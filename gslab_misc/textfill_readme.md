@@ -12,15 +12,19 @@ tags inside the input files) in the locations indicated by the labels in the tem
 
 Textfill must first be imported to make.py.  This is typically achieved by including the following lines:
 
+```
 sys.path.append('./external/lib/python/')
 from gslab_misc.py.textfill import textfill
+```
 
 In the above example, the gslab_misc library has been added to the ./external/ directory by get_externals.  If the location of 
 gslab_misc differs from the above, then the path must be altered accoringly.
 
 Once the module has been imported, the syntax used to call textfill is as follows:
 
+```
 textfill( input = 'input_file(s)', template = 'template_file', output = 'output_file', [size = 'size'], [remove_echoes = 'True/False'] )
+```
 
 The argument 'input' is a list of the text files containing the stata logs to be copied to the LyX tables. If there are multiple input 
 text files, they are listed as: input = 'input_file_1 input_file_2'. The argument 'template' is the user written LyX file which contains 
@@ -43,13 +47,13 @@ In the stata do file which produces the input logs, the user begins a tagged sec
 insert_tag tag_name, open
 
 This will insert the following line, which indicates the beginning of a tagged section of the log, into the log file:
-<textfill_tag_name>
+`<textfill_tag_name>`
 
 The user should now add lines to the do file which print the output they want to add to the tagged section, followed by the line:
 insert_tag tag_name, close
 
 This inserts the following line to the log file, indicating the end of the tagged section:
-</textfill_tag_name>
+`</textfill_tag_name>`
 
 
 ###########################
@@ -79,14 +83,15 @@ This warning means that the custom module text.module has not been installed - s
 #####################
 
 The following is an example of code, which could appear in a Stata do file, used to produce input for textfill.
-
+```
 insert_tag example_log, open
 display "test"
 insert_tag example_log, close
+```
 
 Suppose output from Stata is being logged in stata.log.  This code adds the following lines to stata.log:
 
-
+```
 . insert_tag example_log, open
 <example_log>
 
@@ -95,25 +100,25 @@ test
 
 . insert_tag example_log, close
 </example_log>
-
+```
 
 Suppose we have a LyX file, template.lyx, which contains a label with the value "text:example_log" (without the ""). The following textfill command,
-textfill( input = 'stata.log', template = 'template.lyx', output = 'output.lyx' )
+`textfill( input = 'stata.log', template = 'template.lyx', output = 'output.lyx' )`
 
 would produce a file, output.lyx, identical to template.lyx, but with the label "text:example.log" replaced with the verbatim input:
 
-
+```
 . display "test"
 test
-
+```
 
 The following command,
-textfill( input = 'stata.log', template = 'template.lyx', output = 'output.lyx', remove_echoes = True )
+`textfill( input = 'stata.log', template = 'template.lyx', output = 'output.lyx', remove_echoes = True )`
 
 would produce output.lyx replacing the label with the verbatim input (removing Stata command echoes):
 
 
-test
+`test`
 
 
 ######################
@@ -124,7 +129,9 @@ If an error occurs during the call to text, it will be displayed in the command 
 be able to scroll up through the output and examine any error messages.  Error messages, which include a description of the error type
 and a traceback to the line of code where the error occured, can also be retuned as a string object using the following syntax:
 
+```
 exitmessage = textfill( input = 'input_file(s)', template = 'template_file', output = 'output_file', [size = 'size'], [remove_echoes = 'True/False'] )
+```
 
 Lines can then be added to make.py to output this string to a log file using standard python and built in gslab_make commands.
 

@@ -1,8 +1,6 @@
-#################################################################
-#  Readme for get_externals.py & get_externals_github.py
-#
-#  
-#################################################################
+====================================================
+Readme for get_externals.py & get_externals_github.py
+====================================================
 
 Description:
 get_externals.py is a python module which interprets to the system a formatted text document listing 
@@ -46,11 +44,11 @@ Note that the externals_file argument is required, and the rest are optional. Ea
 optional argument can be provided as a key word argument.    
 	
 Prerequisites for both get_externals.py and get_externals_github.py:
-(1) Python 2.7 installed and defined as an environment variable. [Installation of 2.7.9 is recommended]	
+1.  Python 2.7 installed and defined as an environment variable. [Installation of 2.7.9 is recommended]	
 
 Additional prerequisites for get_externals_github.py:
-(1) The “requests” python module needs to be installed.
-(2) A token, with the proper authority, for GitHub’s API must be created beforehand. [get_externals_github.py
+1.  The “requests” python module needs to be installed.
+2.  A token, with the proper authority, for GitHub’s API must be created beforehand. [get_externals_github.py
 will prompt the user to enter the token. In Linux environments, one can simply copy and paste. In Windows environments, it will have to be typed out.]
 
 
@@ -58,82 +56,74 @@ It should be noted that, when get_externals.py is called, the .py files in /priv
 will be compiled into .pyc compiled files (which Python then reads). These are placed in the 
 ./private/__pycache___ directory.
 
-#############################
-# Map of /py/ directory
-#############################
+========================
+Map of /py/ directory
+========================
 
 * get_externals.py
 The get_externals.py script executes the code, but the modules housed in /py/private perform most
 of the legwork. As can be seen by reading get_externals, the broad structure is as follows:
 	
-	(0) GitHub Externals Only: Prompt user for GitHub token to access GitHub’s API.
-	(1) Apply/parse options and input the externals text file into a readable array.
-	(2) Create an instance of a directive (SvnExport, GitHub, or Copy) depending on which is specified in
+	1.  GitHub Externals Only: Prompt user for GitHub token to access GitHub’s API.
+	2.  Apply/parse options and input the externals text file into a readable array.
+	3.  Create an instance of a directive (SvnExport, GitHub, or Copy) depending on which is specified in
 	    that specific line.
-	(3) Check the line for errors.
-	(4) Clean the line.
-	(5) Issue the directive's command.
+	4.  Check the line for errors.
+	5.  Clean the line.
+	6.  Issue the directive's command.
 	
-* /private/directives
+* `/private/directives`
 This module houses most of the code. The parent class, SystemDirective, is defined first. This defines
 properties that any instance of any specific system directive will have. At this point, 
 GitHubDirective, SvnExportDirective, and CopyDirective are sub-classes of SystemDirective. It is in these subclass 
 definitions that we build on SystemDirective methods, to tailor them to each subclass.
 
-* /private/preliminaries
+* `/private/preliminaries`
 As well as starting logging and inputting the externals text file to a readable array, this parses, 
 checks and applies any options before directives.py.
 
-* /private/exceptionclasses
+* `/private/exceptionclasses`
 This defines the custom exception classes which are called upon during a run. When used, the script
 provides the exception instance with an error message which is displayed and printed to the logfile.
 Three subclasses of CustomError are defined, to better specify the type of exception encountered.
 
-* /private/messages
+* `/private/messages`
 This houses any error messages or notes which are either printed directly to the logfile, or printed
 in an exception statement.
 
-* /private/metadata
+* `/private/metadata`
 This houses any metadata called on during the run of get_externals. At present, it only houses
 the svn command syntax, settings (default destination directory and logfile) and locals 
 (used to replace %svn%, %svnbranch%, and %gslab_l% placemarkers).
 
-#############################
-# externals.txt File Format:
-#############################
+===========================
+externals.txt File Format:
+============================
+
 This file needs to rows of numbers or characters, delimited by either tabs or 4 spaces,one for each file to be exported via svn.
 The proper format is: rev	dir	file	outdir	outfile	notes
 
 
 Column descriptions:
 ---------------------
-rev	-		Revision number of the file/directory. Must be in integer format. If left blank along 
-			with directory column, get_externals.py will read the last specified revision number. 
-			If copying from a shared drive rather than the repository, list revision number as COPY.
-dir	-		Directory of the file/directory requested. As described above, %xxx% placemarkers are 
-			substituted in from predefined values in metadata.py. If left blank along with revision
-			column, get_externals.py will read the last specified directory. 
-file	-	Name of the file requested. If entire directory is required, leave column as a single *. 
-			If a file name wildcard is required place single * within filename (i.e., test*.txt will 
-			call test1.txt, test2.txt, and any file of this form). get_externals.py will also attempt
+*  rev 
+  *  Revision number of the file/directory. Must be in integer format. If left blank along with directory column, get_externals.py will read the last specified revision number. If copying from a shared drive rather than the repository, list revision number as COPY.
+*  dir
+  *  Directory of the file/directory requested. As described above, %xxx% placemarkers are substituted in from predefined values in metadata.py. If left blank along with revision column, get_externals.py will read the last specified directory. 
+*  file 
+  *  Name of the file requested. If entire directory is required, leave column as a single *. If a file name wildcard is required place single * within filename (i.e., test*.txt will call test1.txt, test2.txt, and any file of this form). get_externals.py will also attempt
 			to screen out bad file names. Cannot be left blank.
-outdir	-	Desired output directory of the exported file/directory. Typically of the form ./subdir/. 
-			If left blank, will be filled with the first level of the externals relative path. 
-outfile	-	Desired output name of the exported file/directory. If left as double quotes, indicates 
-			that it should have the same name. Note that the contents of a directory call will be 
-			exported to the specified outdir, regardless of the outfile name. Adding a directory name 
-			that is different from the default """" will place this subdirectory within the outdir. 
-			So if you'd like a directory named /dir/ to be called the same name, place it in external/dir/ 
-			and leave outfile as """". If you'd like to rename it /outdir/, place it in external/ and 
-			leave outfile as 'outdir'. Additionally, get_externals has the capability to assign a prefix 
-			tag to a collection of files to be exported, either through a folder export, or wildcard call. 
-			In order to do so, write in the outfile column '[prefix]*', where the prefix [prefix] 
-			will be attached to each exported file. 
-notes	-	Optional column with notes on the export. get_externals.py ignores this, but logs it.
+*  outdir	
+  *  Desired output directory of the exported file/directory. Typically of the form ./subdir/. If left blank, will be filled with the first level of the externals relative path. 
+*  outfile 
+  *  Desired output name of the exported file/directory. If left as double quotes, indicates that it should have the same name. Note that the contents of a directory call will be exported to the specified outdir, regardless of the outfile name. Adding a directory name that is different from the default """" will place this subdirectory within the outdir. So if you'd like a directory named /dir/ to be called the same name, place it in external/dir/ and leave outfile as """". If you'd like to rename it /outdir/, place it in external/ and leave outfile as 'outdir'. Additionally, get_externals has the capability to assign a prefix tag to a collection of files to be exported, either through a folder export, or wildcard call. In order to do so, write in the outfile column '[prefix]*', where the prefix [prefix] will be attached to each exported file. 
+*  notes
+  *  Optional column with notes on the export. get_externals.py ignores this, but logs it.
 
 
 Example of externals.txt:
 ----------
+```
 rev	dir	file	outdir	outfile	notes
 4908	%svn%/analysis/voting/output/text/	*	./text/	""""
 4908	%svn%/analysis/voting/output/	tables.txt	.	""""	
@@ -143,6 +133,7 @@ rev	dir	file	outdir	outfile	notes
 2325	%svn%/analysis/voting/spreadsheets/	Duplicate readers analysis - independence model.xlsx	./spreadsheets/	""""	
 4908	%svn%/analysis/voting/output/figures/	*	./figures/	prefix_*	
 COPY	%gslab_l%\cverbeck\test\contents\	test*.txt	.	""""
+```
 
 
 Parsing external.txt file:
@@ -162,22 +153,23 @@ The proper format is: url	outdir	outfile	notes
 
 Column descriptions:
 ---------------------
-url	-	Desired download url for the file in a specific GitHub release. This can be found by going to the 
-		file on GitHub and right clicking on the desired file in a release. Then select “copy link address”. 
-		get_externals_github.py will then use this url to parse the exact download url needed. The url given
-		should be the complete url.
-outdir	-	Desired output directory of the exported file/directory. Typically of the form ./subdir/. 
-			If left blank, will be filled with the first level of the externals relative path. 
-outfile	-	Desired output name of the exported file/directory. If left as double quotes, indicates 
-			that it should have the same name as the asset name in GitHub. 
-notes	-	Optional column with notes on the export. get_externals_github.py ignores this, but logs it.
+*  url  
+  *  Desired download url for the file in a specific GitHub release. This can be found by going to the file on GitHub and right clicking on the desired file in a release. Then select “copy link address”. get_externals_github.py will then use this url to parse the exact download url needed. The url given should be the complete url.
+*  outdir 
+  *  Desired output directory of the exported file/directory. Typically of the form ./subdir/. If left blank, will be filled with the first level of the externals relative path. 
+*  outfile 
+  *  Desired output name of the exported file/directory. If left as double quotes, indicates that it should have the same name as the asset name in GitHub. 
+*  notes 
+  *  Optional column with notes on the export. get_externals_github.py ignores this, but logs it.
 
 
 Example of externals_github.txt:
 ----------
+```
 url	outdir	outfile	notes	
 https://github.com/TaddyLab/politext/releases/download/v0.1/politext.pdf	./	""""
 https://github.com/TaddyLab/politext/releases/download/BrownTalk/politext_slides.pdf	./	""""
+```
 
 
 Commenting in externals[_github].txt:
