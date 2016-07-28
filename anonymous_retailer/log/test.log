@@ -1,0 +1,490 @@
+test_R2_connection_basic (test_r2_connection.TestR2Connection) ... ok
+test_parameter_substitution (test_r2_connection.TestR2Connection) ... ok
+test_r2_connection_context_manager (test_r2_connection.TestR2Connection) ... ok
+test_r2_connection_exceptions (test_r2_connection.TestR2Connection) ... ok
+test_set_default_connection (test_r2_connection.TestR2Connection) ... ok
+test_alternate_schema (test_run_sql_loader.TestRunSQLLoader) ... 
+SQL*Loader: Release 12.1.0.2.0 - Production on Thu Jun 30 10:10:08 2016
+
+Copyright (c) 1982, 2014, Oracle and/or its affiliates.  All rights reserved.
+
+Path used:      Direct
+
+Load completed - logical record count 2.
+
+Table TEST_SQL_LOADER:
+  2 Rows successfully loaded.
+
+Check the log file:
+  ../temp/test_sql_loader.log
+for more information about the load.
+ok
+test_basic_function (test_run_sql_loader.TestRunSQLLoader) ... 
+SQL*Loader: Release 12.1.0.2.0 - Production on Thu Jun 30 10:10:13 2016
+
+Copyright (c) 1982, 2014, Oracle and/or its affiliates.  All rights reserved.
+
+Path used:      Direct
+
+Load completed - logical record count 2.
+
+Table TEST_SQL_LOADER:
+  2 Rows successfully loaded.
+
+Check the log file:
+  ../temp/test_sql_loader.log
+for more information about the load.
+ok
+test_exceptions (test_run_sql_loader.TestRunSQLLoader) ... LRM-00101: unknown parameter name 'potatoes'
+
+SQL*Loader: Release 12.1.0.2.0 - Production on Thu Jun 30 10:10:16 2016
+
+Copyright (c) 1982, 2014, Oracle and/or its affiliates.  All rights reserved.
+
+SQL*Loader-100: Syntax error on command-line
+SQL*Loader-500: Unable to open file (potatoes_are_tasty.ctl)
+SQL*Loader-553: file not found
+SQL*Loader-509: System error: No such file or directory
+
+SQL*Loader: Release 12.1.0.2.0 - Production on Thu Jun 30 10:10:16 2016
+
+Copyright (c) 1982, 2014, Oracle and/or its affiliates.  All rights reserved.
+
+SQL*Loader-941: Error during describe of table NO_SUCH_TABLE
+ORA-04043: object NO_SUCH_TABLE does not exist
+
+SQL*Loader: Release 12.1.0.2.0 - Production on Thu Jun 30 10:10:16 2016
+
+Copyright (c) 1982, 2014, Oracle and/or its affiliates.  All rights reserved.
+
+Path used:      Direct
+ok
+test_input_stream (test_run_sql_loader.TestRunSQLLoader) ... 
+SQL*Loader: Release 12.1.0.2.0 - Production on Thu Jun 30 10:10:19 2016
+
+Copyright (c) 1982, 2014, Oracle and/or its affiliates.  All rights reserved.
+
+Path used:      Direct
+
+Load completed - logical record count 2.
+
+Table TEST_SQL_LOADER:
+  2 Rows successfully loaded.
+
+Check the log file:
+  ../temp/test_sql_loader_stream.log
+for more information about the load.
+ok
+test_optional_params (test_run_sql_loader.TestRunSQLLoader) ... 
+SQL*Loader: Release 12.1.0.2.0 - Production on Thu Jun 30 10:10:21 2016
+
+Copyright (c) 1982, 2014, Oracle and/or its affiliates.  All rights reserved.
+
+Path used:      Direct
+
+Load completed - logical record count 2.
+
+Table TEST_SQL_LOADER:
+  2 Rows successfully loaded.
+
+Check the log file:
+  ../temp/test_sql_loader.log
+for more information about the load.
+ok
+test_bad_key (test_save_table.TestSaveTable) ... ok
+test_bad_table (test_save_table.TestSaveTable) ... ok
+test_basic_functionality (test_save_table.TestSaveTable) ... ok
+test_no_compression (test_save_table.TestSaveTable) ... ok
+test_optional_arguments (test_save_table.TestSaveTable) ... ok
+test_single_column_key (test_save_table.TestSaveTable) ... ok
+test_clear_tables (test_sql_utils.TestSQLUtils) ... ok
+test_clear_tables_casecade (test_sql_utils.TestSQLUtils) ... ok
+test_grant_permissions (test_sql_utils.TestSQLUtils) ... ok
+test_normalize_string_col (test_sql_utils.TestSQLUtils) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 60.519s
+
+OK
+CREATE TABLE test_r2_connection (person_id NUMBER(2))
+INSERT INTO test_r2_connection (person_id) VALUES (1)
+INSERT INTO test_r2_connection (person_id) VALUES (2)
+SELECT * FROM test_r2_connection
+DROP TABLE test_r2_connection PURGE
+CREATE TABLE test_r2_connection (scope VARCHAR2(30), value NUMBER)
+INSERT INTO test_r2_connection (scope, value) VALUES ('global', 3.14159)
+INSERT INTO test_r2_connection (scope, value)VALUES ('local', 8.2702)
+INSERT INTO test_r2_connection (scope, value) VALUES ('localer', 5.3298)
+SELECT * FROM test_r2_connection
+DROP TABLE test_r2_connection PURGE
+Clearing table: test_r2_connection
+CREATE TABLE test_r2_connection (person_name VARCHAR2(30))
+INSERT INTO test_r2_connection (person_name) VALUES ('Scarlatti')
+INSERT INTO test_r2_connection (person_name) VALUES ('Rachmaninoff')
+SELECT * FROM test_r2_connection
+DROP TABLE test_r2_connection PURGE
+SELECT USER FROM DUAL
+SELECT USER FROM DUAL
+SELECT USER FROM DUAL
+OPS$AHTHOMAS
+CREATE TABLE test_sql_loader (    var1  NUMBER NOT NULL,    var2  NUMBER NOT NULL,    var3  NUMBER NOT NULL)
+Clearing table: test_sql_loader
+CREATE TABLE test_sql_loader (    var1  NUMBER NOT NULL,    var2  NUMBER NOT NULL,    var3  NUMBER NOT NULL)
+
+
+EXECUTE: sqlldr control=./input/test_sql_loader.ctl userid=contact_history/***** log=../temp/test_sql_loader.log bad=../temp/test_sql_loader.bad
+SELECT * FROM test_sql_loader
+DROP TABLE test_sql_loader PURGE
+DROP TABLE test_sql_loader PURGE
+OPS$AHTHOMAS
+CREATE TABLE test_sql_loader (    var1  NUMBER NOT NULL,    var2  NUMBER NOT NULL,    var3  NUMBER NOT NULL)
+
+
+EXECUTE: sqlldr control=./input/test_sql_loader.ctl userid=/ log=../temp/test_sql_loader.log bad=../temp/test_sql_loader.bad
+SELECT * FROM test_sql_loader
+DROP TABLE test_sql_loader PURGE
+OPS$AHTHOMAS
+CREATE TABLE test_sql_loader (    var1  NUMBER NOT NULL,    var2  NUMBER NOT NULL,    var3  NUMBER NOT NULL)
+
+
+EXECUTE: sqlldr control=./input/test_sql_loader.ctl userid=/ log=../temp/test_sql_loader.log bad=../temp/test_sql_loader.bad
+
+
+EXECUTE: sqlldr control=potatoes_are_tasty.ctl userid=/ log=../temp/potatoes_are_tasty.log bad=../temp/potatoes_are_tasty.bad
+
+
+EXECUTE: sqlldr control=./input/test_bad_sql_loader.ctl userid=/ log=../temp/test_bad_sql_loader.log bad=../temp/test_bad_sql_loader.bad
+DROP TABLE test_sql_loader PURGE
+OPS$AHTHOMAS
+CREATE TABLE test_sql_loader (    var1  NUMBER NOT NULL,    var2  NUMBER NOT NULL,    var3  NUMBER NOT NULL)
+
+
+EXECUTE: gunzip -c ./input/test_sql_loader.csv.gz sqlldr control=./input/test_sql_loader_stream.ctl userid=/ log=../temp/test_sql_loader_stream.log bad=../temp/test_sql_loader_stream.bad
+SELECT * FROM test_sql_loader
+DROP TABLE test_sql_loader PURGE
+OPS$AHTHOMAS
+CREATE TABLE test_sql_loader (    var1  NUMBER NOT NULL,    var2  NUMBER NOT NULL,    var3  NUMBER NOT NULL)
+
+
+EXECUTE: sqlldr control=./input/test_sql_loader.ctl userid=/ log=../temp/test_sql_loader.log bad=../temp/test_sql_loader.bad
+DROP TABLE test_sql_loader PURGE
+CREATE TABLE test_save_table (
+                                   person_id            NUMBER(3),
+                                   toucan_purchase_date DATE,
+                                   person_name          VARCHAR2(30),
+                                   toucan_weight        NUMBER,
+                                   num_toucans          NUMBER(2)
+                                )
+                             
+UPDATE test_save_table SET person_id = NULL WHERE ROWNUM < 2
+DROP TABLE test_save_table PURGE
+CREATE TABLE test_save_table (
+                                   person_id            NUMBER(3),
+                                   toucan_purchase_date DATE,
+                                   person_name          VARCHAR2(30),
+                                   toucan_weight        NUMBER,
+                                   num_toucans          NUMBER(2)
+                                )
+                             
+DROP TABLE test_save_table PURGE
+CREATE TABLE test_save_table (
+                                   person_id            NUMBER(3),
+                                   toucan_purchase_date DATE,
+                                   person_name          VARCHAR2(30),
+                                   toucan_weight        NUMBER,
+                                   num_toucans          NUMBER(2)
+                                )
+                             
+====================================================================================================
+Table: test_save_table
+Key: person_id toucan_purchase_date
+====================================================================================================
+
+             Variable  COUNT        AVG     STDDEV                  MIN                  MAX
+          NUM_TOUCANS     90  45.388889  22.706577                    4                   79
+            PERSON_ID     90   5.000000   2.596454                    1                    9
+          PERSON_NAME     90        NaN        NaN                  NaN                  NaN
+ TOUCAN_PURCHASE_DATE     90        NaN        NaN  2003-04-10 00:00:00  2009-01-13 00:00:00
+        TOUCAN_WEIGHT     90  11.823035   2.005716             7.143832             15.99081
+
+
+DROP TABLE test_save_table PURGE
+CREATE TABLE test_save_table (
+                                   person_id            NUMBER(3),
+                                   toucan_purchase_date DATE,
+                                   person_name          VARCHAR2(30),
+                                   toucan_weight        NUMBER,
+                                   num_toucans          NUMBER(2)
+                                )
+                             
+====================================================================================================
+Table: test_save_table
+Key: person_id toucan_purchase_date
+====================================================================================================
+
+             Variable  COUNT        AVG     STDDEV                  MIN                  MAX
+          NUM_TOUCANS     90  43.822222  24.333164                    3                   79
+            PERSON_ID     90   5.000000   2.596454                    1                    9
+          PERSON_NAME     90        NaN        NaN                  NaN                  NaN
+ TOUCAN_PURCHASE_DATE     90        NaN        NaN  2003-04-08 00:00:00  2008-12-04 00:00:00
+        TOUCAN_WEIGHT     90  11.812461   1.948630              5.68647             16.15901
+
+
+DROP TABLE test_save_table PURGE
+CREATE TABLE test_save_table (
+                                   person_id            NUMBER(3),
+                                   toucan_purchase_date DATE,
+                                   person_name          VARCHAR2(30),
+                                   toucan_weight        NUMBER,
+                                   num_toucans          NUMBER(2)
+                                )
+                             
+====================================================================================================
+Table: test_save_table
+Key: person_id toucan_purchase_date
+====================================================================================================
+
+             Variable  COUNT        AVG     STDDEV                  MIN                  MAX
+          NUM_TOUCANS     90  41.311111  22.193047                    3                   79
+            PERSON_ID     90   5.000000   2.596454                    1                    9
+          PERSON_NAME     90        NaN        NaN                  NaN                  NaN
+ TOUCAN_PURCHASE_DATE     90        NaN        NaN  2003-05-02 00:00:00  2008-12-24 00:00:00
+        TOUCAN_WEIGHT     90  11.913440   2.161091              6.51512             17.95022
+
+
+SELECT cols.table_name, cols.column_name,
+                        const.status, const.constraint_name
+                   FROM all_constraints const, all_cons_columns cols
+                  WHERE cols.table_name = 'TEST_SAVE_TABLE' AND 
+                        const.constraint_type = 'P'         AND
+                        const.constraint_name = cols.constraint_name
+              
+====================================================================================================
+Table: test_save_table
+Key: person_id toucan_purchase_date
+====================================================================================================
+
+             Variable  COUNT        AVG     STDDEV                  MIN                  MAX
+          NUM_TOUCANS     90  41.311111  22.193047                    3                   79
+            PERSON_ID     90   5.000000   2.596454                    1                    9
+          PERSON_NAME     90        NaN        NaN                  NaN                  NaN
+ TOUCAN_PURCHASE_DATE     90        NaN        NaN  2003-05-02 00:00:00  2008-12-24 00:00:00
+        TOUCAN_WEIGHT     90  11.913440   2.161091              6.51512             17.95022
+
+
+SELECT cols.table_name, cols.column_name,
+                        const.status, const.constraint_name
+                   FROM all_constraints const, all_cons_columns cols
+                  WHERE cols.table_name = 'TEST_SAVE_TABLE' AND 
+                        const.constraint_type = 'P'         AND
+                        const.constraint_name = cols.constraint_name
+              
+====================================================================================================
+Table: test_save_table
+Key: person_id toucan_purchase_date
+====================================================================================================
+
+             Variable  COUNT        AVG     STDDEV                  MIN                  MAX
+          NUM_TOUCANS     90  41.311111  22.193047                    3                   79
+            PERSON_ID     90   5.000000   2.596454                    1                    9
+          PERSON_NAME     90        NaN        NaN                  NaN                  NaN
+ TOUCAN_PURCHASE_DATE     90        NaN        NaN  2003-05-02 00:00:00  2008-12-24 00:00:00
+        TOUCAN_WEIGHT     90  11.913440   2.161091              6.51512             17.95022
+
+
+SELECT cols.table_name, cols.column_name,
+                        const.status, const.constraint_name
+                   FROM all_constraints const, all_cons_columns cols
+                  WHERE cols.table_name = 'TEST_SAVE_TABLE' AND 
+                        const.constraint_type = 'P'         AND
+                        const.constraint_name = cols.constraint_name
+              
+DROP TABLE test_save_table PURGE
+CREATE TABLE test_save_table (
+                                   person_id            NUMBER(3),
+                                   toucan_purchase_date DATE,
+                                   person_name          VARCHAR2(30),
+                                   toucan_weight        NUMBER,
+                                   num_toucans          NUMBER(2)
+                                )
+                             
+ALTER TABLE test_save_table ADD contrived_key NUMBER(2)
+UPDATE test_save_table SET contrived_key = ROWNUM
+====================================================================================================
+Table: test_save_table
+Key: contrived_key
+====================================================================================================
+
+             Variable  COUNT        AVG     STDDEV                  MIN                  MAX
+        CONTRIVED_KEY     90  45.500000  26.124701                    1                   90
+          NUM_TOUCANS     90  39.977778  22.467944                    4                   79
+            PERSON_ID     90   5.000000   2.596454                    1                    9
+          PERSON_NAME     90        NaN        NaN                  NaN                  NaN
+ TOUCAN_PURCHASE_DATE     90        NaN        NaN  2003-05-01 00:00:00  2009-02-02 00:00:00
+        TOUCAN_WEIGHT     90  12.146031   2.031294             6.112309             16.58851
+
+
+SELECT cols.table_name, cols.column_name,
+                        const.status, const.constraint_name
+                   FROM all_constraints const, all_cons_columns cols
+                  WHERE cols.table_name = 'TEST_SAVE_TABLE' AND 
+                        const.constraint_type = 'P'         AND
+                        const.constraint_name = cols.constraint_name
+              
+DROP TABLE test_save_table PURGE
+CREATE TABLE test_clear_tablesA (varname NUMBER(1));
+CREATE TABLE test_clear_tablesB (varname NUMBER(1));
+Clearing table: test_clear_tablesA
+Clearing table: test_clear_tablesB
+DROP TABLE test_clear_tablesA PURGE;
+CREATE TABLE test_clear_tablesA (rivers VARCHAR2(30))
+INSERT INTO test_clear_tablesA (rivers) VALUES ('Columbia')
+INSERT INTO test_clear_tablesA (rivers) VALUES ('Yukon')
+INSERT INTO test_clear_tablesA (rivers) VALUES ('Platte')
+INSERT INTO test_clear_tablesA (rivers) VALUES ('Colorado')
+
+                        ALTER TABLE test_clear_tablesA ADD CONSTRAINT pk_test_clear_tablesA
+                            PRIMARY KEY (rivers) 
+                    
+CREATE TABLE test_clear_tablesB (river_name VARCHAR2(30))
+INSERT INTO test_clear_tablesB (river_name) VALUES ('Columbia')
+INSERT INTO test_clear_tablesB (river_name) VALUES ('Yukon')
+
+                        ALTER TABLE test_clear_tablesB ADD CONSTRAINT fk_river_name
+                            FOREIGN KEY (river_name) REFERENCES test_clear_tablesA (rivers)
+                    
+Clearing table: test_clear_tablesA
+
+                        SELECT * FROM USER_CONSTRAINTS WHERE TABLE_NAME = 'TEST_CLEAR_TABLESB'
+                    
+Clearing table: test_clear_tablesB
+SELECT USER FROM DUAL
+CREATE TABLE test_grant_permissions (person_name VARCHAR2(30))
+INSERT INTO test_grant_permissions (person_name) VALUES ('Chopin')
+GRANT SELECT ON test_grant_permissions TO OPS$AHTHOMAS
+
+SELECT * FROM contact_history.test_grant_permissions
+CREATE TABLE permissionsA (var NUMBER)
+CREATE TABLE permissionsB (var NUMBER)
+SELECT TABLE_NAME FROM USER_TABLES
+GRANT SELECT ON DIB_STORE_FORMAT_DESC TO OPS$AHTHOMAS
+
+GRANT SELECT ON DIB_STORE_FORMAT_DESC TO OPS$AHTHOMAS;
+GRANT SELECT ON PHARMACY_FLAG TO OPS$AHTHOMAS
+
+GRANT SELECT ON PHARMACY_FLAG TO OPS$AHTHOMAS;
+GRANT SELECT ON MAILING_STATE_PROV_CODE TO OPS$AHTHOMAS
+
+GRANT SELECT ON MAILING_STATE_PROV_CODE TO OPS$AHTHOMAS;
+GRANT SELECT ON GAS_STATION_FLAG TO OPS$AHTHOMAS
+
+GRANT SELECT ON GAS_STATION_FLAG TO OPS$AHTHOMAS;
+GRANT SELECT ON PAYMENT_TYPE_ID TO OPS$AHTHOMAS
+
+GRANT SELECT ON PAYMENT_TYPE_ID TO OPS$AHTHOMAS;
+GRANT SELECT ON HHLD_MONTH_PANEL TO OPS$AHTHOMAS
+
+GRANT SELECT ON HHLD_MONTH_PANEL TO OPS$AHTHOMAS;
+GRANT SELECT ON EUOM_DESC TO OPS$AHTHOMAS
+
+GRANT SELECT ON EUOM_DESC TO OPS$AHTHOMAS;
+GRANT SELECT ON PROCURED_MANUFACTURED_CODE TO OPS$AHTHOMAS
+
+GRANT SELECT ON PROCURED_MANUFACTURED_CODE TO OPS$AHTHOMAS;
+GRANT SELECT ON DATE_LOOKUP TO OPS$AHTHOMAS
+
+GRANT SELECT ON DATE_LOOKUP TO OPS$AHTHOMAS;
+GRANT SELECT ON ADWEEK_DAYS TO OPS$AHTHOMAS
+
+GRANT SELECT ON ADWEEK_DAYS TO OPS$AHTHOMAS;
+GRANT SELECT ON GAS_STATION_CLOSE_REASON_CODE TO OPS$AHTHOMAS
+
+GRANT SELECT ON GAS_STATION_CLOSE_REASON_CODE TO OPS$AHTHOMAS;
+GRANT SELECT ON PAYMENT_GROUP_ID TO OPS$AHTHOMAS
+
+GRANT SELECT ON PAYMENT_GROUP_ID TO OPS$AHTHOMAS;
+GRANT SELECT ON EXACT_AGE_NUM TO OPS$AHTHOMAS
+
+GRANT SELECT ON EXACT_AGE_NUM TO OPS$AHTHOMAS;
+GRANT SELECT ON INCOME_DESC TO OPS$AHTHOMAS
+
+GRANT SELECT ON INCOME_DESC TO OPS$AHTHOMAS;
+GRANT SELECT ON INCOME_CATEGORY_DESC TO OPS$AHTHOMAS
+
+GRANT SELECT ON INCOME_CATEGORY_DESC TO OPS$AHTHOMAS;
+GRANT SELECT ON PREMIUM_ETHNICITY_DESC TO OPS$AHTHOMAS
+
+GRANT SELECT ON PREMIUM_ETHNICITY_DESC TO OPS$AHTHOMAS;
+GRANT SELECT ON HOUSEHOLD_COMPOSITION_DESC TO OPS$AHTHOMAS
+
+GRANT SELECT ON HOUSEHOLD_COMPOSITION_DESC TO OPS$AHTHOMAS;
+GRANT SELECT ON CHILD_PRESENCE_FLAG TO OPS$AHTHOMAS
+
+GRANT SELECT ON CHILD_PRESENCE_FLAG TO OPS$AHTHOMAS;
+GRANT SELECT ON ETHNICITY_DESC TO OPS$AHTHOMAS
+
+GRANT SELECT ON ETHNICITY_DESC TO OPS$AHTHOMAS;
+GRANT SELECT ON MEDIAN_YEARS_IN_SCHOOL_DESC TO OPS$AHTHOMAS
+
+GRANT SELECT ON MEDIAN_YEARS_IN_SCHOOL_DESC TO OPS$AHTHOMAS;
+GRANT SELECT ON OCTANE_LEVELS TO OPS$AHTHOMAS
+
+GRANT SELECT ON OCTANE_LEVELS TO OPS$AHTHOMAS;
+GRANT SELECT ON UNIT_SIZE_DESC TO OPS$AHTHOMAS
+
+GRANT SELECT ON UNIT_SIZE_DESC TO OPS$AHTHOMAS;
+GRANT SELECT ON PERMISSIONSB TO OPS$AHTHOMAS
+
+GRANT SELECT ON PERMISSIONSB TO OPS$AHTHOMAS;
+GRANT SELECT ON PERMISSIONSA TO OPS$AHTHOMAS
+
+GRANT SELECT ON PERMISSIONSA TO OPS$AHTHOMAS;
+SELECT * FROM dim.permissionsA
+SELECT * FROM dim.permissionsB
+DROP TABLE test_grant_permissions PURGE
+DROP TABLE permissionsA PURGE
+DROP TABLE permissionsB PURGE
+CREATE TABLE rivers (river VARCHAR2(30))
+INSERT INTO rivers (river) VALUES ('Columbia')
+INSERT INTO rivers (river) VALUES ('Yukon')
+INSERT INTO rivers (river) VALUES ('Platte')
+INSERT INTO rivers (river) VALUES ('Colorado')
+Clearing table: river
+
+            CREATE TABLE river AS (
+                SELECT river, DENSE_RANK() OVER (
+                    ORDER BY river) AS river_key
+                  FROM OPS$AHTHOMAS.rivers
+                 WHERE river IS NOT NULL
+                 GROUP BY river
+            )
+        
+GRANT SELECT ON OPS$AHTHOMAS.rivers TO dim
+Clearing table: river
+
+            CREATE TABLE river AS (
+                SELECT river, DENSE_RANK() OVER (
+                    ORDER BY river) AS river_key
+                  FROM OPS$AHTHOMAS.rivers
+                 WHERE river IS NOT NULL
+                 GROUP BY river
+            )
+        
+GRANT SELECT, REFERENCES ON river TO OPS$AHTHOMAS
+Clearing table: rivers_dim
+
+            CREATE TABLE rivers_dim AS (
+                SELECT river, DENSE_RANK() OVER (
+                    ORDER BY river) AS river_int
+                  FROM OPS$AHTHOMAS.rivers
+                 WHERE river IS NOT NULL
+                 GROUP BY river
+            )
+        
+SELECT river, river_key FROM river
+SELECT river, river_key FROM dim.river
+SELECT river, river_int FROM rivers_dim
+DROP TABLE river PURGE
+DROP TABLE rivers_dim PURGE
+DROP TABLE rivers PURGE
+DROP TABLE river PURGE

@@ -1,0 +1,11 @@
+local	linked
+../external_links/adweeks	/work/retail2/raw/R2Data_20130730/AdWeek
+../external_links/anonymized_crosswalks	/work/retail2/raw/Anonymized/Anonymized Files/output
+../external_links/anonymized_hand_coded	/work/retail2/raw/Anonymized/Anonymized Files/hand_coded
+../external_links/contact_history	/work/retail2/raw/R2Data_20150715/coupon_contact_history
+../external_links/customers	/work/retail2/raw/R2Data_20130412/OriginalText/Customers
+../external_links/hhld_survey_jun2012	/work/retail2/raw/June06_12_data
+../external_links/hhld_survey_mar2012	/work/retail2/raw/March28_12_data
+../external_links/payments	/work/retail2/raw/R2Data_20130412/OriginalText/Payments
+../external_links/products_stores_history	/work/retail2/raw/R2Data_20130412/OriginalText/Products&Stores
+../external_links/transactions	/work/retail2/raw/R2Data_20130412/OriginalText/Transactions
