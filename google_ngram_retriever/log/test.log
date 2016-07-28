@@ -1,0 +1,7 @@
+test_download (test_download.testNgramDownload) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.463s
+
+OK
+Data saved to ./consultants_media.csv

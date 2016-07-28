@@ -118,20 +118,20 @@ keyword arguments to save_table:
 
 examples:
 
->>> from anonymous_retailer.py.sql_utils import *
->>> from anonymous_retailer.py.run_sql_loader import *
->>> from anonymous_retailer.py.save_table import save_table
->>>
->>> cxn = R2_connection('schema', connect=False)
->>> clear_tables(['table'], cxn.cxn_string)
->>> run_sql_loader(program = 'import_data.ctl', options = {'userid' : cxn.userid}, 
-...     stream = 'gunzip -c ../external/data/data.csv.gz')
->>> grant_permissions(['table'], cxn_string = cxn.cxn_string)
->>>
->>> max_valid_amount = 8
->>> sql = """CREATE TABLE new_table AS SELECT * 
-...          FROM table WHERE amount < %max_valid_amount%"""
->>> with R2_connection() as cxn:
-...     cxn.execute(sql)
-...     cxn_string = cxn.cxn_string
->>> save_table('new_table','key_variable',cxn_string)
+    >>> from anonymous_retailer.py.sql_utils import *
+    >>> from anonymous_retailer.py.run_sql_loader import *
+    >>> from anonymous_retailer.py.save_table import save_table
+    >>>
+    >>> cxn = R2_connection('schema', connect=False)
+    >>> clear_tables(['table'], cxn.cxn_string)
+    >>> run_sql_loader(program = 'import_data.ctl', options = {'userid' : cxn.userid}, 
+    ...     stream = 'gunzip -c ../external/data/data.csv.gz')
+    >>> grant_permissions(['table'], cxn_string = cxn.cxn_string)
+    >>>
+    >>> max_valid_amount = 8
+    >>> sql = """CREATE TABLE new_table AS SELECT * 
+    ...          FROM table WHERE amount < %max_valid_amount%"""
+    >>> with R2_connection() as cxn:
+    ...     cxn.execute(sql)
+    ...     cxn_string = cxn.cxn_string
+    >>> save_table('new_table','key_variable',cxn_string)

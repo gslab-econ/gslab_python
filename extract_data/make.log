@@ -1,0 +1,135 @@
+make.bat started	
+Wed 04/11/2012				
+17:30:12.41				
+Testing Started. Begin by testing success with legal input.
+
+Test extract_data completes with legal input.
+extract_data passed with input. Logfile below:
+
+
+************************************
+
+
+
+extract_data.py started: 2012-04-11 17:30:12C:\Users\ntsivani\Documents\trunk\lib\python\extract_data\test
+
+Raw folder: ../test/sampledata/
+time to process characteristics file: 247.85 seconds.
+Reading from C:\Users\ntsivani\Documents\trunk\lib\python\extract_data\test\sampledata\sample1
+time to process file sample1 was 0.16 seconds.
+Reading from C:\Users\ntsivani\Documents\trunk\lib\python\extract_data\test\sampledata\sample2
+time to process file sample2 was 0.16 seconds.
+time to sort csv was 0.02 seconds.
+Data written to ../test/purchases_2008_7738.csv
+
+extract_data.py ended: 2012-04-11 17:34:20
+
+
+
+************************************
+
+
+Now test extract_data breaks with illegal command line syntax.
+Input at command line is "python ../py/extract_data.py -r ../test/incorrectfolder/ -o ../test/"
+extract_data failed with input. Please see logfile below:
+
+
+************************************
+
+
+
+extract_data.py started: 2012-04-11 17:34:20C:\Users\ntsivani\Documents\trunk\lib\python\extract_data\test
+
+Traceback (most recent call last):
+  File "../py/extract_data.py", line 40, in <module>
+    main()  
+  File "../py/extract_data.py", line 11, in main
+    options = parse_command_options(sys.argv[1:], LOGFILE)
+  File "C:\Users\ntsivani\Documents\trunk\lib\python\extract_data\py\private\preliminaries.py", line 69, in parse_command_options
+    raise CritError(messages.crit_error_norawfolder % rawfolder)
+private.exceptionclasses.CritError: 'ERROR! Raw folder ../test/incorrectfolder/ does not exist'
+
+
+************************************
+
+
+Input at command line is "python ../py/extract_data.py"
+extract_data failed with input. Please see logfile below:
+
+
+************************************
+
+
+
+extract_data.py started: 2012-04-11 17:34:21C:\Users\ntsivani\Documents\trunk\lib\python\extract_data\test
+
+Traceback (most recent call last):
+  File "../py/extract_data.py", line 40, in <module>
+    main()  
+  File "../py/extract_data.py", line 11, in main
+    options = parse_command_options(sys.argv[1:], LOGFILE)
+  File "C:\Users\ntsivani\Documents\trunk\lib\python\extract_data\py\private\preliminaries.py", line 64, in parse_command_options
+    raise CritError(messages.crit_error_missingoption)
+private.exceptionclasses.CritError: 'ERROR! requires both -r and -o options!'
+
+
+************************************
+
+
+Input at command line is "python ../py/extract_data.py ../test/sampledata/ -o ../test/"
+extract_data failed with input. Please see logfile below:
+
+
+************************************
+
+
+
+extract_data.py started: 2012-04-11 17:34:21C:\Users\ntsivani\Documents\trunk\lib\python\extract_data\test
+
+Traceback (most recent call last):
+  File "../py/extract_data.py", line 40, in <module>
+    main()  
+  File "../py/extract_data.py", line 11, in main
+    options = parse_command_options(sys.argv[1:], LOGFILE)
+  File "C:\Users\ntsivani\Documents\trunk\lib\python\extract_data\py\private\preliminaries.py", line 64, in parse_command_options
+    raise CritError(messages.crit_error_missingoption)
+private.exceptionclasses.CritError: 'ERROR! requires both -r and -o options!'
+
+
+************************************
+
+
+Now test extract_data breaks with illegal binary input file.
+
+Input at command line is "python ../py/extract_data.py -r ../test/sampledata_illegal/ -o ../test_illegal/"
+extract_data failed with input. Please see logfile below:
+
+
+************************************
+
+
+
+extract_data.py started: 2012-04-11 17:34:21C:\Users\ntsivani\Documents\trunk\lib\python\extract_data\test
+
+Raw folder: ../test/sampledata_illegal/
+Output folder: ../test_illegal/
+time to process characteristics file: 197.11 seconds.
+Reading from C:\Users\ntsivani\Documents\trunk\lib\python\extract_data\test\sampledata_illegal\sample1
+time to process file sample1 was 0.16 seconds.
+Reading from C:\Users\ntsivani\Documents\trunk\lib\python\extract_data\test\sampledata_illegal\sample2
+time to process file sample2 was 0.16 seconds.
+Reading from C:\Users\ntsivani\Documents\trunk\lib\python\extract_data\test\sampledata_illegal\sample_stata.dta
+Traceback (most recent call last):
+  File "../py/extract_data.py", line 40, in <module>
+    main()  
+  File "../py/extract_data.py", line 28, in main
+    raise CritError(messages.crit_error_readfail)
+private.exceptionclasses.CritError: 'ERROR! cannot read a line... perhaps a non-text file?'
+
+
+************************************
+
+
+make.bat completed	
+Wed 04/11/2012				
+17:37:38.74				
