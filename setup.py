@@ -7,5 +7,5 @@ setup(name='gslab',
       author='Frank',
       author_email='yangf2@carleton.edu',
       license='MIT',
-      packages=['gslab','gslab_other'],
+      packages=['gslab_python'],
       zip_safe=False)
