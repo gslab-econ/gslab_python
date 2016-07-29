@@ -7,5 +7,5 @@ setup(name='gslab',
       author='Frank',
       author_email='yangf2@carleton.edu',
       license='MIT',
-      packages=['gslab.make.py','gslab_other.eatthepie.py_module'],
+      packages=['gslab.make.py'],
       zip_safe=False)
