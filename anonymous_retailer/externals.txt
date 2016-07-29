@@ -1,2 +1,0 @@
-rev	dir	file	outdir	outfile	notes
-254	%svn_retail2%/raw/Anonymous Retailer/links	links.txt	./	raw_links.txt	""""
