@@ -2,8 +2,6 @@
 #****************************************************
 # GET LIBRARY - Do not modify this section
 #****************************************************
-import subprocess, shutil
-subprocess.check_call(r'svn export --force -r 16215 http://gsbhmg01.chicagobooth.edu/svn/trunk/lib/python/gslab_make/ gslab_make', shell = True)
 from gslab_make.py.get_externals import *
 from gslab_make.py.make_log import *
 from gslab_make.py.run_program import *
@@ -27,5 +25,4 @@ run_python(program = './test/run_all_tests.py', changedir = True, log = './log/t
 
 end_make_logging()
 
-shutil.rmtree('gslab_make')
 input('\n Press <Enter> to exit.')

@@ -3,8 +3,6 @@
 # GET LIBRARY
 #****************************************************
 import subprocess, shutil, os
-gslab_make_path = os.getenv('gslab_make_path')
-subprocess.call('svn export --force -r 32862 ' + gslab_make_path + ' gslab_make', shell = True)
 from gslab_make.py.get_externals import *
 from gslab_make.py.get_externals_github import *
 from gslab_make.py.make_log import *
@@ -27,5 +25,4 @@ run_python(program = 'test/run_all_tests.py', log = 'log/test.log', changedir = 
 
 end_make_logging()
 
-shutil.rmtree('gslab_make')
 raw_input('\n Press <Enter> to exit.')
