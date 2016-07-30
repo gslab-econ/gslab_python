@@ -23,9 +23,9 @@ On command line, type `pip install --upgrade git+ssh://git@github.com/gslab-econ
 
 ### Usage
 
-Use the modules in the same way as if they are downloaded from SVN. Just remove the lines of calling SVN. 
+Use the modules in the **same way** as if they were downloaded from SVN. Just remove the lines of calling SVN. 
 
-Take `politext/source/paper/make.py` as an example, the code now should be written as: 
+Take `politext/source/paper/make.py` as an example, the code should now be written as: 
 
 `import`~~`subprocess, shutil,`~~`os`
 
