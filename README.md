@@ -27,7 +27,7 @@ Use the modules in the same way as if they are downloaded from SVN. Just remove 
 
 Take `politext/source/paper/make.py` as an example, the code now should be written as: 
 
-`import subprocess` ~~`, shutil, os`~~
+`import`~~`subprocess, shutil,`~~`os`
 
 ~~`gslab_make_path = os.getenv('gslab_make_path')`~~
 
