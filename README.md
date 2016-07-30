@@ -43,6 +43,16 @@ Take `politext/source/paper/make.py` as an example, the code now should be writt
 
  ...
  
+~~`get_externals('./externals.txt')`~~
+
+~~`sys.path.append('../../external/paper/lib/python/')`~~
+
+`from gslab_misc.py.tablefill import tablefill`
+
+`from gslab_misc.py.textfill import textfill`
+ 
+ ...
+ 
 `end_make_logging('../../output/paper/make.log')`
 
 ~~`shutil.rmtree('gslab_make')`~~
@@ -53,7 +63,7 @@ Take `politext/source/paper/make.py` as an example, the code now should be writt
 
 ### To-do list 
 
- - Decide which package we do not want to keep in this library
+ - Decide which packages we do not want to include in this library
  - Run unit-testing on each package
  - Publish to PyPI
 
