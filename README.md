@@ -25,7 +25,7 @@ On command line, type `pip install --upgrade git+ssh://git@github.com/gslab-econ
 
 Use the modules in the **same way** as if they were downloaded from SVN. Just remove the lines of calling SVN. 
 
-#### Example 1
+#### Example
 
 Take `politext/source/paper/make.py` as an example, the code should now be written as: 
 
@@ -63,25 +63,28 @@ Take `politext/source/paper/make.py` as an example, the code should now be writt
 
 (Check if this new script successfully runs on your computer and produces the right outcome for politext)
 
-#### Example 2
+#### test
 
 Run python interactively from terminal and type the following:
 ```
 from eatthepie.py_module.module_test import *
 from gslab_make.py.module_test import *
-from political_speech.code.module_test import *
+from political_speech.code.module_test import * 
+from ebt_records.py.module_test import *
+from extract_data.py.private.module_test import *
 ```
 The results should be 
 ```
 test success!
 test success!
 test success!
+test success!
+test sucesss!
 ```
 
 ### To-do list 
 
  - Decide which packages we do not want to include in this library
- - Run unit-testing on each package
  - Publish to PyPI
 
 
