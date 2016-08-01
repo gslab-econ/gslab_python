@@ -1,0 +1,52 @@
+.-
+help for ^cf2^                                             (see manual:  ^[R] cf^)
+.-
+
+Compare two datasets
+--------------------
+
+	^cf2^ varlist ^using^ filename [^,^ ^v^erbose ^id(^varname^)^]
+
+
+Description
+-----------
+
+^cf2^ is a slight variation of ^cf^ to list the observations where differences 
+exist.  Option ^verbose^ must be specified to obtain the listing.  Like ^cf^,
+^cf2^ compares variables in the dataset in memory (the 'master' data) to the 
+corresponding variables in a file (the 'using' dataset).  The variables to be
+compared are specified in varlist.  Alternatively, ^_all^ may be specified to
+request that all variables be compared.  ^cf2^ returns 0 if the specified 
+variables are identical and 9 if there are any differences.  Only the variable 
+values are compared.  Variable labels, value labels, notes, characteristics, 
+etc. are not compared.
+
+In the listings, variable names given for the 'using' dataset are a slight 
+modification of the actual variable names.  If necessary, they are truncated 
+to 7 characters, and all are preceded by an underscore character.
+
+
+Options
+-------
+
+^verbose^ reports the result of the comparison variable-by-variable and
+    lists the observations where differences exist.  If not specified, only
+    the number of differences are mentioned.
+
+^id(^varname^)^ specifies the record id variable within the master dataset.  
+    If specified, this id is displayed as part of the ^verbose^ output. 
+
+
+Examples
+--------
+
+	. ^cf2 mpg weight displ using mydata, verbose^
+
+	. ^cf2 _all using mydata, verbose id(make)^
+
+
+Also see
+--------
+
+ Manual:  ^[R] cf^
+On-line:  help for @compare@

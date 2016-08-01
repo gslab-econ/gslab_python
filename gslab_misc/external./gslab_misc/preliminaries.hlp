@@ -1,0 +1,53 @@
+.-
+help for ^preliminaries^
+.-
+
+Command to set preliminaries for do files
+-----------------------------------------------------------------------
+
+	^preliminaries^ , [^matsize(^integer^)^ ^maxvar(^integer^)^ ^sortseed(^integer^)^ ^seed(^integer^)^ ^linesize(^string^)^ ^loadglob(^list of files^)^]
+
+
+Description
+-----------
+
+^preliminaries^ inputs values for preliminary declarations from the user, reverting to default values
+	if none is specified. Also allows for the user to specify inputs to loadglob. 
+
+Options for use with ^preliminaries^
+---------------------------
+
+^matsize(^integer^)^ is optional. It specifies the maximum number of variables that can be included 
+	in any of Stata's estimation commands for the do file. Defaults to 5000.
+	
+^maxvar(^integer^)^ is optional. It specifies the maximum number of variables allowed in a dataset
+	for the do file. Defaults to 5000. 
+	
+^sortseed(^integer^)^ is optional. It specifies the seed Stata uses to determine sort order for the 
+	do file. Defaults to 47.
+	
+^seed(^integer^)^ is optional. It specifies the seed Stata uses to generate random variables for the
+	do file. Defaults to 147.
+	
+^linesize(^string^)^ is optional. It specifies the line-width of log files stored from the do file.
+	Defaults to 255.
+
+^loadglob(^list of files^)^ is optional. It solicits a space-delimited list of files from which to
+	extract global variables using loadglob.ado. 
+
+Examples
+--------
+
+ . ^preliminaries^
+ 
+ . ^preliminaries, seed(1234)^
+
+ . ^preliminaries, loadglob(constants1.txt constants2.txt)^
+ 
+ . ^preliminaries, maxvar(10000) matsize(10000)^
+
+Author
+------
+
+CJ Verbeck
+

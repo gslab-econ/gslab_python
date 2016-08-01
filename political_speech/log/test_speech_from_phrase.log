@@ -3,19 +3,15 @@ Testing Started:
 [[TEST GOOD]]
 Test speech_from_phrase completes with legal syntax.
 Input at command line is "python ../code/speech_from_phrase.py "naval store" 60 "../log""
-speech_from_phrase passed.
-Input at command line is "python ../code/speech_from_phrase.py "welfar system" 104 "../log" "GPO""
-speech_from_phrase passed.
-
-
-
-[[TEST BAD]]
-Now test speech_from_phrase breaks with illegal command line syntax.
-Input at command line is "python ../code/speech_from_phrase.py"
-speech_from_phrase failed.
-Input at command line is "python ../code/speech_from_phrase.py "naval store" 60 "../non_existent_dir""
-speech_from_phrase failed.
-Input at command line is "python ../code/speech_from_phrase.py "naval store" 200"
-speech_from_phrase failed.
-Input at command line is "python ../code/speech_from_phrase.py "naval" 60 "../log""
-speech_from_phrase failed.
+Traceback (most recent call last):
+  File "test_speech_from_phrase.py", line 32, in <module>
+    test_cmd(line)
+  File "test_speech_from_phrase.py", line 6, in test_cmd
+    flag = subprocess.call(cmd)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/subprocess.py", line 522, in call
+    return Popen(*popenargs, **kwargs).wait()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/subprocess.py", line 710, in __init__
+    errread, errwrite)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/subprocess.py", line 1335, in _execute_child
+    raise child_exception
+OSError: [Errno 2] No such file or directory

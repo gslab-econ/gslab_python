@@ -1,0 +1,99 @@
+{smcl}
+{* 22nov2005}{...}
+{hline}
+help for {cmd:rowsort}
+{hline}
+
+{title:Row sort a set of integer variables} 
+
+{p 8 17 2}
+{cmd:rowsort}
+{it:varlist}
+[{cmd:if} {it:exp}]
+[{cmd:in} {it:range}]
+{cmd:,}
+{cmdab:g:enerate(}{it:newvarlist}{cmd:)}
+[ 
+{cmdab:a:scend}
+{cmdab:d:escend}
+{cmdab:miss:ing(}{it:#}{cmd:)} 
+]
+
+
+{title:Description}
+
+{p 4 4 2} 
+{cmd:rowsort} creates new variables containing the sorted (ordered) values in
+each observation of {it:varlist}. {it:varlist} should contain only numeric
+variables with integer values. 
+
+{p 4 4 2}Missing values are allowed. By default they are sorted to 
+arbitrarily high values, as is standard in Stata. This may not be
+what you want, so see the documentation of the {cmd:missing()} option. 
+
+{p 4 4 2} 
+By default, the first (second, ...) new variable contains the lowest (second
+lowest, ...) value within each observation.  The {cmd:descend} option may be
+used to reverse order. 
+
+
+{title:Remarks} 
+
+{p 4 4 2}
+{cmd:rowsort} loops over observations and may be relatively slow. 
+It may be faster to {help reshape}, {cmd:sort} within blocks, and 
+{cmd:reshape} again. 
+
+
+{title:Options}
+
+{p 4 8 2}
+{cmd:generate()} specifies new variable names for the 
+variables to be generated, one for each variable in {it:varlist}. 
+{it:newvarlist} may be specified in hyphenated form, as in {cmd:s1-s5}. 
+This option is required. 
+
+{p 4 8 2}
+{cmd:ascend} specifies that {it:newvarlist} should contain ascending values 
+and is the default.
+
+{p 4 8 2}
+{cmd:descend} specifies that {it:newvarlist} should contain descending values, 
+such that ordering is from largest downwards. 
+
+{p 4 8 2}
+{cmd:missing()} specifies that missing values should be treated as the
+number specified while sorting. Typically, {cmd:missing()} specifies
+some negative value that does not occur in the data, to ensure that
+missings are sorted to the end. Thus given {cmd:1 . 3 . 5 . 7},
+{cmd:rowsort} by default sorts these to {cmd:1 3 5 7 . . .}, which is
+fine if you want to read off the lowest, next lowest and so forth. But
+with the {cmd:descend} option, {cmd:rowsort} would sort to 
+{cmd:. . . 7 5 3 1}, which makes it difficult to read off the highest,
+next highest, and so forth. With {cmd:missing(-999)}, say, the set would
+be treated as {cmd:1 -999 3 -999 5 -999 7}, sorted to 
+{cmd:7 5 3 1 -999 -999 -999} and reported as {cmd:7 5 3 1 . . .}. Note
+that there is no check of whether the number specified occurs in the
+data and that no attempt to made to distinguish different types of
+missing data. For other ways of handling this kind of problem, see 
+{help mvencode}. 
+
+
+{title:Examples} 
+
+{p 4 8 2}{cmd:. rowsort x1-x5, gen(s1-s5)}{p_end}
+{p 4 8 2}{cmd:. rowsort x1-x5, gen(s1-s5) descend}
+
+
+{title:Author}
+
+{p 4 4 2}Nicholas J. Cox, Durham University{break}
+         n.j.cox@durham.ac.uk
+
+
+
+{title:Acknowledgements}
+
+{p 4 4 2}A problem raised by Alice Dobson led to the {cmd:missing()}
+option. 
+

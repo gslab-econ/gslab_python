@@ -1,159 +1,38 @@
 
- make.py started: 2015-10-27 10:40:23 /data/pstc_home/ahthomas/lib/python/ebt_records 
+ make.py started: 2016-08-01 11:38:46 /Users/Frank/Desktop/gslab_python/ebt_records 
 
 
 Path: gslab_make
-URL: http://gsbhmg01.chicagobooth.edu/svn/trunk/lib/python/gslab_make
-Repository Root: http://gsbhmg01.chicagobooth.edu/svn
+URL: https://econ-gentzkow-svn.stanford.edu/repos/main/trunk/lib/python/gslab_make
+Repository Root: https://econ-gentzkow-svn.stanford.edu/repos/main
 Repository UUID: 89b4331b-4301-411a-8e06-9c78d9cdb83d
-Revision: 32845
+Revision: 34785
 Node Kind: directory
-Last Changed Author: ashahidinejad
-Last Changed Rev: 32396
-Last Changed Date: 2015-09-04 18:23:55 -0400 (Fri, 04 Sep 2015)
+Last Changed Author: jwchoi2
+Last Changed Rev: 33502
+Last Changed Date: 2016-02-07 17:40:17 -0800 (Sun, 07 Feb 2016)
 
 
- get_externals.py started: 2015-10-27 10:40:24 /data/pstc_home/ahthomas/lib/python/ebt_records
+ get_externals.py started: 2016-08-01 11:38:46 /Users/Frank/Desktop/gslab_python/ebt_records
 
  Input was: "25834	%svn%/lib/stata/gslab_misc	*	./lib/stata/gslab_misc	""""	".
-SVN command passed: http://gsbhmg01.chicagobooth.edu/svn/trunk/lib/stata/gslab_misc/ @25834 exported to ./external/./lib/stata/gslab_misc/.
+SVN command passed: https://econ-gentzkow-svn.stanford.edu/repos/main/trunk/lib/stata/gslab_misc/ @25834 exported to ./external./lib/stata/gslab_misc/.
 
  Input was: "27080	%svn%/lib/third_party/stata_tools	*	./lib/third_party/stata_tools	""""".
-SVN command passed: http://gsbhmg01.chicagobooth.edu/svn/trunk/lib/third_party/stata_tools/ @27080 exported to ./external/./lib/third_party/stata_tools/.
+SVN command passed: https://econ-gentzkow-svn.stanford.edu/repos/main/trunk/lib/third_party/stata_tools/ @27080 exported to ./external./lib/third_party/stata_tools/.
 
  Input was: "185	%svn_retail2%/raw/EBT Records/links	links.txt	./	ebt_records_links.txt	""""".
-SVN command passed: file:///data/svn/repository/retailer2/trunk/raw/EBT Records/links/links.txt @185 exported to ./external/ebt_records_links.txt.
-
- get_externals.py ended: 2015-10-27 10:40:30
-
- make_links.py started: 2015-10-27 10:40:31 /data/pstc_home/ahthomas/lib/python/ebt_records
-Symlink successfully created. Source: /work/SNAP/s1_ebt_data/transactions	Local location: ./external_links/transactions.
-Symlink successfully created. Source: /work/SNAP/s1_ebt_data/active_individuals	Local location: ./external_links/active_individuals.
-Symlink successfully created. Source: /work/SNAP/s1_ebt_data/anonymize/output	Local location: ./external_links/anonymous_crosswalks.
-Symlink successfully created. Source: /work/SNAP/s1_ebt_data/anonymize/hand_coded	Local location: ./external_links/anonymous_hand_coded.
-
- make_links.py ended: 2015-10-27 10:40:31
 
 
-Execute:  python  "run_all_tests.py" 
-test_bad (test_save_data.test) ... ok
-test_good (test_save_data.test) ... ok
-test_build_numeric_key (test_ebt_records_tools.test) ... ok
-test_drop_all_duplicates (test_ebt_records_tools.test) ... ok
-test_drop_duplicates (test_ebt_records_tools.test) ... ok
-test_mask_id (test_ebt_records_tools.test) ... ok
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/gslab_make/py/get_externals.py", line 31, in get_externals
+    directive.issue_sys_command(quiet)
+  File "/Library/Python/2.7/site-packages/gslab_make/py/private/getexternalsdirectives.py", line 129, in issue_sys_command
+    self.command(quiet)
+  File "/Library/Python/2.7/site-packages/gslab_make/py/private/getexternalsdirectives.py", line 275, in command
+    self.rev, self.outdir, self.outfile), shell=True)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/subprocess.py", line 540, in check_call
+    raise CalledProcessError(retcode, cmd)
+CalledProcessError: Command 'svn export --force -r185 "file:///data/svn/repository/retailer2/trunk/raw/EBT Records/links/links.txt@185" "./externalebt_records_links.txt"' returned non-zero exit status 1
 
-----------------------------------------------------------------------
-Ran 6 tests in 27.989s
-
-OK
-File type must be 'hdf5', 'csv' or 'dta'
-
-==================================================================================================
-File: ../output/test_good.csv
-Key: id1 id2
-==================================================================================================
-               count       mean        std         min        max
-id1               10        NaN        NaN         NaN        NaN
-id2               10          2   1.490712           0          4
-var1              10  0.5015276  0.3051978  0.05573807  0.9223103
-var2              10  0.5671285  0.3275632  0.09517288  0.9700129
-var3              10  0.5073963  0.3400039   0.1118694  0.9070628
-non_unique_key    10          1          0           1          1
-key_with_nas       5          2   1.581139           0          4
-
-
-
-==================================================================================================
-File: ../output/test_good.csv
-Key: id1 id2
-==================================================================================================
-               count       mean        std         min        max
-id1               10        NaN        NaN         NaN        NaN
-id2               10          2   1.490712           0          4
-var1              10  0.5015276  0.3051978  0.05573807  0.9223103
-var2              10  0.5671285  0.3275632  0.09517288  0.9700129
-var3              10  0.5073963  0.3400039   0.1118694  0.9070628
-non_unique_key    10          1          0           1          1
-key_with_nas       5          2   1.581139           0          4
-
-
-
-==================================================================================================
-File: ../output/test_good.h5
-Key: id1 id2
-Store key: test_hdf
-==================================================================================================
-               count       mean        std         min        max
-id1               10        NaN        NaN         NaN        NaN
-id2               10          2   1.490712           0          4
-var1              10  0.5015276  0.3051978  0.05573807  0.9223103
-var2              10  0.5671285  0.3275632  0.09517288  0.9700129
-var3              10  0.5073963  0.3400039   0.1118694  0.9070628
-non_unique_key    10          1          0           1          1
-key_with_nas       5          2   1.581139           0          4
-
-
-
-==================================================================================================
-File: ../temp/test_good.csv
-Key: id1 id2
-==================================================================================================
-               count       mean        std         min        max
-id1               10        NaN        NaN         NaN        NaN
-id2               10          2   1.490712           0          4
-var1              10  0.5015276  0.3051978  0.05573807  0.9223103
-var2              10  0.5671285  0.3275632  0.09517288  0.9700129
-var3              10  0.5073963  0.3400039   0.1118694  0.9070628
-non_unique_key    10          1          0           1          1
-key_with_nas       5          2   1.581139           0          4
-
-
-
-==================================================================================================
-File: ../output/test_good.dta
-Key: id1 id2
-==================================================================================================
-               count       mean        std         min        max
-id1               10        NaN        NaN         NaN        NaN
-id2               10          2   1.490712           0          4
-var1              10  0.5015276  0.3051978  0.05573807  0.9223103
-var2              10  0.5671285  0.3275632  0.09517288  0.9700129
-var3              10  0.5073963  0.3400039   0.1118694  0.9070628
-non_unique_key    10          1          0           1          1
-key_with_nas       5          2   1.581139           0          4
-
-
-
-==================================================================================================
-File: ../output/test_good.csv
-Key: id1 id2
-==================================================================================================
-               count       mean        std         min        max
-id1               10        NaN        NaN         NaN        NaN
-id2               10          2   1.490712           0          4
-var1              10  0.5015276  0.3051978  0.05573807  0.9223103
-var2              10  0.5671285  0.3275632  0.09517288  0.9700129
-var3              10  0.5073963  0.3400039   0.1118694  0.9070628
-non_unique_key    10          1          0           1          1
-key_with_nas       5          2   1.581139           0          4
-
-
-
-==================================================================================================
-File: ../output/categorical_lookup.h5
-Key: categorical_key
-Store key: categorical
-==================================================================================================
-                count mean        std  min  max
-categorical_key     2  0.5  0.7071068    0    1
-categorical         2  NaN        NaN  NaN  NaN
-
-
-
-5 observations deleted
-0 observations deleted
-3 observations deleted
-0 observations deleted
-
- make.py ended: 2015-10-27 10:41:00
+ get_externals.py ended: 2016-08-01 11:38:48

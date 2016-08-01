@@ -1,0 +1,84 @@
+{smcl}
+{* 31May2009}{...}
+{cmd:help rmse}
+
+{hline}
+
+{title:Title}
+
+{p2colset 5 13 22 2}{...}
+{p2col :{hi:  rmse} {hline 2}}Caluclate raw or adjusted RMSE (Root MSE){p_end}
+
+{marker s_Syntax}
+{title:Syntax}
+
+{p 4 4 6}
+{cmdab:rmse} {it:variable} {it:variable} [{it:{help varlist}}] [, {it:options}]
+
+{marker s_Description}
+{title:Description}
+
+{p 4 4 6}
+{cmd:rmse} provides a fast and easy way to calculate raw or adjusted RMSE, useful 
+for checking prediction accuracy.
+
+{p 4 4 6}rmse = [(sum of (y-yhat)^2)/(N - k - 1)]^.5{p_end}
+{p 4 4 6}where k is the number of parameters, usually regression coefficients.{p_end}
+
+{p 4 4 6}
+The results are stored in r-class locals.
+
+{marker s_Options}
+{title:Options}
+
+{dlgtab:Main}
+
+{p 4 12 6}{opt est:imates}  Use the same sample and degrees of freedom (df) as the current 
+regression results.{p_end}
+
+{p 4 12 6}{opt df_m(#)} # is k in the formula above. Comparable to e(df_m){p_end}
+
+{p 4 12 6}{opt raw}  Do not reduce the df by 1 [as in at the end of (N - k - 1)]{p_end}
+
+{marker s_0}
+{title:Examples}
+
+{p 4 4 6}* reproduce a single RMSE from a regression{p_end}
+{p 4 4 6}{stata sysuse auto, clear}{p_end}
+{p 4 4 6}{stata regress mpg price rep78 headroom turn}{p_end}
+{p 4 4 6}{stata predict yhat}{p_end}
+{p 4 4 6}{stata di e(rmse)}{p_end}
+
+{p 4 4 6}{stata rmse mpg yhat, est}{p_end}
+
+
+{p 4 4 6}* reproduce from scratch{p_end}
+{p 4 4 6}{stata sysuse auto, clear}{p_end}
+{p 4 4 6}{stata regress mpg price rep78 headroom}{p_end}
+{p 4 4 6}{stata predict yhat}{p_end}
+{p 4 4 6}{stata gen resid=yhat-mpg}{p_end}
+{p 4 4 6}{stata gen resid2=resid*resid}{p_end}
+{p 4 4 6}{stata sum resid2 if e(sample)==1}{p_end}
+{p 4 4 6}{stata di e(rmse)}{p_end}
+{p 4 4 6}{stata di (r(mean)*e(N)/(e(N)-e(df_m)-1))^.5}{p_end}
+
+{p 4 4 6}{stata rmse mpg yhat if e(sample)==1, df_m(3)}{p_end}
+
+
+{p 4 4 6}* multiple RMSE{p_end}
+{p 4 4 6}{stata sysuse auto, clear}{p_end}
+{p 4 4 6}{stata rmse mpg price rep78 headroom}{p_end}
+{p 4 4 6}{stata ret list}{p_end}
+
+
+{title:Remarks}
+
+{p 4 12 6}The first variable is compared against the rest.{p_end}
+
+
+{title:Author}
+
+{p 4 4 6}Roy Wada{p_end}
+{p 4 4 6}roywada@hotmail.com{p_end}
+
+

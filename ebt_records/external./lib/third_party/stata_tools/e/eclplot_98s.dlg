@@ -1,0 +1,187 @@
+/*
+ Dialog for eclplot.ado
+ (which can be called by typing -db eclplot-
+ or by clicking on the dialog hypertext in eclplot.hlp).
+ Author: Roger Newson
+ Date: 02 July 2008
+*/
+
+VERSION 10.0
+
+/*
+  Include graphs included in stsgraph.dlg
+*/
+INCLUDE graph_header
+INCLUDE header
+
+/*
+  Include graphs required according to gr_twoway.idlg
+  so that a subset of the twoyay options can work
+*/
+INCLUDE _graph
+INCLUDE _std_graph
+
+/*
+  Help and reset buttons as in stsgraph.dlg
+*/
+HELP hlp1, view("help eclplot")
+RESET res1
+
+/*
+  Values and value names for -rplottype- option
+  (to be used in main dialog)
+*/
+
+LIST rplottypes
+BEGIN
+rcap
+rarea
+rbar
+rcapsym
+rconnected
+rline
+rscatter
+rspike
+END
+
+LIST rplotnames
+BEGIN
+Capped spikes
+Area shading
+Bars
+Spikes capped with symbols
+Lines and markers
+Lines
+Markers
+Spikes
+END
+
+
+/*
+  Main dialog box with basic settings
+*/
+DIALOG main, tabtitle("Main") label("eclplot - Plot estimates with confidence limits")
+BEGIN
+  /*
+    Include list definitions as specified in gr_twoway.idlg
+  */
+  /*
+    Basic settings
+  */
+  GROUPBOX varlist 10 10 250 220,label("Variables to be plotted")
+  TEXT estlab +10 +20 -20 .,label("Estimate variable")
+  VARNAME estimate @ +20 @ .,label("Estimate variable")
+  TEXT clminlab @ +20 @ .,label("Lower confidence limits variable")
+  VARNAME clmin @ +20 @ .,label("Lower confidence limits variable")
+  TEXT clmaxlab @ +20 @ .,label("Upper confidence limits variable")
+  VARNAME clmax @ +20 @ .,label("Upper confidence limits variable")
+  TEXT parmidlab @ +20 @ .,label("Plotted against variable:")
+  VARNAME parmid @ +20 @ .,label("Plotted against variable")
+  TEXT varlist2 @ +20 @ .,label("(Note: all of these variables")
+  TEXT varlist2a @ +15 @ .,label("must be specified)")
+  GROUPBOX orientgp 300 10 200 65,label("Confidence interval orientation")
+  RADIO rb_vert +10 +20 -15 .,first label("Vertical CI plot") default(1)
+  RADIO rb_hori @ +20 @ .,last label("Horizontal CI plot") default(0)
+  GROUPBOX rplotgp -10 +40 200 140,label("Range plot type for CI plot")
+  LISTBOX rplottype +10 +25 -30 .,label("Range plot types") contents(rplotnames) values(rplottypes) option(rplottype)
+END
+
+/*
+  Include definition of dialog for specifying if/in qualifier
+*/
+INCLUDE ifin
+
+/*
+  Include list scripts as specified in gr_twoway.idlg
+*/
+
+
+/*
+  Beginning of twoway options specifications.
+  (These are a subset of those specified in gr_twoway.idlg,
+  because there is apparently not enough memory for them all.)
+*/
+
+INCLUDE gyaxis 
+INCLUDE gxaxis
+INCLUDE gtitle
+INCLUDE gcaption
+
+SCRIPT gr_twoway_enable
+BEGIN
+	script gyaxis_enable
+	script gxaxis_enable
+	script gtitle_enable
+	script gcaption_enable
+END
+
+SCRIPT gr_twoway_disable
+BEGIN
+	script gyaxis_disable
+	script gxaxis_disable
+	script gtitle_disable
+	script gcaption_disable
+END
+
+/*
+  End of twoway options specifications.
+  (These are a subset of those specified in gr_twoway.idlg,
+  because there is apparently not enough memory for them all.)
+*/
+
+
+/*
+  Advanced options
+  (including the option of specifying extra twoway options
+  for which there is not enough memory
+  to use the dialog boxes specified in gr_twoway.idlg).
+*/
+DIALOG advanced, tabtitle("Advanced options")
+BEGIN
+  FRAME advframe 10 10 730 220,label("Frames or group boxes are usually used in Stata dialogs")
+  TEXT estlab 15 +10 720 .,label("Estimate options (as for -twoway scatter-, eg marker options)")
+  EDIT estopts @ +20 @ .,label("Estimate options") option(estopts)
+  TEXT cilab @ +30 @ .,label("Confidence interval options (as for -twoway- range plots, eg CI marker options)")
+  EDIT ciopts @ +20 @ .,label("CI options") option(ciopts)
+  TEXT plotlab @ +30 @ .,label("Other -twoway- plots to be overlayed (as in -[G] addplot_option-)")
+  EDIT plot @ +20 @ .,label("Additional plot option") option(addplot)
+  TEXT twowaylab @ +30 @ .,label("Additional -twoway- options (eg region and legend options)")
+  EDIT twowayopts @ +20 @ .,label("Other twoway options")
+END
+
+
+/*
+  Program to build the command submitted to Stata
+*/
+PROGRAM command
+BEGIN
+  //put "eclplot " main.estimate " " main.clmin " " main.clmax " " main.parmid
+  put "eclplot "
+  varlist main.estimate main.clmin main.clmax main.parmid
+  /*
+    Add if and in qualifiers
+  */
+  INCLUDE _ifin_pr
+  beginoptions
+    if main.rb_hori {
+      put "horizontal"
+    }
+    optionarg main.rplottype
+    optionarg advanced.estopts
+    optionarg advanced.ciopts
+    /*
+      Beginning of statements for adding standard twoway options
+      (as specified in gr_twoway.idlg).
+    */
+    put " " /program gyaxis_output
+    put " " /program gxaxis_output
+    put " " /program gtitle_output
+    put " " /program gcaption_output
+    /*
+      End of statements for adding standard twoway options
+      (as specified in gr_twoway.idlg).
+    */
+    optionarg advanced.plot
+    put " " advanced.twowayopts
+  endoptions
+END

@@ -1,27 +1,27 @@
 
- make.py started: 2015-08-18 13:23:26 /Users/leviboxell/Desktop/eatthepie/gslab_cmd 
+ make.py started: 2016-08-01 11:35:45 /Users/Frank/Desktop/gslab_python/gslab_cmd 
 
 
 Path: gslab_make
-URL: http://gsbhmg01.chicagobooth.edu/svn/trunk/lib/python/gslab_make
-Repository Root: http://gsbhmg01.chicagobooth.edu/svn
+URL: https://econ-gentzkow-svn.stanford.edu/repos/main/trunk/lib/python/gslab_make
+Repository Root: https://econ-gentzkow-svn.stanford.edu/repos/main
 Repository UUID: 89b4331b-4301-411a-8e06-9c78d9cdb83d
-Revision: 32217
+Revision: 34785
 Node Kind: directory
-Last Changed Author: athomas6
-Last Changed Rev: 31413
-Last Changed Date: 2015-05-20 08:18:54 -0700 (Wed, 20 May 2015)
+Last Changed Author: jwchoi2
+Last Changed Rev: 33502
+Last Changed Date: 2016-02-07 17:40:17 -0800 (Sun, 07 Feb 2016)
 
 
- get_externals.py started: 2015-08-18 13:23:27 /Users/leviboxell/Desktop/eatthepie/gslab_cmd
+ get_externals.py started: 2016-08-01 11:35:46 /Users/Frank/Desktop/gslab_python/gslab_cmd
 
- get_externals.py ended: 2015-08-18 13:23:27
+ get_externals.py ended: 2016-08-01 11:35:46
 
- get_externals.py started: 2015-08-18 13:23:27 /Users/leviboxell/Desktop/eatthepie/gslab_cmd
+ get_externals.py started: 2016-08-01 11:35:46 /Users/Frank/Desktop/gslab_python/gslab_cmd
 Note: not using filename externals.txt.
 
 
- get_externals.py ended: 2015-08-18 13:23:27
+ get_externals.py ended: 2016-08-01 11:35:46
 
 
 Execute:  python  "run_all_tests.py" 
@@ -32,8 +32,8 @@ test_minimizeQ (test_NormalVar.test_NormalVar) ... ok
 test_minimizeQ_trueparam (test_NormalVar.test_NormalVar) ... ok
 
 ----------------------------------------------------------------------
-Ran 5 tests in 0.021s
+Ran 5 tests in 0.051s
 
 OK
 
- make.py ended: 2015-08-18 13:23:27
+ make.py ended: 2016-08-01 11:35:47

@@ -1,0 +1,81 @@
+.-
+help for ^eq^                                                                                                  
+.-
+
+Define and list equations
+-------------------------
+
+	^eq^ [^define^] eqtn
+	^eq^ [^define^] eqname ^:^ [eqtn]
+
+	^eq dir^  [^_all^ | eqname [eqname ..]]
+	^eq list^ [^_all^ | eqname [eqname ..]]
+
+	^eq drop^ {^_all^ | eqname [eqname ..]}
+
+
+Description
+-----------
+
+^eq define^ is used to define equations in ^gllamm^. In Stata 5 and earlier this
+was also used by Stata's own multivariate estimation commands. The command
+continues to work in Stata 8 but is no longer documented.
+
+^eq dir^ and ^eq list^ are used to review equations that
+have been defined.  ^eq drop^ is used to eliminate previously defined equations.
+
+^gllamm^ has options ^eqs(eqnames)^ ^geqs(eqnames)^ ^peqs(eqname)^ and ^s(eqname)^
+where eqnames is a list of equation names and eqname is an equation name.  
+You first define equations using ^eq^ and then estimate the model.  
+
+Equations are named and usually define a variable list. For instance,
+to estimate a factor model in ^gllamm^, an equation of the following
+kind must be defined:
+
+	. ^eq load: d1 d2 d3^
+
+where d1, d2 and d3 are dummy variables for three variables or items
+loading on one of the factors. You can abbreviate variable names and 
+take all the other shortcuts you would when specifying a varlist in a 
+command: 
+
+	. ^eq load: d1-d3^
+
+When you do not specify the equation name followed by a colon, the first name
+is taken both as the equation name and as part of the contents of the equation.
+
+There is one exception to this rule.  You may not type 
+
+	. ^eq price^
+
+You must type instead
+
+	. ^eq price: price^
+
+(Such nearly empty equations are not silly; it could mean that price is to
+be estimated by an intercept-only equation.)  One can also define completely
+empty equations in this way:
+
+	. ^eq price: ^
+
+Note the distinction:  "^eq price: price^" defines equation price to contain 
+"price"; "^eq price:^" defines price to contain nothing.
+
+Equations can be dropped, 
+
+	. ^eq drop load^
+	. ^eq load: d1 d2 d3^
+
+or you can redefine equations without bothering to drop them first.
+
+Equations may be listed for review:
+
+	. ^eq list load^
+	. ^eq list load1 load2^
+	. ^eq list^
+
+You can list just the equation names using ^eq dir^:
+
+	. ^eq dir^
+
+

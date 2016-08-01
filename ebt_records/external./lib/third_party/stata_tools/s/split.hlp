@@ -1,0 +1,125 @@
+{smcl}
+{* 4 Mar 2002}{...}
+{hline}
+help for {hi:split}
+{hline}
+
+{title:Splitting string variables into parts} 
+
+{p 8 12}{cmd:split} 
+{it:strvar}
+[{cmd:if} {it:exp}] 
+[{cmd:in} {it:range}] 
+[, 
+{cmdab:g:enerate(}{it:stub}{cmd:)}
+{cmdab:p:arse(}{it:parse_strings}{cmd:)}  
+{cmdab:l:imit(}{it:#}{cmd:)}  
+[{cmdab:no:}]{cmdab:t:rim} 
+{cmd:destring} 
+{it:destring_options} 
+]
+
+{title:Description} 
+
+{p}{cmd:split} splits the contents of a string variable {it:strvar} into one or
+more parts, using one or more {it:parse_strings} (by default blank space(s)),
+so that new string variables are generated.  It is thus useful for separating
+`words' or parts of a string variable. {it:strvar} itself is not modified. 
+ 
+ 
+{title:Options} 
+ 
+{p 0 4}{cmd:generate(}{it:stub}{cmd:)} specifies the beginning characters of
+the new variable names, so that new variables {it:stub}{cmd:1}, {it:stub}{cmd:2},
+etc., are produced. {it:stub} defaults to {it:strvar}. 
+ 
+{p 0 4}{cmd:parse(}{it:parse_strings}{cmd:)} specifies that, instead of spaces,
+parsing should be done using one or more {it:parse_strings}. Most commonly, one
+string which is a single punctuation character will be specified.  For example,
+if {cmd:parse(,)} is specified, then {cmd:{bind:"1,2,3"}} is split into
+{cmd:"1"}, {cmd:"2"} and {cmd:"3"}. 
+ 
+{p 4 4}It is also possible to specify (1) two or more strings which are
+alternative separators of `words' and/or (2) strings which consist of two or
+more characters.  Alternative strings should be separated by spaces and strings
+which include spaces should be bound by {cmd:{bind:" "}}. Thus if
+{cmd:{bind:parse(, " ")}} is specified, then {cmd:{bind:"1,2 3"}} is also split
+into {cmd:"1"}, {cmd:"2"} and {cmd:"3"}.  Note particularly the difference
+between (say) {cmd:{bind:parse(a b)}} and {cmd:parse(ab)}: with the first,
+{cmd:"a"} and {cmd:"b"} are both acceptable as separators, while with the
+second, only the string {cmd:"ab"} is acceptable.
+
+{p 0 4}{cmd:limit(}{it:#}{cmd:)} specifies an upper limit to the 
+number of new variables to be created. Thus {cmd:limit(2)} specifies that 
+at most two new variables should be created. 
+ 
+{p 0 4}{cmd:notrim} specifies that the original string variable should not be
+trimmed of leading and trailing spaces before being parsed. {cmd:trim} is the
+default. 
+ 
+{p 0 4}{cmd:destring} applies {help destring} to the new string variables, 
+replacing the variables initially created as string by numeric variables
+where possible. 
+ 
+{p 0 4}{it:destring_options} qualify the application of {cmd:destring}. 
+Possible options are {cmd:float}, {cmd:force}, {cmd:ignore()} and 
+{cmd:percent}. For details, see {help destring}. 
+ 
+ 
+{title:Examples} 
+ 
+{p}1. Suppose that input is somehow misread as one string variable, say when
+you copy and paste into the data editor, but data are space-separated:
+ 
+{p 4 8}{inp:. split var1, destring}
+
+{p}2. Suppose a string variable holds names of legal cases which should be split
+into variables for plaintiff and defendant. The separators could be
+{inp:{bind:" V "}}, {inp:{bind:" V. "}}, {inp:{bind:" VS "}} and 
+{inp:{bind:" VS. "}}.  Note particularly the leading and trailing spaces: 
+{inp:"V"}, for example, would incorrectly split {inp:{bind:"GOLIATH V DAVID"}}.
+ 
+{p 4 8}{inp:. split case, p(" V " " V. " " VS " " VS. ")}
+
+{p}Signs of problems would be the creation of more than two 
+variables and any variable having blank values, so check: 
+
+{p 4 8}{inp:. list case2 if case2 == ""} 
+
+{p}3. Suppose a string variable holds time of day in the form "hh:mm:ss", 
+e.g. {inp:"12:34:56"}. 
+
+{p 4 8}{inp:. split hms, p(:) destring}{p_end} 
+{p 4 8}{inp:. gen timeofday = hms1 + hms2 / 60 + hms3 / 3600} 
+
+{p}Or suppose a string variable holds time of day in the form 
+{bind:"hh:mm:ss am"} or {bind:"hh:mm:ss pm"},
+e.g. {inp:"06:54:32 am"}, "{inp:11:22:33 pm}". 
+
+{p 4 8}{inp:. split hms, p(: " ") destring}{p_end} 
+{p 4 8}{inp:. gen timeofday = hms1 + hms2 / 60 + hms3 / 3600 + 12 * (hms4 == "pm")} 
+
+{p}4. Email addresses split at {inp:"@"}: 
+
+{p 4 8}{inp:. split address, p(@)} 
+
+
+{title:Author} 
+
+         Nicholas J. Cox, University of Durham, U.K.
+         n.j.cox@durham.ac.uk
+
+
+{title:Acknowledgement}
+
+{p}This program has benefitted substantially from the work of Michael
+Blasnik on an earlier jointly written program. Ken Higbee made very
+useful comments. 
+
+
+{title:Also see}
+
+On-line: help for {help destring}, {help egen} ({cmd:ends()}) 
+ Manual: {hi:[R] destring}, {hi:[R] egen} 
+
+

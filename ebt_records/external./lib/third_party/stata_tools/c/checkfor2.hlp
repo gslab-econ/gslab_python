@@ -1,0 +1,88 @@
+{smcl}
+{hline}
+help for {cmd:checkfor2} {right:Amadou B. DIALLO}
+                         {right:Jean-Benoit HARDOUIN}
+{hline}
+
+{title:Module to check whether a variable exists or not in a dataset.}
+
+{p 4 8 2}{cmd:checkfor2} {it:anything} [{cmd:,}
+ {cmdab:t:olerance}({it:#}) {cmdab:ta:ble} {cmdab:nol:ist} {cmdab:nosu:m} 
+ {cmdab:genm:iss}({it:newvarname}) {cmdab:mis:sing}({it:string})]
+
+{title:Description}
+
+{p 4 4 2}{cmd:checkfor2} is a data management routine to check for existence of variables
+within a (usually big) data set.
+
+{p 4 4 2}{cmd:checkfor2} searchs through the data whether each variable exists.
+The variables are clustered between unavailable variables, available variables with 
+a little amount of missing values and available variables with too many missing values.
+
+{p 4 4 2}{cmd:isvar} must be installed ({stata ssc install isvar:ssc install isvar}).
+
+{title:Options}
+
+{p 4 4 2}{it:anything} is composed of variable names or lists of variables,
+
+{p 4 4 2}{cmd:tolerance} is the tolerance level (in percentage) to consider a variable as available, with default 0,
+
+{p 4 4 2}{cmd:nolist} avoids displaying availability status at the end of the process,
+
+{p 4 4 2}{cmd:nosum} avoids displaying summary statistics of available variables,
+
+{p 4 4 2}{cmd:table} displays the results in a table (instead as text),
+
+{p 4 4 2}{cmd:genmiss} creates a new variable containing the number of missing values among the available variables,
+
+{p 4 4 2}{cmd:missing} defines a specific value or string considered as a missing value.
+
+
+{title:Saved results}
+
+{p 4 4 2} {cmd:r(unavailable)} names of unavailable variables.{p_end}
+
+{p 4 4 2} {cmd:r(available)}   names of available variables with a small amount of missing values.{p_end}
+
+{p 4 4 2} {cmd:r(manymissings)} names of variables present but with too missings.{p_end}
+
+{title:Examples}
+
+{p 4 4 2}{cmd:. use mydata, clear  }{p_end}
+
+{p 4 4 2}{cmd:. checkfor2 x y z , mis(99) genmiss(countmiss) }{p_end}
+
+{p 4 4 2}{cmd:. su `r(available)' }{p_end}
+
+{p 4 4 2}{cmd:. tab countmiss }{p_end}
+
+{p 4 4 2}{cmd:. u bigdataset in 1/100, clear // Big data set}{p_end}
+
+{p 4 4 2}{cmd:. checkfor2 v1 v2 v3 xx yy , nosum tol(5) tab}{p_end}
+
+{p 4 4 2}{cmd:. use `r(available)' using bigdataset, clear }{p_end}
+
+{title:Remarks}
+
+{p 4 4 2}{cmd:checkfor2} and its primary version ({cmd:checkfor}) have been primarily written for comparable surveys such as the Demography and 
+Health Surveys (DHS) or the Multiple Indicator Cluster Surveys (MICS). But this could easily applied 
+to any other survey.
+
+{title:Authors}
+
+{p 4 4 2}Amadou Bassirou DIALLO.
+Poverty and Health Division, PREM, The World Bank.{p_end}
+{p 4 4 2}Email: {browse "mailto:adiallo5@worldbank.org":adiallo5@worldbank.org}
+
+{p 4 4 2}Jean-Benoit HARDOUIN.
+Regional Health Observatory of Orléans, France.{p_end}
+{p 4 4 2}Email: {browse "mailto:jean-benoit.hardouin@orscentre.org":jean-benoit.hardouin@orscentre.org}
+ 
+{title:Aknowledgements}
+
+{p 4 4 2}We would like to thank Christophe Rockmore and also Nick Cox 
+and Kit Baum for their comments.
+
+{title:Also see}
+
+{p 4 13 2}Online:   help for {help checkfor}, {help isvar}, {help nmissing}, {help npresent}, {help missing} and {help dropmiss} if installed.{p_end}

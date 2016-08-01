@@ -1,0 +1,12 @@
+
+ make_links.py started: 2016-08-01 11:38:48 /Users/Frank/Desktop/gslab_python/ebt_records
+Traceback (most recent call last):
+  File "make.py", line 25, in <module>
+    make_link_logs('./external/ebt_records_links.txt', link_heads_file = "", link_stats_file = "")
+  File "/Library/Python/2.7/site-packages/gslab_make/py/make_link_logs.py", line 33, in make_link_logs
+    links_list = LinksList(links_files, links_dir)
+  File "/Library/Python/2.7/site-packages/gslab_make/py/private/linkslist.py", line 39, in __init__
+    lines = input_to_array(f)
+  File "/Library/Python/2.7/site-packages/gslab_make/py/private/preliminaries.py", line 55, in input_to_array
+    raise CritError(messages.crit_error_file % filename)
+gslab_make.py.private.exceptionclasses.CritError: 'ERROR! Cannot open file ./external/ebt_records_links.txt'

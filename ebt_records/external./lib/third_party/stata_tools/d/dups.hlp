@@ -1,0 +1,97 @@
+.-
+help for ^dups^  <version 1.0.3, Stata v6>           (v1.0.1 in STB-41: dm53)
+.-
+
+
+Detection and deletion of duplicate observations
+------------------------------------------------
+
+   ^dups^ [varlist] [ ^, drop^ ^e^xpand^(^varname^)^ ^k^ey^(^varlist2^)^
+	              ^u^nique ^t^erse ^v^erbose ]
+
+
+Description
+-----------
+
+^dups^ provides information about unique and duplicate observations in the 
+dataset and, optionally, drops all duplicate observations. 
+
+^varlist^ is an optional variable list that determines which observations are 
+duplicates: observations must match exactly on all variables in the list to 
+be duplicates.  If no ^varlist^ is given, then all variables in the dataset 
+are used to determine duplicates.
+
+
+Options
+-------
+
+^drop^ causes duplicate observations to be dropped from the dataset.  ^drop^ 
+   must be spelled out completely.
+
+   ^drop^ creates an expand variable (the default name is ^_expand^) to allow 
+   dropped data to be recreated.  If ^_expand^ exists, an error message is 
+   reported and no data are dropped. The expand variable will contain the 
+   number of duplicate copies of the observations in the original dataset. 
+   A subsequent ^expand^ command will completely resurrect the original data 
+   only if ^varlist^ was not specified in the ^dups^ command (or, equivalently, 
+   if ^varlist^ contains all variables in the dataset), or if the unspecified 
+   variables are constant within the subgroups formed by the specified 
+   variables.  The data can be partially, but not fully, resurrected if a 
+   limited ^varlist^ was used (unique information from the variables not in 
+   ^varlist^ cannot be recovered).
+
+^expand(varname)^ specifies a ^varname^ to be used as the expand variable in 
+   place of the default name, ^_expand^.  (This option has no effect unless 
+   option ^drop^ is also included.)  If the specified ^varname^ exists, an 
+   error message is given and no data are dropped.
+
+^key(varlist2)^ causes the value of the variables in ^varlist2^ to be added to 
+   the displayed output for each group.  If ^varlist2^ is  assigned value ^*^ 
+   then ^varlist2^ will be set the same as ^varlist^.  When option ^verbose^ is 
+   specified, ^varlist2^ may include one or more variables which identify an 
+   individual observation uniquely.  Otherwise, ^varlist2^ should contain 
+   variables which assist in identifying the groups of duplicates.  Normally 
+   these would be some or all of the variables in ^varlist^.  
+   ^key()^ is required if ^verbose^ is requested.
+
+^unique^ causes the default display and option ^key()^ to list information for 
+   unique observations also.
+
+^terse^ limits the default display output.  When specified, only the number of 
+   duplicate groups, total observations, number of observations in duplicates,
+   and number of unique observations are shown.
+
+   Without ^terse^, ^dups^ will number the duplicate groups and provide the 
+   observation count in each group, and will do the same for unique 
+   observations, if any, when ^unique^ is specified. 
+
+   Specifying ^terse^ cancels ^key()^, ^unique^ and ^verbose^.
+
+^verbose^ displays the values of ^key()^ for every duplicate in each group of
+   duplicates.  ^key()^ is required if ^verbose^ is requested.  A typical usage 
+   would be to place id variables in ^key()^ (see last example below).  
+
+
+Authors
+-------
+
+   Thomas J. Steichen; RJRT; steicht@@rjrt.com
+   Nicholas J. Cox; University of Durham, UK; n.j.cox@@durham.ac.uk
+
+
+Examples
+--------
+
+ . ^dups^
+ . ^dups, drop^
+ . ^dups foreign, key(*) unique^
+ . ^dups foreign, drop expand(ex) terse^
+ . ^dups foreign, key(make) verbose^
+
+
+Also see
+--------
+
+    STB:  STB-41 dm53
+On-line:  help for @expand@, @fillin@, and @chkdup@ (if installed)
+

@@ -1,19 +1,19 @@
 
- make.py started: 2016-04-21 14:14:11 /data/pstc_home/ahthomas/lib/python/mental_coupons 
+ make.py started: 2016-08-01 11:53:52 /Users/Frank/Desktop/gslab_python/mental_coupons 
 
 
 Path: gslab_make
 URL: https://econ-gentzkow-svn.stanford.edu/repos/main/trunk/lib/python/gslab_make
 Repository Root: https://econ-gentzkow-svn.stanford.edu/repos/main
 Repository UUID: 89b4331b-4301-411a-8e06-9c78d9cdb83d
-Revision: 34134
+Revision: 34785
 Node Kind: directory
 Last Changed Author: jwchoi2
 Last Changed Rev: 33502
-Last Changed Date: 2016-02-07 20:40:17 -0500 (Sun, 07 Feb 2016)
+Last Changed Date: 2016-02-07 17:40:17 -0800 (Sun, 07 Feb 2016)
 
 
- get_externals.py started: 2016-04-21 14:14:17 /data/pstc_home/ahthomas/lib/python/mental_coupons
+ get_externals.py started: 2016-08-01 11:53:52 /Users/Frank/Desktop/gslab_python/mental_coupons
 
  Input was: "33988	%svn%/lib/stata/gslab_misc	*	./lib/stata/gslab_misc	""""".
 SVN command passed: https://econ-gentzkow-svn.stanford.edu/repos/main/trunk/lib/stata/gslab_misc/ @33988 exported to ./external/./lib/stata/gslab_misc/.
@@ -21,153 +21,64 @@ SVN command passed: https://econ-gentzkow-svn.stanford.edu/repos/main/trunk/lib/
  Input was: "33988	%svn%/lib/third_party/stata_tools	*	./lib/third_party/stata_tools	""""".
 SVN command passed: https://econ-gentzkow-svn.stanford.edu/repos/main/trunk/lib/third_party/stata_tools/ @33988 exported to ./external/./lib/third_party/stata_tools/.
 
- get_externals.py ended: 2016-04-21 14:14:26
+ get_externals.py ended: 2016-08-01 11:53:55
 
 
 Execute:  statamp -e do "setup.do"
-
-  ___  ____  ____  ____  ____ (R)
- /__    /   ____/   /   ____/
-___/   /   /___/   /   /___/   14.1   Copyright 1985-2015 StataCorp LP
-  Statistics/Data Analysis            StataCorp
-                                      4905 Lakeway Drive
-     MP - Parallel Edition            College Station, Texas 77845 USA
-                                      800-STATA-PC        http://www.stata.com
-                                      979-696-4600        stata@stata.com
-                                      979-696-4601 (fax)
-
-12-user 16-core Stata network perpetual license:
-       Serial number:  501406230827
-         Licensed to:  Brown University
-                       Providence, RI
-
-Notes:
-      1.  Stata is running in batch mode.
-      2.  Unicode is supported; see help unicode_advice.
-      3.  More than 2 billion observations are allowed; see help obs_advice.
-      4.  Maximum number of variables is set to 5000; see help set_maxvar.
+/bin/sh: statamp: command not found
+ERROR! Command statamp -e do "setup.do" executed with errors 
+Command 'statamp -e do "setup.do"' returned non-zero exit status 127
 
 
-running /opt/stronghold/stata/mp-14-20151116/profile.do ...
-
-. do setup.do 
-
-. version 14
-
-. set more off
-
-. adopath + ../external/lib/stata/gslab_misc/ado
-  [1]  (BASE)      "/opt/stronghold/stata/mp-14-20151116/ado/base/"
-  [2]  (SITE)      "/opt/stronghold/stata/ado/"
-  [3]              "."
-  [4]  (PERSONAL)  "~/ado/personal/"
-  [5]  (PLUS)      "~/ado/plus/"
-  [6]  (OLDPLACE)  "~/ado/"
-  [7]              "../external/lib/stata/gslab_misc/ado"
-
-. preliminaries
-
-. 
-. program main
-  1.     setup_ivreg_test
-  2.     setup_lpoly_test, degree(0)
-  3.     setup_lpoly_test, degree(1)
-  4.     setup_lpoly_test, degree(2)
-  5.     setup_lpoly_test, degree(3)
-  6. end
-
-. 
-. program setup_ivreg_test
-  1.     sysuse auto, clear
-  2.     keep price mpg displacement
-  3.     outsheet using ../temp/ivreg_test_input.csv, comma replace
-  4. 
-.     ivregress 2sls price (mpg = displacement), small
-  5.     matrix V = e(V)
-  6.     matrix b = e(b)
-  7.     local dof = e(df_r)
-  8. 
-.     matrix_to_txt, mat(V) saving(../temp/stata_variance.txt) format(%19.8f) replace
-  9.     matrix_to_txt, mat(b) saving(../temp/stata_coeffs.txt) format(%19.8f) replace
- 10.     file open fh using ../temp/stata_dof.txt, write replace
- 11.     file write fh "`dof'"
- 12.     file close fh
- 13. end
-
-. 
-. program setup_lpoly_test
-  1.     syntax, degree(int)
-  2. 
-.     sysuse auto, clear
-  3.     keep weight length
-  4.     outsheet using ../temp/lpoly_test_input.csv, comma replace
-  5. 
-.     file open fh using ../temp/bandwidths_degree`degree'.txt, write replace
-  6.     local lpoly_opts "degree(`degree') at(length) nograph"
-  7.     lpoly weight length, `lpoly_opts' kernel(epanechnikov)  gen(epanechnikov)
-  8.     file write fh "epanechnikov" _tab "`r(bwidth)'" _n
-  9.     lpoly weight length, `lpoly_opts' kernel(gaussian) gen(gaussian)
- 10.     file write fh "gaussian" _tab "`r(bwidth)'" _n
- 11.     file close fh
- 12. 
-.     format epanechnikov gaussian %19.8f
- 13.     outsheet epanechnikov gaussian using ../temp/stata_lpoly_degree`degree'.csv, comma replace
- 14. end
-
-. 
-. * EXECUTE
-. main
-(1978 Automobile Data)
-(note: file ../temp/ivreg_test_input.csv not found)
-
-
-Instrumental variables (2SLS) regression
-
-      Source |       SS       df       MS         Number of obs   =         74
--------------+------------------------------      F(  1,    72)   =      21.13
-       Model |   105028215     1   105028215      Prob > F        =     0.0000
-    Residual |   530037181    72  7361627.51      R-squared       =     0.1654
--------------+------------------------------      Adj R-squared   =     0.1538
-       Total |   635065396    73  8699525.97      Root MSE        =     2713.2
-
-------------------------------------------------------------------------------
-       price |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-         mpg |  -357.5834   77.78566    -4.60   0.000    -512.6463   -202.5205
-       _cons |   13780.82   1686.382     8.17   0.000     10419.08    17142.56
-------------------------------------------------------------------------------
-Instrumented:  mpg
-Instruments:   displacement
-(note: file ../temp/stata_variance.txt not found)
-(note: file ../temp/stata_coeffs.txt not found)
-(note: file ../temp/stata_dof.txt not found)
-(1978 Automobile Data)
-(note: file ../temp/lpoly_test_input.csv not found)
-(note: file ../temp/bandwidths_degree0.txt not found)
-(note: file ../temp/stata_lpoly_degree0.csv not found)
-(1978 Automobile Data)
-(note: file ../temp/bandwidths_degree1.txt not found)
-(note: file ../temp/stata_lpoly_degree1.csv not found)
-(1978 Automobile Data)
-(note: file ../temp/bandwidths_degree2.txt not found)
-(note: file ../temp/stata_lpoly_degree2.csv not found)
-(1978 Automobile Data)
-(note: file ../temp/bandwidths_degree3.txt not found)
-(note: file ../temp/stata_lpoly_degree3.csv not found)
-
-. 
-end of do-file
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/gslab_make/py/run_program.py", line 52, in run_stata
+    run.move_log(default_log)
+  File "/Library/Python/2.7/site-packages/gslab_make/py/private/runprogramdirective.py", line 238, in move_log
+    raise CritError(messages.crit_error_no_file % default_log)
+CritError: 'ERROR! File test/setup.log not found'
 
 
 Execute:  python  "run_all_tests.py" 
-test_ivreg (test_ivreg.test) ... ok
-test_epanechnikov_kernel (test_qtfit.test) ... ok
-test_first_degree (test_qtfit.test) ... ok
-test_gaussian_kernel (test_qtfit.test) ... ok
+test_ivreg (test_ivreg.test) ... ERROR
+test_qtfit (unittest.loader.ModuleImportFailure) ... ERROR
+
+======================================================================
+ERROR: test_ivreg (test_ivreg.test)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/Frank/Desktop/gslab_python/mental_coupons/test/test_ivreg.py", line 12, in test_ivreg
+    test_input = pd.read_csv('../temp/ivreg_test_input.csv')
+  File "/Library/Python/2.7/site-packages/pandas/io/parsers.py", line 562, in parser_f
+    return _read(filepath_or_buffer, kwds)
+  File "/Library/Python/2.7/site-packages/pandas/io/parsers.py", line 315, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+  File "/Library/Python/2.7/site-packages/pandas/io/parsers.py", line 645, in __init__
+    self._make_engine(self.engine)
+  File "/Library/Python/2.7/site-packages/pandas/io/parsers.py", line 799, in _make_engine
+    self._engine = CParserWrapper(self.f, **self.options)
+  File "/Library/Python/2.7/site-packages/pandas/io/parsers.py", line 1213, in __init__
+    self._reader = _parser.TextReader(src, **kwds)
+  File "pandas/parser.pyx", line 358, in pandas.parser.TextReader.__cinit__ (pandas/parser.c:3427)
+  File "pandas/parser.pyx", line 628, in pandas.parser.TextReader._setup_parser_source (pandas/parser.c:6861)
+IOError: File ../temp/ivreg_test_input.csv does not exist
+
+======================================================================
+ERROR: test_qtfit (unittest.loader.ModuleImportFailure)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_qtfit
+Traceback (most recent call last):
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/unittest/loader.py", line 254, in _find_tests
+    module = self._get_module_from_name(name)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/unittest/loader.py", line 232, in _get_module_from_name
+    __import__(name)
+  File "/Users/Frank/Desktop/gslab_python/mental_coupons/test/test_qtfit.py", line 4, in <module>
+    import pyqt_fit.kernels as kernels
+ImportError: No module named pyqt_fit.kernels
+
 
 ----------------------------------------------------------------------
-Ran 4 tests in 0.135s
+Ran 2 tests in 0.006s
 
-OK
+FAILED (errors=2)
 
- make.py ended: 2016-04-21 14:14:29
+ make.py ended: 2016-08-01 11:53:56

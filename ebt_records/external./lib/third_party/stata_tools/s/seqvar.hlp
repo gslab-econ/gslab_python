@@ -1,0 +1,82 @@
+{smcl}
+{* 25 April 2008}{...}
+{cmd:help seqvar}{right: ({browse "http://www.stata-journal.com/article.html?article=gr0034":SJ8-2: gr0034})}
+{hline}
+
+{title:Title}
+
+{p2colset 5 15 17 2}{...}
+{p2col: {hi:seqvar} {hline 2}}Assign integer numlists to variables{p_end}
+{p2colreset}{...}
+
+
+{title:Syntax}
+
+{p 8 17 2}
+{cmd:seqvar} 
+{it:varname}
+{cmd:=} 
+{it:numlist} 
+[{cmd:,} {cmd:replace}] 
+
+
+{title:Description}
+
+{p 4 4 2}{cmd:seqvar} assigns the values in an integer {it:{help numlist}} to
+the successive observations (observation number 1 and up) of a  variable
+{it:varname}. If the {it:numlist} contains fewer values than the number
+of observations in the dataset, the remaining values will be defined as
+missing. If the {it:numlist} contains more values than the number of
+observations, only as many values as can be assigned will be used and
+the rest will be ignored. The {it:numlist} must include integers only
+and may not include missing values. 
+
+
+{title:Option}
+
+{p 4 8 2}{cmd:replace} specifies that if {it:varname} exists then all
+its values will be replaced.  This option is essential for overwriting
+an existing variable. Nonmissing values will be replaced by
+missing values whenever the {it:numlist} does not specify sufficient
+integers to be assigned. 
+
+
+{title:Remarks} 
+
+{p 4 4 2}{cmd:seqvar} is designed for one main purpose: easy definition
+of numeric axis positions as part of setting up, what is in essence, a
+categorical axis for a graph to be shown by using {helpb graph twoway}. That
+intent does not rule out other uses, but it is likely that other
+purposes will be better served by use of {helpb egen} functions or direct
+use of {cmd:_n} and/or {cmd:_N}. 
+
+{p 4 4 2}The use of {cmd:seqvar} may create as many
+problems as it solves if your data are not in exactly the 
+sort order you need, or if your data include observations that are
+not to be included in a graph. 
+
+{p 4 4 2}{cmd:seqvar} will often be used in conjunction with 
+{helpb labmask}, which is also installed with this command.
+
+
+{title:Examples}
+
+{p 4 8 2}{cmd:. seqvar axis = 1/2 4/10 12/17}{p_end}
+{p 4 8 2}{cmd:. labmask axis, values(access)}{p_end}
+{p 4 8 2}{cmd:. scatter axis access, yla(1/2 4/10 12/17, noticks ang(h) valuelabels grid glc(gs12)) ysc(reverse) plotregion(style(outline))} 
+
+
+{title:Author} 
+
+{p 4 4 2}Nicholas J. Cox, Durham University, U.K.{break}
+n.j.cox@durham.ac.uk
+
+
+{title:Also see}
+
+{psee}
+Article: {it:Stata Journal}, volume 8, number 2: {browse "http://www.stata-journal.com/article.html?article=gr0034":gr0034}{break}
+
+{psee}Manual:  {hi:[D] egen}  
+
+{psee}Online:  {helpb labmask}, if installed; {manhelp egen D}{p_end}

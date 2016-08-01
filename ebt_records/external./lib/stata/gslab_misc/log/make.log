@@ -1,0 +1,688 @@
+
+ make.py started: 2014-04-18 18:52:12 C:\Allen\gslab_misc 
+
+
+Path: gslab_make
+URL: http://gsbhmg01.chicagobooth.edu/svn/trunk/lib/python/gslab_make
+Relative URL: ^/trunk/lib/python/gslab_make
+Repository Root: http://gsbhmg01.chicagobooth.edu/svn
+Repository UUID: 89b4331b-4301-411a-8e06-9c78d9cdb83d
+Revision: 25833
+Node Kind: directory
+Last Changed Author: azhang2
+Last Changed Rev: 24565
+Last Changed Date: 2014-01-29 16:20:06 -0600 (Wed, 29 Jan 2014)
+
+
+ get_externals.py started: 2014-04-18 18:52:12 C:\Allen\gslab_misc
+
+ Input was: "21009	%svn%/lib/third_party/stata_tools	*	./lib/third_party/stata_tools	""""".
+SVN command passed: http://gsbhmg01.chicagobooth.edu/svn/trunk/lib/third_party/stata_tools/ @21009 exported to ./external/./lib/third_party/stata_tools/.
+
+ get_externals.py ended: 2014-04-18 18:52:15
+
+
+Execute:  %STATAEXE% /e do "test_testgood.do"
+
+  ___  ____  ____  ____  ____ (R)
+ /__    /   ____/   /   ____/
+___/   /   /___/   /   /___/   13.1   Copyright 1985-2013 StataCorp LP
+  Statistics/Data Analysis            StataCorp
+                                      4905 Lakeway Drive
+     MP - Parallel Edition            College Station, Texas 77845 USA
+                                      800-STATA-PC        http://www.stata.com
+                                      979-696-4600        stata@stata.com
+                                      979-696-4601 (fax)
+
+22-user 8-core Stata network license expires 30 Jun 2014:
+       Serial number:  501306001307
+         Licensed to:  Preferred Customer
+                       The University of Chicago
+
+Notes:
+      1.  (/v# option or -set maxvar-) 5000 maximum variables
+      2.  Stata running in batch mode
+
+
+running C:\Program Files (x86)\Stata13\profile.do ...
+
+. do test_testgood.do 
+
+. ****************************************************************************************************
+. *
+. * TEST_TESTGOOD.DO
+. *
+. ****************************************************************************************************
+. 
+. quietly {
+
+. 
+. * EXECUTE
+. main
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+
+THESE TESTS SHOULD ALL FAIL:
+Test failed
+    Command: regress y q, 
+    Result: Error where none expected
+Test failed
+    Command: regress y x, , blah
+    Result: Error where none expected
+Test failed
+    Command: blah, 
+    Result: Error where none expected
+
+. 
+. 
+. 
+end of do-file
+
+
+Execute:  %STATAEXE% /e do "test_testbad.do"
+
+  ___  ____  ____  ____  ____ (R)
+ /__    /   ____/   /   ____/
+___/   /   /___/   /   /___/   13.1   Copyright 1985-2013 StataCorp LP
+  Statistics/Data Analysis            StataCorp
+                                      4905 Lakeway Drive
+     MP - Parallel Edition            College Station, Texas 77845 USA
+                                      800-STATA-PC        http://www.stata.com
+                                      979-696-4600        stata@stata.com
+                                      979-696-4601 (fax)
+
+22-user 8-core Stata network license expires 30 Jun 2014:
+       Serial number:  501306001307
+         Licensed to:  Preferred Customer
+                       The University of Chicago
+
+Notes:
+      1.  (/v# option or -set maxvar-) 5000 maximum variables
+      2.  Stata running in batch mode
+
+
+running C:\Program Files (x86)\Stata13\profile.do ...
+
+. do test_testbad.do 
+
+. ****************************************************************************************************
+. *
+. * TEST_TESTBAD.DO
+. *
+. ****************************************************************************************************
+. 
+. quietly {
+
+. 
+. * EXECUTE
+. main
+Test passed
+Test passed
+Test passed
+
+THESE TESTS SHOULD ALL FAIL:
+Test failed
+    Command: regress y x, 
+    Result: No error when error was expected
+Test failed
+    Command: regress y x, , robust
+    Result: No error when error was expected
+Test failed
+    Command: gen z = 2, 
+    Result: No error when error was expected
+
+. 
+. 
+. 
+end of do-file
+
+
+Execute:  %STATAEXE% /e do "test_save_data.do"
+
+  ___  ____  ____  ____  ____ (R)
+ /__    /   ____/   /   ____/
+___/   /   /___/   /   /___/   13.1   Copyright 1985-2013 StataCorp LP
+  Statistics/Data Analysis            StataCorp
+                                      4905 Lakeway Drive
+     MP - Parallel Edition            College Station, Texas 77845 USA
+                                      800-STATA-PC        http://www.stata.com
+                                      979-696-4600        stata@stata.com
+                                      979-696-4601 (fax)
+
+22-user 8-core Stata network license expires 30 Jun 2014:
+       Serial number:  501306001307
+         Licensed to:  Preferred Customer
+                       The University of Chicago
+
+Notes:
+      1.  (/v# option or -set maxvar-) 5000 maximum variables
+      2.  Stata running in batch mode
+
+
+running C:\Program Files (x86)\Stata13\profile.do ...
+
+. do test_save_data.do 
+
+. ****************************************************************************************************
+. *
+. * TEST_SAVE_DATA.DO
+. *
+. ****************************************************************************************************
+. 
+. quietly {
+
+. 
+. * EXECUTE
+. main
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+(6 vars, 40 obs)
+
+. 
+. 
+. 
+end of do-file
+
+
+Execute:  %STATAEXE% /e do "test_preliminaries.do"
+
+  ___  ____  ____  ____  ____ (R)
+ /__    /   ____/   /   ____/
+___/   /   /___/   /   /___/   13.1   Copyright 1985-2013 StataCorp LP
+  Statistics/Data Analysis            StataCorp
+                                      4905 Lakeway Drive
+     MP - Parallel Edition            College Station, Texas 77845 USA
+                                      800-STATA-PC        http://www.stata.com
+                                      979-696-4600        stata@stata.com
+                                      979-696-4601 (fax)
+
+22-user 8-core Stata network license expires 30 Jun 2014:
+       Serial number:  501306001307
+         Licensed to:  Preferred Customer
+                       The University of Chicago
+
+Notes:
+      1.  (/v# option or -set maxvar-) 5000 maximum variables
+      2.  Stata running in batch mode
+
+
+running C:\Program Files (x86)\Stata13\profile.do ...
+
+. do test_preliminaries.do 
+
+.  /**********************************************************
+>  *
+>  *  TEST_PRELIMINARIES.ADO
+>  * 
+>  * 
+>  **********************************************************/ 
+. 
+. adopath ++ ../ado/
+  [1]              "../ado/"
+  [2]  (BASE)      "C:\Program Files (x86)\Stata13\ado\base/"
+  [3]  (SITE)      "C:\Program Files (x86)\Stata13\ado\site/"
+  [4]              "."
+  [5]  (PERSONAL)  "c:\ado\personal/"
+  [6]  (PLUS)      "c:\ado\plus/"
+  [7]  (OLDPLACE)  "c:\ado/"
+
+. 
+. display "maxvar " c(maxvar) ", matsize " c(matsize) ", linesize " c(linesize) ", seed " c(seed)
+maxvar 5000, matsize 400, linesize 255, seed X075bcd151f123bb5159a55e50022865700043e55
+
+. query sortseed
+
+. display `r(sortseed)'
+1001
+
+. ***DEFAULT TEST
+. preliminaries
+
+. display "maxvar " c(maxvar) ", matsize " c(matsize) ", linesize " c(linesize) ", seed " c(seed)
+maxvar 5000, matsize 5000, linesize 255, seed X583eff37c43f462544a474abacbdd93d00044844
+
+. query sortseed
+
+. display `r(sortseed)'
+47
+
+. 
+. ***FULL TEST
+. *test global file
+. file open TESTCONST using ./testconst.txt, write replace
+(note: file ./testconst.txt not found)
+
+. file write TESTCONST "testconst 1"
+
+. file close TESTCONST
+
+. 
+. preliminaries, matsize(1000) maxvar(10000) seed(10) sortseed(100) linesize(200) loadglob(testconst.txt)
+
+. display "maxvar " c(maxvar) ", matsize " c(matsize) ", linesize " c(linesize) ", seed " c(seed)
+maxvar 10000, matsize 1000, linesize 200, seed X95ebda1ec43f462544a474abacbdd93d0004060e
+
+. query sortseed
+
+. display `r(sortseed)'
+100
+
+. display "$testconst"
+1
+
+. 
+. *test seed set
+. display runiform()
+.30912563
+
+. display runiform()
+.04038941
+
+. preliminaries, seed(10)
+
+. display runiform()
+.30912563
+
+. 
+. *test matsize/maxvar error
+. capture noisily preliminaries, maxvar(test)
+'test' found where number expected
+
+. capture noisily preliminaries, matsize(test)
+test found where number expected
+
+. 
+. *test linesize error
+. capture noisily preliminaries, linesize(256)
+linesize must be between 40 and 255
+
+. 
+. *test loadglob error
+. capture noisily preliminaries, loadglob(none)
+file none not found
+
+. capture noisily preliminaries, loadglob(testconst.txt testconst2.txt)
+file testconst2.txt not found
+
+. 
+. erase ./testconst.txt
+
+. 
+. * Help file exists and is correct
+. help preliminaries
+request ignored because of batch mode
+
+. 
+. 
+end of do-file
+
+
+Execute:  %STATAEXE% /e do "test_select_observations.do"
+
+  ___  ____  ____  ____  ____ (R)
+ /__    /   ____/   /   ____/
+___/   /   /___/   /   /___/   13.1   Copyright 1985-2013 StataCorp LP
+  Statistics/Data Analysis            StataCorp
+                                      4905 Lakeway Drive
+     MP - Parallel Edition            College Station, Texas 77845 USA
+                                      800-STATA-PC        http://www.stata.com
+                                      979-696-4600        stata@stata.com
+                                      979-696-4601 (fax)
+
+22-user 8-core Stata network license expires 30 Jun 2014:
+       Serial number:  501306001307
+         Licensed to:  Preferred Customer
+                       The University of Chicago
+
+Notes:
+      1.  (/v# option or -set maxvar-) 5000 maximum variables
+      2.  Stata running in batch mode
+
+
+running C:\Program Files (x86)\Stata13\profile.do ...
+
+. do test_select_observations.do 
+
+. ****************************************************************************************************
+. *
+. * TEST_SELECT_OBSERVATIONS.DO
+. *
+. ****************************************************************************************************
+. 
+. quietly {
+
+. 
+. * EXECUTE
+. main
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+
+. 
+. 
+. 
+end of do-file
+
+
+Execute:  %STATAEXE% /e do "test_build_recode_template.do"
+
+  ___  ____  ____  ____  ____ (R)
+ /__    /   ____/   /   ____/
+___/   /   /___/   /   /___/   13.1   Copyright 1985-2013 StataCorp LP
+  Statistics/Data Analysis            StataCorp
+                                      4905 Lakeway Drive
+     MP - Parallel Edition            College Station, Texas 77845 USA
+                                      800-STATA-PC        http://www.stata.com
+                                      979-696-4600        stata@stata.com
+                                      979-696-4601 (fax)
+
+22-user 8-core Stata network license expires 30 Jun 2014:
+       Serial number:  501306001307
+         Licensed to:  Preferred Customer
+                       The University of Chicago
+
+Notes:
+      1.  (/v# option or -set maxvar-) 5000 maximum variables
+      2.  Stata running in batch mode
+
+
+running C:\Program Files (x86)\Stata13\profile.do ...
+
+. do test_build_recode_template.do 
+
+. ****************************************************************************************************
+. *
+. * TEST_BUILD_RECODE_TEMPLATE.DO
+. *
+. ****************************************************************************************************
+. 
+. quietly {
+
+. 
+. * EXECUTE
+. main
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+
+. 
+end of do-file
+
+
+Execute:  %STATAEXE% /e do "test_insert_tag.do"
+
+  ___  ____  ____  ____  ____ (R)
+ /__    /   ____/   /   ____/
+___/   /   /___/   /   /___/   13.1   Copyright 1985-2013 StataCorp LP
+  Statistics/Data Analysis            StataCorp
+                                      4905 Lakeway Drive
+     MP - Parallel Edition            College Station, Texas 77845 USA
+                                      800-STATA-PC        http://www.stata.com
+                                      979-696-4600        stata@stata.com
+                                      979-696-4601 (fax)
+
+22-user 8-core Stata network license expires 30 Jun 2014:
+       Serial number:  501306001307
+         Licensed to:  Preferred Customer
+                       The University of Chicago
+
+Notes:
+      1.  (/v# option or -set maxvar-) 5000 maximum variables
+      2.  Stata running in batch mode
+
+
+running C:\Program Files (x86)\Stata13\profile.do ...
+
+. do test_insert_tag.do 
+
+. ****************************************************************************************************
+. *
+. * TEST_INSERT_TAG.DO
+. *
+. ****************************************************************************************************
+. 
+. quietly {
+
+. 
+. * EXECUTE
+. main
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+
+. 
+. 
+. 
+end of do-file
+
+
+Execute:  %STATAEXE% /e do "test_load_and_append.do"
+
+  ___  ____  ____  ____  ____ (R)
+ /__    /   ____/   /   ____/
+___/   /   /___/   /   /___/   13.1   Copyright 1985-2013 StataCorp LP
+  Statistics/Data Analysis            StataCorp
+                                      4905 Lakeway Drive
+     MP - Parallel Edition            College Station, Texas 77845 USA
+                                      800-STATA-PC        http://www.stata.com
+                                      979-696-4600        stata@stata.com
+                                      979-696-4601 (fax)
+
+22-user 8-core Stata network license expires 30 Jun 2014:
+       Serial number:  501306001307
+         Licensed to:  Preferred Customer
+                       The University of Chicago
+
+Notes:
+      1.  (/v# option or -set maxvar-) 5000 maximum variables
+      2.  Stata running in batch mode
+
+
+running C:\Program Files (x86)\Stata13\profile.do ...
+
+. do test_load_and_append.do 
+
+. version 12
+
+. set more off
+
+. adopath + ../ado
+  [1]  (BASE)      "C:\Program Files (x86)\Stata13\ado\base/"
+  [2]  (SITE)      "C:\Program Files (x86)\Stata13\ado\site/"
+  [3]              "."
+  [4]  (PERSONAL)  "c:\ado\personal/"
+  [5]  (PLUS)      "c:\ado\plus/"
+  [6]  (OLDPLACE)  "c:\ado/"
+  [7]              "../ado"
+
+. preliminaries
+
+. 
+. program main
+  1.     setup_data
+  2.     local csvlist = r(csvlist)
+  3.     tempfile tempmerged
+  4. 
+.     * Test dta files
+.     testgood load_and_append ./temp/file1 ./temp/file2 ./temp/file3, clear
+  5.     testgood load_and_append ./temp/file1.dta ./temp/file2.dta ./temp/file3.dta, clear
+  6.     qui save "`tempmerged'", replace
+  7. 
+.     * Test tsv files
+.     testgood load_and_append ./temp/delim/file1.txt ./temp/delim/file2.txt ./temp/delim/file3.txt, clear insheet
+  8.     testgood cf * using "`tempmerged'"
+  9. 
+.     * Test csv files
+.     testgood load_and_append ./temp/delim/file1.csv ./temp/delim/file2.csv ./temp/delim/file3.csv, clear insheet
+ 10.     testgood cf * using `"`tempmerged'"'
+ 11. 
+.     * Test dir() option
+.     testgood load_and_append file1 file2 file3, dir(./temp) clear
+ 12.     testgood load_and_append file1 file2 file3, dir(./temp/) clear
+ 13.     testgood load_and_append file1.txt file2.txt file3.txt, dir(./temp/delim/) insheet clear
+ 14.     testgood load_and_append delim/file1.txt delim/file2.txt delim/file3.txt, dir(./temp/) insheet clear
+ 15.     testgood cf * using `"`tempmerged'"'
+ 16. 
+.     * Test wildcards
+.     testgood load_and_append file*, dir(./temp) clear
+ 17.     testgood load_and_append file*.dta, dir(./temp) clear
+ 18.     testgood load_and_append ./temp/file*.dta, clear
+ 19.     testgood load_and_append ./temp/delim/file*.txt, clear insheet
+ 20.     testgood cf * using `"`tempmerged'"'
+ 21. 
+.     * Test clear
+.     testbad load_and_append ./temp/file1 ./temp/file2 ./temp/file3
+ 22.     clear
+ 23.     testgood load_and_append ./temp/file1 ./temp/file2 ./temp/file3
+ 24.     testgood cf * using `"`tempmerged'"'
+ 25. 
+.     * Test insheet_options
+.     testbad load_and_append ./temp/delim/file1.csv ./temp/delim/file2.csv ./temp/delim/file3.csv, ///
+>         clear insheet insheet_options(blah)
+ 26.     testgood load_and_append ./temp/delim/file1.csv ./temp/delim/file2.csv ./temp/delim/file3.csv, ///
+>         clear insheet insheet_options(case)
+ 27.     testgood cf * using `"`tempmerged'"'
+ 28. 
+.     * Test append_options
+.     testbad load_and_append ./temp/file1 ./temp/file2 ./temp/file3, clear append_options(blah)
+ 29.     testgood load_and_append ./temp/file1 ./temp/file2 ./temp/file3, clear append_options(force)
+ 30.     testgood cf * using `"`tempmerged'"'
+ 31. 
+.     * Test if list has only one file
+.     testgood load_and_append ./temp/file1, clear
+ 32. 
+.     * Test backslashes
+.     testgood load_and_append .\temp\file1 .\temp\file2 .\temp\file3, clear
+ 33.     testgood load_and_append file1 file2 file3, dir(.\temp) clear
+ 34.     testgood load_and_append file1 file2 file3, dir(.\temp\) clear
+ 35.         
+.         * Test dsid
+.         testgood load_and_append ./temp/file1 ./temp/file2 ./temp/file3, clear dsid(studynumber)
+ 36.         
+.         * Test dsname
+.         testgood load_and_append ./temp/file1 ./temp/file2 ./temp/file3, clear dsname(study_name)
+ 37.         
+.         * Test obsseq
+.         testgood load_and_append ./temp/file1 ./temp/file2 ./temp/file3, clear obsseq(obs_order)
+ 38.         
+.         * Test subset
+.         testgood load_and_append ./temp/file1 ./temp/file2 ./temp/file3, clear subset(x)
+ 39.         testbad load_and_append ./temp/file1 ./temp/file2 ./temp/file3, clear subset(z)
+ 40.         
+.         * Test fast
+.         testgood load_and_append ./temp/file1 ./temp/file2 ./temp/file3, clear fast
+ 41.         use ./temp/file1, clear
+ 42.         local orig = c(filename)
+ 43.         testbad load_and_append ./temp/file2 ./temp/file3 ./temp/file5, clear fast
+ 44.         local test = c(filename)
+ 45.         assert "`orig'" != "`test'"
+ 46. end
+
+. 
+. program setup_data
+  1.     cap mkdir temp
+  2.     cap mkdir temp/delim
+  3.     foreach i of numlist 1/3 {
+  4.         quietly {
+  5.             clear
+  6.             set obs 100
+  7.             foreach var in x y {
+  8.                 gen `var' = round(uniform(), 0.001)
+  9.             }
+ 10. 
+.             save ./temp/file`i'.dta, replace
+ 11.             outsheet using ./temp/delim/file`i'.txt, replace
+ 12. 
+.             tempfile csvfile`i'
+ 13.             outsheet using ./temp/delim/file`i'.csv, comma replace
+ 14.         }
+ 15.     }
+ 16. end
+
+. 
+. * EXECUTE
+. main
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+Test passed
+
+. 
+. 
+. 
+.  
+. 
+. 
+. 
+.         
+. 
+. 
+end of do-file
+
+ make.py ended: 2014-04-18 18:52:20

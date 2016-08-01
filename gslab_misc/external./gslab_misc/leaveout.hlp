@@ -1,0 +1,60 @@
+.-
+help for ^leaveout^
+.-
+
+Creates a variable that (for each observation) contains a weighted average excluding that observation
+------------------------------------------------------------------------------------------------------
+
+	^leaveout^   newvariable, ^variable(^varname^)^ [^weight(^varname^)^ ^by(^varlist^)^ ^if(^string^)^]
+
+
+Description
+-----------
+
+^leaveout^ creates a variable (name specified by ^newvariable^) that creates a leaveout weighted average.  That is, it will create the weighted mean as if the observation were missing.
+It uses weights from ^weight^ (by default a weight of 1 is used) and you can specify the means to be created on a specific level with ^by^ (e.g. household-year or zipcode-level).
+If ^if^ is specified, the program will treat observations for which ^if^ is false as though they didn't exist.
+
+
+Options for use with ^leaveout^
+------------------------------------
+
+^variable(^varname^)^ is the variable for which the leaveout mean is constructed.
+
+^weight(^varname^)^ is the variable that contains the weights for the average.  If unspecified, a uniform weight of 1 is used.
+
+^by(^varlist^)^ is the "level" at which the means are constructed (e.g. household-year or zipcode).
+
+^if(^string^)^ can be used to specify observations which should be included in the means.  In other words, if ^if(^string^)^ is false, then that observation is treated as if it doesn't exist.
+
+
+Examples
+--------
+
+ . ^leaveout conservative_mean, variable(conservative)^
+ . ^leaveout conservative_mean, variable(conservative) weight(wgtpop)^
+ . ^leaveout conservative_mean, variable(conservative) weight(wgtpop) by(zipcode)^
+ . ^leaveout conservative_mean, variable(conservative) weight(wgtpop) by(zipcode) if(wgtpop > 500)^
+   
+
+Saved results
+-------------
+
+^leaveout^ saves a new variable with the leaveout means.  Even in the case where by() is not specified, this variable will not be the same for all (non-missing) observations.  
+
+In other words, each observation will have it's own leaveout mean of ^variable(^varname^)^ (specifically, the mean as if the ^variable(^varname^)^ was blank for that observation).
+
+
+Note
+-----
+
+^leaveout^ creates two temporary variables _temporaryvar1 and _temporaryvar2, which it deletes at the end.  
+
+However, if you're dealing with a LOT of observations, or are very close to the memory limit, you might be able to do it in a loop across observations in a more memory-efficient way, though I imagine the computation time will be higher.
+
+ 
+Authors
+-------
+
+Patrick DeJarnette
+Jesse Shapiro

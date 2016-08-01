@@ -1,0 +1,52 @@
+.-
+help for ^select_observations^
+.-
+
+
+Syntax
+-----------------------------------------------------------------------
+
+	select_observations varlist using, [utostring(varlist) udestring(varlist) delim(comma|tab) 
+        uif(exp) umatch(varlist) ]
+
+    
+Description
+-----------------------------------------------------------------------
+
+Keep observations from the dataset in memory that match a using dataset
+on specified variables. The specified variables are not required to be
+a key in the using dataset.
+
+
+Options
+-----------------------------------------------------------------------
+
+varlist: Variables to match on in selecting observations.
+
+using: Input file.
+
+utostring(): Variables in using dataset to be converted to string before match.
+
+udestring(): Variables in using dataset to be udestringed before match.
+
+delim(): Indicates that using data is a tab or comma delimited text file 
+    rather than a .dta file.
+
+uif(): Specifies that only the observations in the using data that meet expression
+    exp are to be used. Same syntax as in mmerge.
+    
+umatch(): Specifies the names of the match variables in the using data.  The umatch
+    variables are associated with the match variables in the specified order.  Clearly,
+    the number of match variables in umatch should be the same as the number of matching
+    variables in the master.
+    
+    
+Examples
+-----------------------------------------------------------------------
+
+        select_observations n using temp/using.dta
+        select_observations n using temp/using.csv, delim(comma)
+        select_observations nalt using temp/using.dta, umatch(n)
+        select_observations n using temp/using.dta, uif(n>=50)
+        select_observations n using temp/using.dta, udestring(nstr) umatch(nstr)
+

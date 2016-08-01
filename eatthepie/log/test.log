@@ -1,14 +1,27 @@
-test_analytic (test_eatthepie.test_eatthepie) ... ok
-test_errorchecks (test_eatthepie.test_eatthepie) ... ok
-test_flatconsumption (test_eatthepie.test_eatthepie) ... ok
-test_floathorizon (test_eatthepie.test_eatthepie) ... ok
-test_utility (test_eatthepie.test_eatthepie) ... ok
-test_zeroconsumption (test_eatthepie.test_eatthepie) ... ok
+test_eatthepie (unittest.loader.ModuleImportFailure) ... ERROR
 test_neg (test_MiscFunctions.test_approxloc) ... ok
 test_outofrange (test_MiscFunctions.test_approxloc) ... ok
 test_pos (test_MiscFunctions.test_approxloc) ... ok
 
+======================================================================
+ERROR: test_eatthepie (unittest.loader.ModuleImportFailure)
 ----------------------------------------------------------------------
-Ran 9 tests in 7.253s
+ImportError: Failed to import test module: test_eatthepie
+Traceback (most recent call last):
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/unittest/loader.py", line 254, in _find_tests
+    module = self._get_module_from_name(name)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/unittest/loader.py", line 232, in _get_module_from_name
+    __import__(name)
+  File "/Users/Frank/Desktop/gslab_python/eatthepie/test/test_eatthepie.py", line 6, in <module>
+    import py_module.eatthepie as eatthepie
+  File "../py_module/eatthepie.py", line 7, in <module>
+    import ConsumptionModel as CM
+  File "../py_module/ConsumptionModel.py", line 23, in <module>
+    from numba import jit
+ImportError: No module named numba
 
-OK
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.000s
+
+FAILED (errors=1)

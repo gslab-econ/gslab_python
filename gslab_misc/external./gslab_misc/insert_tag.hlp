@@ -1,0 +1,41 @@
+.-
+help for ^insert_tag^
+.-
+
+Insert HTML tags into logfile
+-----------------------------------------------------------------------
+
+	^insert_tag^  tag, [^open^ | ^close^]
+
+
+Description
+-----------
+
+^insert_tag^ inserts HTML tags, given by tag, into the logfile at the point at which it is called.
+The tag must be a single string. Either one of the ^open^ or ^close^ options must be provided; not
+both or none.
+
+
+Options for use with ^insert_tag^
+---------------------------
+Exactly one of the ^open^ or ^close^ options must be provided.
+
+^open^ indicates that an open tag shall be placed in the given location in the logfile 
+(e.g. <tag>). 
+
+^close^ indicates that an close tag shall be placed in the given location in the logfile 
+(e.g. </tag>). 
+
+
+Examples
+--------
+
+ . ^insert_tag tag, open^
+ . ^insert_tag tag, close^
+
+Author
+------
+Nick Tsivanidis
+
+
+

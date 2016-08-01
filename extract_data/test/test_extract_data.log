@@ -1,0 +1,139 @@
+Testing Started. Begin by testing success with legal input.
+
+Test extract_data completes with legal input.
+extract_data failed with input. Please see logfile below:
+
+
+************************************
+
+
+
+extract_data.py started: 2016-08-01 11:44:28/Users/Frank/Desktop/gslab_python/extract_data/test
+
+Raw folder: ../test/sampledata/
+Traceback (most recent call last):
+  File "../py/extract_data.py", line 40, in <module>
+    main()  
+  File "../py/extract_data.py", line 14, in main
+    prelims = Custom_prelims(globals,options['out'], LOGFILE)
+  File "/Users/Frank/Desktop/gslab_python/extract_data/py/private/custom.py", line 112, in Custom_prelims
+    globals['widths_char'], LOGFILE)
+  File "/Users/Frank/Desktop/gslab_python/extract_data/py/private/custom.py", line 98, in extract_characteristics
+    chars=charfile(itemcharvals,widths_char,module)
+  File "/Users/Frank/Desktop/gslab_python/extract_data/py/private/custom.py", line 50, in __init__
+    self.extractchars()
+  File "/Users/Frank/Desktop/gslab_python/extract_data/py/private/custom.py", line 53, in extractchars
+    charfile=codecs.open(self.charvalinput, 'rU', encoding="latin-1")
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/codecs.py", line 884, in open
+    file = __builtin__.open(filename, mode, buffering)
+IOError: [Errno 2] No such file or directory: '//gsball-b/Nielsen_Raw/RMS2006-2010/products/ITEMCHARVALS'
+
+
+************************************
+
+
+Now test extract_data breaks with illegal command line syntax.
+Input at command line is "python ../py/extract_data.py -r ../test/incorrectfolder/ -o ../test/"
+extract_data failed with input. Please see logfile below:
+
+
+************************************
+
+
+
+extract_data.py started: 2016-08-01 11:44:28/Users/Frank/Desktop/gslab_python/extract_data/test
+
+Traceback (most recent call last):
+  File "../py/extract_data.py", line 40, in <module>
+    main()  
+  File "../py/extract_data.py", line 11, in main
+    options = parse_command_options(sys.argv[1:], LOGFILE)
+  File "/Users/Frank/Desktop/gslab_python/extract_data/py/private/preliminaries.py", line 69, in parse_command_options
+    raise CritError(messages.crit_error_norawfolder % rawfolder)
+private.exceptionclasses.CritError: 'ERROR! Raw folder ../test/incorrectfolder/ does not exist'
+
+
+************************************
+
+
+Input at command line is "python ../py/extract_data.py"
+extract_data failed with input. Please see logfile below:
+
+
+************************************
+
+
+
+extract_data.py started: 2016-08-01 11:44:28/Users/Frank/Desktop/gslab_python/extract_data/test
+
+Traceback (most recent call last):
+  File "../py/extract_data.py", line 40, in <module>
+    main()  
+  File "../py/extract_data.py", line 11, in main
+    options = parse_command_options(sys.argv[1:], LOGFILE)
+  File "/Users/Frank/Desktop/gslab_python/extract_data/py/private/preliminaries.py", line 64, in parse_command_options
+    raise CritError(messages.crit_error_missingoption)
+private.exceptionclasses.CritError: 'ERROR! requires both -r and -o options!'
+
+
+************************************
+
+
+Input at command line is "python ../py/extract_data.py ../test/sampledata/ -o ../test/"
+extract_data failed with input. Please see logfile below:
+
+
+************************************
+
+
+
+extract_data.py started: 2016-08-01 11:44:28/Users/Frank/Desktop/gslab_python/extract_data/test
+
+Traceback (most recent call last):
+  File "../py/extract_data.py", line 40, in <module>
+    main()  
+  File "../py/extract_data.py", line 11, in main
+    options = parse_command_options(sys.argv[1:], LOGFILE)
+  File "/Users/Frank/Desktop/gslab_python/extract_data/py/private/preliminaries.py", line 64, in parse_command_options
+    raise CritError(messages.crit_error_missingoption)
+private.exceptionclasses.CritError: 'ERROR! requires both -r and -o options!'
+
+
+************************************
+
+
+Now test extract_data breaks with illegal binary input file.
+
+Input at command line is "python ../py/extract_data.py -r ../test/sampledata_illegal/ -o ../test_illegal/"
+extract_data failed with input. Please see logfile below:
+
+
+************************************
+
+
+
+extract_data.py started: 2016-08-01 11:44:28/Users/Frank/Desktop/gslab_python/extract_data/test
+
+Raw folder: ../test/sampledata_illegal/
+Output folder: ../test_illegal/
+Traceback (most recent call last):
+  File "../py/extract_data.py", line 40, in <module>
+    main()  
+  File "../py/extract_data.py", line 14, in main
+    prelims = Custom_prelims(globals,options['out'], LOGFILE)
+  File "/Users/Frank/Desktop/gslab_python/extract_data/py/private/custom.py", line 112, in Custom_prelims
+    globals['widths_char'], LOGFILE)
+  File "/Users/Frank/Desktop/gslab_python/extract_data/py/private/custom.py", line 98, in extract_characteristics
+    chars=charfile(itemcharvals,widths_char,module)
+  File "/Users/Frank/Desktop/gslab_python/extract_data/py/private/custom.py", line 50, in __init__
+    self.extractchars()
+  File "/Users/Frank/Desktop/gslab_python/extract_data/py/private/custom.py", line 53, in extractchars
+    charfile=codecs.open(self.charvalinput, 'rU', encoding="latin-1")
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/codecs.py", line 884, in open
+    file = __builtin__.open(filename, mode, buffering)
+IOError: [Errno 2] No such file or directory: '//gsball-b/Nielsen_Raw/RMS2006-2010/products/ITEMCHARVALS'
+
+
+************************************
+
+

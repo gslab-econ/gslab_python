@@ -1,0 +1,260 @@
+* 00000009
+*! version 1.0.0
+* Do not erase or edit this file
+* It is used by Stata to track the ado and help
+* files you have installed.
+
+S http://fmwww.bc.edu/repec/bocode/e
+N estout.pkg
+D  4 Mar 2013
+U 1
+d 'ESTOUT': module to make regression tables
+d 
+d  estout produces a table of regression results from one or
+d several models for use with spreadsheets, LaTeX, HTML, or a
+d word-processor table. eststo stores a quick copy of the active
+d estimation results for later tabulation. esttab is a wrapper for
+d estout. It displays a pretty looking publication-style regression
+d table without much typing. estadd adds additional results to the
+d e()-returns for one or several models previously fitted and
+d stored. This package subsumes the previously circulated esto,
+d esta, estadd,  and estadd_plus. An earlier version of estout is
+d available  as estout1.
+d 
+d KW: estimates
+d KW: LaTeX
+d KW: HTML
+d KW: word processor
+d KW: output
+d 
+d Requires: Stata version 8.2
+d 
+d Distribution-Date: 20091012
+d 
+d Author: Ben Jann, University of Bern
+d Support: email jann@@soz.unibe.ch
+d 
+f _\_eststo.ado
+f _\_eststo.hlp
+f e\estadd.ado
+f e\estadd.hlp
+f e\estout.ado
+f e\estout.hlp
+f e\eststo.ado
+f e\eststo.hlp
+f e\estpost.ado
+f e\estpost.hlp
+f e\esttab.ado
+f e\esttab.hlp
+e
+S http://kk-adofiles.googlecode.com/hg
+N mat2txt2.pkg
+D 30 Mar 2013
+U 2
+d mat2txt2.
+d 
+d Export a matrix to text file.
+d 
+d This program is an update/modification of mat2txt.ado by Ben Jann and M Blasnik
+d (v 1.1.2)
+d 
+d Changes from the original program are additions to the base program or cosmetic
+d changes: {break}
+d (1) Updated syntax to {it:mat2txt2 matname using ... , options }{break}
+d (2) Allow multiple matrices. Allow e() and r() matrices. {break}
+d (3) Replace cells equal to .z with empty cells {break}
+d (4) Options to choose file delimiter.
+d (5) Matnames and Timestamp options {break}
+d (6) Allow user to click on a link to view or open the output file.{break}
+d (7) Handle option (Version 1.1+) {break}
+d (8) Clean option (Verson 1.2+) {break}
+d (9) Label option (Verson 1.3+){break}
+d (10) Default delimiter is "_tab"  (previously ",") (Version 1.3+)  {break}
+d (11) Filestamp option (Verson 1.4+) {break}
+d (12) Rowclean, colclean, rowlabel, and collabel options (Verson 1.5+) {break}
+d 
+d By Keith Kranker
+d Last updated: $
+d 
+d Program by Keith Kranker
+f m\mat2txt2.ado
+f m\mat2txt2.sthlp
+e
+S http://fmwww.bc.edu/repec/bocode/t
+N tuples.pkg
+D 12 Apr 2013
+U 3
+d 'TUPLES': module for selecting all possible tuples from a list
+d 
+d  tuples produces a set of local macros, each containing a list of
+d  the names defining a tuple selected from a given list. By
+d default  the set of macros is complete, other than the tuple
+d containing no  selections. By default the given list is tried as
+d a variable list,  but if it is not a variable list any other kind
+d of list is  acceptable, except that no other expansion is carried
+d out. All  these defaults can be overridden.
+d 
+d KW: tuples
+d KW: combinatorics
+d KW: programming
+d KW: selection
+d 
+d Requires: Stata version 8
+d 
+d Distribution-Date: 20110127
+d 
+d Author: Nicholas J. Cox, Durham University
+d Support: email N.J.Cox@@durham.ac.uk
+d 
+f t\tuples.ado
+f t\tuples.hlp
+e
+S http://web.missouri.edu/~kolenikovs/stata
+N polychoric.pkg
+D 29 Oct 2013
+U 4
+d polychoric -- The polychoric correlation package
+d 
+d Author: Stas Kolenikov, skolenik@unc.edu
+d 
+d This package provides routines to estimate
+d the polychoric, tetrachoric, polyserial and biserial
+d correlations and use them in principal component analysis.
+d Current version: 1.4
+f p\polychoric.ado
+f p\polychoricpca.ado
+f p\polych_ll.ado
+f p\polyser_ll.ado
+f p\polychoric.hlp
+f p\polychoricpca.hlp
+e
+S http://fmwww.bc.edu/repec/bocode/a
+N ashell.pkg
+D 15 Nov 2013
+U 5
+d 'ASHELL': module to capture output from OS shell command
+d 
+d ashell is to be thought of as "another shell" or as "alternative"
+d  or "additional" shell.  If you were at some point frustrated to
+d find out that there is no way to capture the output of an OS
+d command (one you submit by using stata's shell command) into a
+d stata variable  so that you can reformat it and reuse it or parts
+d of it later then this  is the module that solves your problem.
+d It kind of adds to stata's shell command a feature like perl's
+d backticks  where you write something like "array = `os_command`"
+d and your array  contains the output of os_command.
+d 
+d KW: Unix
+d KW: Linux
+d KW: shell commands
+d 
+d Requires: Stata version 8
+d 
+d Distribution-Date: 20090205
+d 
+d Author: Nikos Askitas, IZA, Bonn
+d Support: email nikos@@iza.org
+d 
+f a\ashell.ado
+f a\ashell.hlp
+e
+S http://www-personal.umich.edu/~cattaneo/rdrobust/stata
+N rdrobust.pkg
+D 27 Mar 2014
+U 6
+d STATA Package: RDROBUST
+d 
+d Authors: Sebastian Calonico, Department of Economics, University of Michigan, scalonico@umich.edu
+d          Matias D. Cattaneo, Department of Economics, University of Michigan, cattaneo@umich.edu
+d          Rocio Titiunik, Department of Political Science, University of Michigan, titiunik@umich.edu
+d 
+d Date: 9-Dec-2013
+d 
+f r\rdrobust.ado
+f r\rdrobust.sthlp
+f r\rdbwselect.ado
+f r\rdbwselect.sthlp
+f r\rdbinselect.ado
+f r\rdbinselect.sthlp
+f f\functions.ado
+f b\bwconst.mo
+f k\kweight.mo
+f r\rdvce.mo
+f r\regconst.mo
+f c\cvplot.mo
+e
+S http://fmwww.bc.edu/repec/bocode/i
+N isvar.pkg
+D 27 May 2014
+U 7
+d 'ISVAR': module  to filter names into variable names and others
+d 
+d isvar takes a list of names that might name variables  in your
+d dataset and filters it into a list of those  names that are
+d indeed variable names and a list of  the others.
+d 
+d KW: variable names
+d KW: data management
+d 
+d Requires: Stata version 8.0
+d 
+d Distribution-Date: 20050921
+d 
+d Author: Nicholas J. Cox, Durham University
+d Support: email N.J.Cox@@durham.ac.uk
+d 
+f i\isvar.ado
+f i\isvar.hlp
+e
+S http://fmwww.bc.edu/repec/bocode/c
+N checkfor2.pkg
+D 27 May 2014
+U 8
+d 'CHECKFOR2': module to check whether a variable exists or not in a dataset
+d 
+d checkfor2 is a routine to check for existence of a list of
+d variables within a (usually big) data set. checkfor2 searchs
+d through the data whether the variable exists.
+d 
+d KW: data management
+d 
+d Requires: Stata version 8
+d 
+d Distribution-Date: 20050926
+d 
+d Author: Amadou Bassirou Diallo, AFTPM, The World Bank
+d Support: email adiallo5@@worldbank.org
+d 
+d Author: Jean-Benoit Hardouin , University of Nantes, France
+d Support: email jean-benoit.hardouin@@univ-nantes.fr
+d 
+f c\checkfor2.ado
+f c\checkfor2.hlp
+f i\isvar.ado
+f i\isvar.hlp
+e
+S http://fmwww.bc.edu/repec/bocode/p
+N plotmatrix.pkg
+D 28 May 2014
+U 9
+d 'PLOTMATRIX': module to plot values of a matrix as different coloured blocks
+d 
+d   This command will display the values of a matrix using twoway
+d rarea. Each value of the matrix will be represented by a coloured
+d rectangular block. A legend is automatically created using
+d percentiles but the user can also specify how to split the data.
+d 
+d KW: graphics
+d KW: plot
+d KW: matrix
+d 
+d Requires: Stata version 10.1
+d 
+d Distribution-Date: 20140425
+d 
+d Author: Adrian Mander
+d Support: email Adrian.Mander@@mrc-hnr.cam.ac.uk
+d 
+f p\plotmatrix.ado
+f p\plotmatrix.sthlp
+e

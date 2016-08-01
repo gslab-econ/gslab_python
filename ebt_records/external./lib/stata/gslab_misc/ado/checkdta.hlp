@@ -1,0 +1,67 @@
+.-
+help for ^checkdta^
+.-
+
+Create checkdta.log, which allows users to check whether Stata
+datasets have actually changed after make.bat is re-run.
+Also creates checkdtaprops.log, which checks if data set were 
+sorted, and if the sort variables form a valid key
+--------------------------------------------------------------
+
+	^checkdta^   [, ^startfolder(^foldername^)^]
+
+
+Description
+-----------
+
+Checkdta collects a list of all .dta files in "../output"
+(or in ^foldername^ if specified by user) and its subdirectories;
+it will crawl up to a depth of 3 subfolders. It orders these
+.dta files alphabetically, and then loops over the .dta files:
+-Open the file
+-Run the command "datasignature"
+-Run the command "summarize"
+-Print to checkdta.log
+-Check if data were sorted
+-Check if sort variables form a valid key
+-Print results to checkdtaprops.log 
+
+The file checkdta.do is run after all other scripts have finished
+in make.bat; all /derived/ and /analysis/ directories automatically
+produce checkdta.log and checkdtaprops.log each time they run. If 
+all the data files are unchanged, checkdta.log will be unchanged 
+and TortoiseSVN will display a green check mark on top of its icon. 
+If any of the data files have changed, checkdta.log will be changed
+and will display a red exclamation point. Users can then diff 
+checkdta.log to see which data files changed.
+
+Checkdta requires two lists of files in order to run:
+1) A list of files and file size ..\temp\dirlog.txt,
+   produced by the command "dir /s ..\output\*.dta > ..\temp\dirlog.txt"
+  
+2) A list of files ..\temp\filelist.txt produced by the command
+   "dir /s /b ..\output\*.dta >..\temp\filelist.txt"
+
+Options for use with ^checkdta^
+-------------------------------
+
+^startfolder(^foldername^)^  is optional. It specifies which folder
+is the folder to start crawling ("../output" by default).
+
+
+Examples
+--------
+
+ . ^checkdta^
+ . ^checkdta, startfolder(../output/sub1/sub2)^
+
+ 
+Authors
+-------
+
+Patrick DeJarnette
+Yao Lu
+
+Modifications by
+CJ Verbeck
+Nathan Petek

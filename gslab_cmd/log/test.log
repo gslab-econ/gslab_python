@@ -5,6 +5,6 @@ test_minimizeQ (test_NormalVar.test_NormalVar) ... ok
 test_minimizeQ_trueparam (test_NormalVar.test_NormalVar) ... ok
 
 ----------------------------------------------------------------------
-Ran 5 tests in 0.021s
+Ran 5 tests in 0.051s
 
 OK

@@ -1,0 +1,106 @@
+{smcl}
+help for {cmd:ashell}                             (Nikos Askitas)
+
+{title:Capture the stdout of an OS command into stata variables}
+
+        {cmd:ashell     OS_Command} 
+
+
+{title:Description}
+
+{cmd:ashell} is to be thought of as "another shell" or as "alternative" 
+or "additional" shell.  If you were at some point frustrated to find 
+out that there is no way to capture the output of an OS command (one 
+you submit by using stata's {cmd:shell} command) into a stata variable 
+so that you can reformat it and reuse it or parts of it later then this 
+is the module that solves your problem. 
+It kind of adds to stata's shell command a feature like perl's backticks 
+where you write something like "array = `os_command`" and your array 
+contains the output of os_command.
+
+You use {cmd:ashell} like {cmd:shell} (or instead of it) when you need 
+to reuse the output (or parts thereof) of the command. For example 
+{cmd:shell ps -ef | wc -l} would count the running processes on your 
+system. If you need the number later in your program do {cmd:ashell 
+ps -ef | wc -l} instead and capture the output into stata's {cmd:r(o1)}. 
+
+More generally if a system command returns x lines of output 
+ashell will place the number of lines into r(no) and the lines 
+of the output itlself into {cmd:r(o1), r(o2), ... , r(ox)}.
+You can then parse them with stata's regex engine and collect 
+the info you need to keep.
+
+
+
+
+
+
+{title:Technical note}
+
+{cmd:ashell}
+While writing the module I kept on banging against stata's 
+unusual datatypes. The simplest thing to have done is to 
+return the entire output of a system command into one string
+and then parse it with a "match and replace regex loop" to 
+collect what you need. This is impossible for many reasons not 
+least of which is str244 (see {helpb datatypes}). 
+The current implementation is like swishing an arrow through 
+12 ax-heads.
+
+
+{title:Examples}
+
+On a Windows machine doing:
+
+ . {cmd:ashell "date /T"}
+
+should put the current date in {cmd:r(o1)}.
+
+On a Solaris machine doing:
+ 
+ . {cmd:ashell "top -b"}
+
+should return {cmd:r(o4)} equal to somehing like:
+
+ {cmd:Memory: 512M real, 267M free, 104M swap in use, 750M swap free}
+
+To get the amount of free memory you would then need a snippet like this:
+
+. {cmd:local memline = r(o4)}
+. {cmd:local m = regexm("`memline'", "[0-9]+[A-Z] swap free")}
+
+Now {cmd:m} is 1 if there was a match and the match is in {cmd:regexr(0)}. 
+So doing:
+
+. {cmd:local match = regexr(0)}
+
+puts "750M swap free" into {cmd:match}. Finally doing: 
+
+. {cmd:local free = regexr("`match'", " swap free", "")}
+
+results in {cmd:free} being equal to: {cmd:750M}.
+
+
+
+Similarly on a MacOS X machine doing
+
+ . {cmd:ashell top -l1 -n1 | grep PhysMem}
+
+should return {cmd:r(o1)} looking something like this:
+
+ {cmd:PhysMem:  70.6M wired,  108M active,  145M inactive,  324M used,  699M free}
+
+
+Doing 
+
+. {cmd:ashell date} or 
+. {cmd:ashell date +%Y%m%d}  
+
+sets r(o1) to the date in the form {cmd:Tue Apr 10 07:11:19 CEST 2007} 
+or {cmd:YYYYMMDD} respectively.
+
+
+{title:Author}
+
+Dr Nikos Askitas, IZA, Bonn, Germany.
+Email: {cmd:nikos@@iza.org}

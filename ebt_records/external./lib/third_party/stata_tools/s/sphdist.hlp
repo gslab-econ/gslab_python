@@ -1,0 +1,132 @@
+.-
+Help for ^sphdist^                                                    Bill Rising
+.-
+
+Computes distances on a sphere (Earth as default)
+-------------------------------------------------
+
+    ^sphdist^ [^if^ exp] [^in^ range]^, gen(^newvar^)^ ^lat1(^varlist^)^ ^lon1(^varlist^)^
+        ^lat2(^varlist^)^ ^lon2(^varlist^)^ [^ew1(^varname^)^ ^sn1(^varname^)^ ^ew2(^varname^)^
+        ^sn2(^varname^)^ ^radians^ ^radius(^number^)^ ^units(^{^km^ | ^mi^ | ^naut^}) ^thin^]
+
+
+Description
+-----------
+
+This is used to find the distance between two points on a sphere for each
+observation in a dataset. Typically this would be used to find distances
+between points on Earth, though it will work just as well for points on,
+say, the moon or a basketball. 
+
+
+Options
+-------
+
+Most of the options are not optional! They are specified as options to
+allow flexibility.
+
+^gen^ is the name of the variable which holds the results. This is a required
+option.
+
+^lat1^, ^lon1^, ^lat2^, and ^lon2^ hold the variable or variables which specify the
+latitudes (angles above or below the equator) and longitudes (angles east
+or west of Greenwich). By default, the angles are expressed in degrees. Up
+to three variables (corresponding to degrees, minutes, and seconds of arc)
+are allowed for each latitude and longitude. Note, however, that the number
+of variables for each need not be the same, so the precision of measurement
+does not need to be identical. The command will use however many are
+specified. If the angles are expressed in radians, only one variable for
+each latitude and longitude may be specified. The latitudes and longitudes
+are required options. Note: if all the measurements are from the same
+quarter-sphere, there is no trouble -- all may be positive. If not, see the
+immediately following set of options. These are all required.
+
+^ew1^, ^sn1^, ^ew2^, and ^sn2^ options allow specification of variables which can
+be used to indicate the hemisphere for each observation. Typically, for
+those of us from the intersection of the northern and western hemispheres
+(or the NW quartisphere), this would mean that the ew variable(s) would be
+filled with -1 for east and 1 for west, while the sn variable(s) would
+contain -1 for south and +1 for north, respectively. These options are
+included for those whose data contain a mix of degree/minute/second data
+from multiple hemispheres.
+
+^radians^ states that the angles are in radians, rather than in
+degrees. This, of course, means that just one variable can be given for
+each of the latitude and longitude options.
+
+^radius^ gives the radius of the sphere. If not specified, this defaults to
+the radius of the Earth.
+
+^units^ specifies the units of the final answer. This option has two
+purposes. If a radius is not specified, the units are used to compute the
+proper radius of the earth. In this case, the units default to ^km^, because
+everyone except the U.S. and, uh, Liberia(?) uses the metric system. (This
+must be why the system in the US is called either the Standard or the
+English system.) Other acceptable choices here are ^mi^ for miles and ^naut^
+for nautical miles. If a radius is specified, the units are merely used for
+making a variable label for the newly generated distance variable.
+
+^thin^ is an arcane option used if the dataset already takes up most of the
+memory. It alters the data by dropping the variables used to specify the
+latitudes and longitudes. So... use it with care.
+
+
+Example(s)
+----------
+
+    ^sphdist, lat1(deg1nth min1nth sec1nth) lon1(deg1wst min1wst sec1wst)
+        ^lat2(deg2nth min2nth sec2nth) lon2(deg2wst min2wst sec2wst)
+        ^gen(kmdist)
+
+    generates the new variable ^kmdist^ from the above latitude and longitude
+    variables. The latitudes and longitudes are measured in degrees,
+    minutes and seconds, and are either assumed to all be in a single
+    quartisphere, or are negative in the proper places. The final result
+    will be in kilometers of distance on the surface of the Earth.
+
+    ^sphdist, lat1(degnth1) lon1(degwst1 minwst1) lat2(degnth2 minnth2 secnth2) lon2(degwst2)
+        ^gen(nautdist) units(naut) ew1(ewlong)
+
+    generates the new variable ^nautdist^ from the above latitude and
+    longitude variables. The latitudes and longitudes are measured in
+    varying ways using some or all of the degrees, minutes and seconds. All
+    the latitudes are from the same hemisphere. All of the longitudes for
+    the 'second' variables are in the same hemisphere, and the ewlong
+    variable is 1 for observations in this same hemisphere, and -1 in the
+    opposite one. The final result will be in nautical miles.
+
+
+Notes
+----- 
+
+No error checking is done to be sure that there aren't fractional degrees
+together with minutes and seconds, so it would be possible to feed the
+program a point whose latitude is 34.56 degrees, 27.2 minutes and 70000
+seconds.
+
+If all the points are in one quartisphere (there is no English word for
+quarter-of-the-globe), all angles can be expressed as positive numbers.
+
+If anyone has a better way of treating observations which crass the equator
+or the prime meridian, please let the author know. He is used to easy
+distances in one quartisphere. No, he's never had data from the end of the
+Aleutian islands.
+
+If anyone knows the real name for a quartisphere, please let the author
+know.
+
+For those who, like the author, wonder why kids in the US are still stuck
+learning that there are 12 inches to a foot, three feet to a yard, and 1760
+yards to a mile, there is a special unit of distance which can also be
+specified. It was added in a fit of pro-metric mania: the erca, which is
+equal to the square root of an acre.
+
+
+Author
+------
+
+Bill Rising (brising@@jhsph.edu)
+Dept. of Biostatistics
+Johns Hopkins University
+615 N. Wolfe St.
+Baltimore, MD 21205-2179

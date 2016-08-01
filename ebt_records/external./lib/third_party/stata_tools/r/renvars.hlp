@@ -1,0 +1,99 @@
+.-
+help for ^renvars^                                             [jw]  Apr 10, 2000
+.-
+
+Renames variables
+-----------------
+
+    ^renvars^ varlist^,^ { ^u^pcase ^l^owcase ^pref^ix^(^str^) postf^ix^(^str^)^
+                       ^pres^ub^(^str1 str2^)^ ^posts^ub^(^str1 str2^)^ ^sub^str^(^str1 str2^)^
+                       ^pred^rop^(^#^)^ ^postd^rop^(^#^) t^rim^(^#^)^ }
+                     [ ^d^isplay ^f^ast ]
+
+    ^renamev^ varname str_exp
+
+
+Description
+-----------
+
+^renvars^ renames the variables listed in ^varlist^ in a way specified by the
+options.  Variable labels, value labels, and notes are maintained.
+
+^renamev^ renames varname to the string expression str_exp. This command is a
+useful replacement for the built-in ^rename^ that requires that the new name
+is a string, not a string expression.
+
+
+Options
+-------
+
+One of the following 10 options should be specified:
+
+   ^upcase^  converts the variable names to uppercase
+
+   ^lowcase^  converts the variable names to lowercase
+
+   ^prefix(str)^  pre-fixes str to variable names
+
+   ^postfix(str)^  post-fixes str to variable names
+
+   ^presub(str1 str2)^  replaces the leading string str1 by str2 in variable
+       names. str2 may be empty
+
+   ^postsub(str1 str2)^  replaces the trailing string str1 by str2 in variable
+       names. str2 may be empty
+
+   ^substr(str1 str2)^  substitutes (all occurences of) str2 for str1 in
+       variable names. str2 may be empty
+
+   ^predrop(#)^  removes the first # characters from variables names
+
+   ^postdrop(#)^  removes the last # characters from variables names
+
+   ^trim(#)^  keeps the first # characters from variables names, dropping
+       the remaining characters
+
+^display^ specifies that "oldname -> newname" rules are displayed.
+
+^fast^ specifies that ^renvars^ does not preserve the data in order to
+   be able to revert to the old names if one rename is unsuccessful
+   (e.g., because new name is invalid, or a variable with that name
+   already exists).
+
+
+Examples
+--------
+
+   . ^renvars MYVAR1 MYVAR2 MYVAR3, lowcase^     renames to myvar1 myvar2 myvar3
+   . ^renvars v1-v10, upcase dis^                renames to V1 V2 V3 .. V10
+   . ^renvars sexe age, low fast^                does nothing, already lowercase
+   . ^renvars, pref(X)^                          prefixes X to the varnames
+   . ^renvars, subs(X Y)^                        changes the prefix from X to Y
+   . ^renvars, predrop(1)^                       drop first char from varnames
+
+If ^renvars^ does not provide an option for the transformation of variable names
+that you need, a @for@ construct may be what you need. As ^rename^ does not allow
+the new_name to be specified as an expression, use ^renamev^ instead.
+
+    . ^for @@ in var MYVAR*, noheader : renamev @@ lower(@@)^.
+    . ^for @@ in var VAR*, noheader   : renamev @@ "VAR_"+substr("@@",4,.)^
+
+
+
+Author
+------
+
+    Jeroen Weesie
+    Dept of Sociology
+    Utrecht University
+    J.Weesie @@ fss.uu.nl
+
+
+Also see
+--------
+
+ Manual:  ^[R] names^
+
+On-line:  @rename@         specify the new name of a variable
+          @rensfix@        replaces one prefix with another prefix
+          @for@            for-loops over a varlist

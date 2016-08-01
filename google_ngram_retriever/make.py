@@ -2,7 +2,7 @@
 #****************************************************
 # GET LIBRARY
 #****************************************************
-import subprocess, shutil, os
+import os
 from gslab_make.py.get_externals import *
 from gslab_make.py.get_externals_github import *
 from gslab_make.py.make_log import *

@@ -15,7 +15,7 @@ from gslab_make.py.dir_mod import *
 # SET DEFAULT OPTIONS
 set_option(makelog = 'log/make.log', output_dir = './log', temp_dir = '')
 
-clear_output_dirs()
+clear_dirs('./log')
 start_make_logging()
 
 # RUN ALL TESTS

@@ -1,9 +1,41 @@
-test_ivreg (test_ivreg.test) ... ok
-test_epanechnikov_kernel (test_qtfit.test) ... ok
-test_first_degree (test_qtfit.test) ... ok
-test_gaussian_kernel (test_qtfit.test) ... ok
+test_ivreg (test_ivreg.test) ... ERROR
+test_qtfit (unittest.loader.ModuleImportFailure) ... ERROR
+
+======================================================================
+ERROR: test_ivreg (test_ivreg.test)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/Frank/Desktop/gslab_python/mental_coupons/test/test_ivreg.py", line 12, in test_ivreg
+    test_input = pd.read_csv('../temp/ivreg_test_input.csv')
+  File "/Library/Python/2.7/site-packages/pandas/io/parsers.py", line 562, in parser_f
+    return _read(filepath_or_buffer, kwds)
+  File "/Library/Python/2.7/site-packages/pandas/io/parsers.py", line 315, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+  File "/Library/Python/2.7/site-packages/pandas/io/parsers.py", line 645, in __init__
+    self._make_engine(self.engine)
+  File "/Library/Python/2.7/site-packages/pandas/io/parsers.py", line 799, in _make_engine
+    self._engine = CParserWrapper(self.f, **self.options)
+  File "/Library/Python/2.7/site-packages/pandas/io/parsers.py", line 1213, in __init__
+    self._reader = _parser.TextReader(src, **kwds)
+  File "pandas/parser.pyx", line 358, in pandas.parser.TextReader.__cinit__ (pandas/parser.c:3427)
+  File "pandas/parser.pyx", line 628, in pandas.parser.TextReader._setup_parser_source (pandas/parser.c:6861)
+IOError: File ../temp/ivreg_test_input.csv does not exist
+
+======================================================================
+ERROR: test_qtfit (unittest.loader.ModuleImportFailure)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_qtfit
+Traceback (most recent call last):
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/unittest/loader.py", line 254, in _find_tests
+    module = self._get_module_from_name(name)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/unittest/loader.py", line 232, in _get_module_from_name
+    __import__(name)
+  File "/Users/Frank/Desktop/gslab_python/mental_coupons/test/test_qtfit.py", line 4, in <module>
+    import pyqt_fit.kernels as kernels
+ImportError: No module named pyqt_fit.kernels
+
 
 ----------------------------------------------------------------------
-Ran 4 tests in 0.135s
+Ran 2 tests in 0.006s
 
-OK
+FAILED (errors=2)

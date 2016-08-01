@@ -1,0 +1,45 @@
+.-
+help for ^loadglob^
+.-
+
+Define global variables using an input file
+-----------------------------------------------------------------------
+
+	^loadglob^ using ^filename^
+
+Description
+-----------
+
+Define global variables based on an
+input file. Each line of file is assumed to have
+the name of the global variable followed by a space
+followed by the value of the global variable. Lines
+beginning with * are treated as comments. Script also
+ignores any lines in the file that do not have at least
+two words (defined as blocks of text separated by a
+space). Note that strings enclosed in double quotes
+count as one word.  Nested quotes are recognized.
+
+
+Options for use with ^loadglob^
+---------------------------
+
+None
+
+
+Examples
+--------
+
+ . ^loadglob using "parameters.txt"^
+
+
+Author
+------
+
+Matthew Gentzkow
+
+
+Also see
+--------
+
+
