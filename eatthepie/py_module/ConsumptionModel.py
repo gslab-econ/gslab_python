@@ -18,9 +18,7 @@ from scipy.interpolate import *
 from MiscFunctions import *
 import ErrorCalls
 import scipy.optimize
-
 import multiprocessing as mp
-from numba import jit
 
 class ConsumptionModel(object):
 
