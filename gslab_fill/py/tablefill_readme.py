@@ -1,3 +1,4 @@
+"""
 #################################################################
 #  tablefill_readme.txt - Help/Documentation for tablefill.py
 #################################################################
@@ -306,7 +307,7 @@ It is straightforward to develop functions that conditionally write entries of t
 '\series bold' in the lines of the filled LyX file immeadiately before phrases that the user wishes to make bold. An example of this
 procedure is implemented by the code contained in /source/analysis/tables104th of the politext project repository
 (Tree: a62cee7bb80d27a516439a7c745786d8fa4aec8a).
-
+"""
 
 
 
