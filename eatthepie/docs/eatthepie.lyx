@@ -1,0 +1,361 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\usepackage{soul}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Section*
+Setup
+\end_layout
+
+\begin_layout Standard
+In each of 
+\begin_inset Formula $T$
+\end_inset
+
+ periods indexed 
+\begin_inset Formula $t\in\left\{ 1,...,T\right\} $
+\end_inset
+
+ a household receives income 
+\begin_inset Formula $y_{t}$
+\end_inset
+
+ and chooses consumption 
+\begin_inset Formula $c_{t}$
+\end_inset
+
+.
+ Assets evolve according to
+\begin_inset Formula 
+\[
+w_{t}=R\left(w_{t-1}-c_{t-1}+y_{t}\right)
+\]
+
+\end_inset
+
+with initial wealth level 
+\begin_inset Formula $w_{0}\ge0$
+\end_inset
+
+ and interest rate 
+\begin_inset Formula $R\ge1$
+\end_inset
+
+.
+ Income is deterministic.
+\end_layout
+
+\begin_layout Standard
+The household's total utility is given by
+\begin_inset Formula 
+\begin{eqnarray*}
+V & = & \sum_{t=1}^{T}\delta^{t}u\left(c_{t}\right)\\
+u\left(c_{t}\right) & = & \frac{c_{t}^{1-\rho}}{1-\rho}
+\end{eqnarray*}
+
+\end_inset
+
+where 
+\begin_inset Formula $\delta\in\left(0,1\right)$
+\end_inset
+
+ is the discount factor and 
+\begin_inset Formula $\rho>0$
+\end_inset
+
+ is the coefficient of relative risk aversion.
+\end_layout
+
+\begin_layout Standard
+The household chooses the consumption plan 
+\begin_inset Formula $\left\{ c_{t}\right\} $
+\end_inset
+
+ to maximize 
+\begin_inset Formula $V$
+\end_inset
+
+ subject to 
+\begin_inset Formula $w_{t}\ge0$
+\end_inset
+
+ (no borrowing):
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathbf{c}^{*} & = & \arg\max_{\mathbf{c}}\left(\sum_{t=1}^{T}\delta^{t}u\left(c_{t}\right)\right)\\
+ & s.t. & \mathbf{w}\ge0
+\end{eqnarray*}
+
+\end_inset
+
+ where 
+\series bold
+bold
+\series default
+ indicates a vector.
+\end_layout
+
+\begin_layout Section*
+Algorithm for Numerical Solution
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $\mathbf{G}_{w}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathbf{G}_{c}$
+\end_inset
+
+ be vectors of evenly spaced grid points on 
+\begin_inset Formula $\left[0,1\right]$
+\end_inset
+
+ and let 
+\begin_inset Formula $\overline{w}$
+\end_inset
+
+ and 
+\begin_inset Formula $\overline{c}$
+\end_inset
+
+ be large constants reflecting the largest feasible wealth and consumption
+ levels.
+ An algorithm for solving the program is as follows:
+\end_layout
+
+\begin_layout Enumerate
+For each possible final-period assets 
+\begin_inset Formula $w_{T}$
+\end_inset
+
+ in the grid 
+\begin_inset Formula $\mathbf{G_{w}}\overline{w}$
+\end_inset
+
+, compute 
+\begin_inset Formula $u\left(w_{T}\right)$
+\end_inset
+
+.
+ Because it is optimal for the agent to have 
+\begin_inset Formula $w_{T+1}=0$
+\end_inset
+
+ (i.e.
+ to 
+\begin_inset Quotes eld
+\end_inset
+
+die
+\begin_inset Quotes erd
+\end_inset
+
+ penniless) this is the value function 
+\begin_inset Formula $V_{T}\left(w_{T}\right)$
+\end_inset
+
+ for the final period 
+\begin_inset Formula $T$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+For each possible penultimate-period assets 
+\begin_inset Formula $w_{T-1}$
+\end_inset
+
+in the grid 
+\begin_inset Formula $\mathbf{G}_{w}\overline{w}$
+\end_inset
+
+ and each possible consumption level 
+\begin_inset Formula $c_{T-1}$
+\end_inset
+
+ in the grid 
+\begin_inset Formula $\mathbf{G}_{c}\overline{c}$
+\end_inset
+
+ compute 
+\begin_inset Formula 
+\[
+u\left(c_{T-1}\right)+\delta V_{T}\left(w_{T}\right)
+\]
+
+\end_inset
+
+and choose the value of 
+\begin_inset Formula $c_{T-1}$
+\end_inset
+
+ to maximize this function.
+ Store the optimal policy 
+\begin_inset Formula $c_{T-1}\left(w_{T-1}\right)$
+\end_inset
+
+ and the value function 
+\begin_inset Formula $V_{T-1}\left(w_{T-1}\right)$
+\end_inset
+
+.
+ (Each of these is a vector defined on the grid 
+\begin_inset Formula $\mathbf{G}_{w}\overline{w}$
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Enumerate
+Repeat step 2 to solve the program
+\begin_inset Formula 
+\[
+u\left(c_{T-2}\right)+\delta V_{T-1}\left(w_{T-1}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Iterate back to period 
+\begin_inset Formula $1$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section*
+Analytic Solution
+\end_layout
+
+\begin_layout Standard
+Suppose that 
+\begin_inset Formula $w_{0}>0$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathbf{y}=0$
+\end_inset
+
+.
+ Then the Euler equation is given by 
+\begin_inset Formula $u'(c_{t})=\delta Ru'(c_{t+1})$
+\end_inset
+
+.
+ This gives us 
+\begin_inset Formula $c_{t}^{-\rho}=\delta R\left(c_{t+1}\right)^{-\rho}$
+\end_inset
+
+, which leads to 
+\begin_inset Formula $\ln\left(\frac{c_{t+1}}{c_{t}}\right)=\ln(\delta R)/\rho$
+\end_inset
+
+.
+ So the optimal solution is characterized by the following differential
+ equation:
+\begin_inset Formula 
+\begin{eqnarray*}
+\ln\left(c_{t+1}\right)-\ln\left(c_{t}\right) & = & \frac{r-\gamma}{\rho}\\
+w_{0} & = & \sum_{t=1}^{T}\left(1/R\right)^{t}c_{t}
+\end{eqnarray*}
+
+\end_inset
+
+where 
+\begin_inset Formula $r=\ln R$
+\end_inset
+
+ and 
+\begin_inset Formula $\gamma=-\ln\delta$
+\end_inset
+
+ .
+\end_layout
+
+\end_body
+\end_document

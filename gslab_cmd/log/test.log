@@ -1,0 +1,10 @@
+test_isPSD_1 (test_Misc.test_Misc) ... ok
+test_isPSD_identity (test_Misc.test_Misc) ... ok
+test_isPSD_zeros (test_Misc.test_Misc) ... ok
+test_minimizeQ (test_NormalVar.test_NormalVar) ... ok
+test_minimizeQ_trueparam (test_NormalVar.test_NormalVar) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.021s
+
+OK

@@ -1,0 +1,26 @@
+
+ make.py started: 2015-10-30 14:23:08 /Users/leviboxell/Desktop/google_ngram_retriever 
+
+
+Path: gslab_make
+URL: http://gsbhmg01.chicagobooth.edu/svn/trunk/lib/python/gslab_make
+Repository Root: http://gsbhmg01.chicagobooth.edu/svn
+Repository UUID: 89b4331b-4301-411a-8e06-9c78d9cdb83d
+Revision: 32910
+Node Kind: directory
+Last Changed Author: lboxell
+Last Changed Rev: 32862
+Last Changed Date: 2015-10-28 15:42:52 -0700 (Wed, 28 Oct 2015)
+
+
+
+Execute:  python  "run_all_tests.py" 
+test_download (test_download.testNgramDownload) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.463s
+
+OK
+Data saved to ./consultants_media.csv
+
+ make.py ended: 2015-10-30 14:23:10

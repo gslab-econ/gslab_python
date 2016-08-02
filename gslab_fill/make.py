@@ -16,6 +16,9 @@ set_option(makelog = './log/make.log', output_dir = './log', temp_dir = '', exte
 
 start_make_logging()
 
+# GET_EXTERNALS
+get_externals('externals.txt')
+
 # RUN TESTS
 run_stata(program = './test/input/logs_for_textfill.do', changedir = True, log = './log/stata.log')
 run_python(program = './test/run_all_tests.py', changedir = True, log = './log/test.log')
