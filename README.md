@@ -9,7 +9,7 @@ This library contains following two packages:
  - gslab_fill (for *tablefill* and *textfill*) 
 
 ### Installation
-On command line, type `pip install --upgrade git+ssh://git@github.com/gslab-econ/gslab_python.git`
+On command line, type `pip install gslab_tools`
 
 ### Usage
 
@@ -50,8 +50,4 @@ Take `politext/source/paper/make.py` as an example, the code should now be writt
 ~~`shutil.rmtree('gslab_make')`~~
 
 `raw_input('\n Press <Enter> to exit.')`
-
-### To-do list 
-
- - Publish to PyPI
 
