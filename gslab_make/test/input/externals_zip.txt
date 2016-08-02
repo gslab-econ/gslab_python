@@ -1,0 +1,2 @@
+rev	dir	file	outdir	outfile	notes
+26710	%svn%/derived/Nielsen Kilts Homescan (Purchases)/output/	purchases_2007.zip	./data/	""""		
