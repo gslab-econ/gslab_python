@@ -1,9 +1,0 @@
-test_ivreg (test_ivreg.test) ... ok
-test_epanechnikov_kernel (test_qtfit.test) ... ok
-test_first_degree (test_qtfit.test) ... ok
-test_gaussian_kernel (test_qtfit.test) ... ok
-
-----------------------------------------------------------------------
-Ran 4 tests in 0.135s
-
-OK

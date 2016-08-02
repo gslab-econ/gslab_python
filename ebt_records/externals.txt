@@ -1,4 +1,0 @@
-rev	dir	file	outdir	outfile	notes
-25834	%svn%/lib/stata/gslab_misc	*	./lib/stata/gslab_misc	""""	
-27080	%svn%/lib/third_party/stata_tools	*	./lib/third_party/stata_tools	""""
-185	%svn_retail2%/raw/EBT Records/links	links.txt	./	ebt_records_links.txt	""""

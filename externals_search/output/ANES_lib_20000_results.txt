@@ -1,2 +1,0 @@
-term	file
-lib	code/externals.txt
