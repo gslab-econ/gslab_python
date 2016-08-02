@@ -1,4 +1,0 @@
-input	./input/
-./rinstall/	./input/rinstall_test_package/
-./ext.txt	./input/externals_legal.txt
-./input_*	./input/*_files.txt

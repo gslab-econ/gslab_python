@@ -1,4 +1,0 @@
-test_manifest_error (test_dir_mod.test_check_manifest.testCheckManifest) ... ERROR
-test_manifest_ok (test_dir_mod.test_check_manifest.testCheckManifest) ... FAIL
-test_manifest_warning (test_dir_mod.test_check_manifest.testCheckManifest) ... ERROR
-test_no_makelog (test_dir_mod.test_check_manifest.testCheckManifest) ... 

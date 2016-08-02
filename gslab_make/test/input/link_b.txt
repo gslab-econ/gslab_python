@@ -1,2 +1,0 @@
-./rinstall/	./input/rinstall_test_package/
-./ext.txt	./input/externals_legal.txt
