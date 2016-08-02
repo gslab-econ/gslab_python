@@ -1,2 +1,0 @@
-rev	dir	file	outdir	outfile	notes
-21009	%svn%/lib/third_party/stata_tools	*	./lib/third_party/stata_tools	""""
