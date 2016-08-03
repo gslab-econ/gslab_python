@@ -9,9 +9,9 @@ This library contains following two packages:
  - gslab_fill (for *tablefill* and *textfill*) 
 
 ### Installation
-First time: On command line, type `sudo pip install gslab_tools`
+First time: On command line, type `pip install gslab_tools`
 
-Update: type `sudo pip install gslab_tools --upgrade`
+Update: type `pip install gslab_tools --upgrade`
 
 ### Usage
 
