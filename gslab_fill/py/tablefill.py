@@ -13,15 +13,15 @@ these tables (the input files), and produces a LyX file with filled tables (the 
 
 Tablefill must first be imported to make.py.  This is typically achieved by including the following lines:
 
-sys.path.append('./external/lib/python/')
-from gslab_misc.py.tablefill import tablefill
-
-In the above example, the gslab_misc library has been added to the ./external/ directory by get_externals.  If the location of 
-gslab_misc differs from the above, then the path must be altered accoringly.
+```
+from gslab_fill.py.tablefill import tablefill
+```
 
 Once the module has been imported, the syntax used to call tablefill is as follows:
 
+```
 tablefill( input = 'input_file(s)', template = 'template_file', output = 'output_file' )
+```
 
 The argument 'template' is the user written LyX file which contains the tables to be filled in. The argument 'input' is a list of 
 the text files containing the output to be copied to the LyX tables. If there are multiple input text files, they are listed as: 
@@ -29,8 +29,6 @@ input = 'input_file_1 input_file_2'. The argument 'output' is the name of the fi
 is created by tablefill.py and should not be edited manually by the user.
 
 For an example of this syntax in use, please see make.py in the svn_drafts template directory at /admin/Templates/svn_drafts/.
-
-
 ###########################
 Input File Format:
 ###########################

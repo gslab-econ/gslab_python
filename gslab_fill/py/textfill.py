@@ -15,12 +15,8 @@ tags inside the input files) in the locations indicated by the labels in the tem
 Textfill must first be imported to make.py.  This is typically achieved by including the following lines:
 
 ```
-sys.path.append('./external/lib/python/')
-from gslab_misc.py.textfill import textfill
+from gslab_fill.py.textfill import textfill
 ```
-
-In the above example, the gslab_misc library has been added to the ./external/ directory by get_externals.  If the location of 
-gslab_misc differs from the above, then the path must be altered accoringly.
 
 Once the module has been imported, the syntax used to call textfill is as follows:
 
@@ -43,7 +39,7 @@ Input File Format:
 ###########################
 
 Input files for textfill.py are log files produced by Stata. Sections of input files to be inserted by textfill are indicated by tags printed
-by the stata command 'insert_tags', which is defined by a gslab ado file in /lib/stata/gslab_misc/.
+by the stata command 'insert_tags', which is defined by a gslab ado file in gslab-econ/gslab_stata/gslab_misc/.
 
 In the stata do file which produces the input logs, the user begins a tagged section with the command:
 insert_tag tag_name, open
@@ -129,7 +125,7 @@ would produce output.lyx replacing the label with the verbatim input (removing S
 
 If an error occurs during the call to text, it will be displayed in the command window.  When make.py finishes, the user will
 be able to scroll up through the output and examine any error messages.  Error messages, which include a description of the error type
-and a traceback to the line of code where the error occured, can also be retuned as a string object using the following syntax:
+and a traceback to the line of code where the error occurred, can also be returned as a string object using the following syntax:
 
 ```
 exitmessage = textfill( input = 'input_file(s)', template = 'template_file', output = 'output_file', [size = 'size'], [remove_echoes = 'True/False'] )

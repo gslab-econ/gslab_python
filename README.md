@@ -1,4 +1,4 @@
-## GSLab Python Library 1.0
+## GSLab Python Library 1.0.1
 
 ### Overview
 This library contains the python tools used by GSLab. The original code in this repository is drawn from `trunk/lib/python` of the SVN repository `econ-gentzkow-stanford, revision 34,755`.
@@ -9,7 +9,9 @@ This library contains following two packages:
  - gslab_fill (for *tablefill* and *textfill*) 
 
 ### Installation
-On command line, type `pip install gslab_tools`
+First time: On command line, type `sudo pip install gslab_tools`
+
+Update: type `sudo pip install gslab_tools --upgrade`
 
 ### Usage
 
@@ -50,4 +52,25 @@ Take `politext/source/paper/make.py` as an example, the code should now be writt
 ~~`shutil.rmtree('gslab_make')`~~
 
 `raw_input('\n Press <Enter> to exit.')`
+
+
+### Updating procedures
+
+* Put `__init__.py` in each new subdirectories
+* Run `make.py` in each package to test if the new version is working appropriately 
+* Update `README.md` and `setup.py` to contains the information about this new version
+* Check that the local environment for publishing is ready (see [here](https://www.codementor.io/python/tutorial/host-your-python-package-using-github-on-pypi)): 
+* Push everything to `gslab_python` repo in github
+* Release on github with the tag version to be the version number of this package 
+* Copy the download link from github release page and paste it in `setup.py`
+* Type the following to upload the new version to PyPI test: 
+   * `python setup.py register -r pypitest`
+   * `python setup.py sdist upload -r pypitest`
+* Now type the following to upload the new version to PyPI: 
+   * `python setup.py register -r pypi`
+   * `python setup.py sdist upload -r pypi`
+
+
+
+
 
