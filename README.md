@@ -53,6 +53,10 @@ Take `politext/source/paper/make.py` as an example, the code should now be writt
 
 `raw_input('\n Press <Enter> to exit.')`
 
+#### Documentation
+
+After importing a module, one can use `help()` to see its documentation, for example:
+`help(gslab_fill.py.tablefill)`
 
 ### Updating procedures
 
