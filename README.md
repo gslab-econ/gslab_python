@@ -15,11 +15,11 @@ Update: type `pip install gslab_tools --upgrade`
 
 ### Usage
 
-Use the modules in the **same way** as if they were downloaded from SVN. Just remove the lines of calling SVN. 
+Use the legacy modules (gslab_make, gslab_fill) in the **same way** as if they were downloaded from SVN. Just remove the lines of calling SVN. 
 
 #### Example
 
-Take `politext/source/paper/make.py` as an example, the code should now be written as: 
+Take [politext/source/paper/make.py](https://github.com/TaddyLab/politext/blob/master/source/paper/make.py) as an example, the code should now be written as: 
 
 `import`~~`subprocess, shutil,`~~`os`
 
