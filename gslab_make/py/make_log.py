@@ -84,14 +84,6 @@ def start_make_logging(makelog = '@DEFAULTVALUE@'):
         working_dir = os.getcwd()
         print >> LOGFILE, messages.note_makelogstart, time_begin, working_dir, '\n\n'
 
-        # Add gslab_make info
-        tempname = ('./temp.txt')
-        TEMPFILE = open(tempname, 'wb')
-        command = 'svn info ' + metadata.file_loc['svn'] + '/lib/python/gslab_make'
-        subprocess.check_call(command, shell = True, stdout = TEMPFILE, stderr = TEMPFILE)
-        TEMPFILE.close()
-        LOGFILE.write(open(tempname, 'rU').read())
-        os.remove(tempname)
         LOGFILE.close()
     except Exception as errmsg:
         print "Error with start_make_logging: \n", errmsg
