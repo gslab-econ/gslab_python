@@ -1,4 +1,4 @@
-## GSLab Python Library 1.0.2
+## GSLab Python Library 1.0.3
 
 ### Overview
 This library contains the python tools used by GSLab. The original code in this repository is drawn from `trunk/lib/python` of the SVN repository `econ-gentzkow-stanford, revision 34,755`.
@@ -27,13 +27,13 @@ Take [politext/source/paper/make.py](https://github.com/TaddyLab/politext/blob/m
 
 ~~`subprocess.call('svn export --force -r 33345 ' + gslab_make_path + ' gslab_make', shell = True)`~~
 
-`from gslab_make.py.get_externals import *`
+`from gslab_make.get_externals import *`
 
-`from gslab_make.py.make_log import *`
+`from gslab_make.make_log import *`
 
-`from gslab_make.py.run_program import *`
+`from gslab_make.run_program import *`
 
-`from gslab_make.py.dir_mod import *`
+`from gslab_make.dir_mod import *`
 
  ...
  
@@ -41,9 +41,9 @@ Take [politext/source/paper/make.py](https://github.com/TaddyLab/politext/blob/m
 
 ~~`sys.path.append('../../external/paper/lib/python/')`~~
 
-`from gslab_fill.py.tablefill import tablefill`
+`from gslab_fill.tablefill import tablefill`
 
-`from gslab_fill.py.textfill import textfill`
+`from gslab_fill.textfill import textfill`
  
  ...
  
@@ -56,11 +56,11 @@ Take [politext/source/paper/make.py](https://github.com/TaddyLab/politext/blob/m
 #### Documentation
 
 After importing a module, one can use `help()` to see its documentation, for example:
-`help(gslab_fill.py.tablefill)`
+`help(gslab_fill.tablefill)`
 
 ### Updating procedures
 
-* Put `__init__.py` in each new subdirectories
+* Put `__init__.py` in each new subdirectories (except test folders)
 * Run `make.py` in each package to test if the new version is working appropriately 
 * Update `README.md` and `setup.py` to contains the information about this new version
 * Check that the local environment for publishing is ready (see [here](https://www.codementor.io/python/tutorial/host-your-python-package-using-github-on-pypi))
