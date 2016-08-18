@@ -1,0 +1,17 @@
+test_illegal_input (test_get_externals.testGetExternals) ... svn: E155007: '/' is not a working copy
+svn: E155007: '/' is not a working copy
+svn: E160006: No such revision 49908
+svn: E205000: Try 'svn help' for more info
+svn: E205000: Syntax error parsing peg revision '-40'
+sh: -c: line 0: syntax error near unexpected token `('
+sh: -c: line 0: `svn list "https://econ-gentzkow-svn.stanford.edu/repos/main/trunk/::"?>\\;{]\}((&&^&/voting/output/figures/@4908"'
+svn: warning: W160013: URL 'https://econ-gentzkow-svn.stanford.edu/repos/main/trunk%25/analysis/voting/output/figures' non-existent in revision 4908
+svn: E200009: Could not list all targets because some targets don't exist
+svn: E205000: Try 'svn help' for more info
+svn: E205000: Syntax error parsing peg revision 'COGY'
+svn: E205000: Try 'svn help' for more info
+svn: E205000: Syntax error parsing peg revision 'AB%&G'
+ok
+test_legal_input (test_get_externals.testGetExternals) ... ok
+test_illegal_input (test_get_externals_github.testGetExternals_GitHub) ... FAIL
+test_legal_input (test_get_externals_github.testGetExternals_GitHub) ... FAIL
