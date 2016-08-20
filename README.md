@@ -5,8 +5,9 @@ This library contains the python tools used by GSLab. The original code in this 
 
 ### Packages
 This library contains following two packages: 
- - gslab_make (for *make.py*)
- - gslab_fill (for *tablefill* and *textfill*) 
+ - gslab_make  (for *make.py*)
+ - gslab_fill  (for *tablefill* and *textfill*) 
+ - gslab_scons (for using `scons`)
 
 ### Installation
 First time: On command line, type `pip install gslab_tools`
