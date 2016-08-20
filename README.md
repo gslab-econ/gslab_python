@@ -1,4 +1,4 @@
-## GSLab Python Library 1.0.2
+## GSLab Python Library 1.0.3
 
 ### Overview
 This library contains the python tools used by GSLab. The original code in this repository is drawn from `trunk/lib/python` of the SVN repository `econ-gentzkow-stanford, revision 34,755`.
@@ -57,11 +57,11 @@ Take [politext/source/paper/make.py](https://github.com/TaddyLab/politext/blob/m
 #### Documentation
 
 After importing a module, one can use `help()` to see its documentation, for example:
-`help(gslab_fill.py.tablefill)`
+`help(gslab_fill.tablefill)`
 
 ### Updating procedures
 
-* Put `__init__.py` in each new subdirectories
+* Put `__init__.py` in each new subdirectories (except test folders)
 * Run `make.py` in each package to test if the new version is working appropriately 
 * Update `README.md` and `setup.py` to contains the information about this new version
 * Check that the local environment for publishing is ready (see [here](https://www.codementor.io/python/tutorial/host-your-python-package-using-github-on-pypi))
