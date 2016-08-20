@@ -1,5 +1,5 @@
 import os, sys, shutil, subprocess
-from gslab_fill.tablefill import tablefill
+from gslab_fill.py.tablefill import tablefill
 
 def build_tables(target, source, env):
     tablefill(input    = ' '.join(env.GetBuildPath(env['INPUTS'])), 
@@ -22,32 +22,25 @@ def build_r(target, source, env):
     target_file = str(target[0])
     target_dir  = os.path.dirname(target_file)
     log_file    = target_dir + '/sconscript.log'
-    os.system('Rscript %s >> %s' % (source_file, log_file) + " 2>&1")
+    os.system('Rscript %s >> %s' % (source_file, log_file))
     return None
 
-def build_stata(target, source, env, executable = 'StataMP', version = "14"):
+def build_stata(target, source, env, executable = 'StataMP'):
     source_file = str(source[0])
     target_file = str(target[0])
     target_dir  = os.path.dirname(target_file)
-    
+  
     if os.name == 'posix':
       log_file  = target_dir + '/sconscript.log'
-      loc_log   = source_file.replace('.do','.log')
+      loc_log   = os.path.basename(source_file).replace('.do','.log')
       if executable == 'StataSE':
-        os.system('statase -e %s' % source_file)        
-      else if executable == 'Stata':
-        os.system('stata -e %s' % source_file)
-      else if executable == 'StataMP': 
+        os.system('statase -e %s ' % source_file)        
+      elif executable == 'Stata':
+        os.system('stata -e %s ' % source_file)
+      elif executable == 'StataMP': 
         try:
-          subprocess.check_output(['statamp -e', source_file], shell=True)
+          subprocess.check_output('statamp -e ' + source_file, shell=True)
         except subprocess.CalledProcessError:       
-          subprocess.check_output(['statase -e', source_file], shell=True)      
-      os.system('mv %s %s' % (source_file, log_file))
-    
-    else if os.name == 'nt':
-      log_file  = target_dir + '\sconscript.log'
-      loc_log   = source_file.replace('.do','.log')
-      excut     = '"C:\Program Files\Stata'+ version + '\\' + executable +  '/e do  "' + source_file
-      os.system('move %s %s' % (source_file, log_file))
-    
+          subprocess.check_output('statase -e ' + source_file, shell=True)      
+      shutil.move(loc_log, log_file)
     return None
