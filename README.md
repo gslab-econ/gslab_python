@@ -3,20 +3,20 @@
 ### Overview
 This library contains the python tools used by GSLab. The original code in this repository is drawn from `trunk/lib/python` of the SVN repository `econ-gentzkow-stanford, revision 34,755`.
 
-### Packages
-This library contains following two packages: 
+### Modules
+This library contains following two modules: 
  - gslab_make  (for *make.py*)
  - gslab_fill  (for *tablefill* and *textfill*) 
  - gslab_scons (for using `scons`)
 
 ### Installation
-First time: On command line, type `pip install gslab_tools`
+First time: On command line, enter `pip install gslab_tools`.
 
-Update: type `pip install gslab_tools --upgrade`
+Update: Enter `pip install gslab_tools --upgrade`.
 
 ### Usage
 
-Use the legacy modules (gslab_make, gslab_fill) in the **same way** as if they were downloaded from SVN. Just remove the lines of calling SVN. 
+We can use our legacy modules (gslab_make, gslab_fill) in the **same way** as if they were downloaded from SVN. When uodating code, we should remove the lines downloading content from SVN. 
 
 #### Example
 
