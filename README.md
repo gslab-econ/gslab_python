@@ -20,9 +20,67 @@ Use the legacy modules (gslab_make, gslab_fill) in the **same way** as if they w
 
 #### Example
 
-Take [politext/source/paper/make.py](https://github.com/TaddyLab/politext/blob/master/source/paper/make.py) as an example, the code should now be written as: 
+As an example of how to update code to use this module's Python utilities rather than retrieve them from SVN, consider the following truncated script (taken from  [politext/source/paper/make.py](https://github.com/TaddyLab/politext/blob/master/source/paper/make.py):
 
-`import`~~`subprocess, shutil,`~~`os`
+```Python
+import subprocess
+import shutil
+import os
+gslab_make_path = os.getenv('gslab_make_path')
+subprocess.call('svn export --force -r 33345 ' + gslab_make_path + ' gslab_make', shell = True)
+from gslab_make.py.get_externals import *
+from gslab_make.py.make_log import *
+from gslab_make.py.run_program import *
+from gslab_make.py.dir_mod import *
+
+# ...
+# Excluded code
+# ...
+
+get_externals('./externals.txt')
+sys.path.append('../../external/paper/lib/python/')
+from gslab_misc.py.tablefill import tablefill
+from gslab_misc.py.textfill import textfill
+ 
+# ...
+# Excluded code
+# ...
+ 
+end_make_logging('../../output/paper/make.log')
+
+shutil.rmtree('gslab_make')
+raw_input('\n Press <Enter> to exit.')
+```
+
+After installing `gslab_tools` using pip, would can safely remove the lines that download the GSLab Python utilities from SVN and a few others. Our revised code should look like (without the comments inserted for clarity):
+
+```Python
+# The only package we need to load now is os
+import os
+# We can load our Python make functions without downloading them
+# Also, we no longer need the get_externals submodule
+from gslab_make.make_log import *
+from gslab_make.run_program import *
+from gslab_make.dir_mod import *
+
+# ...
+# Excluded code
+# ...
+
+# We can remove the "get externals" lines
+from gslab_fill.tablefill import tablefill
+from gslab_fill.textfill import textfill
+
+# ...
+# Excluded code
+# ...
+
+end_make_logging('../../output/paper/make.log')
+
+raw_input('\n Press <Enter> to exit.')
+```
+
+import`~~`subprocess, shutil,`~~`os`
 
 ~~`gslab_make_path = os.getenv('gslab_make_path')`~~
 
@@ -48,11 +106,11 @@ Take [politext/source/paper/make.py](https://github.com/TaddyLab/politext/blob/m
  
  ...
  
-`end_make_logging('../../output/paper/make.log')`
+end_make_logging('../../output/paper/make.log')
 
-~~`shutil.rmtree('gslab_make')`~~
-
-`raw_input('\n Press <Enter> to exit.')`
+shutil.rmtree('gslab_make')
+raw_input('\n Press <Enter> to exit.')
+```
 
 #### Documentation
 
