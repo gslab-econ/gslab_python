@@ -57,8 +57,9 @@ After installing `gslab_tools` using pip, would can safely remove the lines that
 ```Python
 # The only package we need to load now is os
 import os
-# We can load our Python make functions without downloading them
+# We can load our Python make functions without downloading them.
 # Also, we no longer need the get_externals submodule
+# Last, note that we can (and must) remove 'py.' from our module path
 from gslab_make.make_log import *
 from gslab_make.run_program import *
 from gslab_make.dir_mod import *
