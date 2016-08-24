@@ -16,7 +16,7 @@ Update: Enter `pip install gslab_tools --upgrade`.
 
 ### Usage
 
-We can use our legacy modules (gslab_make, gslab_fill) in the **same way** as if they were downloaded from SVN. When uodating code, we should remove the lines downloading content from SVN. 
+We can use our legacy modules--`gslab_make` and `gslab_fill`, which used to be called `gslab_misc`--largely as if they were downloaded from SVN. When updating code, we should remove the lines downloading content from SVN and reflect `gslab_misc`'s name change..
 
 #### Example
 
