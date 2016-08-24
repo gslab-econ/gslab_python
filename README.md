@@ -80,59 +80,28 @@ end_make_logging('../../output/paper/make.log')
 raw_input('\n Press <Enter> to exit.')
 ```
 
-import`~~`subprocess, shutil,`~~`os`
-
-~~`gslab_make_path = os.getenv('gslab_make_path')`~~
-
-~~`subprocess.call('svn export --force -r 33345 ' + gslab_make_path + ' gslab_make', shell = True)`~~
-
-`from gslab_make.get_externals import *`
-
-`from gslab_make.make_log import *`
-
-`from gslab_make.run_program import *`
-
-`from gslab_make.dir_mod import *`
-
- ...
- 
-~~`get_externals('./externals.txt')`~~
-
-~~`sys.path.append('../../external/paper/lib/python/')`~~
-
-`from gslab_fill.tablefill import tablefill`
-
-`from gslab_fill.textfill import textfill`
- 
- ...
- 
-end_make_logging('../../output/paper/make.log')
-
-shutil.rmtree('gslab_make')
-raw_input('\n Press <Enter> to exit.')
-```
 
 #### Documentation
 
-After importing a module, one can use `help()` to see its documentation, for example:
-`help(gslab_fill.tablefill)`
+After importing a module, one can use `help()` to see its documentation. For example, `help(gslab_fill.tablefill)` will provide the user with information on our `table_fill` function.
 
 ### Updating procedures
 
-* Put `__init__.py` in each new subdirectory, excluding test folders,
-* Run `make.py` in each package to test if the new version is working appropriately 
-* Update `README.md` and `setup.py` to contains the information about this new version
-* Check that the local environment for publishing is ready (see [here](https://www.codementor.io/python/tutorial/host-your-python-package-using-github-on-pypi))
-   * The username and password for PyPI are stored in GSLab Evernote notebook
-* Push everything to `gslab_python` repo in github
-* Release on github with the tag version to be the version number of this package 
-* Copy the download link from github release page and paste it in `setup.py`
-* Type the following to upload the new version to PyPI test: 
+* Ensure that `__init__.py` has been placed in each new subdirectory, excluding test folders,
+* Run `make.py` in each package to test if the new version is working appropriately,
+* Update `README.md` and `setup.py` with information about the current version of gslab_tools,
+* Check that you have set up your PyPI publishing profile (see [here](https://www.codementor.io/python/tutorial/host-your-python-package-using-github-on-pypi))
+   * Note: the username and password for PyPI are stored in GSLab Evernote notebook.
+* Push changes to `README.md` and `setup.py` everything to the `gslab_python` Github repository;
+* Release the current version of gslab_tools on Github, setting the tag version to be the version number of this package;
+* Copy the download link from GitHub release page and paste it into `setup.py`'s `download_url` field;
+* Enter the following at the command line to upload the new version to PyPI test: 
    * `python setup.py register -r pypitest`
    * `python setup.py sdist upload -r pypitest`
-* Now type the following to upload the new version to PyPI: 
+* Now enter the following to upload the new version to PyPI: 
    * `python setup.py register -r pypi`
    * `python setup.py sdist upload -r pypi`
+ 
 
 
 
