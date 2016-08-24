@@ -28,23 +28,23 @@ Take [politext/source/paper/make.py](https://github.com/TaddyLab/politext/blob/m
 
 ~~`subprocess.call('svn export --force -r 33345 ' + gslab_make_path + ' gslab_make', shell = True)`~~
 
-`from gslab_make.get_externals import *`
+`from gslab_make.py.get_externals import *`
 
-`from gslab_make.make_log import *`
+`from gslab_make.py.make_log import *`
 
-`from gslab_make.run_program import *`
+`from gslab_make.py.run_program import *`
 
-`from gslab_make.dir_mod import *`
+`from gslab_make.py.dir_mod import *`
 
  ...
  
-~~`get_externals('./externals.txt')`~~
+`get_externals('./externals.txt')`
 
 ~~`sys.path.append('../../external/paper/lib/python/')`~~
 
-`from gslab_fill.tablefill import tablefill`
+`from gslab_fill.py.tablefill import tablefill`
 
-`from gslab_fill.textfill import textfill`
+`from gslab_fill.py.textfill import textfill`
  
  ...
  
