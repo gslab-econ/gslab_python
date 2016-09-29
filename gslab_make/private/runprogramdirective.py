@@ -175,7 +175,7 @@ class RunProgramDirective(object):
             os.chdir(self.program_path)
 
         if not self.log:
-            tempname = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) + '/text.txt'
+            tempname = current_directory + '/make-templog.txt'
         else:
             tempname = os.path.abspath(self.log)
         TEMPFILE = open(tempname, 'wb')            
