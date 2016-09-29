@@ -1,14 +1,14 @@
 
- make.py started: 2016-08-18 13:35:35 /Users/shunyang/Desktop/gslab_python/gslab_make/tests 
+ make.py started: 2016-09-29 15:53:56 /Users/arosenbe/Desktop/gslab_python/gslab_make/tests 
 
 
 
 
 List of all files in sub-directories in ./log/
 ./log/
-created/modified Thu Aug 18 13:32:19 2016
-                                          make.log --- created/modified Thu Aug 18 13:35:35 2016 ( 0 bytes )
-                                          test.log --- created/modified Thu Aug 18 13:34:51 2016 ( 1105 bytes )
+created/modified Thu Sep 29 15:53:08 2016
+                                          make.log --- created/modified Thu Sep 29 15:53:56 2016 ( 0 bytes )
+                                          test.log --- created/modified Thu Sep 29 15:53:27 2016 ( 14892 bytes )
 test_manifest_error (test_dir_mod.test_check_manifest.testCheckManifest) ... ok
 test_manifest_ok (test_dir_mod.test_check_manifest.testCheckManifest) ... ok
 test_manifest_warning (test_dir_mod.test_check_manifest.testCheckManifest) ... ok
@@ -126,7 +126,7 @@ test_no_extension (test_run_program.test_run_stata.testRunStata) ... ok
 test_no_program (test_run_program.test_run_stata.testRunStata) ... ok
 
 ----------------------------------------------------------------------
-Ran 102 tests in 451.395s
+Ran 102 tests in 236.837s
 
 OK
 Cleared: ./externals/
@@ -135,4 +135,4 @@ Cleared: ./externals/
 Cleared: ./externals/
 Cleared: ./externals/
 
- make.py ended: 2016-08-18 13:43:06
+ make.py ended: 2016-09-29 15:57:53
