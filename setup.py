@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name         = 'GSLab_Tools',
-      version      = '1.0.4',
+      version      = '1.0.6',
       description  = 'Python tools for GSLab',
       url          = 'https://github.com/gslab-econ/gslab_python',
       author       = 'Matthew Gentzkow, Jesse Shapiro',
