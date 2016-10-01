@@ -3,6 +3,7 @@ from datetime import datetime
 from sys import platform
 from misc import *
 from log import log_timestamp
+from gslab_fill.tablefill import tablefill
 
 def build_tables(target, source, env):
     tablefill(input    = ' '.join(env.GetBuildPath(env['INPUTS'])), 
@@ -11,6 +12,8 @@ def build_tables(target, source, env):
     return None
 
 def build_lyx(target, source, env):
+    source      = make_list_if_string(source)
+    target      = make_list_if_string(target)
     start_time  = current_time()
     source_file = str(source[0])
     target_file = str(target[0])
@@ -27,6 +30,8 @@ def build_lyx(target, source, env):
     return None
 
 def build_r(target, source, env):
+    source      = make_list_if_string(source)
+    target      = make_list_if_string(target)
     start_time  = current_time()
     source_file = str(source[0])
     target_file = str(target[0])
@@ -45,14 +50,11 @@ def build_stata(target, source, env):
        (default: Scons will try to find each flavour). 
     '''
     start_time =  current_time()
-    if isinstance(source, list):
-        source_file  = str(source[0])
-    else:
-        source_file = str(source)
-    if isinstance(target, list):
-        target_file  = str(target[0])
-    else:
-        target_file = str(target)
+    
+    source       = make_list_if_string(source)
+    target       = make_list_if_string(target)
+    source_file  = str(source[0])
+    target_file  = str(target[0])
 
     target_dir   = os.path.dirname(target_file)
     check_source_code_extension(source_file, 'stata')

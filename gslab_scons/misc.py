@@ -46,6 +46,11 @@ def is_in_path(program):
 def is_exe(file_path):
     return os.path.isfile(file_path) and os.access(file_path, os.X_OK)
 
+def make_list_if_string(source):
+    if isinstance(source, str):
+        source = [source]
+    return source
+
 def check_source_code_extension(source_file, software):
     extensions = {'stata': '.do',
                   'r'    : '.r', 
