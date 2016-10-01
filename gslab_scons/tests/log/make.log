@@ -1,0 +1,16 @@
+
+ make.py started: 2016-10-01 12:35:03 /Users/leviboxell/Desktop/gslab_python/gslab_scons/tests 
+
+
+
+
+Execute:  python  "run_all_tests.py" 
+test_default (test_build_stata.testbuild_stata) ... ok
+test_user_executable (test_build_stata.testbuild_stata) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 12.362s
+
+OK
+
+ make.py ended: 2016-10-01 12:35:16
