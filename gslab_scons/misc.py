@@ -52,9 +52,10 @@ def make_list_if_string(source):
     return source
 
 def check_source_code_extension(source_file, software):
-    extensions = {'stata': '.do',
-                  'r'    : '.r', 
-                  'lyx'  : '.lyx'}
+    extensions = {'stata'  : '.do',
+                  'r'      : '.r', 
+                  'lyx'    : '.lyx',
+                  'python' : '.py'}
     ext = extensions[software]
     source_file = str.lower(source_file)
     if not source_file.endswith(ext):

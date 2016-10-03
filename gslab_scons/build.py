@@ -45,6 +45,23 @@ def build_r(target, source, env):
     log_timestamp(start_time, end_time, log_file)
     return None
 
+def build_python(target, source, env):
+    source      = make_list_if_string(source)
+    target      = make_list_if_string(target)
+    start_time  = current_time()
+    source_file = str(source[0])
+    target_file = str(target[0])
+    target_dir  = os.path.dirname(target_file)
+    check_source_code_extension(source_file, 'python')
+    log_file    = target_dir + '/sconscript.log'
+
+    os.system('python %s > %s' % (source_file, log_file))
+
+    end_time   =  current_time()    
+    log_timestamp(start_time, end_time, log_file)
+    return None
+
+
 def build_stata(target, source, env):
     ''' User can specify flavour by typing `scons sf=StataMP` 
        (default: Scons will try to find each flavour). 

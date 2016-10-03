@@ -1,9 +1,10 @@
 test_default (test_build_lyx.testbuild_lyx) ... ok
+test_default (test_build_python.testbuild_python) ... ok
 test_default (test_build_r.testbuild_r) ... ok
 test_default (test_build_stata.testbuild_stata) ... ok
 test_user_executable (test_build_stata.testbuild_stata) ... ok
 
 ----------------------------------------------------------------------
-Ran 4 tests in 15.378s
+Ran 5 tests in 26.435s
 
 OK
