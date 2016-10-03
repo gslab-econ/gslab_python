@@ -1,3 +1,5 @@
+import requests, getpass, re, json, time
+
 def release(env, vers, DriveReleaseFiles = '', local_release = '', org = 'gslab-econ', \
             repo = 'template', target_commitish = 'master'):
     token         = getpass.getpass("Enter github token and then press enter: ") 
