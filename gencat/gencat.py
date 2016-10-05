@@ -19,21 +19,11 @@ class gencat(object):
         dict_name: name of dictionary to be produced.
         zip_name: name of zip file to be produced. 
         '''  
-        paths = [path_in, path_temp, path_out]
-        for path in paths:
-            if path[-1] == '/':
-                path = path
-            else:
-                path = path + '/'
-        
-        self.path_in = path_in
-        self.path_temp = path_temp
-        self.path_out = path_out
-        self.dict_name = dict_name
+        self.path_in = os.path.join(path_in, '')
+        self.path_temp = os.path.join(path_temp, '')
+        self.path_out = os.path.join(path_out, '')
+        self.dict_name = {}
         self.zip_name = zip_name
-        
-        map_dict = dict_name + '_dict'
-        self.map_dict = {}
     
     def main(self):
         '''
@@ -88,31 +78,32 @@ class gencat(object):
         Write the dictionary to output as a |-delimited text file. The elements of each tuple are
         shortened to their filenames for writing only.
         '''
-        outfile_path = self.path_out + self.dict_name + '.txt'
+        outfile_path = self.path_out + 'zipdict.txt'
         with open(outfile_path, 'wb') as outfile:
-            for key in self.map_dict.keys():
+            for key in self.dict_name.keys():
                 outfile.write(key)
-                for val in self.map_dict[key]:
-                    write = val.rsplit('/')[-1]
+                for val in self.dict_name[key]:
+                    write = os.path.basename(val)
                     outfile.write('|' + write)
                 outfile.write('\n')
     
     def zipFiles(self):
         '''
         Concatenates all files in a dictionary values to a new file named for the corresponding key.
+        Files are concatenated in the order in which they appear in the dictionary value. 
         Places NEWFILE\nFILENAME: <original filename> before each new file in the concatenation.
         Stores all concatenated files to a .zip file in path_out.
         '''
-        inzippath = self.path_temp + self.zip_name + '/'
+        inzippath = self.path_temp + os.path.join(self.zip_name, '')
         os.makedirs(inzippath)
         
-        for key in self.map_dict.keys():
+        for key in self.dict_name.keys():
             
             CATFILE = inzippath + key + '.txt'
             with open(CATFILE, 'ab') as catfile: 
                 
-                for val in self.map_dict[key]:
-                    catfile.write('\nNEWFILE\nFILENAME: %s\n\n' % (val.rsplit('/')[-1]))
+                for val in self.dict_name[key]:
+                    catfile.write('\nNEWFILE\nFILENAME: %s\n\n' % (os.path.basename(val))
                     
                     with open(val, 'rU') as f:
                         for line in f:
