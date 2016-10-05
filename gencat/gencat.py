@@ -94,7 +94,7 @@ class gencat(object):
         Places NEWFILE\nFILENAME: <original filename> before each new file in the concatenation.
         Stores all concatenated files to a .zip file in path_out.
         '''
-        inzippath = self.path_temp + os.path.join(self.zip_name, '')
+        inzippath = os.path.join(self.path_temp, self.zip_name, '')
         os.makedirs(inzippath)
         
         for key in self.dict_name.keys():
