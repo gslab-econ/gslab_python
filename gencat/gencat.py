@@ -103,7 +103,7 @@ class gencat(object):
             with open(CATFILE, 'ab') as catfile: 
                 
                 for val in self.dict_name[key]:
-                    catfile.write('\nNEWFILE\nFILENAME: %s\n\n' % (os.path.basename(val))
+                    catfile.write('\nNEWFILE\nFILENAME: %s\n\n' % (os.path.basename(val)))
                     
                     with open(val, 'rU') as f:
                         for line in f:
