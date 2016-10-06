@@ -5,7 +5,7 @@
 The gencat (General Concatenator) module defines an abstract class useful for preprocessing raw data containing a large number of text fils. The gencat class supplies methods to 
   *  Unzip all archives in a single directory
   *  Concatenate unzipped files in a subclass-specified order and rezip them in a single zip file 
-  *  Save a |-delimited text file mapping concatenated files back to original inputs
+  *  Save a |-delimited text file that maps concatenated files back to original inputs
 
 ## Inputs
 
