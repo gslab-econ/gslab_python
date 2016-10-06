@@ -8,4 +8,4 @@ setup(name             = 'GSLab_Gencat',
       author_email     = 'gentzkow@stanford.edu, jesse_shapiro_1@brown.edu',
       license          = 'MIT',
       packages         = find_packages(),
-      zip_safe         = False,
+      zip_safe         = False,)
