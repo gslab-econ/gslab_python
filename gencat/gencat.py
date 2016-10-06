@@ -3,6 +3,7 @@ from abc import ABCMeta, abstractmethod
 import os
 import shutil
 import zipfile
+import zlib
 
 class gencat(object):
     '''
@@ -33,8 +34,8 @@ class gencat(object):
         self.cleanDir(self.path_temp)
         self.cleanDir(self.path_out)
         self.unzipFiles()
-        self.makeMapDict()
-        self.writeMapDict()
+        self.makeDict()
+        self.writeDict()
         self.zipFiles()
         self.cleanDir(self.path_temp, new_dir = False)
     
@@ -55,14 +56,14 @@ class gencat(object):
         infilenames = os.listdir(self.path_in)
         
         for infilename in infilenames:
-            infile = self.path_in + infilename
+            infile = os.path.join(self.path_in, infilename)
         
             if zipfile.is_zipfile(infile):
                 with zipfile.ZipFile(infile, 'r') as zf:
                     zf.extractall(self.path_temp)
     
     @abstractmethod
-    def makeMapDict(self):
+    def makeDict(self):
         '''
         This method is subcalss specific because raw data may come in any format. 
         For any directory, write code to produce a dictionary where each key is the name of a file 
@@ -73,18 +74,21 @@ class gencat(object):
                         'the keys are intended filenames and the values are a tuple of files ' + 
                         'to be concatenated to the key.') 
     
-    def writeMapDict(self):
+    def writeDict(self):
         '''
         Write the dictionary to output as a |-delimited text file. The elements of each tuple are
         shortened to their filenames for writing only.
         '''
-        outfile_path = self.path_out + 'zipdict.txt'
+        outfile_path = os.path.join(self.path_out, 'zipdict.txt')
         with open(outfile_path, 'wb') as outfile:
+            
             for key in self.dict_name.keys():
                 outfile.write(key)
+                
                 for val in self.dict_name[key]:
-                    write = os.path.basename(val)
+                    write = os.path.relpath(val, self.path_temp)
                     outfile.write('|' + write)
+                
                 outfile.write('\n')
     
     def zipFiles(self):
@@ -92,15 +96,23 @@ class gencat(object):
         Concatenates all files in a dictionary values to a new file named for the corresponding key.
         Files are concatenated in the order in which they appear in the dictionary value. 
         Places NEWFILE\nFILENAME: <original filename> before each new file in the concatenation.
-        Stores all concatenated files to a .zip file in path_out.
+        Stores all concatenated files to a .zip file with ZIP64 compression in path_out.
         '''
-        inzippath = os.path.join(self.path_temp, self.zip_name, '')
-        os.makedirs(inzippath)
+        catdirpath = os.path.join(self.path_temp, self.zip_name, '')
+        os.makedirs(catdirpath)
+        
+        inzippath = os.path.join('..', self.zip_name, '')
+        self.cleanDir(inzippath)
+        
+        outzipname = self.zip_name + '.zip'
+        outzippath = os.path.join(self.path_out, outzipname)
+        zf = zipfile.ZipFile(outzippath, 'a', zipfile.ZIP_DEFLATED, True)
         
         for key in self.dict_name.keys():
             
-            CATFILE = inzippath + key + '.txt'
-            with open(CATFILE, 'ab') as catfile: 
+            catfilename = key + '.txt'
+            catfilepath = os.path.join(catdirpath, catfilename)
+            with open(catfilepath, 'ab') as catfile: 
                 
                 for val in self.dict_name[key]:
                     catfile.write('\nNEWFILE\nFILENAME: %s\n\n' % (os.path.basename(val)))
@@ -108,6 +120,10 @@ class gencat(object):
                     with open(val, 'rU') as f:
                         for line in f:
                             catfile.write(line)
+            
+            
+            inzipfile = os.path.join(inzippath, catfilename) 
+            shutil.copyfile(catfilepath, inzipfile)
+            zf.write(inzipfile)
         
-        outzippath = self.path_out + self.zip_name
-        shutil.make_archive(outzippath, 'zip', self.path_temp, self.zip_name)
+        self.cleanDir(inzippath, new_dir = False)
