@@ -65,7 +65,7 @@ class gencat(object):
     @abstractmethod
     def makeDict(self):
         '''
-        This method is subcalss specific because raw data may come in any format. 
+        This method is subclass specific because raw data may come in any format. 
         For any directory, write code to produce a dictionary where each key is the name of a file 
         to be created and each value is a tuple that contains paths to files to be concatenated. 
         Additional methods of the subclass can be defined to help construct the dictionary.
