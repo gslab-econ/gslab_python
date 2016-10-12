@@ -12,19 +12,17 @@ class gencat(object):
     '''
     __metaclass__ = ABCMeta
     
-    def __init__(self, path_in, path_temp, path_out, dict_name, zip_name):
+    def __init__(self, path_in, path_temp, path_out):
         '''
         path_in: path to raw data directory where data is in any number of .zip files.
         path_temp: path to temporary workspace. Workspace is created and destroyed by main method.
         path_out: path to output directory. 
         dict_name: name of dictionary to be produced.
-        zip_name: name of zip file to be produced. 
         '''  
         self.path_in = os.path.join(path_in, '')
         self.path_temp = os.path.join(path_temp, '')
         self.path_out = os.path.join(path_out, '')
         self.dict_name = {}
-        self.zip_name = zip_name
     
     def main(self):
         '''
@@ -91,6 +89,13 @@ class gencat(object):
                 
                 outfile.write('\n')
     
+    @abstractmethod
+    def getZipSubgroups(self):
+        '''
+        This method should return a dictionary where each key is a distinct zipfile and the 
+        values for the key are all concatenated files to be contained in the zipfile.
+        '''
+
     def zipFiles(self):
         '''
         Concatenates all files in a dictionary values to a new file named for the corresponding key.
@@ -98,32 +103,29 @@ class gencat(object):
         Places NEWFILE\nFILENAME: <original filename> before each new file in the concatenation.
         Stores all concatenated files to a .zip file with ZIP64 compression in path_out.
         '''
-        catdirpath = os.path.join(self.path_temp, self.zip_name, '')
-        os.makedirs(catdirpath)
-        
-        inzippath = os.path.join('..', self.zip_name, '')
-        self.cleanDir(inzippath)
-        
-        outzipname = self.zip_name + '.zip'
-        outzippath = os.path.join(self.path_out, outzipname)
-        zf = zipfile.ZipFile(outzippath, 'a', zipfile.ZIP_DEFLATED, True)
-        
-        for key in self.dict_name.keys():
+        subgroups = self.getZipSubgroups()
+        for z in subgroups.keys():
+            catdirpath = os.path.join(self.path_temp, z, '')
+            os.makedirs(catdirpath)
+            inzippath = os.path.join('..', z, '')
+            self.cleanDir(inzippath)
+
+            outzipname = z + '.zip'
+            outzippath = os.path.join(self.path_out, outzipname)
+            zf         = zipfile.ZipFile(outzippath, 'a', zipfile.ZIP_DEFLATED, True)
             
-            catfilename = key + '.txt'
-            catfilepath = os.path.join(catdirpath, catfilename)
-            with open(catfilepath, 'ab') as catfile: 
+            for key in subgroups[z]:
+                catfilename = key + '.txt'
+                catfilepath = os.path.join(catdirpath, catfilename)
+                with open(catfilepath, 'ab') as catfile: 
+                    for val in self.dict_name[key]:
+                        catfile.write('\nNEWFILE\nFILENAME: %s\n\n' % (os.path.basename(val)))
+                        with open(val, 'rU') as f:
+                            for line in f:
+                                catfile.write(line)
                 
-                for val in self.dict_name[key]:
-                    catfile.write('\nNEWFILE\nFILENAME: %s\n\n' % (os.path.basename(val)))
-                    
-                    with open(val, 'rU') as f:
-                        for line in f:
-                            catfile.write(line)
-            
-            
-            inzipfile = os.path.join(inzippath, catfilename) 
-            shutil.copyfile(catfilepath, inzipfile)
-            zf.write(inzipfile)
+                inzipfile = os.path.join(inzippath, catfilename) 
+                shutil.copyfile(catfilepath, inzipfile)
+                zf.write(inzipfile)
         
-        self.cleanDir(inzippath, new_dir = False)
+            self.cleanDir(inzippath, new_dir = False)
