@@ -33,7 +33,9 @@ class gencat(object):
         self.cleanDir(self.path_out)
         self.unzipFiles()
         self.makeDict()
-        self.writeDict()
+        self.getZipSubgroups()
+        self.writeDict(self.dict_name, 'concatDict.txt')
+        self.writeDict(self.subgroups, 'subgroupDict.txt')
         self.zipFiles()
         self.cleanDir(self.path_temp, new_dir = False)
     
@@ -68,22 +70,20 @@ class gencat(object):
         to be created and each value is a tuple that contains paths to files to be concatenated. 
         Additional methods of the subclass can be defined to help construct the dictionary.
         '''
-        raise Exception('Please write methods for the subclass that produce a dictionary where ' + 
-                        'the keys are intended filenames and the values are a tuple of files ' + 
-                        'to be concatenated to the key.') 
+        pass
     
-    def writeDict(self):
+    def writeDict(self, dict, name):
         '''
         Write the dictionary to output as a |-delimited text file. The elements of each tuple are
         shortened to their filenames for writing only.
         '''
-        outfile_path = os.path.join(self.path_out, 'zipdict.txt')
+        outfile_path = os.path.join(self.path_out, name)
         with open(outfile_path, 'wb') as outfile:
             
-            for key in self.dict_name.keys():
+            for key in dict.keys():
                 outfile.write(key)
                 
-                for val in self.dict_name[key]:
+                for val in dict[key]:
                     write = os.path.relpath(val, self.path_temp)
                     outfile.write('|' + write)
                 
@@ -92,9 +92,10 @@ class gencat(object):
     @abstractmethod
     def getZipSubgroups(self):
         '''
-        This method should return a dictionary where each key is a distinct zipfile and the 
+        This method should assign a dictionary to self.subgroups where each key is a distinct zipfile and the 
         values for the key are all concatenated files to be contained in the zipfile.
         '''
+        pass
 
     def zipFiles(self):
         '''
@@ -103,8 +104,7 @@ class gencat(object):
         Places NEWFILE\nFILENAME: <original filename> before each new file in the concatenation.
         Stores all concatenated files to a .zip file with ZIP64 compression in path_out.
         '''
-        subgroups = self.getZipSubgroups()
-        for z in subgroups.keys():
+        for z in self.subgroups.keys():
             catdirpath = os.path.join(self.path_temp, z, '')
             os.makedirs(catdirpath)
             inzippath = os.path.join('..', z, '')
@@ -114,7 +114,7 @@ class gencat(object):
             outzippath = os.path.join(self.path_out, outzipname)
             zf         = zipfile.ZipFile(outzippath, 'a', zipfile.ZIP_DEFLATED, True)
             
-            for key in subgroups[z]:
+            for key in self.subgroups[z]:
                 catfilename = key + '.txt'
                 catfilepath = os.path.join(catdirpath, catfilename)
                 with open(catfilepath, 'ab') as catfile: 
