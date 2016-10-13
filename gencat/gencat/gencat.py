@@ -17,7 +17,6 @@ class gencat(object):
         path_in: path to raw data directory where data is in any number of .zip files.
         path_temp: path to temporary workspace. Workspace is created and destroyed by main method.
         path_out: path to output directory. 
-        dict_name: name of dictionary to be produced.
         '''  
         self.path_in = os.path.join(path_in, '')
         self.path_temp = os.path.join(path_temp, '')
@@ -35,8 +34,8 @@ class gencat(object):
         self.unzipFiles()
         self.makeConcatDict()
         self.makeZipDict()
-        self.writeDict(self.concat_dict, 'concatDict.txt')
-        self.writeDict(self.zip_dict, 'zipDict.txt')
+        self.writeDict(self.concat_dict, 'concatDict.txt', self.path_temp)
+        self.writeDict(self.zip_dict, 'zipDict.txt', '.')
         self.zipFiles()
         self.cleanDir(self.path_temp, new_dir = False)
     
@@ -79,7 +78,7 @@ class gencat(object):
         '''
         pass
 
-    def writeDict(self, dict, name):
+    def writeDict(self, dict, name, rel_path):
         '''
         Write the dictionary to output as a |-delimited text file. The elements of each tuple are
         shortened to their filenames for writing only.
@@ -91,7 +90,7 @@ class gencat(object):
                 outfile.write(key)
                 
                 for val in dict[key]:
-                    write = os.path.relpath(val, self.path_temp)
+                    write = os.path.relpath(val, rel_path)
                     outfile.write('|' + write)
                 
                 outfile.write('\n')
@@ -105,23 +104,24 @@ class gencat(object):
         Places NEWFILE\nFILENAME: <original filename> before each new file in the concatenation.
         Stores all concatenated files to .zip file(s) with ZIP64 compression in path_out.
         '''
-        for z in self.zip_dict.keys():
-            catdirpath = os.path.join(self.path_temp, z, '')
+        for zip_key in self.zip_dict.keys():
+            catdirpath = os.path.join(self.path_temp, zip_key, '')
             os.makedirs(catdirpath)
-            inzippath = os.path.join('..', z, '')
+            inzippath = os.path.join('..', zip_key, '')
             self.cleanDir(inzippath)
 
-            outzipname = z + '.zip'
+            outzipname = zip_key + '.zip'
             outzippath = os.path.join(self.path_out, outzipname)
             zf         = zipfile.ZipFile(outzippath, 'a', zipfile.ZIP_DEFLATED, True)
             
-            for key in self.zip_dict[z]:
-                catfilename = key + '.txt'
+            for zip_val in self.zip_dict[zip_key]:
+                catfilename = zip_val + '.txt'
                 catfilepath = os.path.join(catdirpath, catfilename)
-                with open(catfilepath, 'ab') as catfile: 
-                    for val in self.concat_dict[key]:
-                        catfile.write('\nNEWFILE\nFILENAME: %s\n\n' % (os.path.basename(val)))
-                        with open(val, 'rU') as f:
+                with open(catfilepath, 'ab') as catfile:
+                    concat_key = zip_val 
+                    for concat_val in self.concat_dict[concat_key]:
+                        catfile.write('\nNEWFILE\nFILENAME: %s\n\n' % (os.path.basename(concat_val)))
+                        with open(concat_val, 'rU') as f:
                             for line in f:
                                 catfile.write(line)
                 
