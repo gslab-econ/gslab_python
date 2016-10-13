@@ -63,6 +63,14 @@ class gencat(object):
                     zf.extractall(self.path_temp)
     
     @abstractmethod
+    def makeZipDict(self):
+        '''
+        This method should assign a dictionary to self.zip_dict where each key is a distinct zipfile and the 
+        values for the key are all concatenated files to be contained in the zipfile.
+        '''
+        pass
+
+    @abstractmethod
     def makeConcatDict(self):
         '''
         This method should assign a dictionary to self.concat_dict where each key is a distinct concatenated  
@@ -70,13 +78,6 @@ class gencat(object):
         '''
         pass
     
-    @abstractmethod
-    def makeZipDict(self):
-        '''
-        This method should assign a dictionary to self.zip_dict where each key is a distinct zipfile and the 
-        values for the key are all concatenated files to be contained in the zipfile.
-        '''
-        pass
 
     def writeDict(self, dict, name, rel_path):
         '''
