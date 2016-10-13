@@ -17,7 +17,6 @@ class gencat(object):
         path_in: path to raw data directory where data is in any number of .zip files.
         path_temp: path to temporary workspace. Workspace is created and destroyed by main method.
         path_out: path to output directory. 
-        dict_name: name of dictionary to be produced.
         '''  
         self.path_in = os.path.join(path_in, '')
         self.path_temp = os.path.join(path_temp, '')
