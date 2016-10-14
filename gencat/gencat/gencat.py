@@ -12,19 +12,17 @@ class gencat(object):
     '''
     __metaclass__ = ABCMeta
     
-    def __init__(self, path_in, path_temp, path_out, dict_name, zip_name):
+    def __init__(self, path_in, path_temp, path_out):
         '''
         path_in: path to raw data directory where data is in any number of .zip files.
         path_temp: path to temporary workspace. Workspace is created and destroyed by main method.
         path_out: path to output directory. 
-        dict_name: name of dictionary to be produced.
-        zip_name: name of zip file to be produced. 
         '''  
         self.path_in = os.path.join(path_in, '')
         self.path_temp = os.path.join(path_temp, '')
         self.path_out = os.path.join(path_out, '')
-        self.dict_name = {}
-        self.zip_name = zip_name
+        self.concat_dict = {}
+        self.zip_dict = {}
     
     def main(self):
         '''
@@ -34,8 +32,10 @@ class gencat(object):
         self.cleanDir(self.path_temp)
         self.cleanDir(self.path_out)
         self.unzipFiles()
-        self.makeDict()
-        self.writeDict()
+        self.makeConcatDict()
+        self.makeZipDict()
+        self.writeDict(self.concat_dict, 'concatDict.txt', self.path_temp)
+        self.writeDict(self.zip_dict, 'zipDict.txt', '.')
         self.zipFiles()
         self.cleanDir(self.path_temp, new_dir = False)
     
@@ -63,67 +63,71 @@ class gencat(object):
                     zf.extractall(self.path_temp)
     
     @abstractmethod
-    def makeDict(self):
+    def makeZipDict(self):
         '''
-        This method is subclass specific because raw data may come in any format. 
-        For any directory, write code to produce a dictionary where each key is the name of a file 
-        to be created and each value is a tuple that contains paths to files to be concatenated. 
-        Additional methods of the subclass can be defined to help construct the dictionary.
+        This method should assign a dictionary to self.zip_dict where each key is a distinct zipfile and the 
+        values for the key are all concatenated files to be contained in the zipfile.
         '''
-        raise Exception('Please write methods for the subclass that produce a dictionary where ' + 
-                        'the keys are intended filenames and the values are a tuple of files ' + 
-                        'to be concatenated to the key.') 
+        pass
+
+    @abstractmethod
+    def makeConcatDict(self):
+        '''
+        This method should assign a dictionary to self.concat_dict where each key is a distinct concatenated  
+        filename and the values for the key are all raw files to be concatenated.
+        '''
+        pass
     
-    def writeDict(self):
+
+    def writeDict(self, dict, name, rel_path):
         '''
         Write the dictionary to output as a |-delimited text file. The elements of each tuple are
         shortened to their filenames for writing only.
         '''
-        outfile_path = os.path.join(self.path_out, 'zipdict.txt')
+        outfile_path = os.path.join(self.path_out, name)
         with open(outfile_path, 'wb') as outfile:
             
-            for key in self.dict_name.keys():
+            for key in dict.keys():
                 outfile.write(key)
                 
-                for val in self.dict_name[key]:
-                    write = os.path.relpath(val, self.path_temp)
+                for val in dict[key]:
+                    write = os.path.relpath(val, rel_path)
                     outfile.write('|' + write)
                 
                 outfile.write('\n')
     
+
+
     def zipFiles(self):
         '''
         Concatenates all files in a dictionary values to a new file named for the corresponding key.
         Files are concatenated in the order in which they appear in the dictionary value. 
         Places NEWFILE\nFILENAME: <original filename> before each new file in the concatenation.
-        Stores all concatenated files to a .zip file with ZIP64 compression in path_out.
+        Stores all concatenated files to .zip file(s) with ZIP64 compression in path_out.
         '''
-        catdirpath = os.path.join(self.path_temp, self.zip_name, '')
-        os.makedirs(catdirpath)
-        
-        inzippath = os.path.join('..', self.zip_name, '')
-        self.cleanDir(inzippath)
-        
-        outzipname = self.zip_name + '.zip'
-        outzippath = os.path.join(self.path_out, outzipname)
-        zf = zipfile.ZipFile(outzippath, 'a', zipfile.ZIP_DEFLATED, True)
-        
-        for key in self.dict_name.keys():
+        for zip_key in self.zip_dict.keys():
+            catdirpath = os.path.join(self.path_temp, zip_key, '')
+            os.makedirs(catdirpath)
+            inzippath = os.path.join('..', zip_key, '')
+            self.cleanDir(inzippath)
+
+            outzipname = zip_key + '.zip'
+            outzippath = os.path.join(self.path_out, outzipname)
+            zf         = zipfile.ZipFile(outzippath, 'a', zipfile.ZIP_DEFLATED, True)
             
-            catfilename = key + '.txt'
-            catfilepath = os.path.join(catdirpath, catfilename)
-            with open(catfilepath, 'ab') as catfile: 
+            for zip_val in self.zip_dict[zip_key]:
+                catfilename = zip_val + '.txt'
+                catfilepath = os.path.join(catdirpath, catfilename)
+                with open(catfilepath, 'ab') as catfile:
+                    concat_key = zip_val 
+                    for concat_val in self.concat_dict[concat_key]:
+                        catfile.write('\nNEWFILE\nFILENAME: %s\n\n' % (os.path.basename(concat_val)))
+                        with open(concat_val, 'rU') as f:
+                            for line in f:
+                                catfile.write(line)
                 
-                for val in self.dict_name[key]:
-                    catfile.write('\nNEWFILE\nFILENAME: %s\n\n' % (os.path.basename(val)))
-                    
-                    with open(val, 'rU') as f:
-                        for line in f:
-                            catfile.write(line)
-            
-            
-            inzipfile = os.path.join(inzippath, catfilename) 
-            shutil.copyfile(catfilepath, inzipfile)
-            zf.write(inzipfile)
+                inzipfile = os.path.join(inzippath, catfilename) 
+                shutil.copyfile(catfilepath, inzipfile)
+                zf.write(inzipfile)
         
-        self.cleanDir(inzippath, new_dir = False)
+            self.cleanDir(inzippath, new_dir = False)
