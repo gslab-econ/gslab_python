@@ -1,5 +1,8 @@
+test_bad_order (test_build_lyx.testbuild_lyx) ... ok
 test_default (test_build_lyx.testbuild_lyx) ... ok
+test_bad_order (test_build_python.testbuild_python) ... ok
 test_default (test_build_python.testbuild_python) ... ok
+test_bad_order (test_build_r.testbuild_r) ... ok
 test_default (test_build_r.testbuild_r) ... ok
 test_bad_order (test_build_stata.testbuild_stata) ... ok
 test_bad_user_executable (test_build_stata.testbuild_stata) ... /bin/sh: bad_user_executable: command not found
@@ -8,8 +11,10 @@ test_default (test_build_stata.testbuild_stata) ... ok
 test_user_executable (test_build_stata.testbuild_stata) ... ok
 
 ----------------------------------------------------------------------
-Ran 7 tests in 11.411s
+Ran 10 tests in 9.170s
 
 OK
+*** Error: First argument in `source`, bad, must be a .lyx file
+*** Error: First argument in `source`, bad, must be a .py file
+*** Error: First argument in `source`, bad, must be a .r file
 *** Error: First argument in `source`, bad, must be a .do file
-*** Error: Stata executable not found.

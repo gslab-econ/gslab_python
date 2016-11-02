@@ -107,7 +107,6 @@ def build_stata(target, source, env):
     try:
         subprocess.check_output(command % source_file, shell = True)
     except subprocess.CalledProcessError:
-        print('*** Error: Stata executable not found.')
         raise BadExecutableError()
 
     shutil.move(loc_log, log_file)
