@@ -4,6 +4,7 @@ from sys import platform
 from misc import *
 from log import log_timestamp
 from gslab_fill.tablefill import tablefill
+from exceptions import *
 
 def build_tables(target, source, env):
     tablefill(input    = ' '.join(env.GetBuildPath(env['INPUTS'])), 
@@ -106,7 +107,8 @@ def build_stata(target, source, env):
     try:
         subprocess.check_output(command % source_file, shell = True)
     except subprocess.CalledProcessError:
-        sys.exit('*** Error: Cannot find Stata executable.')
+        print('*** Error: Stata executable not found.')
+        raise BadExecutableError()
 
     shutil.move(loc_log, log_file)
     end_time = current_time()

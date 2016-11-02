@@ -1,6 +1,7 @@
 import os, sys, shutil, subprocess
 from datetime import datetime
 from sys import platform
+from exceptions import *
 
 def check_lfs():
     try:
@@ -59,11 +60,11 @@ def check_source_code_extension(source_file, software):
     ext = extensions[software]
     source_file = str.lower(source_file)
     if not source_file.endswith(ext):
-        try:
-            raise ValueError()
-        except ValueError:
-            sys.exit('*** Error: ' + 'First argument in `source`, ' + source_file + ', must be a ' + ext + ' file')    
+        print('*** Error: ' + 'First argument in `source`, ' + source_file + ', must be a ' + ext + ' file')    
+        raise BadSourceOrderError()
     return None
 
 def current_time():
-    return datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')    
+    return datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')   
+
+ 

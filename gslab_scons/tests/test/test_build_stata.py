@@ -1,9 +1,10 @@
 #! /usr/bin/env python
 
 import unittest, sys, os, shutil, contextlib
-sys.path.append('../..')
-from build import *
-from log import *
+sys.path.append('../../..')
+from gslab_scons.build import *
+from gslab_scons.log import *
+from gslab_scons.exceptions import *
 from gslab_make.get_externals import get_externals
 from nostderrout import nostderrout
 
@@ -30,24 +31,16 @@ class testbuild_stata(unittest.TestCase):
         if os.path.isfile('../build/sconscript.log'):
             os.remove('../build/sconscript.log')
 
-   # def test_bad_user_executable(self):
-   #     env = {'user_flavor':'bad_user_executable'}
-   #     with nostderrout():
-   #         build_stata('../build/stata.dta', './input/stata_test_script.do', env)
-   #     logfile_data = open('../build/sconscript.log', 'rU').read()
-   #     self.assertIn('Error: Cannot find Stata executable.', logfile_data)
-   #     if os.path.isfile('../build/sconscript.log'):
-   #         os.remove('../build/sconscript.log')
+    def test_bad_user_executable(self):
+        env = {'user_flavor':'bad_user_executable'}
+        with self.assertRaises(BadExecutableError):
+            build_stata('../build/stata.dta', './input/stata_test_script.do', env)
 
-    #def test_bad_order(self):
-    #    env = {'user_flavor':'bad_user_executable'}
-    #    with nostderrout():
-    #        build_stata('../build/stata.dta', ['bad', './input/stata_test_script.do'], env)
-    #    logfile_data = open('../build/sconscript.log', 'rU').read()
-    #    self.assertIn('Error: ' + 'First argument in', logfile_data)
-    #    if os.path.isfile('../build/sconscript.log'):
-    #        os.remove('../build/sconscript.log')
-    
+    def test_bad_order(self):
+        env = {'user_flavor':'bad_user_executable'}
+        with self.assertRaises(BadSourceOrderError):
+            build_stata('../build/stata.dta', ['bad', './input/stata_test_script.do'], env)
+
     def tearDown(self):
         if os.path.exists('../build/'):
             shutil.rmtree('../build/')
