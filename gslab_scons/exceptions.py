@@ -3,7 +3,7 @@ class BadExecutableError(Exception):
 	def __init__(self):
 		pass
 
-class BadSourceOrderError(Exception):
+class BadExtensionError(Exception):
 	def __init__(self):
 		pass
 

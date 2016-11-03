@@ -1,4 +1,4 @@
-import os, sys, shutil, subprocess
+import os, sys, shutil, subprocess, stat
 from datetime import datetime
 from sys import platform
 from exceptions import *
@@ -45,14 +45,14 @@ def is_in_path(program):
     return None
 
 def is_exe(file_path):
-    return os.path.isfile(file_path) and os.access(file_path, os.X_OK)
+    return os.path.isfile(file_path) and os.access(file_path, stat.S_IEXEC)
 
 def make_list_if_string(source):
     if isinstance(source, str):
         source = [source]
     return source
 
-def check_source_code_extension(source_file, software):
+def check_code_extension(source_file, software):
     extensions = {'stata'  : '.do',
                   'r'      : '.r', 
                   'lyx'    : '.lyx',
@@ -60,11 +60,10 @@ def check_source_code_extension(source_file, software):
     ext = extensions[software]
     source_file = str.lower(source_file)
     if not source_file.endswith(ext):
-        print('*** Error: ' + 'First argument in `source`, ' + source_file + ', must be a ' + ext + ' file')    
-        raise BadSourceOrderError()
+        print('*** Error: ' + 'First argument, ' + source_file + ', must be a ' + ext + ' file')    
+        raise BadExtensionError()
     return None
 
 def current_time():
     return datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')   
 
- 

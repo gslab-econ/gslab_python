@@ -6,7 +6,6 @@ from gslab_scons.build import *
 from gslab_scons.log import *
 from gslab_scons.exceptions import *
 from gslab_make.get_externals import get_externals
-from nostderrout import nostderrout
 
 class testbuild_lyx(unittest.TestCase):
 
@@ -22,14 +21,16 @@ class testbuild_lyx(unittest.TestCase):
         if os.path.isfile('../build/sconscript.log'):
             os.remove('../build/sconscript.log')
     
-    def test_bad_order(self):
+    def test_bad_extension(self):
         env = ''
-        with self.assertRaises(BadSourceOrderError):
+        with self.assertRaises(BadExtensionError):
             build_lyx('../build/lyx.pdf', ['bad', './input/lyx_test_file.lyx'], env)
    
     def tearDown(self):
         if os.path.exists('../build/'):
             shutil.rmtree('../build/')
+        if os.path.exists('output.txt'):
+            os.remove('output.txt')
                 
 if __name__ == '__main__':
     os.getcwd()

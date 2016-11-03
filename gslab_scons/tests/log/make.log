@@ -1,29 +1,44 @@
 
- make.py started: 2016-11-02 16:39:39 /Users/leviboxell/Desktop/gslab_python/gslab_scons/tests 
+ make.py started: 2016-11-03 13:46:26 /Users/leviboxell/Desktop/gslab_python/gslab_scons/tests 
 
 
 
 
 Execute:  python  "run_all_tests.py" 
-test_bad_order (test_build_lyx.testbuild_lyx) ... ok
+test_bad_extension (test_build_lyx.testbuild_lyx) ... ok
 test_default (test_build_lyx.testbuild_lyx) ... ok
-test_bad_order (test_build_python.testbuild_python) ... ok
+test_bad_extension (test_build_python.testbuild_python) ... ok
 test_default (test_build_python.testbuild_python) ... ok
-test_bad_order (test_build_r.testbuild_r) ... ok
+test_bad_extension (test_build_r.testbuild_r) ... ok
 test_default (test_build_r.testbuild_r) ... ok
-test_bad_order (test_build_stata.testbuild_stata) ... ok
+test_bad_extension (test_build_stata.testbuild_stata) ... ok
 test_bad_user_executable (test_build_stata.testbuild_stata) ... /bin/sh: bad_user_executable: command not found
 ok
 test_default (test_build_stata.testbuild_stata) ... ok
 test_user_executable (test_build_stata.testbuild_stata) ... ok
+test_target_extension (test_build_tables.test_build_tables) ... ok
+test_log_timestamp (test_log.test_log) ... ok
+test_start_log (test_log.test_log) ... ok
+test_check_code_extension (test_misc.test_misc) ... ok
+test_check_lfs (test_misc.test_misc) ... ok
+test_current_time (test_misc.test_misc) ... ok
+test_is_64_windows (test_misc.test_misc) ... ok
+test_is_exe (test_misc.test_misc) ... ok
+test_is_in_path (test_misc.test_misc) ... ok
+test_is_unix (test_misc.test_misc) ... ok
+test_make_list_if_string (test_misc.test_misc) ... ok
+test_stata_command_unix (test_misc.test_misc) ... ok
+test_stata_command_win (test_misc.test_misc) ... skipped 'skipped test_stata_command_win because on a unix machine'
 
 ----------------------------------------------------------------------
-Ran 10 tests in 9.170s
+Ran 23 tests in 28.000s
 
-OK
-*** Error: First argument in `source`, bad, must be a .lyx file
-*** Error: First argument in `source`, bad, must be a .py file
-*** Error: First argument in `source`, bad, must be a .r file
-*** Error: First argument in `source`, bad, must be a .do file
+OK (skipped=1)
+*** Error: First argument, bad, must be a .lyx file
+*** Error: First argument, bad, must be a .py file
+*** Error: First argument, bad, must be a .r file
+*** Error: First argument, bad, must be a .do file
+*** Error: First argument, ./input/tablefill_template_filled.bad, must be a .lyx file
+*** Error: First argument, test.badextension, must be a .py file
 
- make.py ended: 2016-11-02 16:39:48
+ make.py ended: 2016-11-03 13:46:54

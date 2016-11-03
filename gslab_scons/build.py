@@ -7,9 +7,12 @@ from gslab_fill.tablefill import tablefill
 from exceptions import *
 
 def build_tables(target, source, env):
-    tablefill(input    = ' '.join(env.GetBuildPath(env['INPUTS'])), 
-              template = env.GetBuildPath(source[0]), 
-              output   = env.GetBuildPath(target[0]))
+    source      = make_list_if_string(source)
+    target      = make_list_if_string(target)
+    check_code_extension(target[0], 'lyx')
+    tablefill(input    = ' '.join(source[1:len(source)]), 
+              template = source[0], 
+              output   = target[0])
     return None
 
 def build_lyx(target, source, env):
@@ -19,7 +22,7 @@ def build_lyx(target, source, env):
     source_file = str(source[0])
     target_file = str(target[0])
     target_dir  = os.path.dirname(target_file)
-    check_source_code_extension(source_file, 'lyx')
+    check_code_extension(source_file, 'lyx')
     newpdf      = source_file.replace('.lyx','.pdf')
     log_file    = target_dir + '/sconscript.log'
     
@@ -37,7 +40,7 @@ def build_r(target, source, env):
     source_file = str(source[0])
     target_file = str(target[0])
     target_dir  = os.path.dirname(target_file)
-    check_source_code_extension(source_file, 'r')
+    check_code_extension(source_file, 'r')
     log_file    = target_dir + '/sconscript.log'
 
     os.system('R CMD BATCH --no-save %s %s' % (source_file, log_file))
@@ -53,7 +56,7 @@ def build_python(target, source, env):
     source_file = str(source[0])
     target_file = str(target[0])
     target_dir  = os.path.dirname(target_file)
-    check_source_code_extension(source_file, 'python')
+    check_code_extension(source_file, 'python')
     log_file    = target_dir + '/sconscript.log'
 
     os.system('python %s > %s' % (source_file, log_file))
@@ -75,7 +78,7 @@ def build_stata(target, source, env):
     target_file  = str(target[0])
 
     target_dir   = os.path.dirname(target_file)
-    check_source_code_extension(source_file, 'stata')
+    check_code_extension(source_file, 'stata')
     log_file = target_dir + '/sconscript.log'
     loc_log  = os.path.basename(source_file).replace('.do','.log')
 

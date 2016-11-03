@@ -6,7 +6,6 @@ from gslab_scons.build import *
 from gslab_scons.log import *
 from gslab_scons.exceptions import *
 from gslab_make.get_externals import get_externals
-from nostderrout import nostderrout
 
 class testbuild_r(unittest.TestCase):
 
@@ -22,15 +21,17 @@ class testbuild_r(unittest.TestCase):
         if os.path.isfile('../build/sconscript.log'):
             os.remove('../build/sconscript.log')
 
-    def test_bad_order(self):
+    def test_bad_extension(self):
         env = ''
-        with self.assertRaises(BadSourceOrderError):
+        with self.assertRaises(BadExtensionError):
             build_r('../build/r.rds', ['bad', './input/R_test_script.R'], env)
 
     def tearDown(self):
         if os.path.exists('../build/'):
             shutil.rmtree('../build/')
-                
+        if os.path.exists('output.txt'):
+            os.remove('output.txt')
+
 if __name__ == '__main__':
     os.getcwd()
     unittest.main()

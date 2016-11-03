@@ -6,7 +6,6 @@ from gslab_scons.build import *
 from gslab_scons.log import *
 from gslab_scons.exceptions import *
 from gslab_make.get_externals import get_externals
-from nostderrout import nostderrout
 
 class testbuild_stata(unittest.TestCase):
 
@@ -36,15 +35,21 @@ class testbuild_stata(unittest.TestCase):
         with self.assertRaises(BadExecutableError):
             build_stata('../build/stata.dta', './input/stata_test_script.do', env)
 
-    def test_bad_order(self):
+    def test_bad_extension(self):
         env = {'user_flavor':'bad_user_executable'}
-        with self.assertRaises(BadSourceOrderError):
+        with self.assertRaises(BadExtensionError):
             build_stata('../build/stata.dta', ['bad', './input/stata_test_script.do'], env)
 
     def tearDown(self):
         if os.path.exists('../build/'):
             shutil.rmtree('../build/')
-                
+        if os.path.exists('../external/'):
+            shutil.rmtree('../external/')
+        if os.path.exists('get_externals.log'):
+            os.remove('get_externals.log')
+        if os.path.exists('output.txt'):
+            os.remove('output.txt')
+
 if __name__ == '__main__':
     os.getcwd()
     unittest.main()
