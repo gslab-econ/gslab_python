@@ -1,4 +1,4 @@
-import os, sys, shutil, subprocess, stat
+import os, sys, shutil, subprocess
 from datetime import datetime
 from sys import platform
 from exceptions import *
@@ -45,7 +45,7 @@ def is_in_path(program):
     return None
 
 def is_exe(file_path):
-    return os.path.isfile(file_path) and os.access(file_path, stat.S_IEXEC)
+    return os.path.isfile(file_path) and os.access(file_path, os.X_OK)
 
 def make_list_if_string(source):
     if isinstance(source, str):

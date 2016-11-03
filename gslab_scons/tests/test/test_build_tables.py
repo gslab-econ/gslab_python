@@ -10,7 +10,6 @@ from gslab_make.get_externals import get_externals
 class test_build_tables(unittest.TestCase):
 
     def setUp(self):
-        get_externals('./input/externals_stata_ado.txt', '../external/', '', quiet = True)
         if not os.path.exists('../build/'):
             os.mkdir('../build/')
 
