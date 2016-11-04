@@ -1,10 +1,12 @@
 #! /usr/bin/env python
 
-import unittest, sys, os, shutil, contextlib, re
+import unittest
+import sys
+import os
+import re
 sys.path.append('../../..')
 from gslab_scons.misc import *
 from sys import platform
-from gslab_make.get_externals import get_externals
 
 class test_misc(unittest.TestCase):
 
@@ -32,7 +34,7 @@ class test_misc(unittest.TestCase):
     	pass
 
     def test_is_in_path(self):
-    	self.assertEqual(is_in_path('jibberish_long_program_name_that_fails'), None)
+    	self.assertEqual(is_in_path('jabberwocky_long_program_name_that_fails'), None)
     	self.assertTrue(re.search('python', is_in_path('python')))
 
     def test_is_exe(self):

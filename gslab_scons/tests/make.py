@@ -2,7 +2,8 @@
 #****************************************************
 # GET LIBRARY - Do not modify this section
 #****************************************************
-import os, sys
+import os
+import sys
 sys.path.append('../../gslab_make') 
 from get_externals import *
 from make_log import *

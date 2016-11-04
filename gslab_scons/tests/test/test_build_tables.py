@@ -1,11 +1,12 @@
 #! /usr/bin/env python
 
-import unittest, sys, os, shutil, contextlib
+import unittest
+import sys
+import os
 sys.path.append('../../..')
 from gslab_scons.build import *
 from gslab_scons.log import *
 from gslab_scons.exceptions import *
-from gslab_make.get_externals import get_externals
 
 class test_build_tables(unittest.TestCase):
 

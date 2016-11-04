@@ -1,4 +1,7 @@
-import os, sys, shutil, subprocess
+import os
+import sys
+import shutil
+import subprocess
 from datetime import datetime
 from sys import platform
 from misc import *
@@ -110,7 +113,7 @@ def build_stata(target, source, env):
     try:
         subprocess.check_output(command % source_file, shell = True)
     except subprocess.CalledProcessError:
-        raise BadExecutableError()
+        raise BadExecutableError('Could not find executable.')
 
     shutil.move(loc_log, log_file)
     end_time = current_time()

@@ -1,4 +1,7 @@
-import os, sys, shutil, subprocess
+import os
+import sys
+import shutil
+import subprocess
 from datetime import datetime
 from sys import platform
 from misc import is_unix, check_lfs
@@ -6,9 +9,9 @@ from misc import is_unix, check_lfs
 def start_log(log = 'sconstruct.log'):
     check_lfs()
     if is_unix():
-        sys.stdout = os.popen('tee %s' % log, 'w')
+        sys.stdout = os.popen('tee %s' % log, 'wb')
     elif platform == 'win32':
-        sys.stdout = open(log, 'w')
+        sys.stdout = open(log, 'wb')
     sys.stderr = sys.stdout 
     return None
 

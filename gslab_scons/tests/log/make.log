@@ -1,5 +1,5 @@
 
- make.py started: 2016-11-03 13:55:24 /Users/leviboxell/Desktop/gslab_python/gslab_scons/tests 
+ make.py started: 2016-11-03 17:07:17 /Users/leviboxell/Desktop/gslab_python/gslab_scons/tests 
 
 
 
@@ -31,14 +31,15 @@ test_stata_command_unix (test_misc.test_misc) ... ok
 test_stata_command_win (test_misc.test_misc) ... skipped 'skipped test_stata_command_win because on a unix machine'
 
 ----------------------------------------------------------------------
-Ran 23 tests in 12.806s
+Ran 23 tests in 8.773s
 
 OK (skipped=1)
-*** Error: First argument, bad, must be a .lyx file
-*** Error: First argument, bad, must be a .py file
-*** Error: First argument, bad, must be a .r file
-*** Error: First argument, bad, must be a .do file
-*** Error: First argument, ./input/tablefill_template_filled.bad, must be a .lyx file
-*** Error: First argument, test.badextension, must be a .py file
+First argument, bad, must be a .lyx file
+First argument, bad, must be a .py file
+First argument, bad, must be a .r file
+First argument, bad, must be a .do file
+Could not find executable.
+First argument, ./input/tablefill_template_filled.bad, must be a .lyx file
+First argument, test.badextension, must be a .py file
 
- make.py ended: 2016-11-03 13:55:37
+ make.py ended: 2016-11-03 17:07:26

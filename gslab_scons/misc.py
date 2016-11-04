@@ -1,4 +1,7 @@
-import os, sys, shutil, subprocess
+import os
+import sys
+import shutil
+import subprocess
 from datetime import datetime
 from sys import platform
 from exceptions import *
@@ -10,7 +13,7 @@ def check_lfs():
         try:
             output = subprocess.check_output("git-lfs init", shell = True) # init is deprecated version of install
         except:
-            sys.exit('''ERROR: Either Git LFS is not installed or your Git LFS settings need to be updated. 
+            raise LFSError('''Either Git LFS is not installed or your Git LFS settings need to be updated. 
                   Please install Git LFS or run 'git lfs install --force' if prompted above.''')
 
 def stata_command_unix(flavor):
@@ -18,11 +21,11 @@ def stata_command_unix(flavor):
                'linux' : '-b',
                'linux2': '-b'}
     option  = options[platform]
-    command = flavor + ' ' + option + ' %s '
+    command = flavor + ' ' + option + ' %s ' # %s will take filename later
     return command
 
 def stata_command_win(flavor):
-    command  = flavor + ' /e do' + ' %s '
+    command  = flavor + ' /e do' + ' %s ' # %s will take filename later
     return command
 
 def is_unix():
@@ -60,8 +63,7 @@ def check_code_extension(source_file, software):
     ext = extensions[software]
     source_file = str.lower(source_file)
     if not source_file.endswith(ext):
-        print('*** Error: ' + 'First argument, ' + source_file + ', must be a ' + ext + ' file')    
-        raise BadExtensionError()
+        raise BadExtensionError('First argument, ' + source_file + ', must be a ' + ext + ' file')
     return None
 
 def current_time():

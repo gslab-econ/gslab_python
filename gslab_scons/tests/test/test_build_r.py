@@ -1,6 +1,9 @@
 #! /usr/bin/env python
 
-import unittest, sys, os, shutil, contextlib
+import unittest
+import sys
+import os
+import shutil
 sys.path.append('../../..')
 from gslab_scons.build import *
 from gslab_scons.log import *

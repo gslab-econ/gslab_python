@@ -1,7 +1,11 @@
-import requests, getpass, re, json, time
+import requests
+import getpass
+import re
+import json
+import time
 
-def release(env, vers, DriveReleaseFiles = '', local_release = '', org = 'gslab-econ', \
-            repo = 'template', target_commitish = 'master'):
+def release(env, vers, DriveReleaseFiles = '', local_release = '', org = '', \
+            repo = '', target_commitish = ''):
     token         = getpass.getpass("Enter github token and then press enter: ") 
     tag_name      = vers
     releases_path = 'https://%s:@api.github.com/repos/%s/%s/releases' % (token, org, repo)
@@ -48,7 +52,7 @@ def release(env, vers, DriveReleaseFiles = '', local_release = '', org = 'gslab-
         with open('gdrive_assets.txt', 'w') as f:
             f.write('\n'.join(['Google Drive:'] + DrivePath))
         upload_asset(token, org, repo, release_id, 'gdrive_assets.txt')
-        os.system('rm gdrive_assets.txt')
+        os.remove('gdrive_assets.txt')
 
 def upload_asset(token, org, repo, release_id, file_name, content_type = 'text/markdown'):
     session = requests.session()

@@ -4,7 +4,7 @@
 
 # Description:
 gslab_scons.py is a Python module containing general-purpose Scons builders for Lyx, 
-R, and Stata.
+R, python, and Stata.
 
 OS supported: Windows (`cmd`), Mac OS, Linux OS
 Prerequisite: scons 
