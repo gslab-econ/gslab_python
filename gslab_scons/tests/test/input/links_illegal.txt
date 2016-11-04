@@ -1,0 +1,14 @@
+# Missing columns
+./input	
+	./links_legal.txt
+
+# Illegal spacing/columns
+./new/new_links_legal.txt ./input/links_legal.txt
+
+# Non-existent folders/files
+./new/new_links_legal.txt	./fake_folder/links_legal.txt
+./new/new_links_legal.txt	./input/fake_file.txt
+
+# Illegal characters
+./new/new_links_legal.txt	./input::"?>\\;{]\}((&&^&/links_legal.txt
+./new/new_links_legal.txt	./input/links_legal::"?>\\;{]\}((&&^&.txt
