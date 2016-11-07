@@ -3,6 +3,7 @@ import getpass
 import re
 import json
 import time
+import os
 
 def release(env, vers, DriveReleaseFiles = '', local_release = '', org = '', \
             repo = '', target_commitish = ''):
