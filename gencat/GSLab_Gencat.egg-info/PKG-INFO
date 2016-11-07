@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: GSLab-Gencat
+Version: 0.0.2
+Summary: A class to unzip and concatenate, and rezip files.
+Home-page: https://github.com/gslab-econ/gslab_python/tree/issue13-subgroupzip/gencat
+Author: Matthew Gentzkow, Jesse Shapiro
+Author-email: gentzkow@stanford.edu, jesse_shapiro_1@brown.edu
+License: MIT
+Description: UNKNOWN
+Platform: UNKNOWN

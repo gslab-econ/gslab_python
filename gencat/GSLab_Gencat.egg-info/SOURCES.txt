@@ -1,0 +1,9 @@
+setup.cfg
+setup.py
+GSLab_Gencat.egg-info/PKG-INFO
+GSLab_Gencat.egg-info/SOURCES.txt
+GSLab_Gencat.egg-info/dependency_links.txt
+GSLab_Gencat.egg-info/not-zip-safe
+GSLab_Gencat.egg-info/top_level.txt
+gencat/__init__.py
+gencat/gencat.py
