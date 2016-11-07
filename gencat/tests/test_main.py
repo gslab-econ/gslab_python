@@ -15,7 +15,7 @@ class TestCat(gencat.gencat):
 class test_main(unittest.TestCase):
     
     def setUp(self):
-        paths = ['./test_data', './test_temp', './test_out']
+        paths = ['./test_data']
         for path in paths:
             try:
                 os.makedirs(path)
@@ -46,7 +46,7 @@ class test_main(unittest.TestCase):
 
 
     def tearDown(self):
-        paths = ['./test_data', './test_temp', './test_out']
+        paths = ['./test_data', './test_out']
         for path in paths:
             shutil.rmtree(path, ignore_errors = True)
 

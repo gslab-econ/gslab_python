@@ -13,6 +13,6 @@ test_twofile (test_zipFile.test_zipFiles) ... ok
 test_twozips (test_zipFile.test_zipFiles) ... ok
 
 ----------------------------------------------------------------------
-Ran 13 tests in 0.576s
+Ran 13 tests in 0.123s
 
 OK

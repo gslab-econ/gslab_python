@@ -1,14 +1,14 @@
 
- make.py started: 2016-11-07 15:46:57 /Users/leviboxell/Desktop/gslab_python/gencat/tests 
+ make.py started: 2016-11-07 15:48:06 /Users/leviboxell/Desktop/gslab_python/gencat/tests 
 
 
 
 
 List of all files in sub-directories in ./log/
 ./log/
-created/modified Mon Nov  7 15:46:12 2016
-                                          make.log --- created/modified Mon Nov  7 15:46:57 2016 ( 0 bytes )
-                                          test.log --- created/modified Mon Nov  7 15:46:12 2016 ( 545 bytes )
+created/modified Mon Nov  7 15:46:57 2016
+                                          make.log --- created/modified Mon Nov  7 15:48:06 2016 ( 0 bytes )
+                                          test.log --- created/modified Mon Nov  7 15:46:58 2016 ( 749 bytes )
 test_base (test_cleanDir.test_cleanDir) ... ok
 test_deep (test_cleanDir.test_cleanDir) ... ok
 test_nonew (test_cleanDir.test_cleanDir) ... ok
@@ -24,8 +24,8 @@ test_twofile (test_zipFile.test_zipFiles) ... ok
 test_twozips (test_zipFile.test_zipFiles) ... ok
 
 ----------------------------------------------------------------------
-Ran 13 tests in 0.576s
+Ran 13 tests in 0.123s
 
 OK
 
- make.py ended: 2016-11-07 15:46:58
+ make.py ended: 2016-11-07 15:48:06
