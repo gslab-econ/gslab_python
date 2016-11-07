@@ -6,9 +6,12 @@ test_afile (test_unzipFiles.test_unzipFiles) ... ok
 test_nofile (test_unzipFiles.test_unzipFiles) ... ok
 test_twofile (test_unzipFiles.test_unzipFiles) ... ok
 test_nofile (test_writeDict.test_writeDict) ... ok
-test_default (test_zipFile.test_zipFiles) ... ok
+test_onefile (test_zipFile.test_zipFiles) ... ok
+test_twoconcats_onezip (test_zipFile.test_zipFiles) ... ok
+test_twofile (test_zipFile.test_zipFiles) ... ok
+test_twozips (test_zipFile.test_zipFiles) ... ok
 
 ----------------------------------------------------------------------
-Ran 9 tests in 0.040s
+Ran 12 tests in 0.080s
 
 OK
