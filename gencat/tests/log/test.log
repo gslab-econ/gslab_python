@@ -5,8 +5,10 @@ test_strange (test_cleanDir.test_cleanDir) ... ok
 test_afile (test_unzipFiles.test_unzipFiles) ... ok
 test_nofile (test_unzipFiles.test_unzipFiles) ... ok
 test_twofile (test_unzipFiles.test_unzipFiles) ... ok
+test_nofile (test_writeDict.test_writeDict) ... ok
+test_default (test_zipFile.test_zipFiles) ... ok
 
 ----------------------------------------------------------------------
-Ran 7 tests in 0.006s
+Ran 9 tests in 0.040s
 
 OK
