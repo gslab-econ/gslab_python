@@ -30,7 +30,7 @@ class test_checkDicts(unittest.TestCase):
         
         testcat.checkDicts()
     
-    def test_notallTuple(self):
+    def test_notAllTuple(self):
         '''
         Test that TypeError is raised when dictionaries exist but do not have tuple-valued keys.
         '''
@@ -46,7 +46,7 @@ class test_checkDicts(unittest.TestCase):
         with self.assertRaises(TypeError):
             testcat.checkDicts()
 
-    def test_notallDicts(self):
+    def test_notAllDicts(self):
         '''
         Test that Exception is raised when a dictionary does not exist.
         '''

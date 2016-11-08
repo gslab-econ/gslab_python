@@ -97,9 +97,9 @@ class test_unzipFiles(unittest.TestCase):
             count = count + 1
         self.assertEqual(count, 2)
 
-    def test_twofile(self):
+    def test_twoFile(self):
         '''
-        Test that a single file in a single zip file is unzipped and that content is preserved.
+        Test that a single zip file containing two text files is unzipped and that content is preserved.
         '''
         # Set up
         files = ['test1', 'test2']
@@ -118,6 +118,51 @@ class test_unzipFiles(unittest.TestCase):
         testcat.unzipFiles()
         outzip = zipfile.ZipFile('test_temp/test_zip.zip')
         outzip.extractall('test_temp')
+
+        for f in files:
+            self.assertTrue(os.path.isfile('test_temp/test_data/%s_text.txt' % f))
+
+        # Test Content
+        for f in files:
+            with open('test_temp/test_data/%s_text.txt' % f, 'rU') as fi:
+                lines = fi.readlines()
+            
+            count = 0
+            for line in lines:
+                line = line.strip()
+                self.assertEqual(line, f)
+                count = count + 1
+            self.assertEqual(count, 2)
+
+    def test_twoZipFile(self):
+        '''
+        Test that two zip files containing one text file apiece are unzipped and that content is preserved.
+        '''
+        # Set up
+        files = ['test1', 'test2']
+        inzip1 = zipfile.ZipFile('test_temp/test1_zip.zip', 'w', zipfile.ZIP_DEFLATED, True)
+        inzip2 = zipfile.ZipFile('test_temp/test2_zip.zip', 'w', zipfile.ZIP_DEFLATED, True)
+        for f in files:
+            with open('test_data/%s_text.txt' % f, 'wb') as fi:
+                fi.write('%s\n%s' % (f, f))
+            if f == 'test1':
+                inzip1.write('test_data/%s_text.txt' % f)
+                inzip1.close()
+            elif f == 'test2':
+                inzip2.write('test_data/%s_text.txt' % f)
+                inzip2.close()
+
+        # Test Zipping
+        for zf in ['test1_zip.zip', 'test2_zip.zip']:
+            self.assertTrue(os.path.isfile('test_temp/%s' % zf))
+            self.assertTrue(zipfile.is_zipfile('test_temp/%s' % zf))
+
+        # Test Unzipping
+        testcat.unzipFiles()
+        outzip1 = zipfile.ZipFile('test_temp/test1_zip.zip')
+        outzip1.extractall('test_temp')
+        outzip2 = zipfile.ZipFile('test_temp/test2_zip.zip')
+        outzip2.extractall('test_temp')
 
         for f in files:
             self.assertTrue(os.path.isfile('test_temp/test_data/%s_text.txt' % f))

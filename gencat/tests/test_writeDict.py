@@ -26,7 +26,7 @@ class test_writeDict(unittest.TestCase):
                 shutil.rmtree(path, ignore_errors = True)
                 os.makedirs(path)
     
-    def test_onepath(self):
+    def test_onePath(self):
         '''
         Test that dictionary with one key paired to a single-element tuple value is printed as intended.
         '''
@@ -38,7 +38,7 @@ class test_writeDict(unittest.TestCase):
             lines = f.readline().strip()
         self.assertEqual(lines, 'path|file.txt')
     
-    def test_twoppath(self):
+    def test_twopPath(self):
         '''
         Test that dictionary with two keys paired to single-element tuple values is printed as intended.
         '''
@@ -53,7 +53,7 @@ class test_writeDict(unittest.TestCase):
         self.assertEqual(lines[0], 'path1|file1.txt')
         self.assertEqual(lines[1], 'path2|file2.txt')
 
-    def test_twofile(self):
+    def test_twoFile(self):
         '''
         Test that dictionary with one key paired to two-element tuple value is printed as intended.
         '''
@@ -65,7 +65,7 @@ class test_writeDict(unittest.TestCase):
             lines = f.readline().strip()
         self.assertEqual(lines, 'path|file1.txt|file2.txt')
     
-    def test_nopath(self):
+    def test_noPath(self):
         '''
         Test that printed path is not modified when rel_path flag is blank.
         '''

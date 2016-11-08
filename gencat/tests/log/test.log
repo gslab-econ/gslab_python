@@ -1,27 +1,29 @@
 test_default (test_checkDicts.test_checkDicts) ... ok
-test_notallDicts (test_checkDicts.test_checkDicts) ... ok
-test_notallTuple (test_checkDicts.test_checkDicts) ... ok
-test_cleandir (test_cleanDir.test_cleanDir) ... ok
-test_deeppath (test_cleanDir.test_cleanDir) ... ok
-test_makedir (test_cleanDir.test_cleanDir) ... ok
-test_nonew (test_cleanDir.test_cleanDir) ... ok
-test_strange (test_cleanDir.test_cleanDir) ... ok
+test_notAllDicts (test_checkDicts.test_checkDicts) ... ok
+test_notAllTuple (test_checkDicts.test_checkDicts) ... ok
+test_cleanDir (test_cleanDir.test_cleanDir) ... ok
+test_makeDir (test_cleanDir.test_cleanDir) ... ok
+test_noNew (test_cleanDir.test_cleanDir) ... ok
+test_recursiveClear (test_cleanDir.test_cleanDir) ... ok
+test_recursiveMake (test_cleanDir.test_cleanDir) ... ok
+test_strangeFlag (test_cleanDir.test_cleanDir) ... ok
 test_default (test_main.test_main) ... ok
 test_aZipFile (test_unzipFiles.test_unzipFiles) ... ok
 test_blankZipFile (test_unzipFiles.test_unzipFiles) ... ok
 test_noFile (test_unzipFiles.test_unzipFiles) ... ok
 test_noZipFile (test_unzipFiles.test_unzipFiles) ... ok
-test_twofile (test_unzipFiles.test_unzipFiles) ... ok
-test_nopath (test_writeDict.test_writeDict) ... ok
-test_onepath (test_writeDict.test_writeDict) ... ok
-test_twofile (test_writeDict.test_writeDict) ... ok
-test_twoppath (test_writeDict.test_writeDict) ... ok
-test_onefile (test_zipFile.test_zipFiles) ... ok
-test_twoconcats_onezip (test_zipFile.test_zipFiles) ... ok
-test_twofile (test_zipFile.test_zipFiles) ... ok
-test_twozips (test_zipFile.test_zipFiles) ... ok
+test_twoFile (test_unzipFiles.test_unzipFiles) ... ok
+test_twoZipFile (test_unzipFiles.test_unzipFiles) ... ok
+test_noPath (test_writeDict.test_writeDict) ... ok
+test_onePath (test_writeDict.test_writeDict) ... ok
+test_twoFile (test_writeDict.test_writeDict) ... ok
+test_twopPath (test_writeDict.test_writeDict) ... ok
+test_oneFile (test_zipFile.test_zipFiles) ... ok
+test_twoConcatsOneZip (test_zipFile.test_zipFiles) ... ok
+test_twoFile (test_zipFile.test_zipFiles) ... ok
+test_twoZips (test_zipFile.test_zipFiles) ... ok
 
 ----------------------------------------------------------------------
-Ran 22 tests in 0.020s
+Ran 24 tests in 0.025s
 
 OK

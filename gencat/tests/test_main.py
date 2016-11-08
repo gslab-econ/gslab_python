@@ -26,9 +26,11 @@ class test_main(unittest.TestCase):
             except:
                 shutil.rmtree(path, ignore_errors = True)
                 os.makedirs(path)
+        count = 1
         for FILE in ['./test_data/file1.txt', './test_data/file2.txt']:
             with open(FILE, 'wb') as f:
-                f.write('''THIS IS A TEST FILE.\n''')
+                f.write('THIS IS TEST FILE %s.\n' % (count))
+            count = count + 1
 
     def test_default(self):
         '''
@@ -49,8 +51,8 @@ class test_main(unittest.TestCase):
         with open('./test_out/zip1/concat1.txt', 'rU') as f:
             text = f.read()
 
-        test_text = '\nNEWFILE\nFILENAME: file1.txt\n\nTHIS IS A TEST FILE.' + \
-                    '\n\nNEWFILE\nFILENAME: file2.txt\n\nTHIS IS A TEST FILE.\n'
+        test_text = '\nNEWFILE\nFILENAME: file1.txt\n\nTHIS IS TEST FILE 1.' + \
+                    '\n\nNEWFILE\nFILENAME: file2.txt\n\nTHIS IS TEST FILE 2.\n'
         self.assertEqual(text, test_text)
 
     def tearDown(self):
