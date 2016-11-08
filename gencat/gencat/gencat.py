@@ -65,16 +65,6 @@ class gencat(object):
                 with zipfile.ZipFile(infile, 'r') as zf:
                     zf.extractall(self.path_temp)
     
-    
-    @abstractmethod
-    def makeZipDict(self):
-        '''
-        This method should assign a dictionary to self.zip_dict where each key is a distinct zipfile and the 
-        values for the key are all concatenated files to be contained in the zipfile.
-        '''
-        pass
-    
-    
     @abstractmethod
     def makeConcatDict(self):
         '''
@@ -83,7 +73,14 @@ class gencat(object):
         '''
         pass
     
-    
+    @abstractmethod
+    def makeZipDict(self):
+        '''
+        This method should assign a dictionary to self.zip_dict where each key is a distinct zipfile and the 
+        values for the key are all concatenated files to be contained in the zipfile.
+        '''
+        pass
+        
     def tupleVals(self):
         '''
         Raises an exception if ZipDict or ConcatDict has non-tuple values.
