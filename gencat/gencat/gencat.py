@@ -7,7 +7,7 @@ import zlib
 
 class gencat(object):
     '''
-    The gencat (General Concatenation) is an abstract class that concatenates files stored in a .zip 
+    gencat (General Concatenation) is an abstract class that concatenates files stored in a .zip 
     file in a user-specified structure and stores the new files in a .zip file. 
     '''
     __metaclass__ = ABCMeta
