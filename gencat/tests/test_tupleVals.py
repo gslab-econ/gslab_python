@@ -4,7 +4,7 @@ import shutil
 import zipfile
 from gencat import gencat
 
-class test_tupleKeys(unittest.TestCase): 
+class test_tupleVals(unittest.TestCase): 
     
     def setUp(self):
         paths = ['./test_data', './test_temp', './test_out']
@@ -25,7 +25,7 @@ class test_tupleKeys(unittest.TestCase):
         testcat.makeConcatDict()
         testcat.makeZipDict()
         
-        testcat.tupleKeys()
+        testcat.tupleVals()
     
     def test_notallTuple(self):
         class TestCat(gencat.gencat):
@@ -38,7 +38,7 @@ class test_tupleKeys(unittest.TestCase):
         testcat.makeZipDict()
         
         with self.assertRaises(TypeError):
-            testcat.tupleKeys()
+            testcat.tupleVals()
     
     def tearDown(self):
         paths = ['./test_data', './test_temp', './test_out']

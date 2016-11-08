@@ -35,7 +35,7 @@ class gencat(object):
         self.unzipFiles()
         self.makeConcatDict()
         self.makeZipDict()
-        self.tupleKeys()
+        self.tupleVals()
         self.writeDict(self.concat_dict, 'concatDict.txt', self.path_temp)
         self.writeDict(self.zip_dict, 'zipDict.txt', '.')
         self.zipFiles()
@@ -84,7 +84,7 @@ class gencat(object):
         pass
     
     
-    def tupleKeys(self):
+    def tupleVals(self):
         '''
         Raises an exception if ZipDict or ConcatDict has non-tuple values.
         '''

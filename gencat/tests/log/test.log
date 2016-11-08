@@ -3,8 +3,8 @@ test_deeppath (test_cleanDir.test_cleanDir) ... ok
 test_nonew (test_cleanDir.test_cleanDir) ... ok
 test_strange (test_cleanDir.test_cleanDir) ... ok
 test_default (test_main.test_main) ... ok
-test_allTuple (test_TupleKeys.test_tupleKeys) ... ok
-test_notallTuple (test_TupleKeys.test_tupleKeys) ... ok
+test_allTuple (test_tupleVals.test_tupleVals) ... ok
+test_notallTuple (test_tupleVals.test_tupleVals) ... ok
 test_afile (test_unzipFiles.test_unzipFiles) ... ok
 test_nofile (test_unzipFiles.test_unzipFiles) ... ok
 test_twofile (test_unzipFiles.test_unzipFiles) ... ok
@@ -18,6 +18,6 @@ test_twofile (test_zipFile.test_zipFiles) ... ok
 test_twozips (test_zipFile.test_zipFiles) ... ok
 
 ----------------------------------------------------------------------
-Ran 18 tests in 0.032s
+Ran 18 tests in 0.022s
 
 OK
