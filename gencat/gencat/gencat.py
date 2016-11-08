@@ -35,7 +35,7 @@ class gencat(object):
         self.unzipFiles()
         self.makeConcatDict()
         self.makeZipDict()
-        self.tupleVals()
+        self.checkDicts()
         self.writeDict(self.concat_dict, 'concatDict.txt', self.path_temp)
         self.writeDict(self.zip_dict, 'zipDict.txt', '.')
         self.zipFiles()
@@ -81,15 +81,17 @@ class gencat(object):
         '''
         pass
         
-    def tupleVals(self):
+    def checkDicts(self):
         '''
-        Raises an exception if ZipDict or ConcatDict has non-tuple values.
+        Raises an exception if ZipDict or ConcatDict is empty or has non-tuple values.
         '''
-
         for d in [self.concat_dict, self.zip_dict]:
-            for key in d:
-                if not type(d[key]) is tuple:
-                    raise TypeError('All keys in %s must be tuples. Check key %s key, and try again.')
+            if not d:
+                raise Exception('THe dictionary %s must be non-empty' % (d))
+            else:
+                for key in d:
+                    if not type(d[key]) is tuple:
+                        raise TypeError('All keys in dictionary %s must be tuples. Check key %s, and try again.' % (d, key))
     
     
     def writeDict(self, dict, name, rel_path):
@@ -100,7 +102,7 @@ class gencat(object):
         outfile_path = os.path.join(self.path_out, name)
         with open(outfile_path, 'wb') as outfile:
             
-            for key in dict.keys():
+            for key in sorted(dict.keys()):
                 outfile.write(key)
                 
                 for val in dict[key]:
