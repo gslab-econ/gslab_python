@@ -37,6 +37,7 @@ class test_zipFiles(unittest.TestCase):
 
         self.assertTrue(os.path.isfile('./test_out/zip1.zip'))
         self.assertTrue(zipfile.is_zipfile('./test_out/zip1.zip'))
+        
         with zipfile.ZipFile('./test_out/zip1.zip', 'r') as zf:
             zf.extractall('./test_out/')
 
@@ -58,6 +59,7 @@ class test_zipFiles(unittest.TestCase):
 
         self.assertTrue(os.path.isfile('./test_out/zip1.zip'))
         self.assertTrue(zipfile.is_zipfile('./test_out/zip1.zip'))
+        
         with zipfile.ZipFile('./test_out/zip1.zip', 'r') as zf:
             zf.extractall('./test_out/')
 
@@ -81,6 +83,7 @@ class test_zipFiles(unittest.TestCase):
         self.assertTrue(os.path.isfile('./test_out/zip2.zip'))
         self.assertTrue(zipfile.is_zipfile('./test_out/zip1.zip'))
         self.assertTrue(zipfile.is_zipfile('./test_out/zip2.zip'))
+        
         with zipfile.ZipFile('./test_out/zip1.zip', 'r') as zf:
             zf.extractall('./test_out/')
         with zipfile.ZipFile('./test_out/zip2.zip', 'r') as zf:
@@ -106,6 +109,7 @@ class test_zipFiles(unittest.TestCase):
 
         self.assertTrue(os.path.isfile('./test_out/zip1.zip'))
         self.assertTrue(zipfile.is_zipfile('./test_out/zip1.zip'))
+        
         with zipfile.ZipFile('./test_out/zip1.zip', 'r') as zf:
             zf.extractall('./test_out/')
 
@@ -122,6 +126,6 @@ class test_zipFiles(unittest.TestCase):
         for path in paths:
             shutil.rmtree(path, ignore_errors = True)
 
+
 if __name__ == '__main__':
     unittest.main()
-

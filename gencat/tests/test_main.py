@@ -4,13 +4,17 @@ import shutil
 import zipfile
 from gencat import gencat
 
+
 class TestCat(gencat.gencat):
+
     def makeZipDict(self):
         self.zip_dict = {} 
         self.zip_dict['zip1'] = ('concat1', )
+
     def makeConcatDict(self):
         self.concat_dict = {}
         self.concat_dict['concat1'] = ('./test_data/file1.txt', ) + ('./test_data/file2.txt', )
+
 
 class test_main(unittest.TestCase):
     
@@ -25,7 +29,6 @@ class test_main(unittest.TestCase):
         for FILE in ['./test_data/file1.txt', './test_data/file2.txt']:
             with open(FILE, 'wb') as f:
                 f.write('''THIS IS A TEST FILE.\n''')
-
 
     def test_default(self):
         testcat = TestCat('./test_data', './test_temp', './test_out')
@@ -46,11 +49,11 @@ class test_main(unittest.TestCase):
                     '\n\nNEWFILE\nFILENAME: file2.txt\n\nTHIS IS A TEST FILE.\n'
         self.assertEqual(text, test_text)
 
-
     def tearDown(self):
         paths = ['./test_data', './test_out']
         for path in paths:
             shutil.rmtree(path, ignore_errors = True)
+
 
 if __name__ == '__main__':
     unittest.main()

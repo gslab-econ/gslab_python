@@ -4,12 +4,16 @@ import shutil
 import zipfile
 from gencat import gencat
 
+
 class TestCat(gencat.gencat):
     def makeZipDict(self):
         pass
     def makeConcatDict(self):
         pass
+
+
 testcat = TestCat('./test_data', './test_temp', './out_temp')
+
 
 class test_unzipFiles(unittest.TestCase):
 
@@ -28,7 +32,7 @@ class test_unzipFiles(unittest.TestCase):
         self.assertEqual(l, [])
 
     def test_afile(self):
-        #Set up
+        # Set up
         inzip = zipfile.ZipFile('test_temp/test_zip.zip', 'w', zipfile.ZIP_DEFLATED, True)
         with open('test_data/test_text.txt', 'wb') as f:
             f.write('test\ntest')
@@ -58,7 +62,7 @@ class test_unzipFiles(unittest.TestCase):
 
     def test_twofile(self):
 
-        #Set up
+        # Set up
         files = ['test1', 'test2']
         inzip = zipfile.ZipFile('test_temp/test_zip.zip', 'w', zipfile.ZIP_DEFLATED, True)
         for f in files:
@@ -96,6 +100,6 @@ class test_unzipFiles(unittest.TestCase):
         for path in paths:
             shutil.rmtree(path, ignore_errors = True)
 
+
 if __name__ == '__main__':
     unittest.main()
-
