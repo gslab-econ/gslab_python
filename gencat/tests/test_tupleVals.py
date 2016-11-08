@@ -44,6 +44,7 @@ class test_tupleVals(unittest.TestCase):
         paths = ['./test_data', './test_temp', './test_out']
         for path in paths:
             shutil.rmtree(path, ignore_errors = True)
+    
 
 if __name__ == '__main__':
     unittest.main()
