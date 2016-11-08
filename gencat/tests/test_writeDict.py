@@ -4,12 +4,16 @@ import shutil
 import zipfile
 from gencat import gencat
 
+
 class TestCat(gencat.gencat):
     def makeZipDict(self):
         pass
     def makeConcatDict(self):
         pass
+
+
 testcat = TestCat('./test_data', './test_temp', './test_out')
+
 
 class test_writeDict(unittest.TestCase):
     
@@ -65,6 +69,7 @@ class test_writeDict(unittest.TestCase):
         paths = ['./test_data', './test_temp', './test_out']
         for path in paths:
             shutil.rmtree(path, ignore_errors = True)
+
 
 if __name__ == '__main__':
     unittest.main()
