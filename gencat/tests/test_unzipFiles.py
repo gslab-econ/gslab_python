@@ -32,7 +32,7 @@ class test_unzipFiles(unittest.TestCase):
         self.assertEqual(l, [])
 
     def test_afile(self):
-        #Set up
+        # Set up
         inzip = zipfile.ZipFile('test_temp/test_zip.zip', 'w', zipfile.ZIP_DEFLATED, True)
         with open('test_data/test_text.txt', 'wb') as f:
             f.write('test\ntest')
@@ -62,7 +62,7 @@ class test_unzipFiles(unittest.TestCase):
 
     def test_twofile(self):
 
-        #Set up
+        # Set up
         files = ['test1', 'test2']
         inzip = zipfile.ZipFile('test_temp/test_zip.zip', 'w', zipfile.ZIP_DEFLATED, True)
         for f in files:
