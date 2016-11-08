@@ -4,7 +4,7 @@ import shutil
 import zipfile
 from gencat import gencat
 
-class test_tupleVals(unittest.TestCase): 
+class test_checkDicts(unittest.TestCase): 
     
     def setUp(self):
         paths = ['./test_data', './test_temp', './test_out']
@@ -15,19 +15,25 @@ class test_tupleVals(unittest.TestCase):
                 shutil.rmtree(path, ignore_errors = True)
                 os.makedirs(path)
     
-    def test_allTuple(self):
+    def test_default(self):
+        '''
+        Test that no exception is raised when dictionaries exist and all keys are tuples.
+        '''
         class TestCat(gencat.gencat):
             def makeZipDict(self):
                 self.zip_dict = {'a': ('tuple1', )}
             def makeConcatDict(self):
-                self.concat_dict = {'b': ('tuple1', )}
+                self.concat_dict = {'b': ('tuple2', )}
         testcat = TestCat('./test_data', './test_temp', './test_out')
         testcat.makeConcatDict()
         testcat.makeZipDict()
         
-        testcat.tupleVals()
+        testcat.checkDicts()
     
     def test_notallTuple(self):
+        '''
+        Test that TypeError is raised when dictionaries exist but do not have tuple-valued keys.
+        '''
         class TestCat(gencat.gencat):
             def makeZipDict(self):
                 self.zip_dict = {'a': 'not_a_tuple_tuple1'}
@@ -38,7 +44,23 @@ class test_tupleVals(unittest.TestCase):
         testcat.makeZipDict()
         
         with self.assertRaises(TypeError):
-            testcat.tupleVals()
+            testcat.checkDicts()
+
+    def test_notallDicts(self):
+        '''
+        Test that Exception is raised when a dictionary does not exist.
+        '''
+        class TestCat(gencat.gencat):
+            def makeZipDict(self):
+                self.zip_dict = {}
+            def makeConcatDict(self):
+                self.concat_dict = {'b', ('tuple2', )}
+        testcat = TestCat('./test_data', './test_temp', './test_out')
+        testcat.makeConcatDict()
+        testcat.makeZipDict()
+        
+        with self.assertRaises(Exception):
+            testcat.checkDicts()
     
     def tearDown(self):
         paths = ['./test_data', './test_temp', './test_out']

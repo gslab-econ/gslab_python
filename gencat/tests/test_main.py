@@ -31,6 +31,10 @@ class test_main(unittest.TestCase):
                 f.write('''THIS IS A TEST FILE.\n''')
 
     def test_default(self):
+        '''
+        Test that the lines in main run in the intended order and produce predictable output 
+        when given simple input. 
+        '''
         testcat = TestCat('./test_data', './test_temp', './test_out')
         testcat.main()
         

@@ -26,12 +26,49 @@ class test_unzipFiles(unittest.TestCase):
                 shutil.rmtree(path, ignore_errors = True)
                 os.makedirs(path)
 
-    def test_nofile(self):
+    def test_noFile(self):
+        '''
+        Test that an empty list is returned when there is no file in the input directory.
+        '''
         testcat.unzipFiles()
         l = os.listdir('./test_out')
         self.assertEqual(l, [])
 
-    def test_afile(self):
+    def test_noZipFile(self):
+        '''
+        Test that an empty list is returned when there is no zip file in the input directory.
+        '''
+        with open('./test_data/test.txt', 'wb') as f:
+            f.write('test')
+
+        testcat.unzipFiles()
+        l = os.listdir('./test_out')
+        self.assertEqual(l, [])
+    
+    def test_blankZipFile(self):
+        '''
+        Test that nothing is returned by a zip file without content.
+        '''
+        # Set up
+        inzip = zipfile.ZipFile('test_temp/test_zip.zip', 'w', zipfile.ZIP_DEFLATED, True)
+        inzip.close()
+
+        # Test Zipping
+        self.assertTrue(os.path.isfile('test_temp/test_zip.zip'))
+        self.assertTrue(zipfile.is_zipfile('test_temp/test_zip.zip'))
+
+        # Test Unzipping
+        testcat.unzipFiles()
+        outzip = zipfile.ZipFile('test_temp/test_zip.zip')
+        outzip.extractall('test_temp')
+        
+        # Test Content
+        self.assertEqual(os.listdir('test_temp/'), ['test_zip.zip'])
+
+    def test_aZipFile(self):
+        '''
+        Test that a single file in a single zip file is unzipped and that content is preserved.
+        '''
         # Set up
         inzip = zipfile.ZipFile('test_temp/test_zip.zip', 'w', zipfile.ZIP_DEFLATED, True)
         with open('test_data/test_text.txt', 'wb') as f:
@@ -61,7 +98,9 @@ class test_unzipFiles(unittest.TestCase):
         self.assertEqual(count, 2)
 
     def test_twofile(self):
-
+        '''
+        Test that a single file in a single zip file is unzipped and that content is preserved.
+        '''
         # Set up
         files = ['test1', 'test2']
         inzip = zipfile.ZipFile('test_temp/test_zip.zip', 'w', zipfile.ZIP_DEFLATED, True)

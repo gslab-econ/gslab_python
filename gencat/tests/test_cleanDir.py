@@ -28,7 +28,7 @@ class test_cleanDir(unittest.TestCase):
 
     def test_cleandir(self):
         '''
-        Test that files in directory are cleared
+        Test that files in directory are cleared.
         '''
         with open('test_data/test_file', 'wb') as f:
             f.write('test')
@@ -48,21 +48,21 @@ class test_cleanDir(unittest.TestCase):
     
     def test_strange(self):
         '''
-        Test that new_dir flag does not affect output unless False is entered
+        Test that new_dir flag does not affect output unless False is entered.
         '''
         testcat.cleanDir('./test', new_dir = 'gibberish1!')
         self.assertTrue(os.path.isdir('./test'))
     
     def test_nonew(self):
         '''
-        Test that a new directory is not created if the new_dir flag is False
+        Test that a new directory is not created if the new_dir flag is False.
         '''
         testcat.cleanDir('./test', new_dir = False)
         self.assertFalse(os.path.isdir('./test'))
     
     def test_deeppath(self):
         '''
-        Test that the cleanDir method functions on subdirectories
+        Test that the cleanDir method functions on subdirectories.
         '''
         testcat.cleanDir('./a/deep/test/dir')
         self.assertTrue(os.path.isdir('./a/deep/test/dir'))

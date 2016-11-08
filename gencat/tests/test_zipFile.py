@@ -27,6 +27,9 @@ class test_zipFiles(unittest.TestCase):
 
 
     def test_twofile(self):
+        '''
+        Test that two text files are concatenated into one without loss of content.
+        '''
         testcat = TestCat('./test_data', './test_temp', './test_out')
         testcat.zip_dict = {} 
         testcat.zip_dict['zip1'] = ('concat1', )
@@ -34,7 +37,7 @@ class test_zipFiles(unittest.TestCase):
         testcat.concat_dict['concat1'] = ('./test_data/file1.txt', ) + ('./test_data/file2.txt', )
         
         testcat.zipFiles()
-
+        
         self.assertTrue(os.path.isfile('./test_out/zip1.zip'))
         self.assertTrue(zipfile.is_zipfile('./test_out/zip1.zip'))
         
@@ -47,8 +50,11 @@ class test_zipFiles(unittest.TestCase):
         test_text = '\nNEWFILE\nFILENAME: file1.txt\n\nTHIS IS A TEST FILE.' + \
                     '\n\nNEWFILE\nFILENAME: file2.txt\n\nTHIS IS A TEST FILE.\n'
         self.assertEqual(text, test_text)
-
+    
     def test_onefile(self):
+        '''
+        Test that contentation functions for a single file.
+        '''
         testcat = TestCat('./test_data', './test_temp', './test_out')
         testcat.zip_dict = {} 
         testcat.zip_dict['zip1'] = ('concat1', )
@@ -56,19 +62,22 @@ class test_zipFiles(unittest.TestCase):
         testcat.concat_dict['concat1'] = ('./test_data/file1.txt', )
         
         testcat.zipFiles()
-
+        
         self.assertTrue(os.path.isfile('./test_out/zip1.zip'))
         self.assertTrue(zipfile.is_zipfile('./test_out/zip1.zip'))
         
         with zipfile.ZipFile('./test_out/zip1.zip', 'r') as zf:
             zf.extractall('./test_out/')
-
+        
         with open('./test_out/zip1/concat1.txt', 'rU') as f:
             text = f.read()
-
+        
         self.assertEqual(text, '\nNEWFILE\nFILENAME: file1.txt\n\nTHIS IS A TEST FILE.\n')
-
+    
     def test_twozips(self):
+        '''
+        Test that two files can be concatenated to different text files and stored in separate zip files.
+        ''' 
         testcat = TestCat('./test_data', './test_temp', './test_out')
         testcat.zip_dict = {} 
         testcat.zip_dict['zip1'] = ('concat1', )
@@ -78,7 +87,7 @@ class test_zipFiles(unittest.TestCase):
         testcat.concat_dict['concat2'] = ('./test_data/file2.txt', )
         
         testcat.zipFiles()
-
+        
         self.assertTrue(os.path.isfile('./test_out/zip1.zip'))
         self.assertTrue(os.path.isfile('./test_out/zip2.zip'))
         self.assertTrue(zipfile.is_zipfile('./test_out/zip1.zip'))
@@ -88,16 +97,19 @@ class test_zipFiles(unittest.TestCase):
             zf.extractall('./test_out/')
         with zipfile.ZipFile('./test_out/zip2.zip', 'r') as zf:
             zf.extractall('./test_out/')
-
+        
         with open('./test_out/zip1/concat1.txt', 'rU') as f:
             text1 = f.read()
         with open('./test_out/zip2/concat2.txt', 'rU') as f:
             text2 = f.read()
-
+        
         self.assertEqual(text1, '\nNEWFILE\nFILENAME: file1.txt\n\nTHIS IS A TEST FILE.\n')
         self.assertEqual(text2, '\nNEWFILE\nFILENAME: file2.txt\n\nTHIS IS A TEST FILE.\n')
-
+    
     def test_twoconcats_onezip(self):
+        '''
+        Test that two files can be concatenated to different text files and stored in the same zip file.
+        '''
         testcat = TestCat('./test_data', './test_temp', './test_out')
         testcat.zip_dict = {} 
         testcat.zip_dict['zip1'] = ('concat1', ) + ('concat2', )
@@ -106,21 +118,21 @@ class test_zipFiles(unittest.TestCase):
         testcat.concat_dict['concat2'] = ('./test_data/file2.txt', )
         
         testcat.zipFiles()
-
+        
         self.assertTrue(os.path.isfile('./test_out/zip1.zip'))
         self.assertTrue(zipfile.is_zipfile('./test_out/zip1.zip'))
         
         with zipfile.ZipFile('./test_out/zip1.zip', 'r') as zf:
             zf.extractall('./test_out/')
-
+        
         with open('./test_out/zip1/concat1.txt', 'rU') as f:
             text1 = f.read()
         with open('./test_out/zip1/concat2.txt', 'rU') as f:
             text2 = f.read()
-
+        
         self.assertEqual(text1, '\nNEWFILE\nFILENAME: file1.txt\n\nTHIS IS A TEST FILE.\n')
         self.assertEqual(text2, '\nNEWFILE\nFILENAME: file2.txt\n\nTHIS IS A TEST FILE.\n')
-
+    
     def tearDown(self):
         paths = ['./test_data', './test_temp', './test_out']
         for path in paths:

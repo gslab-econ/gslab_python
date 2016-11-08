@@ -27,6 +27,9 @@ class test_writeDict(unittest.TestCase):
                 os.makedirs(path)
     
     def test_onepath(self):
+        '''
+        Test that dictionary with one key paired to a single-element tuple value is printed as intended.
+        '''
         d = {'path': ('path/to/file.txt', )}
         testcat.writeDict(d, 'test_dict.txt', 'path/to/')
         
@@ -36,6 +39,9 @@ class test_writeDict(unittest.TestCase):
         self.assertEqual(lines, 'path|file.txt')
     
     def test_twoppath(self):
+        '''
+        Test that dictionary with two keys paired to single-element tuple values is printed as intended.
+        '''
         d = {'path1': ('path/to/file1.txt', ), 'path2': ('path/to/file2.txt', )}
         testcat.writeDict(d, 'test_dict.txt', 'path/to/')
         
@@ -44,19 +50,13 @@ class test_writeDict(unittest.TestCase):
             lines = []
             for line in f:
                 lines.append(line.strip())
-        self.assertEqual(lines[1], 'path1|file1.txt')
-        self.assertEqual(lines[0], 'path2|file2.txt')
-    
-    def test_nopath(self):
-        d = {'path': ('file.txt', )}
-        testcat.writeDict(d, 'test_dict.txt', '')
+        self.assertEqual(lines[0], 'path1|file1.txt')
+        self.assertEqual(lines[1], 'path2|file2.txt')
 
-        with open('./test_out/test_dict.txt', 'rU') as f:
-            lines = f.readline()
-        lines = lines.strip()
-        self.assertEqual(lines, 'path|file.txt')
-    
     def test_twofile(self):
+        '''
+        Test that dictionary with one key paired to two-element tuple value is printed as intended.
+        '''
         d = {'path': ('path/to/file1.txt', 'path/to/file2.txt')}
         testcat.writeDict(d, 'test_dict.txt', 'path/to/')
 
@@ -64,6 +64,18 @@ class test_writeDict(unittest.TestCase):
         with open('./test_out/test_dict.txt', 'rU') as f:
             lines = f.readline().strip()
         self.assertEqual(lines, 'path|file1.txt|file2.txt')
+    
+    def test_nopath(self):
+        '''
+        Test that printed path is not modified when rel_path flag is blank.
+        '''
+        d = {'path': ('a/path/file.txt', )}
+        testcat.writeDict(d, 'test_dict.txt', '')
+
+        with open('./test_out/test_dict.txt', 'rU') as f:
+            lines = f.readline()
+        lines = lines.strip()
+        self.assertEqual(lines, 'path|a/path/file.txt')
     
     def tearDown(self):
         paths = ['./test_data', './test_temp', './test_out']

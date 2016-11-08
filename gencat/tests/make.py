@@ -14,7 +14,6 @@ import locale
 def main():
     start_make_log('./log/make.log', './log/')
     run_tests('./log/make.log', './log/test.log')
-    os.system('rm -rf stopwords')
     end_make_log('./log/make.log')
 
 
