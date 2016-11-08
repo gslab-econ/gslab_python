@@ -4,9 +4,15 @@ import shutil
 import zipfile
 from gencat import gencat
 
+class TestCat(gencat.gencat):
+    def makeZipDict(self):
+        pass
+    def makeConcatDict(self):
+        pass
+testcat = TestCat('./test_data', './test_temp', './out_temp')
 
 class test_unzipFiles(unittest.TestCase):
-    
+
     def setUp(self):
         paths = ['./test_data', './test_temp', './test_out']
         for path in paths:
@@ -17,25 +23,11 @@ class test_unzipFiles(unittest.TestCase):
                 os.makedirs(path)
 
     def test_nofile(self):
-        class TestCat(gencat.gencat):
-            def makeZipDict(self):
-                pass
-            def makeConcatDict(self):
-                pass
-        testcat = TestCat('./test_data', './test_temp', './test_out')
-
         testcat.unzipFiles()
         l = os.listdir('./test_out')
         self.assertEqual(l, [])
 
     def test_afile(self):
-        class TestCat(gencat.gencat):
-            def makeZipDict(self):
-                pass
-            def makeConcatDict(self):
-                pass
-        testcat = TestCat('./test_data', './test_temp', './test_out')
-
         #Set up
         inzip = zipfile.ZipFile('test_temp/test_zip.zip', 'w', zipfile.ZIP_DEFLATED, True)
         with open('test_data/test_text.txt', 'wb') as f:
@@ -65,12 +57,6 @@ class test_unzipFiles(unittest.TestCase):
         self.assertEqual(count, 2)
 
     def test_twofile(self):
-        class TestCat(gencat.gencat):
-            def makeZipDict(self):
-                pass
-            def makeConcatDict(self):
-                pass
-        testcat = TestCat('./test_data', './test_temp', './test_out')
 
         #Set up
         files = ['test1', 'test2']

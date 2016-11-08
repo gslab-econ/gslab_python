@@ -3,6 +3,12 @@ import os
 import shutil
 from gencat import gencat
 
+class TestCat(gencat.gencat):
+    def makeZipDict(self):
+        pass
+    def makeConcatDict(self):
+        pass
+testcat = TestCat('./test_data', './test_temp', './out_temp')
 
 class test_cleanDir(unittest.TestCase):
     
@@ -16,46 +22,18 @@ class test_cleanDir(unittest.TestCase):
                 os.makedirs(path)
 
     def test_base(self):
-        class TestCat(gencat.gencat):
-            def makeZipDict(self):
-                pass
-            def makeConcatDict(self):
-                pass
-        testcat = TestCat('./test_data', './test_temp', './out_temp')
-
         testcat.cleanDir('./test')
         self.assertTrue(os.path.isdir('./test'))
     
     def test_strange(self):
-        class TestCat(gencat.gencat):
-            def makeZipDict(self):
-                pass
-            def makeConcatDict(self):
-                pass
-        testcat = TestCat('./test_data', './test_temp', './out_temp')
-        
         testcat.cleanDir('./test', new_dir = 'gibberish')
         self.assertTrue(os.path.isdir('./test'))
     
     def test_nonew(self):
-        class TestCat(gencat.gencat):
-            def makeZipDict(self):
-                pass
-            def makeConcatDict(self):
-                pass
-        testcat = TestCat('./test_data', './test_temp', './out_temp')
-        
         testcat.cleanDir('./test', new_dir = False)
         self.assertFalse(os.path.isdir('./test'))
     
-    def test_deep(self):
-        class TestCat(gencat.gencat):
-            def makeZipDict(self):
-                pass
-            def makeConcatDict(self):
-                pass
-        testcat = TestCat('./test_data', './test_temp', './out_temp')
-
+    def test_deeppath(self):
         testcat.cleanDir('./a/deep/test/dir')
         self.assertTrue(os.path.isdir('./a/deep/test/dir'))
         shutil.rmtree('./a')

@@ -23,6 +23,7 @@ class gencat(object):
         self.path_out = os.path.join(path_out, '')
         self.concat_dict = {}
         self.zip_dict = {}
+
     
     def main(self):
         '''
@@ -34,11 +35,13 @@ class gencat(object):
         self.unzipFiles()
         self.makeConcatDict()
         self.makeZipDict()
+        self.tupleKeys()
         self.writeDict(self.concat_dict, 'concatDict.txt', self.path_temp)
         self.writeDict(self.zip_dict, 'zipDict.txt', '.')
         self.zipFiles()
         self.cleanDir(self.path_temp, new_dir = False)
     
+
     def cleanDir(self, path, new_dir = True):
         '''
         Remove path and all subdirectories below.
@@ -62,6 +65,7 @@ class gencat(object):
                 with zipfile.ZipFile(infile, 'r') as zf:
                     zf.extractall(self.path_temp)
     
+    
     @abstractmethod
     def makeZipDict(self):
         '''
@@ -69,7 +73,8 @@ class gencat(object):
         values for the key are all concatenated files to be contained in the zipfile.
         '''
         pass
-
+    
+    
     @abstractmethod
     def makeConcatDict(self):
         '''
@@ -78,7 +83,18 @@ class gencat(object):
         '''
         pass
     
+    
+    def tupleKeys(self):
+        '''
+        Raises an exception if ZipDict or ConcatDict has non-tuple values.
+        '''
 
+        for d in [self.concat_dict, self.zip_dict]:
+            for key in d:
+                if not type(d[key]) is tuple:
+                    raise TypeError('All keys in %s must be tuples. Check key %s key, and try again.')
+    
+    
     def writeDict(self, dict, name, rel_path):
         '''
         Write the dictionary to output as a |-delimited text file. The elements of each tuple are
@@ -96,8 +112,7 @@ class gencat(object):
                 
                 outfile.write('\n')
     
-
-
+    
     def zipFiles(self):
         '''
         Concatenates all files in a dictionary values to a new file named for the corresponding key.

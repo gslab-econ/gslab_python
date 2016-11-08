@@ -1,12 +1,18 @@
 test_base (test_cleanDir.test_cleanDir) ... ok
-test_deep (test_cleanDir.test_cleanDir) ... ok
+test_deeppath (test_cleanDir.test_cleanDir) ... ok
 test_nonew (test_cleanDir.test_cleanDir) ... ok
 test_strange (test_cleanDir.test_cleanDir) ... ok
+test_allTuple (test_TupleKeys.test_tupleKeys) ... ok
+test_notallTuple (test_TupleKeys.test_tupleKeys) ... ok
 test_afile (test_unzipFiles.test_unzipFiles) ... ok
 test_nofile (test_unzipFiles.test_unzipFiles) ... ok
 test_twofile (test_unzipFiles.test_unzipFiles) ... ok
+test_nopath (test_writeDict.test_writeDict) ... ok
+test_onepath (test_writeDict.test_writeDict) ... ok
+test_twofile (test_writeDict.test_writeDict) ... ok
+test_twoppath (test_writeDict.test_writeDict) ... ok
 
 ----------------------------------------------------------------------
-Ran 7 tests in 0.006s
+Ran 13 tests in 0.010s
 
 OK
