@@ -7,7 +7,7 @@ import zlib
 
 class gencat(object):
     '''
-    The gencat (General Concatenation) is an abstract class that concatenates files stored in a .zip 
+    gencat (General Concatenation) is an abstract class that concatenates files stored in a .zip 
     file in a user-specified structure and stores the new files in a .zip file. 
     '''
     __metaclass__ = ABCMeta
@@ -23,6 +23,7 @@ class gencat(object):
         self.path_out = os.path.join(path_out, '')
         self.concat_dict = {}
         self.zip_dict = {}
+
     
     def main(self):
         '''
@@ -34,11 +35,13 @@ class gencat(object):
         self.unzipFiles()
         self.makeConcatDict()
         self.makeZipDict()
+        self.checkDicts()
         self.writeDict(self.concat_dict, 'concatDict.txt', self.path_temp)
         self.writeDict(self.zip_dict, 'zipDict.txt', '.')
         self.zipFiles()
         self.cleanDir(self.path_temp, new_dir = False)
     
+
     def cleanDir(self, path, new_dir = True):
         '''
         Remove path and all subdirectories below.
@@ -63,14 +66,6 @@ class gencat(object):
                     zf.extractall(self.path_temp)
     
     @abstractmethod
-    def makeZipDict(self):
-        '''
-        This method should assign a dictionary to self.zip_dict where each key is a distinct zipfile and the 
-        values for the key are all concatenated files to be contained in the zipfile.
-        '''
-        pass
-
-    @abstractmethod
     def makeConcatDict(self):
         '''
         This method should assign a dictionary to self.concat_dict where each key is a distinct concatenated  
@@ -78,7 +73,27 @@ class gencat(object):
         '''
         pass
     
-
+    @abstractmethod
+    def makeZipDict(self):
+        '''
+        This method should assign a dictionary to self.zip_dict where each key is a distinct zipfile and the 
+        values for the key are all concatenated files to be contained in the zipfile.
+        '''
+        pass
+        
+    def checkDicts(self):
+        '''
+        Raises an exception if ZipDict or ConcatDict is empty or has non-tuple values.
+        '''
+        for d in [self.concat_dict, self.zip_dict]:
+            if not d:
+                raise Exception('THe dictionary %s must be non-empty' % (d))
+            else:
+                for key in d:
+                    if not type(d[key]) is tuple:
+                        raise TypeError('All keys in dictionary %s must be tuples. Check key %s, and try again.' % (d, key))
+    
+    
     def writeDict(self, dict, name, rel_path):
         '''
         Write the dictionary to output as a |-delimited text file. The elements of each tuple are
@@ -87,7 +102,7 @@ class gencat(object):
         outfile_path = os.path.join(self.path_out, name)
         with open(outfile_path, 'wb') as outfile:
             
-            for key in dict.keys():
+            for key in sorted(dict.keys()):
                 outfile.write(key)
                 
                 for val in dict[key]:
@@ -96,8 +111,7 @@ class gencat(object):
                 
                 outfile.write('\n')
     
-
-
+    
     def zipFiles(self):
         '''
         Concatenates all files in a dictionary values to a new file named for the corresponding key.

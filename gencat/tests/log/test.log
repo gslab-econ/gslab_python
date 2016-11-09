@@ -1,0 +1,29 @@
+test_default (test_checkDicts.test_checkDicts) ... ok
+test_notAllDicts (test_checkDicts.test_checkDicts) ... ok
+test_notAllTuple (test_checkDicts.test_checkDicts) ... ok
+test_cleanDir (test_cleanDir.test_cleanDir) ... ok
+test_makeDir (test_cleanDir.test_cleanDir) ... ok
+test_noNew (test_cleanDir.test_cleanDir) ... ok
+test_recursiveClear (test_cleanDir.test_cleanDir) ... ok
+test_recursiveMake (test_cleanDir.test_cleanDir) ... ok
+test_strangeFlag (test_cleanDir.test_cleanDir) ... ok
+test_default (test_main.test_main) ... ok
+test_aZipFile (test_unzipFiles.test_unzipFiles) ... ok
+test_blankZipFile (test_unzipFiles.test_unzipFiles) ... ok
+test_noFile (test_unzipFiles.test_unzipFiles) ... ok
+test_noZipFile (test_unzipFiles.test_unzipFiles) ... ok
+test_twoFile (test_unzipFiles.test_unzipFiles) ... ok
+test_twoZipFile (test_unzipFiles.test_unzipFiles) ... ok
+test_noPath (test_writeDict.test_writeDict) ... ok
+test_onePath (test_writeDict.test_writeDict) ... ok
+test_twoFile (test_writeDict.test_writeDict) ... ok
+test_twopPath (test_writeDict.test_writeDict) ... ok
+test_oneFile (test_zipFile.test_zipFiles) ... ok
+test_twoConcatsOneZip (test_zipFile.test_zipFiles) ... ok
+test_twoFile (test_zipFile.test_zipFiles) ... ok
+test_twoZips (test_zipFile.test_zipFiles) ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 0.026s
+
+OK
