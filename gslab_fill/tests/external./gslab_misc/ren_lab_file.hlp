@@ -1,0 +1,65 @@
+.-
+help for ^ren_lab_file^
+.-
+
+Command to rename and label variables using a text file as input
+-----------------------------------------------------------------------
+
+	^ren_lab_file^   ^using^ filename, [^rename^] [^label^]
+
+Description
+-----------
+
+^ren_lab_file^ uses a text file to rename and/or label the variables in
+a dataset. The input file filename must have one of the following three
+forms:
+
+%top of file%
+name1 newname1
+name2 newname2
+name3 newname3
+...
+%end of file%
+
+%top of file%
+name1 "new label 1"
+name2 "new label 2"
+name3 new label 3"
+...
+%end of file%
+
+%top of file%
+name1 newname1 "new label 1"
+name2 newname2 "new label 2"
+name3 newname3 "new label 3"
+...
+%end of file%
+
+Options for use with ^ren_lab_file^
+---------------------------
+
+For files of the first form (rename only) specify ^rename^ but not ^label^
+
+For files of the second form (label only) specify ^label^ but not ^rename^
+
+For files of the third form (label and rename) specify both ^label^ and ^rename^
+
+Remarks
+-------
+
+The command currently does not check that filename has the appropriate format,
+so use with caution.
+
+Examples
+--------
+
+ . ^ren_lab_file using "rename.txt", rename^
+
+ . ^ren_lab_file using "rename_and_label.txt", rename label^
+
+
+Author
+------
+
+Matthew Gentzkow
+

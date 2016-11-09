@@ -1,4 +1,4 @@
-## GSLab Python Library 1.0.8
+## GSLab Python Library 1.0.9
 
 ### Overview
 This library contains the python tools used by GSLab. The original code in this repository is drawn from `trunk/lib/python` of the SVN repository `econ-gentzkow-stanford, revision 34,755`.

@@ -1,0 +1,69 @@
+.-
+help for ^rankunique^
+.-
+
+Replacement for egen ... = rank(), unique that uses explicit randomization
+---------------------------------------------------------------------------
+
+	^rankunique^   varlist [^if^ exp] [^in^ range], ^gen(^newvar^)^ [^by(^groupvar^)^ ^seed(^newseed^)^]
+
+Description
+-----------
+
+^rankunique^ generates the rank of each observation according to varlist. It is intended to correct a problem 
+with the built-in Stata command egen rank(), unique. When there are ties in the sort order, this command does 
+not use explicit randomization to break them. This means that the rank generated can be different each time 
+the code is run and so the same code can produce different results. rankunique breaks ties using a random 
+number chosen with a fixed seed and should therefore produce the same results every time.
+
+
+Options for use with ^rankunique^
+---------------------------
+
+^gen(^newvar^)^ is not optional. It specifies the name of the rank
+    variable to create. 
+
+^by(^groupvar^)^ is optional. If specified, the command ranks within the groups determined by groupvar.
+
+^seed(^newseed^)^ is optional. It allows the user to explicitly specify a seed to use for the 
+		randomization that breaks ties.	If it is not set, the randomization always uses the 
+		default seed 4271975.
+
+Remarks
+-------
+
+^rankunique^ accepts the same varlist syntax as @gsort@.
+
+^rankunique^ does not permanently change the seed. So running
+
+set seed 123
+rankunique var1 var2, gen(rank)
+gen newvar = uniform()
+
+will produce the same result as running
+
+set seed 123
+sort var1 var2
+gen newvar = uniform()
+
+
+Examples
+--------
+
+ . ^rankunique var1, gen(rank)^
+
+ . ^rankunique var1 -var2 var3, gen(rank) by(var4)^
+
+
+Author
+------
+
+Matthew Gentzkow
+
+
+Also see
+--------
+
+Shared:          help for @sortunique@ if installed.
+
+

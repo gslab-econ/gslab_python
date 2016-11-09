@@ -1,14 +1,14 @@
 
- make.py started: 2016-08-18 12:19:06 /Users/shunyang/Desktop/gslab_python/gslab_fill/tests 
+ make.py started: 2016-11-09 11:10:09 /Users/arosenbe/Desktop/gslab_python/gslab_fill/tests 
 
 
 
- get_externals.py started: 2016-08-18 12:19:06 /Users/shunyang/Desktop/gslab_python/gslab_fill/tests
+ get_externals.py started: 2016-11-09 11:10:09 /Users/arosenbe/Desktop/gslab_python/gslab_fill/tests
 
  Input was: "17902	%svn%/lib/stata/gslab_misc/ado/	*	./gslab_misc/	""""".
 SVN command passed: https://econ-gentzkow-svn.stanford.edu/repos/main/trunk/lib/stata/gslab_misc/ado/ @17902 exported to ./external./gslab_misc/.
 
- get_externals.py ended: 2016-08-18 12:19:08
+ get_externals.py ended: 2016-11-09 11:10:10
 
 
 Execute:  statamp -e do "logs_for_textfill.do"
@@ -23,16 +23,19 @@ ___/   /   /___/   /   /___/   14.0   Copyright 1985-2015 StataCorp LP
                                       979-696-4600        stata@stata.com
                                       979-696-4601 (fax)
 
-8-user 4-core Stata network perpetual license:
-       Serial number:  501406225577
-         Licensed to:  Andres Shahidinejad
-                       GSLab
+Unlimited-user 4-core Stata network license expires 21 Jul 2017:
+       Serial number:  501409012939
+         Licensed to:  Economics
+                       Stanford University
 
 Notes:
       1.  Stata is running in batch mode.
       2.  Unicode is supported; see help unicode_advice.
       3.  More than 2 billion observations are allowed; see help obs_advice.
       4.  Maximum number of variables is set to 5000; see help set_maxvar.
+
+
+running /Applications/Stata/profile.do ...
 
 . do logs_for_textfill.do 
 
@@ -79,8 +82,8 @@ testTagsIncorrectlySpecified (test_textfill.testTextfill) ... ok
 testTagsNotClosed (test_textfill.testTextfill) ... ok
 
 ----------------------------------------------------------------------
-Ran 12 tests in 0.078s
+Ran 12 tests in 0.095s
 
 OK
 
- make.py ended: 2016-08-18 12:19:09
+ make.py ended: 2016-11-09 11:10:11
