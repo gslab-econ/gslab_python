@@ -2,6 +2,9 @@ import unittest
 import os
 import shutil
 import zipfile
+import sys
+
+sys.path.append('../')
 from gencat import gencat
 
 class test_checkDicts(unittest.TestCase): 

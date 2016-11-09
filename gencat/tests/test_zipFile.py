@@ -2,8 +2,10 @@ import unittest
 import os
 import shutil
 import zipfile
-from gencat import gencat
+import sys
 
+sys.path.append('../')
+from gencat import gencat
 class TestCat(gencat.gencat):
     def makeZipDict(self):
         pass
