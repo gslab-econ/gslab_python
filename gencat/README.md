@@ -1,4 +1,4 @@
-# GSLAB_Gencat 0.0.2
+# GSLAB_Gencat
 
 ## Overview
 
