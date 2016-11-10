@@ -3,7 +3,7 @@ import os
 import shutil
 import sys
 
-sys.path.append('../')
+sys.path.append('../../')
 from gencat import gencat
 
 
