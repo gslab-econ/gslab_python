@@ -4,7 +4,7 @@ import shutil
 import zipfile
 import sys
 
-sys.path.append('../')
+sys.path.append('../../')
 from gencat import gencat
 
 class TestCat(gencat.gencat):

@@ -1,14 +1,14 @@
 
- make.py started: 2016-11-09 10:28:25 /Users/arosenbe/Desktop/gslab_python/gencat/tests 
+ make.py started: 2016-11-10 14:02:37 /Users/leviboxell/Desktop/gslab_python/gencat/tests 
 
 
 
 
 List of all files in sub-directories in ./log/
 ./log/
-created/modified Wed Nov  9 10:27:19 2016
-                                          make.log --- created/modified Wed Nov  9 10:28:25 2016 ( 0 bytes )
-                                          test.log --- created/modified Wed Nov  9 10:27:19 2016 ( 1374 bytes )
+created/modified Wed Nov  9 14:02:44 2016
+                                          make.log --- created/modified Thu Nov 10 14:02:37 2016 ( 0 bytes )
+                                          test.log --- created/modified Wed Nov  9 14:02:44 2016 ( 1374 bytes )
 test_default (test_checkDicts.test_checkDicts) ... ok
 test_notAllDicts (test_checkDicts.test_checkDicts) ... ok
 test_notAllTuple (test_checkDicts.test_checkDicts) ... ok
@@ -35,8 +35,8 @@ test_twoFile (test_zipFile.test_zipFiles) ... ok
 test_twoZips (test_zipFile.test_zipFiles) ... ok
 
 ----------------------------------------------------------------------
-Ran 24 tests in 0.026s
+Ran 24 tests in 0.088s
 
 OK
 
- make.py ended: 2016-11-09 10:28:25
+ make.py ended: 2016-11-10 14:02:38
