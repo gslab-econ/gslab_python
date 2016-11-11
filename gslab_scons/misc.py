@@ -61,7 +61,7 @@ def check_code_extension(source_file, software):
                   'lyx'    : '.lyx',
                   'python' : '.py'}
     ext = extensions[software]
-    source_file = str.lower(source_file)
+    source_file = str.lower(str(source_file))
     if not source_file.endswith(ext):
         raise BadExtensionError('First argument, ' + source_file + ', must be a ' + ext + ' file')
     return None
