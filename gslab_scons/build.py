@@ -12,10 +12,10 @@ from exceptions import *
 def build_tables(target, source, env):
     source      = make_list_if_string(source)
     target      = make_list_if_string(target)
-    check_code_extension(target[0], 'lyx')
-    tablefill(input    = ' '.join(source[1:len(source)]), 
-              template = source[0], 
-              output   = target[0])
+    check_code_extension(str(target[0]), 'lyx')
+    tablefill(input    = ' '.join([str(a) for a in source[1:len(source)]]), 
+              template = str(source[0]), 
+              output   = str(target[0]))
     return None
 
 def build_lyx(target, source, env):
