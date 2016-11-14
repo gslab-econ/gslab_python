@@ -1,7 +1,13 @@
 #! /usr/bin/env python
 
-import unittest, sys, os, re, types, HTMLParser
-sys.path.append('../..')
+import unittest
+import sys
+import os
+import re
+import types
+import HTMLParser
+
+sys.path.append('..')
 from textfill import textfill, read_text, remove_trailing_leading_blanklines
 from nostderrout import nostderrout
 
@@ -9,37 +15,37 @@ class testTextfill(unittest.TestCase):
 
     def testInput(self):
         with nostderrout():
-            message = textfill(input = '../log/stata_output_for_textfill/legal.log', \
-                                        template = '../test/input/textfill_template.lyx', \
-                                        output =  '../test/input/textfill_template_filled.lyx')
+            message = textfill(input    = './log/stata_output_for_textfill/legal.log', 
+                               template = './input/textfill_template.lyx', 
+                               output   = './input/textfill_template_filled.lyx')
         self.assertIn('filled successfully', message)
         log_remove_string = '. insert_tag'
-        log = '../log/stata_output_for_textfill/legal.log'
+        log = './log/stata_output_for_textfill/legal.log'
         self.checkLogInLyX(log, log_remove_string, "textfill_")
         
     def testAlternativePrefix(self):
         with nostderrout():
-            message = textfill(input = '../log/stata_output_for_textfill/alternative_prefix.log', \
-                                        template = '../test/input/textfill_template.lyx', \
-                                        output =  '../test/input/textfill_template_filled.lyx', \
-                                        prefix = 'prefix')
+            message = textfill(input    = './log/stata_output_for_textfill/alternative_prefix.log', 
+                               template = './input/textfill_template.lyx', 
+                               output   = './input/textfill_template_filled.lyx', 
+                               prefix   = 'prefix')
         self.assertIn('filled successfully', message)
         log_remove_string = '. insert_tag'
-        log = '../log/stata_output_for_textfill/alternative_prefix.log'
+        log = './log/stata_output_for_textfill/alternative_prefix.log'
         self.checkLogInLyX(log, log_remove_string, "prefix_")
         
     def testRemoveEchoes(self):
         with nostderrout():
-            textfill(input = '../log/stata_output_for_textfill/legal.log', \
-                              template = '../test/input/textfill_template.lyx', \
-                              output =  '../test/input/textfill_template_filled.lyx', \
-                              remove_echoes = True)
+            textfill(input    = './log/stata_output_for_textfill/legal.log', 
+                     template = './input/textfill_template.lyx', 
+                     output   =  './input/textfill_template_filled.lyx', 
+                     remove_echoes = True)
         log_remove_string = '. '
-        log = '../log/stata_output_for_textfill/legal.log'
+        log = './log/stata_output_for_textfill/legal.log'
         self.checkLogInLyX(log, log_remove_string, "textfill_")
     
     def checkLogInLyX(self, log, log_remove_string, prefix):
-        raw_lyx = open("../test/input/textfill_template_filled.lyx", 'rU').readlines()
+        raw_lyx = open("./input/textfill_template_filled.lyx", 'rU').readlines()
         raw_lyx = [re.sub(r'\\end_layout\n$', '', x) for x in raw_lyx]
         
         text = read_text(log, prefix)
@@ -55,61 +61,62 @@ class testTextfill(unittest.TestCase):
     
     def testTagsDontMatch(self):
         with nostderrout():
-            error = textfill(input = '../log/stata_output_for_textfill/tags_dont_match.log', \
-                                      template = '../test/input/textfill_template.lyx', \
-                                      output =  '../test/input/textfill_template_filled.lyx')
+            error = textfill(input    = './log/stata_output_for_textfill/tags_dont_match.log', 
+                             template = './input/textfill_template.lyx', 
+                             output   =  './input/textfill_template_filled.lyx')
         self.assertIn('ValueError', error)
         
     def testTagsNotClosed(self):
         with nostderrout():   
-            error = textfill(input = '../log/stata_output_for_textfill/tags_not_closed.log', \
-                                      template = '../test/input/textfill_template.lyx', \
-                                      output =  '../test/input/textfill_template_filled.lyx')
+            error = textfill(input    = './log/stata_output_for_textfill/tags_not_closed.log', 
+                             template = './input/textfill_template.lyx', 
+                             output   = './input/textfill_template_filled.lyx')
         self.assertIn('HTMLParseError', error)
         
     def testTagsIncorrectlySpecified(self):
         with nostderrout():
-            textfill(input = '../log/stata_output_for_textfill/tags_incorrectly_named.log', \
-                                      template = '../test/input/textfill_template.lyx', \
-                                      output =  '../test/input/textfill_template_filled.lyx')
+            textfill(input    = './log/stata_output_for_textfill/tags_incorrectly_named.log', 
+                     template = './input/textfill_template.lyx', 
+                     output   = './input/textfill_template_filled.lyx')
         log_remove_string = '. insert_tag'
         with self.assertRaises(AssertionError):
-            log = '../log/stata_output_for_textfill/tags_incorrectly_named.log'
+            log = './log/stata_output_for_textfill/tags_incorrectly_named.log'
             self.checkLogInLyX(log, log_remove_string, "textfill_")
         
     def testIllegalSyntax(self):
         # missing arguments
         with nostderrout(): 
-            error = textfill(input = '../log/stata_output_for_textfill/legal.log', \
-                                      template = '../test/input/textfill_template.lyx')
+            error = textfill(input    = './log/stata_output_for_textfill/legal.log', 
+                             template = './input/textfill_template.lyx')
         self.assertIn('KeyError', error)                      
                           
         # non-existent input 1
         with nostderrout():
-            error = textfill(input = '../log/stata_output_for_textfill/fake_file.log', \
-                                      template = '../test/input/textfill_template.lyx', \
-                                      output =  '../test/input/textfill_template_filled.lyx')
+            error = textfill(input    = './log/stata_output_for_textfill/fake_file.log', 
+                             template = './input/textfill_template.lyx', 
+                             output   =  './input/textfill_template_filled.lyx')
         self.assertIn('IOError', error)
         
         # non-existent input 2
         with nostderrout():
-            error = textfill(input = '../log/stata.log ../log/stata_output_for_textfill/fake_file.log', \
-                                      template = '../test/input/textfill_template.lyx', \
-                                      output =  '../test/input/textfill_template_filled.lyx')        
+            error = textfill(input    = './log/stata.log ./log/stata_output_for_textfill/fake_file.log', 
+                             template = './input/textfill_template.lyx', 
+                             output   = './input/textfill_template_filled.lyx')        
         self.assertIn('IOError', error)
         
     def testArgumentOrder(self):
         with nostderrout():
-            message = textfill(input = '../log/stata_output_for_textfill/legal.log', \
-                                        output =  '../test/input/textfill_template_filled.lyx', \
-                                        template = '../test/input/textfill_template.lyx')
+            message = textfill(input    = './log/stata_output_for_textfill/legal.log', 
+                               output   = './input/textfill_template_filled.lyx', 
+                               template = './input/textfill_template.lyx')
         self.assertIn('filled successfully', message)                                
             
         with nostderrout():            
-            message = textfill(template = '../test/input/textfill_template.lyx',\
-                                        output =  '../test/input/textfill_template_filled.lyx', \
-                                        input = '../log/stata_output_for_textfill/legal.log')
+            message = textfill(template = './input/textfill_template.lyx',
+                               output   = './input/textfill_template_filled.lyx',
+                               input    = './log/stata_output_for_textfill/legal.log')
         self.assertIn('filled successfully', message)
+        
         
 if __name__ == '__main__':
     os.getcwd()

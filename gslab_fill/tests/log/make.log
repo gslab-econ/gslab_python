@@ -1,21 +1,21 @@
 
- make.py started: 2016-11-09 11:10:09 /Users/arosenbe/Desktop/gslab_python/gslab_fill/tests 
+ make.py started: 2016-11-14 14:35:56 /Users/mrsull/Desktop/gslab_python/gslab_fill/tests 
 
 
 
- get_externals.py started: 2016-11-09 11:10:09 /Users/arosenbe/Desktop/gslab_python/gslab_fill/tests
+ get_externals.py started: 2016-11-14 14:35:56 /Users/mrsull/Desktop/gslab_python/gslab_fill/tests
 
  Input was: "17902	%svn%/lib/stata/gslab_misc/ado/	*	./gslab_misc/	""""".
 SVN command passed: https://econ-gentzkow-svn.stanford.edu/repos/main/trunk/lib/stata/gslab_misc/ado/ @17902 exported to ./external./gslab_misc/.
 
- get_externals.py ended: 2016-11-09 11:10:10
+ get_externals.py ended: 2016-11-14 14:35:57
 
 
 Execute:  statamp -e do "logs_for_textfill.do"
 
   ___  ____  ____  ____  ____ (R)
  /__    /   ____/   /   ____/
-___/   /   /___/   /   /___/   14.0   Copyright 1985-2015 StataCorp LP
+___/   /   /___/   /   /___/   14.1   Copyright 1985-2015 StataCorp LP
   Statistics/Data Analysis            StataCorp
                                       4905 Lakeway Drive
      MP - Parallel Edition            College Station, Texas 77845 USA
@@ -25,7 +25,7 @@ ___/   /   /___/   /   /___/   14.0   Copyright 1985-2015 StataCorp LP
 
 Unlimited-user 4-core Stata network license expires 21 Jul 2017:
        Serial number:  501409012939
-         Licensed to:  Economics
+         Licensed to:  SIEPR
                        Stanford University
 
 Notes:
@@ -82,8 +82,8 @@ testTagsIncorrectlySpecified (test_textfill.testTextfill) ... ok
 testTagsNotClosed (test_textfill.testTextfill) ... ok
 
 ----------------------------------------------------------------------
-Ran 12 tests in 0.095s
+Ran 12 tests in 0.058s
 
 OK
 
- make.py ended: 2016-11-09 11:10:11
+ make.py ended: 2016-11-14 14:35:58
