@@ -4,10 +4,10 @@ import unittest
 import sys
 import os
 import shutil
-sys.path.append('../../..')
-from gslab_scons.build import *
-from gslab_scons.log import *
-from gslab_scons.exceptions import *
+
+sys.path.append('../..')
+from gslab_scons.build        import build_stata
+from gslab_scons.exceptions   import BadExecutableError, BadExtensionError
 from gslab_make.get_externals import get_externals
 
 class testbuild_stata(unittest.TestCase):

@@ -9,7 +9,7 @@ import metadata as metadata
 
 class LinksList(object):
 
-    def __init__ (self, file_list, links_dir = '@DEFAULTVALUE@'):
+    def __init__(self, file_list, links_dir = '@DEFAULTVALUE@'):
         if links_dir == '@DEFAULTVALUE@':
             links_dir = metadata.settings['links_dir']
         if links_dir[-1] != '/':
@@ -41,14 +41,14 @@ class LinksList(object):
                 directive = LinkDirectives(line, self.links_dir)
                 self.linkdirectives_list.append(directive)
                 
-    def issue_sys_command (self, logfile, quiet):        
+    def issue_sys_command(self, logfile, quiet):        
         for link in self.linkdirectives_list:
             try:
                 link.issue_sys_command(logfile, quiet)
             except:
                 print_error(logfile)
     
-    def link_files_and_dict (self, recur_lim):
+    def link_files_and_dict(self, recur_lim):
         links_dict = {}
         for link in self.linkdirectives_list:
             links_dict = link.add_to_dict(links_dict)

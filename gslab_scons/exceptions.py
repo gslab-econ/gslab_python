@@ -1,4 +1,3 @@
-
 class BadExecutableError(Exception):
 	def __init__(self, message = ''):
 		print 'Error: ' + message
@@ -10,5 +9,3 @@ class BadExtensionError(Exception):
 class LFSError(Exception):
 	def __init__(self, message = ''):
 		print 'Error: ' + message
-
-

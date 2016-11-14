@@ -4,10 +4,10 @@ import unittest
 import sys
 import os
 import shutil
-sys.path.append('../../..')
-from gslab_scons.build import *
-from gslab_scons.log import *
-from gslab_scons.exceptions import *
+
+sys.path.append('../..')
+from gslab_scons.build import build_lyx
+from gslab_scons.exceptions import BadExtensionError
 
 class testbuild_lyx(unittest.TestCase):
 
@@ -24,6 +24,7 @@ class testbuild_lyx(unittest.TestCase):
             os.remove('../build/sconscript.log')
     
     def test_bad_extension(self):
+        '''Test that build_lyx() recognises an inappropriate file extension'''
         env = ''
         with self.assertRaises(BadExtensionError):
             build_lyx('../build/lyx.pdf', ['bad', './input/lyx_test_file.lyx'], env)

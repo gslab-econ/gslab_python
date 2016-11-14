@@ -5,13 +5,16 @@
 #################################################################
 
 Description:
-tablefill.py is a Python module designed to fill LyX tables with output from text files (usually output from Stata or Matlab).
+tablefill.py is a Python module designed to fill LyX tables with output  from 
+text files (usually output from Stata or Matlab).
 
 Usage:
-Tablefill takes as input a LyX file containing empty tables (the template file) and text files containing data to be copied to 
-these tables (the input files), and produces a LyX file with filled tables (the output file). 
+Tablefill takes as input a LyX file containing empty tables (the template file) 
+and text files containing data to be copied to  these tables (the input files), 
+and produces a LyX file with filled tables (the output file). 
 
-Tablefill must first be imported to make.py.  This is typically achieved by including the following lines:
+Tablefill must first be imported to make.py.  This is typically achieved by 
+including the following lines:
 
 ```
 from gslab_fill.tablefill import tablefill
@@ -20,21 +23,23 @@ from gslab_fill.tablefill import tablefill
 Once the module has been imported, the syntax used to call tablefill is as follows:
 
 ```
-tablefill( input = 'input_file(s)', template = 'template_file', output = 'output_file' )
+tablefill(input = 'input_file(s)', template = 'template_file', output = 'output_file')
 ```
 
-The argument 'template' is the user written LyX file which contains the tables to be filled in. The argument 'input' is a list of 
-the text files containing the output to be copied to the LyX tables. If there are multiple input text files, they are listed as: 
-input = 'input_file_1 input_file_2'. The argument 'output' is the name of the filled LyX file to be produced.  Note that this file
-is created by tablefill.py and should not be edited manually by the user.
+The argument 'template' is the user written LyX file which contains the tables to 
+be  filled in. The argument 'input' is a list of the text files containing the 
+output to be copied to the LyX tables. If there are multiple input text files, 
+they are listed as: input = 'input_file_1 input_file_2'. The argument 'output' is 
+the name of the filled LyX file to be produced.  Note that this file is created by
+tablefill.py and should not be edited manually by the user.
 
-For an example of this syntax in use, please see make.py in the svn_drafts template directory at /admin/Templates/svn_drafts/.
 ###########################
 Input File Format:
 ###########################
 
-The data needs to be tab-delimited rows of numbers (or characters), preceeded by `<label>`.  The < and > are mandatory.
-The numbers can be arbitrarily long, can be negative, and can also be in scientific notation.
+The data needs to be tab-delimited rows of numbers (or characters), preceeded by 
+`<label>`.  The < and > are mandatory. The numbers can be arbitrarily long, can be 
+negative, and can also be in scientific notation.
 
 Examples:
 ----------
@@ -74,8 +79,8 @@ is equivalent to:
 3   1   2
 ```
 
-This feature is useful as Stata outputs missing values in numerical variables as ".", and missing values in string variables
-as "[space]".
+This feature is useful as Stata outputs missing values in numerical variables as ".", and missing 
+values in string variables as "[space]".
 
 ................................
  Scientific Notation Notes:
@@ -96,25 +101,32 @@ Template LyX Format:
 
 The LyX template file determines where the numbers from the input files are placed.
 
-Every table in the template file (if it is to be filled) must appear within a float. There must be one, and only one, table object inside the float,
-and the table name must include a label object that corresponds to the label of the required table in the input file.
+Every table in the template file (if it is to be filled) must appear within a float. There must 
+be one, and only one, table object inside the float, and the table name must include a label 
+object that corresponds to the label of the required table in the input file.
 
-Note that table names cannot be duplicated.  For a single template file, each table to be filled must have a unique label, and there must be one,
-and only one, table with that same label in the text files used as input. Having multiple tables with the same name in the input files or in the 
+Note that table names cannot be duplicated.  For a single template file, each table to be filled 
+must have a unique label, and there must be one, and only one, table with that same label in the 
+text files used as input. Having multiple tables with the same name in the input files or in the 
 template file will cause errors.  
 
-Note also that labels are NOT case-sensitive. That is, <TAB:Table1> is considered the same as `<tab:table1>`.
+Note also that labels are NOT case-sensitive. That is, <TAB:Table1> is considered the same as 
+`<tab:table1>`.
 
-In the LyX tables, "cells" to be filled with entries from the input text files are indicated by the following tags:
+In the LyX tables, "cells" to be filled with entries from the input text files are indicated by 
+the following tags: 
+
 `"###"  (no quotes)`
 or 
 `"#[number][,]#"  (no quotes)`
 
-The first case will result in a literal substitution.  I.e. whatever is in the text tables for that cell will be copied over.
-The second case will convert the data table's number (if in scientific notation) and will truncate this converted number 
-to [number] decimal places.  It will automatically round while doing so.
+The first case will result in a literal substitution.  I.e. whatever is in the text tables for 
+that  cell will be copied over. The second case will convert the data table's number (if in 
+scientific notation) and will truncate this converted number to [number] decimal places.  It 
+will automatically round while doing so.
 
-If a comma appears after the number (within #[number]#), then it will add commas to the digits to the left of the decimal place.
+If a comma appears after the number (within #[number]#), then it will add commas to the digits 
+to the left of the decimal place.
 
 Examples:
 ---------
@@ -135,7 +147,8 @@ Examples:
 -2.23e+10  + #7,# = -22300000000 + #7,# = -22,300,000,000.000000
 ```
 
-Furthermore, only ###/#num# will be replaced, allowing you to put things around ###/#num# to alter the final output:
+Furthermore, only ###/#num# will be replaced, allowing you to put things around ###/#num# to alter 
+the final output:
 
 Examples:
 --------
@@ -242,7 +255,8 @@ Recall that to the program, the above input table is no different from:
 -1  2
 ```
 
-It doesn't "know" where the numbers should be placed within a row, only what the next number to place should be.
+It doesn't "know" where the numbers should be placed within a row, only what the next number
+ to place should be.
 
 Similarly:
 
@@ -267,20 +281,24 @@ abc abc abc
 2   -1  2
 ```
 
-If a row in the template has no substitutions, then it's not really a row from the program's point of view.
+If a row in the template has no substitutions, then it's not really a row from the program's 
+point of view.
 
 
 ######################
 # Error Logging
 ######################
 
-If an error occurs during the call to tablefill, it will be displayed in the command window.  When make.py finishes, the user will
-be able to scroll up through the output and examine any error messages.  Error messages, which include a description of the error type
-and a traceback to the line of code where the error occured, can also be retuned as a string object using the following syntax:
+If an error occurs during the call to tablefill, it will be displayed in the command window.  
+When make.py finishes, the user will be able to scroll up through the output and examine any 
+error messages.  Error messages, which include a description of the error type and a traceback 
+to the line of code where the error occured, can also be retuned as a string object using the 
+following syntax:
 
 exitmessage = tablefill( input = 'input_file(s)', template = 'template_file', output = 'output_file' )
 
-Lines can then be added to make.py to output this string to a log file using standard python and built in gslab_make commands.
+Lines can then be added to make.py to output this string to a log file using standard python 
+and built in gslab_make commands.
 
 
 ######################
@@ -289,28 +307,34 @@ Lines can then be added to make.py to output this string to a log file using sta
 
 Common mistakes which can lead to errors include:
 
-- Mismatch between the length of the LyX table and the corresponding text table.  If the lyx table has more entries to be filled than the
-text table has entries to fill from, this will cause an error and the table will not be filled.
+- Mismatch between the length of the LyX table and the corresponding text table.  If the LyX table 
+has more entries to be filled than the text table has entries to fill from, this will cause an error
+and the table will not be filled.
 
-- Use of numerical tags (e.g. #1#) to fill non-numerical data.  This will cause an error. Non-numerical data can only be filled using "###",
-as it does not make sense to round or truncate this data.
+- Use of numerical tags (e.g. #1#) to fill non-numerical data.  This will cause an error. 
+Non-numerical data can only be filled using "###", as it does not make sense to round or truncate 
+this data.
 
-- Multiple table objects in the same float.  Each table float in the template LyX file can only contain one table object.  If a float contains
-a second table object, this table will not be filled.
+- Multiple table objects in the same float.  Each table float in the template LyX file can only contain 
+one table object.  If a float contains a second table object, this table will not be filled.
 
 
 ######################
 # Boldfacing entries
 ######################
 
-It is straightforward to develop functions that conditionally write entries of tables in boldface; functions may do so by inserting
-'\series bold' in the lines of the filled LyX file immeadiately before phrases that the user wishes to make bold. An example of this
-procedure is implemented by the code contained in /source/analysis/tables104th of the politext project repository
-(Tree: a62cee7bb80d27a516439a7c745786d8fa4aec8a).
+It is straightforward to develop functions that conditionally write entries of tables in boldface; 
+functions may do so by inserting '\series bold' in the lines of the filled LyX file immeadiately before 
+phrases that the user wishes to make bold.
 '''
 
-import os, argparse, types, re, traceback
+import os
+import argparse
+import types
+import re
+import traceback
 from decimal import Decimal, ROUND_HALF_UP
+
 
 def tablefill(**kwargs):
     try:
@@ -328,6 +352,7 @@ def tablefill(**kwargs):
         print exitmessage
         return exitmessage
     
+
 def parse_arguments(kwargs):
     args = dict()
     if 'input' in kwargs.keys():
@@ -340,11 +365,13 @@ def parse_arguments(kwargs):
     
     return args
 
+
 def parse_tables(args):
-    data = read_data(args['input'])
+    data   = read_data(args['input'])
     tables = parse_data(data)
     
     return tables
+
 
 def read_data(input):
     data = []
@@ -354,6 +381,7 @@ def read_data(input):
         data += open(file, 'rU').readlines()
     
     return data
+
 
 def parse_data(data):
     tables = {}
@@ -374,6 +402,7 @@ def parse_data(data):
         
     return tables    
     
+
 def insert_tables(args,tables):
     lyx_text = open(args['template'], 'rU').readlines()
     for n in range( len(lyx_text) ):
@@ -406,7 +435,8 @@ def insert_tables(args,tables):
                         search_table = False
     
     return lyx_text
-    
+ 
+
 def round_entry(entry_tag, entry):
     round_to = int(entry_tag.replace(',', ''))
     decimal_place = round(pow(0.1, round_to), round_to)
@@ -417,6 +447,7 @@ def round_entry(entry_tag, entry):
     rounded_entry = str(Decimal(entry).quantize(Decimal(decimal_place), rounding = ROUND_HALF_UP))
 
     return rounded_entry
+
 
 def insert_commas(entry):
     integer_part = re.split('\.', entry)[0]
@@ -432,7 +463,8 @@ def insert_commas(entry):
         entry_commas = '-' + entry_commas
     
     return entry_commas
-    
+  
+
 def insert_warning(args, lyx_text):
     input = ' '.join(args['input'])
     template = ''.join(args['template'])
@@ -454,6 +486,7 @@ def insert_warning(args, lyx_text):
         
     return lyx_text
     
+
 def write_to_lyx(args, lyx_text):    
     outfile = open(args['output'], 'wb')
     outfile.write( ''.join(lyx_text) )

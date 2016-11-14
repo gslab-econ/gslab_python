@@ -14,14 +14,13 @@ from private.preliminaries import print_error, files_list
 from dir_mod import delete_files, list_directory
 from private.exceptionclasses import CustomError, CritError, SyntaxError, LogicError
 
-######################################################
-# Set default options
-######################################################
+#== Set default options ==============================
 
 def set_option(**kwargs):
-    """This function takes a dictionary as the input and overwrite the default values of
-    the settings in metadata. The key identifies the setting to be changed, and the value
-    will be the new default value of that setting."""
+    """This function takes a dictionary as input and overwrites the default values
+    of the settings in metadata. The key identifies the setting to be changed, 
+    and the value will be the new default value of that setting.
+    """
 
     try:
         dict((k.lower(), v) for k, v in kwargs.iteritems())
@@ -54,10 +53,7 @@ def set_option(**kwargs):
         print "Error with set_option: \n", errmsg
 
 
-######################################################
-# Logging
-######################################################
-
+#== Logging ==========================================
 def start_make_logging(makelog = '@DEFAULTVALUE@'):
     """Start "makelog" log file with time stamp."""
 
@@ -89,7 +85,7 @@ def start_make_logging(makelog = '@DEFAULTVALUE@'):
         print "Error with start_make_logging: \n", errmsg
 
 def end_make_logging(makelog = '@DEFAULTVALUE@'):
-    """End "makelog" log file with time stamp."""
+    """End "makelog" log file with time stamp.    """
 
     # metadata.settings should not be part of argument defaults so that they can be
     # overwritten by make_log.set_option
@@ -110,12 +106,9 @@ def end_make_logging(makelog = '@DEFAULTVALUE@'):
     print >> LOGFILE, messages.note_makelogend, time_end
     LOGFILE.close()
 
-######################################################
-# Add and Delete from Log
-######################################################
-
+#== Additions and deletions from logs ================
 def add_log(*args, **kwargs):
-    """Add log files in "*arg" list to "makelog" log file."""
+    """Add log files in "*arg" list to "makelog" log file.    """
 
     # metadata.settings should not be part of argument defaults so that they can be
     # overwritten by make_log.set_option
@@ -149,8 +142,11 @@ def add_log(*args, **kwargs):
 
 
 def del_log(*args, **kwargs):
-    """Delete each of the log files listed in "*arg" list.
-    Errors are printed to "makelog" log file."""
+    """Delete log files
+
+    This function deletes each of the log files listed in "*arg" list.
+    Errors are printed to `makelog` log file.
+    """
 
     # metadata.settings should not be part of argument defaults so that they can be
     # overwritten by make_log.set_option
@@ -182,10 +178,7 @@ def del_log(*args, **kwargs):
 
     LOGFILE.close()
 
-######################################################
-# Log file stats and file heads
-######################################################
-
+#== Log file information and file heads ==============
 def make_output_local_logs (output_local_dir = '@DEFAULTVALUE@',
            output_dir = '@DEFAULTVALUE@',
            stats_file = '@DEFAULTVALUE@', 
@@ -208,9 +201,11 @@ def make_output_local_logs (output_local_dir = '@DEFAULTVALUE@',
     
 
 def make_stats_log (output_dir, stats_file, all_files):
-    """Create a log file at "stats_file" in "output_dir" of statistics of the 
+    """
+    Create a log file at "stats_file" in "output_dir" of statistics of the 
     files listed in "all_files". The statistics are (in order): file name, date
-    and time last modified, and file size."""
+    and time last modified, and file size.
+    """
     
     if stats_file == '':
         return
@@ -233,8 +228,10 @@ def make_stats_log (output_dir, stats_file, all_files):
     STATSFILE.close()
 
 def make_heads_log (output_dir, heads_file, all_files, head_lines = 10):
-    """Create a log file at "heads_file" in "output_dir" of the first 
-    "head_lines" lines of each file listed in "all_files"."""
+    """
+    Create a log file at "heads_file" in "output_dir" of the first 
+    "head_lines" lines of each file listed in "all_files".
+    """
     
     if heads_file == '':
         return

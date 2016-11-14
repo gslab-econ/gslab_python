@@ -1,16 +1,14 @@
 #! /usr/bin/env python
-
 import unittest
 import sys
 import os
 import shutil
-sys.path.append('../../..')
-from gslab_scons.build import *
-from gslab_scons.log import *
-from gslab_scons.exceptions import *
-from gslab_make.get_externals import get_externals
 
-class testbuild_r(unittest.TestCase):
+sys.path.append('../../..')
+from gslab_scons.build import build_python
+from gslab_scons.exceptions import BadExtensionError
+
+class testbuild_python(unittest.TestCase):
 
     def setUp(self):
         if not os.path.exists('../build/'):
@@ -18,17 +16,17 @@ class testbuild_r(unittest.TestCase):
 
     def test_default(self):
         env = ''
-        build_r('../build/r.rds', './input/R_test_script.R', env)
+        build_python('../build/py.py', './input/python_test_script.py', env)
         logfile_data = open('../build/sconscript.log', 'rU').read()
         self.assertIn('Log created:', logfile_data)
         if os.path.isfile('../build/sconscript.log'):
             os.remove('../build/sconscript.log')
-
+ 
     def test_bad_extension(self):
         env = ''
         with self.assertRaises(BadExtensionError):
-            build_r('../build/r.rds', ['bad', './input/R_test_script.R'], env)
-
+            build_python('../build/py.py', ['bad', './input/python_test_script.py'], env)
+   
     def tearDown(self):
         if os.path.exists('../build/'):
             shutil.rmtree('../build/')

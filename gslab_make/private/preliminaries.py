@@ -9,14 +9,10 @@ import shutil
 
 import messages as messages
 import metadata as metadata
+
 from exceptionclasses import CustomError, CritError
-from getexternalsdirectives import SystemDirective, SvnExportDirective, CopyDirective, GitHubDirective
 
-
-######################################################
-# Logging
-######################################################
-
+#== Logging ===============================================
 def start_logging(log, logtype):
     try:
         LOGFILE = open(log,'wb') 
@@ -27,7 +23,6 @@ def start_logging(log, logtype):
     sys.stderr = LOGFILE
     working_dir = os.getcwd()
     print >> LOGFILE, messages.note_logstart % logtype, time_begin, working_dir
-
     return LOGFILE
 
 def end_logging(LOGFILE, makelog, logtype):
@@ -41,11 +36,7 @@ def end_logging(LOGFILE, makelog, logtype):
     MAKE_LOGFILE.write( open(LOGFILE.name, 'rU').read() )
     MAKE_LOGFILE.close()
     os.remove(LOGFILE.name)
-
-
-######################################################
-# Input_to_array
-######################################################
+#==========================================================
 
 def input_to_array(filename):
     # Import file
@@ -64,10 +55,7 @@ def input_to_array(filename):
 
     return filearray
     
-######################################################
-# Print Error
-######################################################
-
+#== Print error ===========================================
 def print_error(LOGFILE):
     print '\n'
     print >> LOGFILE, '\n'
@@ -82,10 +70,10 @@ def add_error_to_log(makelog):
     LOGFILE = open(makelog, 'ab')
     print_error(LOGFILE)
     LOGFILE.close()
-   
-######################################################
-# Walk through directories
-######################################################
+
+
+
+#== Walk through directories ==============================
 def files_list (read_dir, recur_lim):
     """Generate a list of all files in "read_dir" and its subdirectories (up to
     a depth of "recur_lim" -- if recur_lim is 0, there is no depth limit)."""
@@ -157,11 +145,8 @@ def in_current_drive (dir):
     other_drive = os.path.splitdrive(dir)[0]
     return current_drive == other_drive
  
+#==========================================================
 
-######################################################
-# get_externas[_github] preliminaries
-###################################################### 
-    
 def externals_preliminaries(makelog, externals_file, LOGFILE):
     if makelog == '@DEFAULTVALUE@':
         makelog = metadata.settings['makelog_file']

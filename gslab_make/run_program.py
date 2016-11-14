@@ -1,11 +1,15 @@
 #! /usr/bin/env python
 
-import os, shutil, fileinput
+import os
+import shutil
+import fileinput
 
 import private.metadata as metadata
 import private.messages as messages
 from private.exceptionclasses import SyntaxError
-from private.runprogramdirective import RunProgramDirective, RunCommandDirective, RunRPackageDirective
+from private.runprogramdirective import (RunProgramDirective, 
+                                         RunCommandDirective, 
+                                         RunRPackageDirective)
 from private.preliminaries import add_error_to_log
 
 ###############################################################
@@ -14,9 +18,11 @@ from private.preliminaries import add_error_to_log
 ###############################################################
 
 def run_stata(**kwargs):
-    """Run Stata program with log file
+    """Execute a Stata script 
 
-    Please see /trunk/lib/python/gslab_make/py/readme_make.txt for more explanations."""
+    This function executes a Stata script and produces a log file
+    for this run.
+    """
 
     try:
         run = RunProgramDirective(kwargs)
@@ -55,9 +61,11 @@ def run_stata(**kwargs):
 
 
 def run_matlab(**kwargs):
-    """Run Matlab program with log file
+    """ Run a Matlab script
 
-    Please see /trunk/lib/python/gslab_make/py/readme_make.txt for more explanations."""
+    This function executes a Matlab script and produces a log file
+    for this run.
+    """
 
     try:
         run = RunProgramDirective(kwargs)
@@ -87,9 +95,7 @@ def run_matlab(**kwargs):
 
 
 def run_perl(**kwargs):
-    """Run Perl program
-
-    Please see /trunk/lib/python/gslab_make/py/readme_make.txt for more explanations."""
+    """Execute a Perl script"""
 
     try:
         run = RunProgramDirective(kwargs)
@@ -112,9 +118,7 @@ def run_perl(**kwargs):
 
 
 def run_python(**kwargs):
-    """Run Python program
-
-    Please see /trunk/lib/python/gslab_make/py/readme_make.txt for more explanations."""
+    """Execute a Python script."""
 
     try:
         run = RunProgramDirective(kwargs)
@@ -137,9 +141,7 @@ def run_python(**kwargs):
 
 
 def run_mathematica(**kwargs):
-    """Run Mathematica program
-
-    Please see /trunk/lib/python/gslab_make/py/readme_make.txt for more explanations."""
+    """Execute a Mathematica script"""
 
     try:
         run = RunProgramDirective(kwargs)
@@ -166,9 +168,7 @@ def run_mathematica(**kwargs):
 
 
 def run_stc(**kwargs):
-    """Run StatTransfer .stc program
-
-    Please see /trunk/lib/python/gslab_make/py/readme_make.txt for more explanations."""
+    """Run StatTransfer .stc program"""
 
     try:
         run = RunProgramDirective(kwargs)
@@ -191,9 +191,7 @@ def run_stc(**kwargs):
 
 
 def run_stcmd(**kwargs):
-    """Run StatTransfer .stcmd program
-
-    Please see /trunk/lib/python/gslab_make/py/readme_make.txt for more explanations."""
+    """Run StatTransfer .stcmd program"""
 
     try:
         run = RunProgramDirective(kwargs)
@@ -216,9 +214,7 @@ def run_stcmd(**kwargs):
 
 
 def run_lyx(**kwargs):
-    """Run Lyx export to Pdf
-
-    Please see /trunk/lib/python/gslab_make/py/readme_make.txt for more explanations."""
+    """Export a LyX file to PDF"""
 
     try:
         run = RunProgramDirective(kwargs)
@@ -284,9 +280,7 @@ def run_lyx(**kwargs):
 
 
 def run_rbatch(**kwargs):
-    """Run R batch program with log file
-
-    Please see /trunk/lib/python/gslab_make/py/readme_make.txt for more explanations."""
+    """Run an R batch program with log file"""
 
     try:
         run = RunProgramDirective(kwargs)
@@ -317,9 +311,7 @@ def run_rbatch(**kwargs):
 
 
 def run_rinstall(**kwargs):
-    """Install R package
-
-    Please see /trunk/lib/python/gslab_make/py/readme_make.txt for more explanations."""
+    """Install an R package"""
 
     try:
         run = RunRPackageDirective(kwargs)
@@ -343,9 +335,7 @@ def run_rinstall(**kwargs):
 
 
 def run_sas(**kwargs):
-    """Run SAS script
-
-    Please see /trunk/lib/python/gslab_make/py/readme_make.txt for more explanations."""
+    """Run a SAS script"""
 
     try:
         run = RunProgramDirective(kwargs)
@@ -386,10 +376,8 @@ def run_sas(**kwargs):
 
 
 def run_command(**kwargs):
-    """Run a Shell command
-
-    Please see /trunk/lib/python/gslab_make/py/readme_make.txt for more explanations."""
-
+    """Run a Shell command"""
+    
     run = RunCommandDirective(kwargs)
     try:
         run.error_check('other')

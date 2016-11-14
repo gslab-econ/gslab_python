@@ -3,10 +3,11 @@
 import os
 import re
 import datetime
+import private.metadata as metadata
 
 from make_log import make_stats_log, make_heads_log
 from private.linkslist import LinksList
-import private.metadata as metadata
+
 
 def make_link_logs (links_files,
                     links_dir = '@DEFAULTVALUE@',

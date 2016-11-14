@@ -2,9 +2,9 @@ import os
 import sys
 import shutil
 import subprocess
-from datetime import datetime
-from sys import platform
-from exceptions import *
+from datetime   import datetime
+from sys        import platform
+from exceptions import BadExtensionError
 
 def check_lfs():
     try:
@@ -17,6 +17,10 @@ def check_lfs():
                   Please install Git LFS or run 'git lfs install --force' if prompted above.''')
 
 def stata_command_unix(flavor):
+    '''
+    This function returns the appropriate Stata command for a user's 
+    Unix platform.
+    '''
     options = {'darwin': '-e',
                'linux' : '-b',
                'linux2': '-b'}
@@ -25,18 +29,33 @@ def stata_command_unix(flavor):
     return command
 
 def stata_command_win(flavor):
+    '''
+    This function returns the appropriate Stata command for a user's 
+    Windows platform.
+    '''
     command  = flavor + ' /e do' + ' %s ' # %s will take filename later
     return command
 
 def is_unix():
+    '''
+    This function return True if the user's platform is Unix and false 
+    otherwise.
+    '''
     unix = ['darwin', 'linux', 'linux2']
     return platform in unix
 
 def is_64_windows():
+    '''
+    This function return True if the user's platform is Windows (64 bit)
+     and false otherwise.
+    '''
     return 'PROGRAMFILES(X86)' in os.environ
 
 def is_in_path(program):
-    # General helper function to check if `program` exist in the path env
+    '''
+    This general helper function checks whether `program` exists in the 
+    user's path environment variable.
+    '''
     if is_exe(program):
         return program
     else:
@@ -56,6 +75,10 @@ def make_list_if_string(source):
     return source
 
 def check_code_extension(source_file, software):
+    '''
+    This function raises an exception if `source_file`'s extension
+    does not match the software package specified by `software`.
+    '''
     extensions = {'stata'  : '.do',
                   'r'      : '.r', 
                   'lyx'    : '.lyx',
@@ -67,5 +90,8 @@ def check_code_extension(source_file, software):
     return None
 
 def current_time():
+    '''
+    This function returns the current time in a a Y-M-D H:M:S format.
+    '''
     return datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')   
 
