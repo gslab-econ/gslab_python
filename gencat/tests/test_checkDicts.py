@@ -4,7 +4,7 @@ import shutil
 import zipfile
 import sys
 
-sys.path.append('../../')
+sys.path.append('..')
 from gencat import gencat
 
 class test_checkDicts(unittest.TestCase): 
@@ -22,7 +22,7 @@ class test_checkDicts(unittest.TestCase):
         '''
         Test that no exception is raised when dictionaries exist and all keys are tuples.
         '''
-        class TestCat(gencat.gencat):
+        class TestCat(gencat):
             def makeZipDict(self):
                 self.zip_dict = {'a': ('tuple1', )}
             def makeConcatDict(self):
@@ -37,7 +37,7 @@ class test_checkDicts(unittest.TestCase):
         '''
         Test that TypeError is raised when dictionaries exist but do not have tuple-valued keys.
         '''
-        class TestCat(gencat.gencat):
+        class TestCat(gencat):
             def makeZipDict(self):
                 self.zip_dict = {'a': 'not_a_tuple_tuple1'}
             def makeConcatDict(self):
@@ -53,7 +53,7 @@ class test_checkDicts(unittest.TestCase):
         '''
         Test that Exception is raised when a dictionary does not exist.
         '''
-        class TestCat(gencat.gencat):
+        class TestCat(gencat):
             def makeZipDict(self):
                 self.zip_dict = {}
             def makeConcatDict(self):

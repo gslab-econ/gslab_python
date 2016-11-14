@@ -84,5 +84,3 @@ def end_make_log(makelog):
 
 
 main()
-
-raw_input('\n Press <Enter> to exit.')
