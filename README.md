@@ -29,6 +29,4 @@ or
 ```
 pip install git+https://git@github.com/gslab-econ/gslab_python.git
 ```
-noting that the SSH command requires a working GitHub SSH keypair and that, when
-the user has enabled two-factor authentication, the HTTPS command requires the user
-to have a working GitHub personal access token. 
+which are the SSH and HTTPS protocol versions.
