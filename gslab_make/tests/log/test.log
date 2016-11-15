@@ -115,7 +115,7 @@ test_no_extension (test_run_program.test_run_stata.testRunStata) ... ok
 test_no_program (test_run_program.test_run_stata.testRunStata) ... ok
 
 ----------------------------------------------------------------------
-Ran 102 tests in 452.253s
+Ran 102 tests in 364.929s
 
 OK
 Cleared: ./externals/

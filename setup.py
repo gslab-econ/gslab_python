@@ -19,7 +19,7 @@ class CleanRepo(build_py):
 
 
 setup(name         = 'GSLab_Tools',
-      version      = '1.1.1',
+      version      = '2.0.0',
       description  = 'Python tools for GSLab',
       url          = 'https://github.com/gslab-econ/gslab_python',
       author       = 'Matthew Gentzkow, Jesse Shapiro',

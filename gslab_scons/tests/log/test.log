@@ -30,7 +30,7 @@ test_stata_command_unix (test_misc.test_misc) ... ok
 test_stata_command_win (test_misc.test_misc) ... skipped 'skipped test_stata_command_win because on a unix machine'
 
 ----------------------------------------------------------------------
-Ran 23 tests in 9.246s
+Ran 23 tests in 14.681s
 
 OK (skipped=1)
 Error: First argument, bad, must be a .lyx file

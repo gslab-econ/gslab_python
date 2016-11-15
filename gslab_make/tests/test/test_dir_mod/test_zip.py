@@ -1,6 +1,11 @@
 #! /usr/bin/env python
 
-import unittest, sys, os, shutil, contextlib
+import unittest
+import sys
+import os
+import shutil
+import contextlib
+
 sys.path.append('../..')
 from dir_mod import zip_dir, unzip, unzip_externals, clear_dirs
 from get_externals import get_externals
