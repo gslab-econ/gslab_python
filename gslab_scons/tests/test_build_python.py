@@ -4,9 +4,9 @@ import sys
 import os
 import shutil
 
-sys.path.append('../../..')
-from gslab_scons.build import build_python
-from gslab_scons.exceptions import BadExtensionError
+sys.path.append('../..')
+from gslab_scons import build_python, BadExtensionError
+
 
 class testbuild_python(unittest.TestCase):
 

@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: latin-1 -*-
 '''
 ======================================
 gslab_make: a library of make.py tools

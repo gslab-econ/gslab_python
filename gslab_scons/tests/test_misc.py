@@ -6,8 +6,8 @@ import os
 import re
 
 sys.path.append('../..')
-import misc
-from exceptions import BadExtensionError
+import gslab_scons.misc as misc
+from gslab_scons import BadExtensionError
 
 class test_misc(unittest.TestCase):
 
@@ -42,8 +42,8 @@ class test_misc(unittest.TestCase):
 
     def test_is_exe(self):
     	pyth_exec = misc.is_in_path('python')
-    	self.assertTrue(is_exe(pyth_exec))
-    	self.assertFalse(is_exe('BAD_EXEC_FILE'))
+    	self.assertTrue(misc.is_exe(pyth_exec))
+    	self.assertFalse(misc.is_exe('BAD_EXEC_FILE'))
 
     def test_make_list_if_string(self):
     	self.assertEqual(misc.make_list_if_string(['test', 'test']), ['test', 'test'])
@@ -62,7 +62,7 @@ class test_misc(unittest.TestCase):
     	self.assertEqual(misc.check_code_extension('test.lyx', 'lyx'),   None)
     	self.assertEqual(misc.check_code_extension('test.py', 'python'), None)
     	with self.assertRaises(BadExtensionError):
-    		check_code_extension('test.badextension', 'python')
+    		misc.check_code_extension('test.badextension', 'python')
 
     def test_current_time(self):
         '''Test that current_time() prints times in the expected format'''

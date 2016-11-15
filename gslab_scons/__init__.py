@@ -21,3 +21,7 @@ the first argument in source when calling builders from SConscript.
 
 from . import builders
 from .builders import build_r, build_lyx, build_stata, build_tables, build_python
+
+from .release import release, upload_asset
+from .log import start_log, log_timestamp
+from .exceptions import BadExecutableError, BadExtensionError, LFSError

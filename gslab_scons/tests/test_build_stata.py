@@ -6,9 +6,8 @@ import os
 import shutil
 
 sys.path.append('../..')
-from gslab_scons.build        import build_stata
-from gslab_scons.exceptions   import BadExecutableError, BadExtensionError
-from gslab_make.get_externals import get_externals
+from gslab_scons  import build_stata, BadExecutableError, BadExtensionError
+from gslab_make import get_externals
 
 class testbuild_stata(unittest.TestCase):
 
@@ -52,6 +51,7 @@ class testbuild_stata(unittest.TestCase):
             os.remove('get_externals.log')
         if os.path.exists('output.txt'):
             os.remove('output.txt')
+
 
 if __name__ == '__main__':
     os.getcwd()

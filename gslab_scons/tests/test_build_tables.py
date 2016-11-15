@@ -3,9 +3,11 @@
 import unittest
 import sys
 import os
+
 sys.path.append('../..')
-from gslab_scons.build      import build_tables
-from gslab_scons.exceptions import BadExtensionError
+from gslab_scons import build_tables, BadExtensionError
+
+
 
 class test_build_tables(unittest.TestCase):
 

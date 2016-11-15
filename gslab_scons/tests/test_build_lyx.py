@@ -6,10 +6,10 @@ import os
 import shutil
 
 sys.path.append('../..')
-from gslab_scons.build import build_lyx
-from gslab_scons.exceptions import BadExtensionError
+from gslab_scons import build_lyx, BadExtensionError
 
-class testbuild_lyx(unittest.TestCase):
+
+class test_build_lyx(unittest.TestCase):
 
     def setUp(self):
         if not os.path.exists('../build/'):
@@ -34,6 +34,7 @@ class testbuild_lyx(unittest.TestCase):
             shutil.rmtree('../build/')
         if os.path.exists('output.txt'):
             os.remove('output.txt')
+         
                 
 if __name__ == '__main__':
     os.getcwd()

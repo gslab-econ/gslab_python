@@ -1,4 +1,5 @@
 import os
+import shutil
 import gslab_scons.misc as misc
 from gslab_scons.log import log_timestamp
 from gslab_scons.exceptions import BadExecutableError
