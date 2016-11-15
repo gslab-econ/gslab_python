@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+
 import os
 import getpass
 import private.preliminaries as prelim
@@ -9,7 +10,7 @@ from private.getexternalsdirectives import SystemDirective
 
 def get_externals_github(externals_file, external_dir = '@DEFAULTVALUE@',
                          makelog = '@DEFAULTVALUE@', quiet = False):
-    '''Retrieve external files from GitHub
+    '''Fetch external files from GitHub
 
     Description:
     This function retrieves files from GitHub as specified by a formatted text
@@ -19,20 +20,21 @@ def get_externals_github(externals_file, external_dir = '@DEFAULTVALUE@',
     within a release.
 
     Usage:
-    This function's sage largely follows that of get_externals().
+    - This function's usage largely follows that of get_externals(). Instead of 
+      rading
+    - get_externals_github is only intended to download assets from releases.
+      It cannot download the release source code or other assets not contained 
+      within a release.
 
-    externals_github.txt file format:
+    File format of a `externals_file`:
     This file needs to rows of numbers or characters, delimited by either tabs or 
-    4 spaces,one for each file to be exported via GitHub.
-    The proper format is: url   outdir  outfile notes
+    4 spaces, one for each file to be exported via GitHub.
+    The proper column format is: url   outdir  outfile notes
     
     Column descriptions:
     *  url  
-      *  Desired download url for the file in a specific GitHub release. This can be
-         found by going to the file on GitHub and right clicking on the desired file 
-         in a release. Then select “copy link address”. get_externals_github.py will 
-         then use this url to parse the exact download url needed. The url given should 
-         be the complete url.
+      *  Download url for the file in a specific GitHub release. The url given 
+         should be the complete url.
     *  outdir 
       *  Desired output directory of the exported file/directory. Typically of the form 
          ./subdir/. If left blank, will be filled with the first level of the externals 

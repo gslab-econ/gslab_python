@@ -11,11 +11,11 @@ def get_externals(externals_file,
                   external_dir = '@DEFAULTVALUE@',
                   makelog      = '@DEFAULTVALUE@',
                   quiet        = False):
-    '''Fetch external files from SVN
+    '''Fetch external files
 
     Description:
-    This function interprets a formatted text document listing 
-    files to be exported via SVN or a system copy command.
+    This function interprets a formatted text document listing files 
+    to be exported via SVN or a system copy command.
 
     Syntax:
     get_externals(externals_file [, externals_dir [, makelog [, quiet]]])
@@ -29,33 +29,33 @@ def get_externals(externals_file,
 
         ### Column descriptions:
         *  rev 
-          * Revision number of the file/directory. Must be in integer format. 
+          * Revision number of the file/directory in integer format. 
             If left blank along with directory column, get_externals.py will 
             read the last specified revision number. If copying from a shared 
             drive rather than the repository, list revision number as COPY.
         *  dir
           *  Directory of the file/directory requested. As described above, 
              %xxx% placemarkers are substituted in from predefined values in 
-             metadata.py. If left blank along with revision column, get_externals.py 
-             will read the last specified directory. 
+             metadata.py. If left blank along with revision column, 
+             get_externals.py will read the last specified directory. 
         *  file 
           *  Name of the file requested. If entire directory is required, leave 
              column as a single *. If a file name wildcard is required place 
-             single * within filename (i.e., test*.txt will call test1.txt, 
-             test2.txt, and any file of this form). get_externals.py will also 
-             attempt to screen out bad file names. Cannot be left blank.
+             single * within filename. get_externals.py will attempt to screen
+              out bad file names. Cannot be left blank.
         *  outdir   
-          *  Desired output directory of the exported file/directory. Typically of 
-             the form ./subdir/. If left blank, will be filled with the first level of 
-             the externals relative path. 
+          *  Desired output directory of the exported file/directory. 
+             Typically of the form ./subdir/. If left blank, will be 
+             filled with the first level of the externals relative path. 
         *  outfile 
-          *  Desired output name of the exported file/directory. If left as double quotes,
-             indicates that it should have the same name. Adding a directory name that 
-             is different from the default """" will place this subdirectory within 
-             the outdir. Additionally, get_externals has the capability to assign a prefix 
-             tag to a collection of files to be exported, either through a folder export, 
-             or wildcard call. In order to do so, write in the outfile column '[prefix]*', 
-             where the prefix [prefix] will be attached to each exported file. 
+          *  Desired output name of the exported file/directory. If left as 
+             double quotes, indicates that it should have the same name. 
+             Adding a directory name that is different from the default """" 
+             will place this subdirectory within the outdir. Additionally, 
+             get_externals can assign a prefix tag to exported file collections, 
+             either through a folder export, or a wildcard call; it does so 
+             when the outfile column contains text of the pattern '[prefix]*', 
+             where the prefix [prefix] will be attached to exported files. 
         *  notes
           *  Optional column with notes on the export. get_externals.py ignores this, but logs it.
                 
