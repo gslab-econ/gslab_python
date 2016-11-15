@@ -29,7 +29,7 @@ def set_option(**kwargs):
                external_dir = './external', manifest = './manifest.log', 
                externalslog = './log/externals.log')
 
-    - Each of the above is optional. For all keys, "_dir" and "_file" are optional.
+    Each of the above is optional. For all keys, "_dir" and "_file" are optional.
     """
 
     try:

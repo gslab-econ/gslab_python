@@ -7,7 +7,7 @@ import re
 import traceback
 import tablefill_info
 from decimal import Decimal, ROUND_HALF_UP
-from tablefill_info import __doc__
+
 
 def tablefill(**kwargs):
     try:

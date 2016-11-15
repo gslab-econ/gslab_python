@@ -184,13 +184,13 @@ def list_directory(top, makelog = '@DEFAULTVALUE@'):
                         dirs_to_keep.append(dirname)
                 dirs[:] = dirs_to_keep
 
-                # print out the sub-directory and its time stamp
+                # Print out the sub-directory and its time stamp
                 created = os.stat(root).st_mtime
                 asciiTime = time.asctime(time.localtime(created))
                 print >> LOGFILE, root
                 print >> LOGFILE, 'created/modified', asciiTime
 
-                # print out all the files in the sub-directories
+                # Print out all the files in the sub-directories
                 for name in files:
                     full_name = os.path.join(root, name)
                     created = os.path.getmtime(full_name)

@@ -57,7 +57,8 @@ def get_externals(externals_file,
              when the outfile column contains text of the pattern '[prefix]*', 
              where the prefix [prefix] will be attached to exported files. 
         *  notes
-          *  Optional column with notes on the export. get_externals.py ignores this, but logs it.
+          *  Optional column with notes on the export. get_externals.py ignores this, 
+             but logs it.
                 
         Example of externals.txt:
         ```
@@ -73,7 +74,6 @@ def get_externals(externals_file,
 
     The fourth argument, quiet, is by default False.  Setting this argument to 
     True suppresses standard output and errors from SVN. 
-
     '''
     try:
         LOGFILE = prelim.start_logging(metadata.settings['externalslog_file'], 'get_externals.py')        

@@ -10,9 +10,6 @@ import messages as messages
 import metadata as metadata
 from exceptionclasses import CustomError, CritError, SyntaxError, LogicError
 
-######################################################
-# System Directive
-######################################################
 
 class SystemDirective(object):
 
@@ -43,7 +40,7 @@ class SystemDirective(object):
             self.dir = self.dir + '/'
         # Flag if wildcard list needs to be compiled in subclass
         self.flag_list = []
-        if re.search('\*.+',self.file) or re.search('^.+\*',self.file) or (re.search('\*',self.outfile)):
+        if re.search('\*.+', self.file) or re.search('^.+\*', self.file) or (re.search('\*', self.outfile)):
             self.flag_list = 1
 
     # Error Check
@@ -281,9 +278,7 @@ class SvnExportDirective(SystemDirective):
         print >> self.logfile, messages.success_svn % (self.dir, self.file, self.rev,
                                                        self.outdir, self.outfile)
 
-######################################################
-# Copy Directive
-######################################################
+
 
 class CopyDirective(SystemDirective):
 
