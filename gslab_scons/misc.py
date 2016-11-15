@@ -6,7 +6,9 @@ from datetime   import datetime
 from sys        import platform
 from exceptions import BadExtensionError
 
+
 def check_lfs():
+    '''Check that Git LFS is installed'''
     try:
         output = subprocess.check_output("git-lfs install", shell = True)
     except:
@@ -15,6 +17,7 @@ def check_lfs():
         except:
             raise LFSError('''Either Git LFS is not installed or your Git LFS settings need to be updated. 
                   Please install Git LFS or run 'git lfs install --force' if prompted above.''')
+
 
 def stata_command_unix(flavor):
     '''
@@ -28,6 +31,7 @@ def stata_command_unix(flavor):
     command = flavor + ' ' + option + ' %s ' # %s will take filename later
     return command
 
+
 def stata_command_win(flavor):
     '''
     This function returns the appropriate Stata command for a user's 
@@ -35,6 +39,7 @@ def stata_command_win(flavor):
     '''
     command  = flavor + ' /e do' + ' %s ' # %s will take filename later
     return command
+
 
 def is_unix():
     '''
@@ -44,12 +49,14 @@ def is_unix():
     unix = ['darwin', 'linux', 'linux2']
     return platform in unix
 
+
 def is_64_windows():
     '''
     This function return True if the user's platform is Windows (64 bit)
-     and false otherwise.
+    and false otherwise.
     '''
     return 'PROGRAMFILES(X86)' in os.environ
+
 
 def is_in_path(program):
     '''
@@ -66,13 +73,18 @@ def is_in_path(program):
                 return exe
     return None
 
+
 def is_exe(file_path):
+    '''Check that a path refers to a file that exists and can be exectuted.'''
     return os.path.isfile(file_path) and os.access(file_path, os.X_OK)
 
+
 def make_list_if_string(source):
+    '''Convert a string input into a singleton list containing that string.'''
     if isinstance(source, str):
         source = [source]
     return source
+
 
 def check_code_extension(source_file, software):
     '''
@@ -89,9 +101,9 @@ def check_code_extension(source_file, software):
         raise BadExtensionError('First argument, ' + source_file + ', must be a ' + ext + ' file')
     return None
 
+
 def current_time():
     '''
     This function returns the current time in a a Y-M-D H:M:S format.
     '''
     return datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')   
-

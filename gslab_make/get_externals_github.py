@@ -1,21 +1,57 @@
 #! /usr/bin/env python
 import os
 import getpass
-import private.preliminates as prelim
+import private.preliminaries as prelim
 import private.metadata as metadata
 import private.messages as messages
-
 from private.getexternalsdirectives import SystemDirective
 
 
-######################################################
-# Main Program
-######################################################
-
 def get_externals_github(externals_file, external_dir = '@DEFAULTVALUE@',
                          makelog = '@DEFAULTVALUE@', quiet = False):
-    # metadata.settings should not be part of argument defaults so that they can be
-    # overwritten by make_log.set_option
+    '''Retrieve external files from GitHub
+
+    Description:
+    This function retrieves files from GitHub as specified by a formatted text
+    document indicated as an argument. 
+    get_externals_github is only intended to download assets from releases.
+    It cannot download the release source code or other assets not contained 
+    within a release.
+
+    Usage:
+    This function's sage largely follows that of get_externals().
+
+    externals_github.txt file format:
+    This file needs to rows of numbers or characters, delimited by either tabs or 
+    4 spaces,one for each file to be exported via GitHub.
+    The proper format is: url   outdir  outfile notes
+    
+    Column descriptions:
+    *  url  
+      *  Desired download url for the file in a specific GitHub release. This can be
+         found by going to the file on GitHub and right clicking on the desired file 
+         in a release. Then select “copy link address”. get_externals_github.py will 
+         then use this url to parse the exact download url needed. The url given should 
+         be the complete url.
+    *  outdir 
+      *  Desired output directory of the exported file/directory. Typically of the form 
+         ./subdir/. If left blank, will be filled with the first level of the externals 
+         relative path. 
+    *  outfile 
+      *  Desired output name of the exported file/directory. If left as double quotes, 
+         indicates that it should have the same name as the asset name in GitHub. 
+    *  notes 
+      *  Optional column with notes on the export. get_externals_github.py ignores this,
+         but logs it.
+
+    Example of externals_github.txt:
+
+    ```
+    url outdir  outfile notes   
+    https://github.com/TestUser/TestRepo/releases/download/v1.0/document.pdf    ./  """"
+    https://github.com/TestUser/TestRepo/releases/download/AlternativeVersion/other_document.pdf    ./  """"
+    ```
+    '''
     try:
         # Request Token
         token = getpass.getpass("Enter a valid GitHub token and then press enter: ") 

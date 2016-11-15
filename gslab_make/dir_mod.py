@@ -210,10 +210,9 @@ def clear_dirs(*args):
     This function creates a directory for each path specified in 
     *args if such a directory does not already exist. It deletes
     all files in each directory that already exists while keeping 
-    directory structure (i.e. sub-directories).
+    directory structure (i.e. sub-directories). This function is
+    safe for symlinks.
     """
-    # metadata.settings should not be part of argument defaults so that they can be
-    # overwritten by make_log.set_option  
     for dir in args:
         if os.path.isdir(dir):
             remove_dir(dir)
