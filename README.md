@@ -13,7 +13,14 @@ Information about each of these packages is available in its internal documentat
 
 Installation
 ------------
-To install this repository's Python libraries, run the `setup.py` script at its root. 
+To install this repository's Python libraries, run the `setup.py` script at its root
+with the command:
+```
+python setup.py install [clean]
+```
+where the optional clean command deletes files used in installating the libraries
+after installation is complete.
+
 One can use `pip` to assist with this installation procedure by using the commands:
 ```
 pip install git+ssh://git@github.com/gslab-econ/gslab_python.git
