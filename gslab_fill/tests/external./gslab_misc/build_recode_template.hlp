@@ -1,0 +1,49 @@
+.-
+help for ^build_recode_template^
+.-
+
+Syntax
+-----------------------------------------------------------------------
+
+	build_recode_template using, output(str) variables(str) [key(str) import(str) 
+		descriptors(str) recode_var_name(str)]
+		
+Description
+-----------------------------------------------------------------------
+
+Creates a new recode CSV file from a using dataset. The recode dataset has one row for each
+value of each specified variable, and a column in which recoded values can be entered. If
+the user specifies a key, there will be one for each value of each variable for each value of the
+key. If there is a preexisting recode file, then the recode data in this can be preserved by 
+specifying it under the import() option.
+
+Options
+-----------------------------------------------------------------------
+
+using: name/location of input file - if none specified, dataset in memory is used.
+
+output(): name/location of file to be created
+
+variables(): list of variables from input file to be included in recode file
+
+key(): list of keys from input file; recoding done within values of these keys
+
+import(): name/location of pre-existing recode file to be preserved
+
+descriptors(): list of descriptor variables.  Descriptors must be listed in the same order as the corresponding variables.  
+			Note that if some variables have descriptors and others do not, those with descriptors must appear fist in 
+			variables().  If no descriptors are listed, the file checks if default descriptors of the form `variable'_descriptor exist, 
+			If there is no descriptor for an input variable, the output variable 'descriptor' will be set to missing for the 
+			relevant observations.
+
+recode_var_name(): name of recode column
+
+
+Examples
+-----------------------------------------------------------------------
+
+		build_recode_template using using.dta, output(recode.csv) variables(attribute1 attribute2)
+		build_recode_template using using.dta, output(recode.csv) variables(attribute1 attribute2) key(keyvar)
+		build_recode_template using using.dta, output(recode.csv) variables(attribute1 attribute2) import(old_recode.csv)
+		build_recode_template using using.dta, output(recode.csv) variables(attribute1 attribute2) recode_var_name(collapse)
+		build_recode_template using using.dta, output(recode.csv) variables(attribute1 attribute2) descriptors(descriptor1 descriptor2)

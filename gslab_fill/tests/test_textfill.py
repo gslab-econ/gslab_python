@@ -25,9 +25,9 @@ class testTextfill(unittest.TestCase):
         
     def testAlternativePrefix(self):
         with nostderrout():
-            message = textfill(input    = './log/stata_output_for_textfill/alternative_prefix.log',
-                               template = './input/textfill_template.lyx',
-                               output   =  './input/textfill_template_filled.lyx', \
+            message = textfill(input    = './log/stata_output_for_textfill/alternative_prefix.log', 
+                               template = './input/textfill_template.lyx', 
+                               output   = './input/textfill_template_filled.lyx', 
                                prefix   = 'prefix')
         self.assertIn('filled successfully', message)
         log_remove_string = '. insert_tag'
@@ -78,6 +78,7 @@ class testTextfill(unittest.TestCase):
             textfill(input    = './log/stata_output_for_textfill/tags_incorrectly_named.log',
                      template = './input/textfill_template.lyx',
                      output   = './input/textfill_template_filled.lyx')
+        
         log_remove_string = '. insert_tag'
 
         with self.assertRaises(AssertionError):
@@ -93,32 +94,36 @@ class testTextfill(unittest.TestCase):
                           
         # non-existent input 1
         with nostderrout():
-            error = textfill(input    = './log/stata_output_for_textfill/fake_file.log', \
-                             template = './input/textfill_template.lyx', \
-                             output   = './input/textfill_template_filled.lyx')
+            error = textfill(input    = './log/stata_output_for_textfill/fake_file.log', 
+                             template = './input/textfill_template.lyx', 
+                             output   =  './input/textfill_template_filled.lyx')
+
         self.assertIn('IOError', error)
         
         # non-existent input 2
         with nostderrout():
-            error = textfill(input    = './log/stata.log ./log/stata_output_for_textfill/fake_file.log', \
-                             template = './input/textfill_template.lyx', \
-                             output   = './input/textfill_template_filled.lyx')        
+            error = textfill(input    = './log/stata.log ./log/stata_output_for_textfill/fake_file.log', 
+                             template = './input/textfill_template.lyx', 
+                             output   = './input/textfill_template_filled.lyx')
+
         self.assertIn('IOError', error)
         
     def testArgumentOrder(self):
         with nostderrout():
-            message = textfill(input     = './log/stata_output_for_textfill/legal.log', \
-                                output   = './input/textfill_template_filled.lyx', \
-                                template = './input/textfill_template.lyx')
+            message = textfill(input    = './log/stata_output_for_textfill/legal.log', 
+                               output   = './input/textfill_template_filled.lyx', 
+                               template = './input/textfill_template.lyx')
+
         self.assertIn('filled successfully', message)                                
             
         with nostderrout():            
-            message = textfill(template = './input/textfill_template.lyx',\
-                               output   = './input/textfill_template_filled.lyx', \
+            message = textfill(template = './input/textfill_template.lyx',
+                               output   = './input/textfill_template_filled.lyx',
                                input    = './log/stata_output_for_textfill/legal.log')
+
         self.assertIn('filled successfully', message)
         
-
+        
 if __name__ == '__main__':
     os.getcwd()
     unittest.main()

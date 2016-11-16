@@ -1,0 +1,43 @@
+.-
+help for ^cutby^
+.-
+
+By-able version of egen ... = cut()
+-----------------------------------------------------------------------
+
+	^cutby^   cutvar [^if^ exp] [^in^ range],
+			^by(^varlist^)^ ^groups(^number^)^ ^gen(^newname^)^
+
+
+Description
+-----------
+
+^cutby^ does the same thing as egen ... = cut(), except that it allows a by() option.
+It produces a new variable 1...number that divides the data into equal-sized groups
+according to the values of cutvar within the groups specified in by().
+
+
+Options for use with ^cutby^
+---------------------------
+
+^by(^varlist^)^ is not optional. It specifies the name of the grouping
+    variable. 
+
+^groups(^groupvar^)^ is not optional. It specifies the number of groups
+    just as in the egen command.
+    
+^gen(^newname^)^ is not optional. It specifies the new variable to create.
+
+
+Examples
+--------
+
+ . ^cutby iq, by(state) groups(5) gen(state_quintile)^
+
+Author
+------
+
+Matthew Gentzkow
+
+
+

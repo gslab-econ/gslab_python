@@ -12,6 +12,6 @@ testTagsIncorrectlySpecified (test_textfill.testTextfill) ... ok
 testTagsNotClosed (test_textfill.testTextfill) ... ok
 
 ----------------------------------------------------------------------
-Ran 12 tests in 0.095s
+Ran 12 tests in 0.160s
 
 OK

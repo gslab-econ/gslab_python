@@ -15,8 +15,8 @@ class testTablefill(unittest.TestCase):
 
     def testInput(self):
         with nostderrout():
-            message = tablefill(input    = './input/tables_appendix.txt ./input/tables_appendix_two.txt', \
-                                template = './input/tablefill_template.lyx', \
+            message = tablefill(input    = './input/tables_appendix.txt ./input/tables_appendix_two.txt', 
+                                template = './input/tablefill_template.lyx', 
                                 output   = './input/tablefill_template_filled.lyx')
         self.assertIn('filled successfully', message)                        
         tag_data = open('./input/tablefill_template.lyx', 'rU').readlines()
@@ -44,43 +44,44 @@ class testTablefill(unittest.TestCase):
    
     def testBreaksRoundingString(self):
         with nostderrout():
-            error = tablefill(input    = './input/tables_appendix.txt ./input/tables_appendix_two.txt', \
-                              template = './input/tablefill_template_breaks.lyx', \
-                              output   = './input/tablefill_template_filled.lyx')
+            error = tablefill(input    =  './input/tables_appendix.txt ./input/tables_appendix_two.txt', 
+                              template =  './input/tablefill_template_breaks.lyx', 
+                              output   =  './input/tablefill_template_filled.lyx')
         self.assertIn('InvalidOperation', error)
     
     def testIllegalSyntax(self):
         # missing arguments
         with nostderrout():
-            error = tablefill(input    = './input/tables_appendix.txt ./input/tables_appendix_two.txt', \
+
+            error = tablefill(input   = './input/tables_appendix.txt ./input/tables_appendix_two.txt', 
                               template = './input/textfill_template.lyx')
         self.assertIn('KeyError', error)
                 
         # non-existent input 1
         with nostderrout():
-            error = tablefill(input    = './input/fake_file.txt ./input/tables_appendix_two.txt', \
-                              template = './input/tablefill_template_breaks.lyx', \
+            error = tablefill(input    = './input/fake_file.txt ./input/tables_appendix_two.txt', 
+                              template = './input/tablefill_template_breaks.lyx', 
                               output   = './input/tablefill_template_filled.lyx')
         self.assertIn('IOError', error)
         
         # non-existent input 2
         with nostderrout():
-            error = tablefill(input    = './input/tables_appendix.txt ./input/fake_file.txt', \
-                              template = './input/tablefill_template_breaks.lyx', \
+            error = tablefill(input    = './input/tables_appendix.txt ./input/fake_file.txt', 
+                              template = './input/tablefill_template_breaks.lyx', 
                               output   = './input/tablefill_template_filled.lyx')
         self.assertIn('IOError', error)
         
     def testArgumentOrder(self):
         with nostderrout():
-            message = tablefill(input    = './input/tables_appendix.txt ./input/tables_appendix_two.txt', \
-                                output   = './input/tablefill_template_filled.lyx', \
+            message = tablefill(input    = './input/tables_appendix.txt ./input/tables_appendix_two.txt', 
+                                output   = './input/tablefill_template_filled.lyx',
                                 template = './input/tablefill_template.lyx')
         self.assertIn('filled successfully', message)
         filled_data_args1 = open('./input/tablefill_template_filled.lyx', 'rU').readlines()
         
         with nostderrout():
-            message = tablefill(output   = './input/tablefill_template_filled.lyx', \
-                                template = './input/tablefill_template.lyx', \
+            message = tablefill(output   = './input/tablefill_template_filled.lyx', 
+                                template = './input/tablefill_template.lyx', 
                                 input    = './input/tables_appendix.txt ./input/tables_appendix_two.txt')
         self.assertIn('filled successfully', message)
         filled_data_args2 = open('./input/tablefill_template_filled.lyx', 'rU').readlines()
@@ -88,6 +89,7 @@ class testTablefill(unittest.TestCase):
         self.assertEqual(filled_data_args1, filled_data_args2)
         
         
+
 if __name__ == '__main__':
     os.getcwd()
     unittest.main()
