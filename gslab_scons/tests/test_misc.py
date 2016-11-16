@@ -5,9 +5,10 @@ import sys
 import os
 import re
 
-sys.path.append('..')
-import misc
-from exceptions import BadExtensionError
+sys.path.append('../..')
+import gslab_scons
+import gslab_scons.misc as misc
+
 
 class test_misc(unittest.TestCase):
 
@@ -57,11 +58,11 @@ class test_misc(unittest.TestCase):
         file extensions as intended.
         '''
 
-    	self.assertEqual(misc.check_code_extension('test.do', 'stata'),  None)
-    	self.assertEqual(misc.check_code_extension('test.r', 'r'),       None)
-    	self.assertEqual(misc.check_code_extension('test.lyx', 'lyx'),   None)
-    	self.assertEqual(misc.check_code_extension('test.py', 'python'), None)
-    	with self.assertRaises(BadExtensionError):
+    	self.assertEqual(misc.check_code_extension('test.do',  'stata'),  None)
+    	self.assertEqual(misc.check_code_extension('test.r',   'r'),      None)
+    	self.assertEqual(misc.check_code_extension('test.lyx', 'lyx'),    None)
+    	self.assertEqual(misc.check_code_extension('test.py',  'python'), None)
+    	with self.assertRaises(gslab_scons.BadExtensionError):
     		misc.check_code_extension('test.badextension', 'python')
 
     def test_current_time(self):

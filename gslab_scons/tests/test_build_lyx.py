@@ -27,6 +27,7 @@ class test_build_lyx(unittest.TestCase):
         '''Test that build_lyx() recognises an inappropriate file extension'''
         env = ''
         with self.assertRaises(BadExtensionError):
+            print 'Expecting an error...'
             build_lyx('../build/lyx.pdf', ['bad', './input/lyx_test_file.lyx'], env)
    
     def tearDown(self):

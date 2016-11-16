@@ -8,7 +8,6 @@ sys.path.append('../..')
 from gslab_scons import build_tables, BadExtensionError
 
 
-
 class test_build_tables(unittest.TestCase):
 
     def setUp(self):
@@ -31,7 +30,7 @@ class test_build_tables(unittest.TestCase):
         for n in range(len(tag_data)):
             self.tag_compare(tag_data[n], filled_data[n + 13])         
  
-    def default_string_target(self):
+    def test_default_string_target(self):
         
         # Specify the sources and the target before calling the build function.
         source = ['./input/tablefill_template.lyx', 

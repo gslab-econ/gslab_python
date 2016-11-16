@@ -6,8 +6,8 @@ import os
 import shutil
 
 sys.path.append('../..')
-from gslab_scons  import build_r, BadExtensionError
-from gslab_make import get_externals
+from gslab_scons import build_r, BadExtensionError
+from gslab_make  import get_externals
 
 
 class testbuild_r(unittest.TestCase):
@@ -28,6 +28,7 @@ class testbuild_r(unittest.TestCase):
         '''Test that build_r() recognises an inappropriate file extension'''
         env = ''
         with self.assertRaises(BadExtensionError):
+            print 'Expecting an error...'
             build_r('../build/r.rds', ['bad', './input/R_test_script.R'], env)
 
     def tearDown(self):
@@ -35,6 +36,7 @@ class testbuild_r(unittest.TestCase):
             shutil.rmtree('../build/')
         if os.path.exists('output.txt'):
             os.remove('output.txt')
+
 
 if __name__ == '__main__':
     os.getcwd()

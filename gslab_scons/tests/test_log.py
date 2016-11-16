@@ -4,8 +4,8 @@ import unittest
 import sys
 import os
 
-sys.path.append('..')
-from log import log_timestamp
+sys.path.append('../..')
+from gslab_scons import log_timestamp
 
 class test_log(unittest.TestCase):
 
