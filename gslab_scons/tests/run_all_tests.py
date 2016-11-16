@@ -4,5 +4,12 @@ import unittest
 
 loader = unittest.TestLoader()
 tests  = loader.discover('.')
-testRunner = unittest.TextTestRunner(verbosity = 2)
-testRunner.run(tests)
+
+with open('./log/make.log', 'wb') as log:
+    testRunner = unittest.TextTestRunner(stream = log, verbosity = 2)
+    testRunner.run(tests)
+
+with open('./log/make.log', 'rU') as log:
+    print log.read()
+
+

@@ -2,9 +2,10 @@ import os
 import sys
 import shutil
 import subprocess
-from datetime   import datetime
-from sys        import platform
-from exceptions import BadExtensionError
+
+from datetime import datetime
+from sys import platform
+from _exceptions import BadExtensionError
 
 
 def check_lfs():

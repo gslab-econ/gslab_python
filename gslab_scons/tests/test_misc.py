@@ -5,9 +5,9 @@ import sys
 import os
 import re
 
-sys.path.append('../..')
-import gslab_scons.misc as misc
-from gslab_scons import BadExtensionError
+sys.path.append('..')
+import misc
+from exceptions import BadExtensionError
 
 class test_misc(unittest.TestCase):
 

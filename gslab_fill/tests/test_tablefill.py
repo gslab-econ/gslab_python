@@ -88,7 +88,6 @@ class testTablefill(unittest.TestCase):
         
         self.assertEqual(filled_data_args1, filled_data_args2)
         
-        
 
 if __name__ == '__main__':
     os.getcwd()

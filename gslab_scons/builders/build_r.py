@@ -1,6 +1,6 @@
 import os
 import gslab_scons.misc as misc
-from gslab_scons.log import log_timestamp
+from gslab_scons import log_timestamp
 
 def build_r(target, source, env):
     '''Build SCons targets using an R script

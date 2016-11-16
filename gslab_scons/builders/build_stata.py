@@ -2,8 +2,8 @@ import os
 import subprocess
 import shutil
 import gslab_scons.misc as misc
-from gslab_scons.exceptions import BadExecutableError
-from gslab_scons.log import log_timestamp
+from gslab_scons import BadExecutableError, log_timestamp
+
 
 def build_stata(target, source, env):
     '''Build targets with a Stata command

@@ -1,8 +1,7 @@
 import os
 import shutil
 import gslab_scons.misc as misc
-from gslab_scons.log import log_timestamp
-from gslab_scons.exceptions import BadExecutableError
+from gslab_scons import log_timestamp, BadExecutableError
 
 def build_lyx(target, source, env):
     '''Compile a pdf from a LyX file
