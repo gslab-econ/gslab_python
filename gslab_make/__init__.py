@@ -159,10 +159,14 @@ file is exported.
 from get_externals import get_externals
 from get_externals_github import get_externals_github
 
-from make_log import set_option, start_make_logging, end_make_logging
-
-from dir_mod import clear_dirs
+from make_log import (set_option, start_make_logging, end_make_logging, 
+                      add_log, del_log)
+from make_links import make_links
+from make_link_logs import make_link_logs
+from dir_mod import (clear_dirs, check_manifest, delete_files, 
+                     list_directory, remove_dir)
 
 from run_program import run_stata, run_matlab, run_perl, run_python, run_mathematica
 from run_program import run_stc, run_stcmd, run_lyx, run_rbatch
 from run_program import run_rinstall, run_sas, run_command
+

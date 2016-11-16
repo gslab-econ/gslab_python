@@ -99,6 +99,7 @@ def start_make_logging(makelog = '@DEFAULTVALUE@'):
     except Exception as errmsg:
         print "Error with start_make_logging: \n", errmsg
 
+
 def end_make_logging(makelog = '@DEFAULTVALUE@'):
     """End "makelog" log file with time stamp.
 
