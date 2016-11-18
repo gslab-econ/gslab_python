@@ -61,7 +61,9 @@ def build_stata(target, source, env):
                         break
 
     try:
-        subprocess.check_output(command % source_file, shell = True)
+        subprocess.check_output(command % source_file, 
+                                stderr = subprocess.STDOUT,
+                                shell  = True)
     except subprocess.CalledProcessError:
         raise BadExecutableError('Could not find executable.')
 

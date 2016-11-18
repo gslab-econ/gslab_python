@@ -24,6 +24,6 @@ test_twoFile (test_zipFile.test_zipFiles) ... ok
 test_twoZips (test_zipFile.test_zipFiles) ... ok
 
 ----------------------------------------------------------------------
-Ran 24 tests in 0.085s
+Ran 24 tests in 0.084s
 
 OK

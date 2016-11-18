@@ -38,6 +38,6 @@ Traceback (most recent call last):
 NameError: global name 'tag_data' is not defined
 
 ----------------------------------------------------------------------
-Ran 24 tests in 9.571s
+Ran 24 tests in 13.439s
 
 FAILED (errors=1, skipped=1)

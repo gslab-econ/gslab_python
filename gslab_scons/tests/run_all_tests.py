@@ -13,7 +13,7 @@ with open('./log/make.log', 'wb') as log:
 
 sys.stdout = stdout
 with open('./log/make.log', 'rU') as log:
-    print '\n=== Test results =========='
+    print '\n=== Test results ' + '='*53 
     print log.read()
 
 
