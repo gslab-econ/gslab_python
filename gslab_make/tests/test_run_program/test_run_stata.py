@@ -5,7 +5,10 @@ import sys
 import os
 import shutil
 
-sys.path.append('../..')
+# Ensure the script is run from its own directory 
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+sys.path.append('../../..')
 import gslab_make.private.metadata as metadata
 from gslab_make import start_make_logging, clear_dirs, run_stata, get_externals
 from gslab_make.tests import nostderrout
@@ -20,12 +23,12 @@ class testRunStata(unittest.TestCase):
         with nostderrout():
             clear_dirs(output_dir, external_dir)
             start_make_logging(makelog_file)
-            get_externals('./input/externals_stata_ado.txt', 
+            get_externals('../input/externals_stata_ado.txt', 
                           '../external/', '', quiet = True)
 
     def test_default_log(self):
         with nostderrout():
-            run_stata(program = './input/stata_test_script.do')
+            run_stata(program = '../input/stata_test_script.do')
         self.assertTrue(self.last_line_equals('../output/make.log', 
                                               'end of do-file\n'))
         
@@ -38,9 +41,9 @@ class testRunStata(unittest.TestCase):
         with nostderrout():    
             clear_dirs(output_dir, external_dir)
             start_make_logging(makelog_file)
-            get_externals('./input/externals_stata_ado.txt', 
+            get_externals('../input/externals_stata_ado.txt', 
                           '../external/', '', quiet = True)
-            run_stata(program = './input/stata_test_script.do', 
+            run_stata(program = '../input/stata_test_script.do', 
                       makelog = '../output/custom_make.log')
         
         self.assertTrue(self.last_line_equals('../output/custom_make.log', 
@@ -48,7 +51,7 @@ class testRunStata(unittest.TestCase):
         
     def test_independent_log(self):
         with nostderrout():
-            run_stata(program = './input/stata_test_script.do', 
+            run_stata(program = '../input/stata_test_script.do', 
                       log     = '../output/stata.log')
 
         self.assertTrue(self.last_line_equals('../output/make.log', 
@@ -61,24 +64,24 @@ class testRunStata(unittest.TestCase):
         
     def test_no_extension(self):
         with nostderrout():
-            run_stata(program = './input/stata_test_script')
+            run_stata(program = '../input/stata_test_script')
         self.assertTrue(self.last_line_equals('../output/make.log', 
                                               'end of do-file\n'))
         
     def test_executable(self):
         with nostderrout():
             if os.name == 'posix':
-                run_stata(program    = './input/stata_test_script.do', 
+                run_stata(program    = '../input/stata_test_script.do', 
                           executable = metadata.default_executables['stataunix']) 
             else:
-                run_stata(program    = './input/stata_test_script.do', 
+                run_stata(program    = '../input/stata_test_script.do', 
                           executable = metadata.default_executables['statawin']) 
 
         self.assertTrue(self.last_line_equals('../output/make.log', 'end of do-file\n'))
         
     def test_bad_executable(self):
         with nostderrout():
-            run_stata(program    = './input/stata_test_script.do', 
+            run_stata(program    = '../input/stata_test_script.do', 
                       executable = 'nonexistent_stata_executable')
 
         logfile_data = open('../output/make.log', 'rU').read()
@@ -91,24 +94,21 @@ class testRunStata(unittest.TestCase):
     
     def test_no_program(self):
         with nostderrout():
-            run_stata(program = './input/nonexistent_stata_script.do')
+            run_stata(program = '../input/nonexistent_stata_script.do')
         logfile_data = open('../output/make.log', 'rU').readlines()
         self.assertTrue(logfile_data[-1].startswith('CritError:'))
 
     def test_change_dir(self):
-        os.mkdir('output')
-        os.mkdir('external')
-        get_externals('./input/externals_stata_ado.txt', 
-                      './external/', '', quiet = True)
-
+        get_externals('../input/externals_stata_ado.txt', 
+                      '../external/', '', quiet = True)
         with nostderrout():
-            run_stata(program   = './input/stata_test_script.do', 
+            run_stata(program   = '../input/stata_test_script.do', 
                       changedir = True)
 
         self.assertTrue(self.last_line_equals('../output/make.log', 
                                               'end of do-file\n'))    
-        self.assertTrue(os.path.isfile('./output/stata1.dta'))
-        self.assertFalse(os.path.isfile('../output/stata1.dta'))
+        self.assertTrue(os.path.isfile('../output/stata1.dta'))
+        self.assertFalse(os.path.isfile('../../output/stata1.dta'))
     
     def last_line_equals(self, filename, string):
         file_data = open(filename, 'rU')

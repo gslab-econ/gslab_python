@@ -1,0 +1,6 @@
+
+ make_links.py started: 2016-11-17 15:45:11 /Users/mrsull/Desktop/gslab_python/gslab_make/tests/test_dir_mod
+Symlink successfully created. Source: /Users/mrsull/Desktop/gslab_python/gslab_make/tests/test_dir_mod/externals/	Local location: ../external_links/externals.
+Symlink successfully created. Source: /Users/mrsull/Desktop/gslab_python/gslab_make/tests/test_dir_mod/input/externals_legal.txt	Local location: ../external_links/test.txt.
+
+ make_links.py ended: 2016-11-17 15:45:11

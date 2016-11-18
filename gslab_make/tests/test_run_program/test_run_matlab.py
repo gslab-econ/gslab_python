@@ -5,7 +5,10 @@ import sys
 import os
 import shutil
 
-sys.path.append('../..')
+# Ensure the script is run from its own directory 
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+sys.path.append('../../..')
 from gslab_make import start_make_logging, clear_dirs, run_matlab
 from gslab_make.tests import nostderrout
 
@@ -21,7 +24,7 @@ class testRunMatlab(unittest.TestCase):
 
     def test_default_log(self):
         with nostderrout():
-            run_matlab(program = './input/matlab_test_script.m')
+            run_matlab(program = '../input/matlab_test_script.m')
         self.assert_proper_output('../output/make.log')
         self.assertTrue(os.path.isfile('../output/matlab_test.mat'))
       
@@ -32,14 +35,14 @@ class testRunMatlab(unittest.TestCase):
         with nostderrout():
             clear_dirs(output_dir)
             start_make_logging(makelog_file)
-            run_matlab(program = './input/matlab_test_script.m', 
+            run_matlab(program = '../input/matlab_test_script.m', 
                        makelog = '../output/custom_make.log')
         self.assert_proper_output('../output/custom_make.log')
         self.assertTrue(os.path.isfile('../output/matlab_test.mat'))
       
     def test_independent_log(self):
         with nostderrout():
-            run_matlab(program = './input/matlab_test_script.m', 
+            run_matlab(program = '../input/matlab_test_script.m', 
                        log     = '../output/matlab.log')
         self.assert_proper_output('../output/make.log')
         self.assertTrue(os.path.isfile('../output/matlab.log'))
@@ -48,20 +51,20 @@ class testRunMatlab(unittest.TestCase):
 
     def test_no_extension(self):
         with nostderrout():
-            run_matlab(program = './input/matlab_test_script')
+            run_matlab(program = '../input/matlab_test_script')
         self.assert_proper_output('../output/make.log')
         self.assertTrue(os.path.isfile('../output/matlab_test.mat'))
       
     def test_executable(self):
         with nostderrout():
-            run_matlab(program    = './input/matlab_test_script.m', 
+            run_matlab(program    = '../input/matlab_test_script.m', 
                        executable = 'matlab') 
         self.assert_proper_output('../output/make.log')
         self.assertTrue(os.path.isfile('../output/matlab_test.mat'))
       
     def test_bad_executable(self):
         with nostderrout():
-            run_matlab(program    = './input/matlab_test_script.m', 
+            run_matlab(program    = '../input/matlab_test_script.m', 
                        executable = 'nonexistent_matlab_executable')
         logfile_data = open('../output/make.log', 'rU').read()
         if os.name == 'posix':
@@ -72,13 +75,13 @@ class testRunMatlab(unittest.TestCase):
   
     def test_no_program(self):
         with nostderrout():
-            run_matlab(program = './input/nonexistent_matlab_script.m')
+            run_matlab(program = '../input/nonexistent_matlab_script.m')
         logfile_data = open('../output/make.log', 'rU').readlines()
         self.assertTrue(logfile_data[-1].startswith('CritError:'))
   
     def test_option(self):
         with nostderrout():
-            run_matlab(program = './input/matlab_test_script.m', 
+            run_matlab(program = '../input/matlab_test_script.m', 
                        option  = '-h')
         logfile_data = open('../output/make.log', 'rU').read()
         if os.name == 'posix':
@@ -88,8 +91,8 @@ class testRunMatlab(unittest.TestCase):
           
     def test_wait(self):
         with nostderrout():
-            run_matlab(program = './input/matlab_test_script_wait1.m')
-            run_matlab(program = './input/matlab_test_script_wait2.m')
+            run_matlab(program = '../input/matlab_test_script_wait1.m')
+            run_matlab(program = '../input/matlab_test_script_wait2.m')
         file_data = open('../output/make.log', 'rU').read()
         self.assertIn('1.716', file_data)
         self.assertNotIn('Error', file_data)

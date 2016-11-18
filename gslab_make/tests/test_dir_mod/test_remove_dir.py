@@ -4,9 +4,11 @@ import unittest
 import sys
 import os
 import shutil
-import contextlib
 
-sys.path.append('../..')
+# Ensure the script is run from its own directory 
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+sys.path.append('../../..')
 from gslab_make import remove_dir, clear_dirs, get_externals, make_links
 from gslab_make.tests import nostderrout
 
@@ -14,19 +16,20 @@ from gslab_make.tests import nostderrout
 class testRemoveDir(unittest.TestCase):
 
     def setUp(self):
-        clear_dirs('./externals/')
-        get_externals('./input/externals_remove_dir.txt', 
+        with nostderrout():
+            clear_dirs('./externals/')
+        get_externals('../input/externals_remove_dir.txt', 
                         external_dir = './externals/', 
                         makelog = '', 
                         quiet = True)
-        make_links('./input/links_remove_dir.txt', 
+        make_links('../input/links_remove_dir.txt', 
                         makelog = '',
                         quiet = True)
     
     def test_safe_symlinks(self):
         with nostderrout():
             remove_dir('../external_links/')
-        test_isfile = os.path.isfile('./input/externals_legal.txt')
+        test_isfile = os.path.isfile('../input/externals_legal.txt')
         self.assertTrue(test_isfile)
     
     def test_data_links(self):

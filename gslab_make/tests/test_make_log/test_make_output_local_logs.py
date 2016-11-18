@@ -5,7 +5,10 @@ import sys
 import os
 import shutil
 
-sys.path.append('../..')
+# Ensure the script is run from its own directory 
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+sys.path.append('../../..')
 from gslab_make.make_log import make_output_local_logs
 from gslab_make.tests import nostderrout
     
@@ -13,7 +16,7 @@ from gslab_make.tests import nostderrout
 class testMakeOutputLocalLogs(unittest.TestCase):
 
     def setUp(self):
-        self.test_dir = './input/'
+        self.test_dir = '../input/'
         files = os.listdir(self.test_dir)
         files = [ f for f in files if (os.path.isfile(os.path.join(self.test_dir, f)) 
                                        and not f.startswith('.')) ]

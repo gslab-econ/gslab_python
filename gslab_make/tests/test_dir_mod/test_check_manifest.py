@@ -6,7 +6,10 @@ import os
 import shutil
 import contextlib
 
-sys.path.append('../..')
+# Ensure the script is run from its own directory 
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+sys.path.append('../../..')
 from gslab_make import (check_manifest, clear_dirs, start_make_logging,
                         run_stata, get_externals)
 from gslab_make.private import CritError
@@ -22,8 +25,9 @@ class testCheckManifest(unittest.TestCase):
         with nostderrout():
             clear_dirs(output_dir, external_dir)
             start_make_logging(makelog_file)
-            get_externals('./input/externals_stata_ado.txt', '../external/', '', quiet = True)
-            run_stata(program = './input/stata_test_script.do')
+            get_externals('../input/externals_stata_ado.txt', 
+                          '../external/', '', quiet = True)
+            run_stata(program = '../input/stata_test_script.do')
      
     def test_manifest_ok(self):
         manifest_file = '../output/data_file_manifest.log'

@@ -5,7 +5,10 @@ import sys
 import os
 import shutil
 
-sys.path.append('../..')
+# Ensure the script is run from its own directory 
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+sys.path.append('../../..')
 from gslab_make import start_make_logging, clear_dirs, run_rinstall
 from gslab_make.tests import nostderrout
     
@@ -21,14 +24,14 @@ class testRunRInstall(unittest.TestCase):
 
     def test_default_log(self):
         with nostderrout():
-            run_rinstall(package = './input/rinstall_test_package/Ecdat_0.1-6.1.tar.gz')
+            run_rinstall(package = '../input/rinstall_test_package/Ecdat_0.1-6.1.tar.gz')
         self.assertTrue(self.last_line_equals('../output/make.log', '* DONE (Ecdat)\n'))
 
     def test_specify_lib(self):
         self.assertFalse(os.path.isdir('../output/Ecdat/'))
         self.assertFalse(os.path.isfile('../output/Ecdat/INDEX'))       
         with nostderrout():
-            run_rinstall(package = './input/rinstall_test_package/Ecdat_0.1-6.1.tar.gz', lib = '../output/')
+            run_rinstall(package = '../input/rinstall_test_package/Ecdat_0.1-6.1.tar.gz', lib = '../output/')
         self.assertTrue(self.last_line_equals('../output/make.log', '* DONE (Ecdat)\n'))
         self.assertTrue(os.path.isdir('../output/Ecdat/'))
         self.assertTrue(os.path.isfile('../output/Ecdat/INDEX'))        
@@ -40,23 +43,23 @@ class testRunRInstall(unittest.TestCase):
         with nostderrout():
             clear_dirs(output_dir)
             start_make_logging(makelog_file)
-            run_rinstall(package = './input/rinstall_test_package/Ecdat_0.1-6.1.tar.gz', makelog = '../output/custom_make.log')
+            run_rinstall(package = '../input/rinstall_test_package/Ecdat_0.1-6.1.tar.gz', makelog = '../output/custom_make.log')
         self.assertTrue(self.last_line_equals('../output/custom_make.log', '* DONE (Ecdat)\n'))
         
     def test_independent_log(self):
         with nostderrout():
-            run_rinstall(package = './input/rinstall_test_package/Ecdat_0.1-6.1.tar.gz', log = '../output/R.log')
+            run_rinstall(package = '../input/rinstall_test_package/Ecdat_0.1-6.1.tar.gz', log = '../output/R.log')
         self.assertTrue(self.last_line_equals('../output/make.log', '* DONE (Ecdat)\n'))
         self.assertTrue(self.last_line_equals('../output/R.log', '* DONE (Ecdat)\n'))
         
     def test_executable(self):
         with nostderrout():
-            run_rinstall(package = './input/rinstall_test_package/Ecdat_0.1-6.1.tar.gz', executable = 'R CMD INSTALL') 
+            run_rinstall(package = '../input/rinstall_test_package/Ecdat_0.1-6.1.tar.gz', executable = 'R CMD INSTALL') 
         self.assertTrue(self.last_line_equals('../output/make.log', '* DONE (Ecdat)\n'))
         
     def test_bad_executable(self):
         with nostderrout():
-            run_rinstall(package = './input/rinstall_test_package/Ecdat_0.1-6.1.tar.gz', executable = 'nonexistent_R_executable') 
+            run_rinstall(package = '../input/rinstall_test_package/Ecdat_0.1-6.1.tar.gz', executable = 'nonexistent_R_executable') 
         logfile_data = open('../output/make.log', 'rU').read()
         if os.name == 'posix':
             self.assertIn('/bin/sh: nonexistent_R_executable: command not found', logfile_data)
@@ -73,7 +76,7 @@ class testRunRInstall(unittest.TestCase):
         self.assertFalse(os.path.isdir('../output/Ecdat/'))
         self.assertFalse(os.path.isfile('../output/Ecdat/INDEX'))       
         with nostderrout():
-            run_rinstall(package = './input/rinstall_test_package/Ecdat_0.1-6.1.tar.gz', lib = '../output/', option = '--no-data')
+            run_rinstall(package = '../input/rinstall_test_package/Ecdat_0.1-6.1.tar.gz', lib = '../output/', option = '--no-data')
         self.assertTrue(os.path.isdir('../output/Ecdat/'))
         self.assertTrue(os.path.isfile('../output/Ecdat/INDEX'))   
         self.assertFalse(os.path.isdir('../output/Ecdat/data/'))

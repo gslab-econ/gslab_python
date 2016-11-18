@@ -5,8 +5,10 @@ import sys
 import os
 import shutil
 import pdb
-import contextlib
 import re
+
+# Ensure the script is run from its own directory 
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 sys.path.append('../..')
 from gslab_make import start_make_logging, clear_dirs, get_externals
@@ -25,7 +27,8 @@ class testGetExternals(unittest.TestCase):
             start_make_logging(makelog_file)
 
     def test_legal_input(self):
-        get_externals('./input/externals_legal.txt', '../external/', '../output/make.log', quiet = True)
+        get_externals('../input/externals_legal.txt', '../external/', 
+                      '../output/make.log', quiet = True)
         logfile_lines = open('../output/make.log', 'rU').readlines()
         self.assertIn('get_externals.py ended:', logfile_lines[-1])
         logfile_data = open('../output/make.log', 'rU').read()
@@ -33,9 +36,10 @@ class testGetExternals(unittest.TestCase):
         self.assertTrue(os.path.isdir('../external/'))
         
     def test_illegal_input(self):
-        externals = './input/externals_illegal.txt'
+        externals = '../input/externals_illegal.txt'
         with nostderrout():
-            get_externals(externals, '../external/', '../output/make.log', quiet = True)
+            get_externals(externals, '../external/', 
+                          '../output/make.log', quiet = True)
         externals_data = open(externals, 'rU').readlines()
         comments = self.find_comment_lines(externals_data)
         number_of_externals = len(externals_data) - comments       

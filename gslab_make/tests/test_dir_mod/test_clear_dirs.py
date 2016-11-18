@@ -1,7 +1,14 @@
 #! /usr/bin/env python
 
-import unittest, sys, os, shutil
-sys.path.append('../..')
+import unittest
+import sys
+import os
+import shutil
+
+# Ensure the script is run from its own directory 
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+sys.path.append('../../..')
 from gslab_make import clear_dirs
 from gslab_make.tests import nostderrout
 

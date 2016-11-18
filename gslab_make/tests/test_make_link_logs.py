@@ -6,6 +6,7 @@ import os
 import shutil
 import re
 
+# Ensure the script is run from its own directory 
 sys.path.append('../..')
 from gslab_make import make_link_logs, make_links, remove_dir
 from gslab_make.tests import nostderrout
@@ -14,16 +15,20 @@ from gslab_make.tests import nostderrout
 class testMakeLinkLogs(unittest.TestCase):
 
     def setUp(self):
+        sys.path.append('../..')
+        from gslab_make import make_link_logs, make_links, remove_dir
+        from gslab_make.tests import nostderrout
+
         self.test_dir = './input/'
         files = os.listdir(self.test_dir)
-        files = [ f for f in files if (os.path.isfile(os.path.join(self.test_dir, f)) 
+        files = [f for f in files if (os.path.isfile(os.path.join(self.test_dir, f)) 
                                        and not f.startswith('.')) ]
         self.file_count = len(files)
             
     def test_default_log(self):
         default_stats = '../log/link_stats.log'
         default_heads = '../log/link_heads.log'
-        default_orig = '../log/link_orig.log'
+        default_orig  = '../log/link_orig.log'
         self.assertFalse(os.path.exists(default_stats))
         self.assertFalse(os.path.exists(default_heads))
         self.assertFalse(os.path.exists(default_orig))
@@ -45,19 +50,19 @@ class testMakeLinkLogs(unittest.TestCase):
         self.assertTrue(number_of_links >= logged_links)           
                          
     def test_custom_log(self):
-        custom_stats = '../output/custom_link_stats.log'
-        custom_heads = '../output/custom_link_heads.log'
-        custom_orig = '../output/custom_link_orig.log'
+        custom_stats = './output/custom_link_stats.log'
+        custom_heads = './output/custom_link_heads.log'
+        custom_orig  = './output/custom_link_orig.log'
         self.assertFalse(os.path.exists(custom_stats))
         self.assertFalse(os.path.exists(custom_heads))
         self.assertFalse(os.path.exists(custom_orig))
         
         with nostderrout():
             make_link_logs('./input/links_simple.txt',
-                            link_logs_dir = '../output/',
+                            link_logs_dir   = './output/',
                             link_stats_file = 'custom_link_stats.log',
                             link_heads_file = 'custom_link_heads.log',
-                            link_orig_file = 'custom_link_orig.log')  
+                            link_orig_file  = 'custom_link_orig.log')  
         
         self.assertTrue(os.path.exists(custom_stats))
         self.assertTrue(os.path.exists(custom_heads))
@@ -70,7 +75,7 @@ class testMakeLinkLogs(unittest.TestCase):
     def test_multiple_input_list(self):
         default_stats = '../log/link_stats.log'
         default_heads = '../log/link_heads.log'
-        default_orig = '../log/link_orig.log'
+        default_orig  = '../log/link_orig.log'
         self.assertFalse(os.path.exists(default_stats))
         self.assertFalse(os.path.exists(default_heads))
         self.assertFalse(os.path.exists(default_orig))
@@ -93,7 +98,7 @@ class testMakeLinkLogs(unittest.TestCase):
     def test_multiple_input_string(self):
         default_stats = '../log/link_stats.log'
         default_heads = '../log/link_heads.log'
-        default_orig = '../log/link_orig.log'
+        default_orig  = '../log/link_orig.log'
         self.assertFalse(os.path.exists(default_stats))
         self.assertFalse(os.path.exists(default_heads))
         self.assertFalse(os.path.exists(default_orig))
@@ -116,7 +121,7 @@ class testMakeLinkLogs(unittest.TestCase):
     def test_wildcard_input(self):
         default_stats = '../log/link_stats.log'
         default_heads = '../log/link_heads.log'
-        default_orig = '../log/link_orig.log'
+        default_orig  = '../log/link_orig.log'
         self.assertFalse(os.path.exists(default_stats))
         self.assertFalse(os.path.exists(default_heads))
         self.assertFalse(os.path.exists(default_orig))
@@ -139,7 +144,7 @@ class testMakeLinkLogs(unittest.TestCase):
     def test_lower_recur_lim(self):
         default_stats = '../log/link_stats.log'
         default_heads = '../log/link_heads.log'
-        default_orig = '../log/link_orig.log'
+        default_orig  = '../log/link_orig.log'
         self.assertFalse(os.path.exists(default_stats))
         self.assertFalse(os.path.exists(default_heads))
         self.assertFalse(os.path.exists(default_orig))
@@ -159,14 +164,14 @@ class testMakeLinkLogs(unittest.TestCase):
     def test_no_recur_lim (self):
         default_stats = '../log/link_stats.log'
         default_heads = '../log/link_heads.log'
-        default_orig = '../log/link_orig.log'
+        default_orig  = '../log/link_orig.log'
         self.assertFalse(os.path.exists(default_stats))
         self.assertFalse(os.path.exists(default_heads))
         self.assertFalse(os.path.exists(default_orig))
         
         with nostderrout():
             make_link_logs('./input/links_simple.txt',
-                            recur_lim = False)
+                           recur_lim = False)
 
         self.assertTrue(os.path.exists(default_stats))
         self.assertTrue(os.path.exists(default_heads))
@@ -209,20 +214,21 @@ class testMakeLinkLogs(unittest.TestCase):
         return comments             
 
     def tearDown(self):
-        if os.path.isdir('../output/'):
-            shutil.rmtree('../output/')
+        if os.path.isdir('./output/'):
+            shutil.rmtree('./output/')
         if os.path.exists('../log/link_stats.log'):
             os.remove('../log/link_stats.log')  
         if os.path.exists('../log/link_heads.log'):
             os.remove('../log/link_heads.log')    
         if os.path.exists('../log/link_orig.log'):
             os.remove('../log/link_orig.log')              
-        if os.path.isdir('../external_links/'):
-            remove_dir('../external_links/')
+        if os.path.isdir('./external_links/'):
+            remove_dir('./external_links/')
         if os.path.exists('./make_links.log'):
             os.remove('./make_links.log')
     
     
 if __name__ == '__main__':
-    os.getcwd()
+    print os.path.abspath(__file__)
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
     unittest.main()

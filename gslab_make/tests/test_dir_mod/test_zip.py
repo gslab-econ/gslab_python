@@ -4,9 +4,11 @@ import unittest
 import sys
 import os
 import shutil
-import contextlib
 
-sys.path.append('../..')
+# Ensure the script is run from its own directory 
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+sys.path.append('../../..')
 from gslab_make import get_externals, make_links
 from gslab_make.dir_mod import zip_dir, unzip, unzip_externals, clear_dirs
 from gslab_make.tests import nostderrout
@@ -19,7 +21,8 @@ class testZip(unittest.TestCase):
         with nostderrout():
             clear_dirs('./externals/data')   
         
-        shutil.copy('./input/zip_test_file.zip', './externals/zip_test_file.zip')
+        shutil.copy('../input/zip_test_file.zip', 
+                    './externals/zip_test_file.zip')
         
         with open('./externals/data/unzip_test.txt', 'wb') as f:
             f.write('Temporary test file\n')

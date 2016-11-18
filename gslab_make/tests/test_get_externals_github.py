@@ -7,6 +7,9 @@ import shutil
 import pdb
 import re
 
+# Ensure the script is run from its own directory 
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
 sys.path.append('../..')
 from gslab_make import start_make_logging, clear_dirs, get_externals_github
 from gslab_make.private import CritError, LogicError
@@ -23,7 +26,8 @@ class testGetExternals_GitHub(unittest.TestCase):
             start_make_logging(makelog_file)
 
     def test_legal_input(self):
-        get_externals_github('./input/externals_github_legal.txt', '../external/', '../output/make.log', quiet = True)
+        get_externals_github('../input/externals_github_legal.txt', '../external/', 
+                             '../output/make.log', quiet = True)
         logfile_lines = open('../output/make.log', 'rU').readlines()
         self.assertIn('get_externals_github.py ended:', logfile_lines[-1])
         logfile_data = open('../output/make.log', 'rU').read()
@@ -31,13 +35,15 @@ class testGetExternals_GitHub(unittest.TestCase):
         self.assertTrue(os.path.isdir('../external/'))
         
     def test_illegal_input(self):
-        externals = './input/externals_github_illegal.txt'
+        externals = '../input/externals_github_illegal.txt'
         with nostderrout():
-            get_externals_github(externals, '../external/', '../output/make.log', quiet = True)
+            get_externals_github(externals, '../external/', 
+                                 '../output/make.log', quiet = True)
         externals_data = open(externals, 'rU').readlines()
         comments = self.find_comment_lines(externals_data)
         number_of_externals = len(externals_data) - comments       
-        self.assertTrue(self.check_results('../output/make.log', number_of_externals))
+        self.assertTrue(self.check_results('../output/make.log', 
+                                           number_of_externals))
     
     def check_results(self, logfile, num_errors):
         logfile_data = open(logfile, 'rU').readlines()
