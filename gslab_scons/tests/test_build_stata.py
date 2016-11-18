@@ -5,9 +5,14 @@ import sys
 import os
 import shutil
 
+# Ensure the script is run from its own directory 
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
 sys.path.append('../..')
 from gslab_scons import build_stata, BadExecutableError, BadExtensionError
 from gslab_make  import get_externals
+from gslab_make.tests import nostderrout
+
 
 class testbuild_stata(unittest.TestCase):
 
@@ -35,13 +40,13 @@ class testbuild_stata(unittest.TestCase):
     def test_bad_user_executable(self):
         env = {'user_flavor':'bad_user_executable'}
         with self.assertRaises(BadExecutableError):
-            print 'Expecting an error...'
+            print "Expecting a bad executable error..."
             build_stata('../build/stata.dta', './input/stata_test_script.do', env)
+
 
     def test_bad_extension(self):
         env = {'user_flavor':'bad_user_executable'}
-        with self.assertRaises(BadExtensionError):
-            print 'Expecting an error...'
+        with self.assertRaises(BadExtensionError), nostderrout():
             build_stata('../build/stata.dta', ['bad', './input/stata_test_script.do'], env)
 
     def tearDown(self):

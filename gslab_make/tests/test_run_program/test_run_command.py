@@ -5,10 +5,7 @@ import sys
 import os
 import shutil
 
-# Ensure the script is run from its own directory 
-os.chdir(os.path.dirname(os.path.realpath(__file__)))
-
-sys.path.append('../../..')
+sys.path.append('../..')
 from gslab_make import start_make_logging, clear_dirs, run_command
 from gslab_make.tests import nostderrout
   
@@ -25,7 +22,7 @@ class testRunCommand(unittest.TestCase):
     def test_default_log(self):
         self.assertFalse(os.path.isfile('test_data.txt'))
         with nostderrout():
-            run_command(command = 'unzip -o ../input/zip_test_file.zip') 
+            run_command(command = 'unzip -o ./input/zip_test_file.zip') 
         logfile_data = open('../output/make.log', 'rU').readlines()
         search_str1 = 'Unzipping test_data.txt.'
         search_str2 = 'extracting: test_data.txt'
@@ -42,7 +39,7 @@ class testRunCommand(unittest.TestCase):
         with nostderrout():
             clear_dirs(output_dir)  
             start_make_logging(makelog_file)
-            run_command(command = 'unzip -o ../input/zip_test_file.zip', 
+            run_command(command = 'unzip -o ./input/zip_test_file.zip', 
                         makelog = '../output/custom_make.log')
         logfile_data = open('../output/custom_make.log', 'rU').readlines()
         search_str1 = 'Unzipping test_data.txt.'
@@ -55,7 +52,7 @@ class testRunCommand(unittest.TestCase):
     def test_independent_log(self):
         self.assertFalse(os.path.isfile('test_data.txt'))     
         with nostderrout():
-            run_command(command = 'unzip -o ../input/zip_test_file.zip', 
+            run_command(command = 'unzip -o ./input/zip_test_file.zip', 
                         log     = '../output/command.log')
         makelog_data = open('../output/make.log', 'rU').readlines()
         search_str1 = 'Unzipping test_data.txt.'

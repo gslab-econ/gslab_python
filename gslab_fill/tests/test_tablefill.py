@@ -7,9 +7,12 @@ import re
 import decimal
 from subprocess import check_call, CalledProcessError
 
-sys.path.append('..') 
-from tablefill import tablefill
-from nostderrout import nostderrout
+# Ensure the script is run from its own directory 
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+sys.path.append('../..') 
+from gslab_fill import tablefill
+from gslab_make.tests import nostderrout
 
 class testTablefill(unittest.TestCase):
 

@@ -5,10 +5,7 @@ import sys
 import os
 import shutil
 
-# Ensure the script is run from its own directory 
-os.chdir(os.path.dirname(os.path.realpath(__file__)))
-
-sys.path.append('../../..')
+sys.path.append('../..')
 from gslab_make import (start_make_logging, set_option, end_make_logging,
                         check_manifest, clear_dirs, get_externals, run_stata)
 from gslab_make.tests import nostderrout

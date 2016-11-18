@@ -7,9 +7,12 @@ import re
 import types
 import HTMLParser
 
-sys.path.append('..')
-from textfill import textfill, read_text, remove_trailing_leading_blanklines
-from nostderrout import nostderrout
+# Ensure the script is run from its own directory 
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+sys.path.append('../..')
+from gslab_fill.textfill import textfill, read_text, remove_trailing_leading_blanklines
+from gslab_make.tests import nostderrout
 
 class testTextfill(unittest.TestCase):
 

@@ -5,10 +5,7 @@ import sys
 import os
 import shutil
 
-# Ensure the script is run from its own directory 
-os.chdir(os.path.dirname(os.path.realpath(__file__)))
-
-sys.path.append('../../..')
+sys.path.append('../..')
 from gslab_make import clear_dirs
 from gslab_make.tests import nostderrout
 
@@ -57,6 +54,7 @@ class testClearDirs(unittest.TestCase):
             shutil.rmtree('./output_local_empty/')
         if os.path.isdir('./output_local_files/'):
             shutil.rmtree('./output_local_files/')            
+    
     
 if __name__ == '__main__':
     os.getcwd()

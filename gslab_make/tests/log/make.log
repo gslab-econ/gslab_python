@@ -17,8 +17,10 @@ test_safe_symlinks (test_dir_mod.test_remove_dir.testRemoveDir) ... ok
 test_standard (test_dir_mod.test_remove_dir.testRemoveDir) ... ok
 test_unzip (test_dir_mod.test_zip.testZip) ... ok
 test_zip (test_dir_mod.test_zip.testZip) ... ok
-test_illegal_input (test_get_externals.testGetExternals) ... ok
-test_legal_input (test_get_externals.testGetExternals) ... ok
+test_illegal_input (test_get_externals.testGetExternals)
+Test that get_externals() correctly handles illegal output ... ok
+test_legal_input (test_get_externals.testGetExternals)
+Test that get_externals() correctly handles legal output ... ok
 test_illegal_input (test_get_externals_github.testGetExternals_GitHub) ... ok
 test_legal_input (test_get_externals_github.testGetExternals_GitHub) ... ok
 test_custom_log (test_make_link_logs.testMakeLinkLogs) ... ok
@@ -114,6 +116,6 @@ test_no_extension (test_run_program.test_run_stata.testRunStata) ... ok
 test_no_program (test_run_program.test_run_stata.testRunStata) ... ok
 
 ----------------------------------------------------------------------
-Ran 114 tests in 683.307s
+Ran 114 tests in 164.872s
 
 OK

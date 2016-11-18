@@ -6,9 +6,6 @@ import os
 import shutil
 import re
 
-# Ensure the script is run from its own directory 
-os.chdir(os.path.dirname(os.path.realpath(__file__)))
-
 sys.path.append('../..')
 from gslab_make import start_make_logging, make_links, clear_dirs, remove_dir
 from gslab_make.tests import nostderrout

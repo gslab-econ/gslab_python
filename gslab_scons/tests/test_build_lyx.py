@@ -5,9 +5,12 @@ import sys
 import os
 import shutil
 
+# Ensure the script is run from its own directory 
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
 sys.path.append('../..')
 from gslab_scons import build_lyx, BadExtensionError
-
+from gslab_make.tests import nostderrout
 
 class test_build_lyx(unittest.TestCase):
 
@@ -26,8 +29,7 @@ class test_build_lyx(unittest.TestCase):
     def test_bad_extension(self):
         '''Test that build_lyx() recognises an inappropriate file extension'''
         env = ''
-        with self.assertRaises(BadExtensionError):
-            print 'Expecting an error...'
+        with self.assertRaises(BadExtensionError), nostderrout():
             build_lyx('../build/lyx.pdf', ['bad', './input/lyx_test_file.lyx'], env)
    
     def tearDown(self):

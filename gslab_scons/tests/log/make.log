@@ -33,11 +33,11 @@ test_stata_command_win (test_misc.test_misc) ... skipped 'skipped test_stata_com
 ERROR: test_default_string_target (test_build_tables.test_build_tables)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/Users/mrsull/Desktop/gslab_python/gslab_scons/tests/test_build_tables.py", line 45, in test_default_string_target
+  File "/Users/mrsull/Desktop/gslab_python/gslab_scons/tests/test_build_tables.py", line 48, in test_default_string_target
     self.assertEqual(len(tag_data) + 13, len(filled_data))
 NameError: global name 'tag_data' is not defined
 
 ----------------------------------------------------------------------
-Ran 24 tests in 10.232s
+Ran 24 tests in 9.571s
 
 FAILED (errors=1, skipped=1)

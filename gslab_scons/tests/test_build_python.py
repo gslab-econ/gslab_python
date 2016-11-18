@@ -4,8 +4,12 @@ import sys
 import os
 import shutil
 
+# Ensure the script is run from its own directory 
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
 sys.path.append('../..')
 from gslab_scons import build_python, BadExtensionError
+from gslab_make.tests import nostderrout
 
 
 class testbuild_python(unittest.TestCase):
@@ -24,8 +28,7 @@ class testbuild_python(unittest.TestCase):
  
     def test_bad_extension(self):
         env = ''
-        with self.assertRaises(BadExtensionError):
-            print 'Expecting an error...'
+        with self.assertRaises(BadExtensionError), nostderrout():
             build_python('../build/py.py', ['bad', './input/python_test_script.py'], env)
    
     def tearDown(self):

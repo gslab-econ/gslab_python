@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 import unittest
+import os
 
 loader = unittest.TestLoader()
 tests  = loader.discover('.')

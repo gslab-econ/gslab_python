@@ -5,11 +5,15 @@ import sys
 import os
 import shutil
 
+# Ensure the script is run from its own directory 
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
 sys.path.append('../..')
 from gslab_scons import build_r, BadExtensionError
 from gslab_make  import get_externals
+from gslab_make.tests import nostderrout
 
-
+ 
 class testbuild_r(unittest.TestCase):
 
     def setUp(self):
@@ -27,8 +31,7 @@ class testbuild_r(unittest.TestCase):
     def test_bad_extension(self):
         '''Test that build_r() recognises an inappropriate file extension'''
         env = ''
-        with self.assertRaises(BadExtensionError):
-            print 'Expecting an error...'
+        with self.assertRaises(BadExtensionError), nostderrout():
             build_r('../build/r.rds', ['bad', './input/R_test_script.R'], env)
 
     def tearDown(self):

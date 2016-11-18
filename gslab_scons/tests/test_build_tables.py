@@ -4,9 +4,12 @@ import unittest
 import sys
 import os
 
+# Ensure the script is run from its own directory 
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
 sys.path.append('../..')
 from gslab_scons import build_tables, BadExtensionError
-
+from gslab_make.tests import nostderrout
 
 class test_build_tables(unittest.TestCase):
 
@@ -57,7 +60,7 @@ class test_build_tables(unittest.TestCase):
         
         # Calling build_tables() with a target argument whose file extension
         # is unexpected should raise a BadExtensionError.
-        with self.assertRaises(BadExtensionError):
+        with self.assertRaises(BadExtensionError), nostderrout():
             build_tables(target, source, '')    
 
     def tag_compare(self, tag_line, filled_line):

@@ -5,10 +5,7 @@ import sys
 import os
 import shutil
 
-# Ensure the script is run from its own directory 
-os.chdir(os.path.dirname(os.path.realpath(__file__)))
-
-sys.path.append('../../..')
+sys.path.append('../..')
 from gslab_make import start_make_logging, clear_dirs, run_lyx
 from gslab_make.tests import nostderrout
     
@@ -24,7 +21,7 @@ class testRunLyx(unittest.TestCase):
 
     def test_default_log(self):
         with nostderrout():
-            run_lyx(program = '../input/lyx_test_file.lyx')
+            run_lyx(program = './input/lyx_test_file.lyx')
         logfile_data = open('../output/make.log', 'rU').read()
         self.assertIn('LaTeX', logfile_data)
         self.assertTrue(os.path.isfile('../output/lyx_test_file.pdf'))
@@ -36,7 +33,7 @@ class testRunLyx(unittest.TestCase):
         with nostderrout():        
             clear_dirs(output_dir)
             start_make_logging(makelog_file)
-            run_lyx(program = '../input/lyx_test_file.lyx', 
+            run_lyx(program = './input/lyx_test_file.lyx', 
                     makelog = '../output/custom_make.log')
         logfile_data = open('../output/custom_make.log', 'rU').read()
         self.assertIn('LaTeX', logfile_data)
@@ -44,7 +41,7 @@ class testRunLyx(unittest.TestCase):
         
     def test_independent_log(self):
         with nostderrout():
-            run_lyx(program = '../input/lyx_test_file.lyx', 
+            run_lyx(program = './input/lyx_test_file.lyx', 
                     log     = '../output/lyx.log')
         makelog_data = open('../output/make.log', 'rU').read()
         self.assertIn('LaTeX', makelog_data)
@@ -56,14 +53,14 @@ class testRunLyx(unittest.TestCase):
 
     def test_no_extension(self):
         with nostderrout():
-            run_lyx(program = '../input/lyx_test_file')
+            run_lyx(program = './input/lyx_test_file')
         logfile_data = open('../output/make.log', 'rU').read()
         self.assertIn('LaTeX', logfile_data)
         self.assertTrue(os.path.isfile('../output/lyx_test_file.pdf'))
         
     def test_executable(self):
         with nostderrout():
-            run_lyx(program    = '../input/lyx_test_file.lyx', 
+            run_lyx(program    = './input/lyx_test_file.lyx', 
                     executable = 'lyx') 
         logfile_data = open('../output/make.log', 'rU').read()
         self.assertIn('LaTeX', logfile_data)
@@ -71,7 +68,7 @@ class testRunLyx(unittest.TestCase):
         
     def test_bad_executable(self):
         with nostderrout():
-            run_lyx(program    = '../input/lyx_test_file.lyx', 
+            run_lyx(program    = './input/lyx_test_file.lyx', 
                     executable = 'nonexistent_lyx_executable')
         logfile_data = open('../output/make.log', 'rU').read()
         if os.name == 'posix':
@@ -82,38 +79,38 @@ class testRunLyx(unittest.TestCase):
     
     def test_no_program(self):
         with nostderrout():
-            run_lyx(program = '../input/nonexistent_lyx_file.lyx')
+            run_lyx(program = './input/nonexistent_lyx_file.lyx')
         logfile_data = open('../output/make.log', 'rU').readlines()
         self.assertTrue(logfile_data[-1].startswith('CritError:'))
     
     def test_option(self):
         with nostderrout():
-            run_lyx(program = '../input/lyx_test_file.lyx', option = '-e pdf')
+            run_lyx(program = './input/lyx_test_file.lyx', option = '-e pdf')
         logfile_data = open('../output/make.log', 'rU').read()
         self.assertIn('LaTeX', logfile_data)
         self.assertTrue(os.path.isfile('../output/lyx_test_file.pdf'))
     
     def test_change_dir(self): 
         with nostderrout():    
-            run_lyx(program = '../input/lyx_test_file.lyx', changedir = True)
+            run_lyx(program = './input/lyx_test_file.lyx', changedir = True)
         logfile_data = open('../output/make.log', 'rU').read()
         self.assertIn('LaTeX', logfile_data)
         self.assertTrue(os.path.isfile('../output/lyx_test_file.pdf'))
         
     def test_pdfout(self): 
         with nostderrout():    
-            run_lyx(program = '../input/lyx_test_file.lyx', 
-                    pdfout = '../input/custom_outfile.pdf')
+            run_lyx(program = './input/lyx_test_file.lyx', 
+                    pdfout  = './input/custom_outfile.pdf')
         logfile_data = open('../output/make.log', 'rU').read()
         self.assertIn('LaTeX', logfile_data)
-        self.assertTrue(os.path.isfile('../input/custom_outfile.pdf'))
+        self.assertTrue(os.path.isfile('./input/custom_outfile.pdf'))
         self.assertFalse(os.path.isfile('../output/lyx_test_file.pdf'))
 
     def test_comments(self):  
         temp_dir = '../temp/'
         with nostderrout():   
             clear_dirs(temp_dir)
-            run_lyx(program = '../input/lyx_test_file.lyx', 
+            run_lyx(program = './input/lyx_test_file.lyx', 
                     comments = True)
         logfile_data = open('../output/make.log', 'rU').read()
         self.assertIn('LaTeX', logfile_data)
@@ -124,7 +121,7 @@ class testRunLyx(unittest.TestCase):
         temp_dir = '../temp/'
         with nostderrout():   
             clear_dirs(temp_dir)
-            run_lyx(program = '../input/lyx_beamer_test_file.lyx', 
+            run_lyx(program = './input/lyx_beamer_test_file.lyx', 
                     handout = True, comments = True)
         logfile_data = open('../output/make.log', 'rU').read()
         self.assertIn('LaTeX', logfile_data)
@@ -135,7 +132,7 @@ class testRunLyx(unittest.TestCase):
         temp_dir = '../temp/'
         with nostderrout():    
             clear_dirs(temp_dir)
-            run_lyx(program = '../input/lyx_test_file.lyx', 
+            run_lyx(program = './input/lyx_test_file.lyx', 
                     handout = True, changedir = True)
         logfile_data = open('../output/make.log', 'rU').read()
         self.assertIn('LaTeX', logfile_data)
@@ -145,11 +142,12 @@ class testRunLyx(unittest.TestCase):
         temp_dir = '../temp/'
         with nostderrout():    
             clear_dirs(temp_dir)
-            run_lyx(program = '../input/lyx_test_file.lyx', 
-                    handout = True, pdfout = '../input/custom_outfile.pdf')
+            run_lyx(program = './input/lyx_test_file.lyx', 
+                    handout = True,
+                    pdfout  = './input/custom_outfile.pdf')
         logfile_data = open('../output/make.log', 'rU').read()
         self.assertIn('LaTeX', logfile_data)
-        self.assertTrue(os.path.isfile('../input/custom_outfile.pdf'))
+        self.assertTrue(os.path.isfile('./input/custom_outfile.pdf'))
         self.assertFalse(os.path.isfile('../temp/lyx_test_file_handout.pdf'))
         
     def tearDown(self):
