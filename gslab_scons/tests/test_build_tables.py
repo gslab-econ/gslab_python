@@ -4,9 +4,7 @@ import unittest
 import sys
 import os
 
-# Ensure the script is run from its own directory 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
-
 sys.path.append('../..')
 from gslab_scons import build_tables, BadExtensionError
 from gslab_make.tests import nostderrout
