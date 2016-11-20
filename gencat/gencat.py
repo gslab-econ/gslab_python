@@ -12,7 +12,7 @@ class gencat(object):
     gencat (General Concatenation) is an abstract class that concatenates
     files stored in a .zip file in a user-specified structure and stores 
     the new files in a .zip file. Its constructor takes the following
-    as argumnets:
+    as arguments:
         - path_in: the path to the directory containing the .zip files holding the
             text files that we wish to concatenate.
         - path_temp: the path to a temporary directory used in the intermediate
