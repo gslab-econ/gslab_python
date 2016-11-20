@@ -12,11 +12,8 @@ additional information on their functionalities:
 - build_r
 - build_python
 - build_tables
-- build_r
 - build_stata
 
-In general, the source code file (e.g. `.do` for Stata) must be listed as 
-the first argument in source when calling builders from SConscript.
 '''
 
 from .release import release, upload_asset
