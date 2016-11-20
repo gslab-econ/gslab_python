@@ -6,14 +6,8 @@ gslab_scons is a Python library containing general-purpose SCons builders
 for LyX, R, Python, and Stata. Its builders work on both Unix and Windows 
 platforms. 
 
-Please consult the docstrings of the following gslab_scons builders for
-additional information on their functionalities:
-- build_lyx
-- build_r
-- build_python
-- build_tables
-- build_stata
-
+Please consult the docstrings of the gslab_scons builders belonging to
+this module for additonal information on their functionalities.
 '''
 
 from .release import release, upload_asset
