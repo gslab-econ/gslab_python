@@ -75,7 +75,7 @@ links.txt File Format:
 This file needs to rows of numbers or characters, delimited by either tabs or 4 spaces.
 The proper format is: 
 
-`localname  linkpath`
+`localname    linkpath`
 
 
 Column descriptions:
