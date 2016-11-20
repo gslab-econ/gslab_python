@@ -16,7 +16,7 @@ Installation
 To install this repository's Python libraries, run the `setup.py` script at its root
 with the command:
 ```
-python setup.py install [clean]
+python setup.py install clean
 ```
 where the optional clean command deletes files used in installating the libraries
 after installation is complete.
