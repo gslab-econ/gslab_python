@@ -6,6 +6,7 @@ from datetime import datetime
 from sys import platform
 from misc import is_unix, check_lfs
 
+
 def start_log(log = 'sconstruct.log'):
     '''Begins logging a build process'''
     check_lfs()
@@ -15,6 +16,7 @@ def start_log(log = 'sconstruct.log'):
         sys.stdout = open(log, 'wb')
     sys.stderr = sys.stdout 
     return None
+
 
 def log_timestamp(start_time, end_time, filename):
     '''Adds beginning and ending times to a log file.'''
