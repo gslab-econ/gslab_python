@@ -106,6 +106,7 @@ class testTextfill(unittest.TestCase):
                              template = './input/textfill_template.lyx', 
                              output   =  './build/textfill_template_filled.lyx')
 
+
         self.assertIn('IOError', error)
         
         # non-existent input 2
@@ -117,6 +118,7 @@ class testTextfill(unittest.TestCase):
         self.assertIn('IOError', error)
         
     def test_argument_order(self):
+
         with nostderrout():
             message = textfill(input    = './input/legal.log', 
                                output   = './input/textfill_template_filled.lyx', 

@@ -27,6 +27,5 @@ setup(name         = 'GSLab_Tools',
       license      = 'MIT',
       packages     = find_packages(),
       zip_safe     = False,
-      download_url = "https://github.com/gslab-econ/gslab_python/archive/v1.1.1.tar.gz",
       cmdclass     = {'clean': CleanRepo})
 

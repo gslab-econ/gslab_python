@@ -9,7 +9,7 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append('../..')
 
 from gslab_scons import build_stata
-from gslab_scons._exceptions import BadExecutableError, BadExtensionError
+from gslab_scons._exception_classes import BadExecutableError, BadExtensionError
 from gslab_make  import get_externals
 from gslab_make.tests import nostderrout
 
@@ -17,7 +17,8 @@ from gslab_make.tests import nostderrout
 class testbuild_stata(unittest.TestCase):
 
     def setUp(self):
-        get_externals('./input/externals_stata_ado.txt', '../external/', '', quiet = True)
+        get_externals('./input/externals_stata_ado.txt', 
+                      '../external/', '', quiet = True)
         if not os.path.exists('./build/'):
             os.mkdir('./build/')
 
@@ -47,7 +48,8 @@ class testbuild_stata(unittest.TestCase):
     def test_bad_extension(self):
         env = {'user_flavor':'bad_user_executable'}
         with self.assertRaises(BadExtensionError), nostderrout():
-            build_stata('./build/stata.dta', ['bad', './input/stata_test_script.do'], env)
+            build_stata('./build/stata.dta', 
+                        ['bad', './input/stata_test_script.do'], env)
 
     def tearDown(self):
         if os.path.exists('./build/'):

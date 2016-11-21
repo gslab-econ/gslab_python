@@ -10,7 +10,7 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append('../..')
 
 from gslab_scons import build_tables
-from gslab_scons._exceptions import BadExtensionError
+from gslab_scons._exception_classes import BadExtensionError
 from gslab_make.tests import nostderrout
 
 
@@ -79,7 +79,7 @@ class test_build_tables(unittest.TestCase):
         source = ['./input/tablefill_template.lyx', 
                   './input/tables_appendix.txt', 
                   './input/tables_appendix_two.txt']
-        target = './build/tablefill_template_filled.BAD'
+        target =  './build/tablefill_template_filled.BAD'
         
         # Calling build_tables() with a target argument whose file extension
         # is unexpected should raise a BadExtensionError.

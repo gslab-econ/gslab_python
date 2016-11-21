@@ -15,5 +15,3 @@ sys.stdout = stdout
 with open('./log/make.log', 'rU') as log:
     print '\n=== Test results ' + '='*53 
     print log.read()
-
-

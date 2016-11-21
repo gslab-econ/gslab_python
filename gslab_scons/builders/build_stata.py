@@ -3,7 +3,7 @@ import subprocess
 import shutil
 import gslab_scons.misc as misc
 from gslab_scons import log_timestamp
-from gslab_scons._exceptions import BadExecutableError
+from gslab_scons._exception_classes import BadExecutableError
 
 
 def build_stata(target, source, env):

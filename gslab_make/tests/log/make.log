@@ -116,6 +116,6 @@ test_no_extension (test_run_program.test_run_stata.testRunStata) ... ok
 test_no_program (test_run_program.test_run_stata.testRunStata) ... ok
 
 ----------------------------------------------------------------------
-Ran 114 tests in 159.741s
+Ran 114 tests in 178.368s
 
 OK

@@ -5,7 +5,7 @@ import subprocess
 
 from datetime import datetime
 from sys import platform
-from _exceptions import BadExtensionError
+from _exception_classes import BadExtensionError
 
 
 def check_lfs():

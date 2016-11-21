@@ -75,7 +75,11 @@ links.txt File Format:
 This file needs to rows of numbers or characters, delimited by either tabs or 4 spaces.
 The proper format is: 
 
+<<<<<<< HEAD
 `localname  linkpath`
+=======
+`localname    linkpath`
+>>>>>>> master
 
 
 Column descriptions:
@@ -166,7 +170,7 @@ from make_link_logs import make_link_logs
 from dir_mod import (clear_dirs, check_manifest, delete_files, 
                      list_directory, remove_dir)
 
+
 from run_program import run_stata, run_matlab, run_perl, run_python, run_mathematica
 from run_program import run_stc, run_stcmd, run_lyx, run_rbatch
 from run_program import run_rinstall, run_sas, run_command
-
