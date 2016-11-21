@@ -43,10 +43,13 @@ class testGetExternals(unittest.TestCase):
     def test_illegal_input(self):
         '''Test that get_externals() correctly handles illegal output'''
         externals = './input/externals_illegal.txt'
+        
+        print('\n== Expecting svn errors... ==\n')
         with nostderrout():
             get_externals(externals, './external/', 
                           './output/make.log', quiet = True)
-        
+        print('\n== Done expecting errors ==')
+
         with open(externals, 'rU') as externals_file:
             externals_data = externals_file.readlines()
 

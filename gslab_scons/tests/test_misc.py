@@ -5,10 +5,10 @@ import sys
 import os
 import re
 
-# Ensure the script is run from its own directory 
+# Ensure that Python can find and load the GSLab libraries
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
-
 sys.path.append('../..')
+
 import gslab_scons
 import gslab_scons.misc as misc
 from gslab_scons._exceptions import BadExtensionError

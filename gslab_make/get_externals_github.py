@@ -56,7 +56,7 @@ def get_externals_github(externals_file, external_dir = '@DEFAULTVALUE@',
     '''
     try:
         # Request Token
-        token = getpass.getpass("Enter a valid GitHub token and then press enter: ") 
+        token = getpass.getpass("\nEnter a valid GitHub token and then press enter: ") 
         LOGFILE = prelim.start_logging(metadata.settings['githublog_file'], 
                                       'get_externals_github.py')        
         makelog, externals, last_dir, last_rev = \
