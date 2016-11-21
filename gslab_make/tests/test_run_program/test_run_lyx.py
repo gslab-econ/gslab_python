@@ -144,10 +144,10 @@ class testRunLyx(unittest.TestCase):
             clear_dirs(temp_dir)
             run_lyx(program = './input/lyx_test_file.lyx', 
                     handout = True,
-                    pdfout  = './input/custom_outfile.pdf')
+                    pdfout  = '../output/custom_outfile.pdf')
         logfile_data = open('../output/make.log', 'rU').read()
         self.assertIn('LaTeX', logfile_data)
-        self.assertTrue(os.path.isfile('./input/custom_outfile.pdf'))
+        self.assertTrue(os.path.isfile('../output/custom_outfile.pdf'))
         self.assertFalse(os.path.isfile('../temp/lyx_test_file_handout.pdf'))
         
     def tearDown(self):
@@ -155,8 +155,8 @@ class testRunLyx(unittest.TestCase):
             shutil.rmtree('../output/')
         if os.path.isdir('../temp/'):
             shutil.rmtree('../temp/')
-        if os.path.isfile('../input/custom_outfile.pdf'):
-            os.remove('../input/custom_outfile.pdf')
+        if os.path.isfile('./input/custom_outfile.pdf'):
+            os.remove('./input/custom_outfile.pdf')
     
     
 if __name__ == '__main__':

@@ -74,7 +74,8 @@ class testRunPython(unittest.TestCase):
             self.assertIn('/bin/sh: nonexistent_python_executable: command not found', 
                           logfile_data)
         else:
-            self.assertIn('\'nonexistent_python_executable\' is not recognized as an internal or external command', logfile_data)
+            self.assertIn('\'nonexistent_python_executable\' is not recognized as an' +
+                          ' internal or external command', logfile_data)
     
     def test_no_program(self):
         with nostderrout():

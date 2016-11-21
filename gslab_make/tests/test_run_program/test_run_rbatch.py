@@ -42,7 +42,8 @@ class testRunRBatch(unittest.TestCase):
         
     def test_independent_log(self):
         with nostderrout():
-            run_rbatch(program = './input/R_test_script.R', log = '../output/R.log')
+            run_rbatch(program = './input/R_test_script.R', 
+                       log     = '../output/R.log')
         makelog_data = open('../output/make.log', 'rU').read()
         self.assertIn('Test script complete', makelog_data)
         self.assertTrue(os.path.isfile('../output/R.log'))
@@ -122,8 +123,8 @@ class testRunRBatch(unittest.TestCase):
             shutil.rmtree('../output/')
         if os.path.isfile('output.txt'):
             os.remove('output.txt')
-        if os.path.isfile('../input/output.txt'):
-            os.remove('../input/output.txt')                
+        if os.path.isfile('./input/output.txt'):
+            os.remove('./input/output.txt')                
         if os.path.isfile('.RData'):
             os.remove('.RData')
        
