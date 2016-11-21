@@ -1,23 +1,30 @@
 #!/usr/bin/env python
-from abc import ABCMeta, abstractmethod
 import os
 import shutil
 import zipfile
 import zlib
+from abc import ABCMeta, abstractmethod
 
 class gencat(object):
     '''
-    gencat (General Concatenation) is an abstract class that concatenates files stored in a .zip 
-    file in a user-specified structure and stores the new files in a .zip file. 
+    Tool for concatenating text files stored in .zip files
+
+    gencat (General Concatenation) is an abstract class that concatenates
+    files stored in a .zip file in a user-specified structure and stores 
+    the new files in a .zip file. Its constructor takes the following
+    as arguments:
+        - path_in: the path to the directory containing the .zip files holding the
+            text files that we wish to concatenate.
+        - path_temp: the path to a temporary directory used in the intermediate
+            stages of file concatenation. This directory is created and destroyed 
+            by the class's main method.
+        - path_out: the path to the directory to which a gencat object will save
+            its final output. 
     '''
+
     __metaclass__ = ABCMeta
     
     def __init__(self, path_in, path_temp, path_out):
-        '''
-        path_in: path to raw data directory where data is in any number of .zip files.
-        path_temp: path to temporary workspace. Workspace is created and destroyed by main method.
-        path_out: path to output directory. 
-        '''  
         self.path_in = os.path.join(path_in, '')
         self.path_temp = os.path.join(path_temp, '')
         self.path_out = os.path.join(path_out, '')

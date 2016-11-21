@@ -1,14 +1,14 @@
 
- make.py started: 2016-09-29 15:53:56 /Users/arosenbe/Desktop/gslab_python/gslab_make/tests 
+ make.py started: 2016-11-15 15:37:22 /Users/mrsull/Desktop/gslab_python/gslab_make/tests 
 
 
 
 
 List of all files in sub-directories in ./log/
 ./log/
-created/modified Thu Sep 29 15:53:08 2016
-                                          make.log --- created/modified Thu Sep 29 15:53:56 2016 ( 0 bytes )
-                                          test.log --- created/modified Thu Sep 29 15:53:27 2016 ( 14892 bytes )
+created/modified Tue Nov 15 15:35:38 2016
+                                          make.log --- created/modified Tue Nov 15 15:37:22 2016 ( 0 bytes )
+                                          test.log --- created/modified Tue Nov 15 15:36:29 2016 ( 8447 bytes )
 test_manifest_error (test_dir_mod.test_check_manifest.testCheckManifest) ... ok
 test_manifest_ok (test_dir_mod.test_check_manifest.testCheckManifest) ... ok
 test_manifest_warning (test_dir_mod.test_check_manifest.testCheckManifest) ... ok
@@ -31,15 +31,15 @@ test_zip (test_dir_mod.test_zip.testZip) ... ok
 test_illegal_input (test_get_externals.testGetExternals) ... svn: E155007: '/' is not a working copy
 svn: E155007: '/' is not a working copy
 svn: E160006: No such revision 49908
-svn: E205000: Try 'svn help' for more info
+svn: E205000: Try 'svn help list' for more information
 svn: E205000: Syntax error parsing peg revision '-40'
 sh: -c: line 0: syntax error near unexpected token `('
 sh: -c: line 0: `svn list "https://econ-gentzkow-svn.stanford.edu/repos/main/trunk/::"?>\\;{]\}((&&^&/voting/output/figures/@4908"'
 svn: warning: W160013: URL 'https://econ-gentzkow-svn.stanford.edu/repos/main/trunk%25/analysis/voting/output/figures' non-existent in revision 4908
 svn: E200009: Could not list all targets because some targets don't exist
-svn: E205000: Try 'svn help' for more info
+svn: E205000: Try 'svn help list' for more information
 svn: E205000: Syntax error parsing peg revision 'COGY'
-svn: E205000: Try 'svn help' for more info
+svn: E205000: Try 'svn help list' for more information
 svn: E205000: Syntax error parsing peg revision 'AB%&G'
 ok
 test_legal_input (test_get_externals.testGetExternals) ... ok
@@ -126,7 +126,7 @@ test_no_extension (test_run_program.test_run_stata.testRunStata) ... ok
 test_no_program (test_run_program.test_run_stata.testRunStata) ... ok
 
 ----------------------------------------------------------------------
-Ran 102 tests in 236.837s
+Ran 102 tests in 364.929s
 
 OK
 Cleared: ./externals/
@@ -135,4 +135,4 @@ Cleared: ./externals/
 Cleared: ./externals/
 Cleared: ./externals/
 
- make.py ended: 2016-09-29 15:57:53
+ make.py ended: 2016-11-15 15:43:27

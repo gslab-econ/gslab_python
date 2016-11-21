@@ -6,18 +6,12 @@ import shutil
 import subprocess
 import urlparse
 
-
-
 import messages as messages
 import metadata as metadata
 from exceptionclasses import CustomError, CritError, SyntaxError, LogicError
 
-######################################################
-# System Directive
-######################################################
 
 class SystemDirective(object):
-
 
     def __new__(cls, raw, LOGFILE, last_dir, last_rev, token = "@NONE@"):
         if raw.split('\t',1)[0]!='COPY':
@@ -46,7 +40,7 @@ class SystemDirective(object):
             self.dir = self.dir + '/'
         # Flag if wildcard list needs to be compiled in subclass
         self.flag_list = []
-        if re.search('\*.+',self.file) or re.search('^.+\*',self.file) or (re.search('\*',self.outfile)):
+        if re.search('\*.+', self.file) or re.search('^.+\*', self.file) or (re.search('\*', self.outfile)):
             self.flag_list = 1
 
     # Error Check
@@ -174,8 +168,10 @@ class GitHubDirective(SystemDirective):
         organization, repo, releases, download, tag, assetname = clean_path
         prelim_path         = "https://" + self.token + ":@api.github.com/repos/"
         paste_prelim        = "https://" + "[token]"  + ":@api.github.com/repos/"
-        releasepath         = prelim_path  + organization + "/" + repo + "/" + releases + "/" + "tags" + "/" + tag
-        releasepath_paste   = paste_prelim + organization + "/" + repo + "/" + releases + "/" + "tags" + "/" + tag
+        releasepath         = prelim_path  + organization + "/" + repo + "/" + \
+                              releases + "/" + "tags" + "/" + tag
+        releasepath_paste   = paste_prelim + organization + "/" + repo + "/" + \
+                              releases + "/" + "tags" + "/" + tag
 
         # Accessing GitHub API for asset ID
         try:
@@ -198,8 +194,10 @@ class GitHubDirective(SystemDirective):
         if assetid is None:
             raise CritError(messages.crit_error_assetid % (assetname, tag))
         else:
-            assetpath       = prelim_path  + organization + "/" + repo + "/" + releases + "/" + "assets" + "/" + assetid
-            paste_assetpath = paste_prelim + organization + "/" + repo + "/" + releases + "/" + "assets" + "/" + assetid
+            assetpath       = prelim_path  + organization + "/" + repo + "/" + \
+                              releases + "/" + "assets" + "/" + assetid
+            paste_assetpath = paste_prelim + organization + "/" + repo + "/" + \
+                              releases + "/" + "assets" + "/" + assetid
         
         self.url        = assetpath
         self.paste_url  = paste_assetpath
@@ -216,7 +214,8 @@ class GitHubDirective(SystemDirective):
             self.github_download()
         else:
             self.github_download()    
-            print >> self.logfile, messages.success_github % (self.paste_url, self.outdir, self.outfile)
+            print >> self.logfile, messages.success_github % (self.paste_url, self.outdir, 
+                                                              self.outfile)
     
     # Download Asset
     def github_download(self):
@@ -269,16 +268,17 @@ class SvnExportDirective(SystemDirective):
         # Following command contains try/except clause
         if quiet:
             subprocess.check_call(metadata.commands['svnexport'] % (self.rev, self.dir, self.file,
-                                self.rev, self.outdir, self.outfile), shell=True, stdout=open(os.devnull, 'w'), stderr=open(os.devnull, 'w'))
+                                                                    self.rev, self.outdir, self.outfile), 
+                                  shell = True, stdout = open(os.devnull, 'w'), stderr = open(os.devnull, 'w'))
         else:
             subprocess.check_call(metadata.commands['svnexport'] % (self.rev, self.dir, self.file,
-                                self.rev, self.outdir, self.outfile), shell=True)        
+                                                                    self.rev, self.outdir, self.outfile), 
+                                  shell = True)
+
         print >> self.logfile, messages.success_svn % (self.dir, self.file, self.rev,
                                                        self.outdir, self.outfile)
 
-######################################################
-# Copy Directive
-######################################################
+
 
 class CopyDirective(SystemDirective):
 

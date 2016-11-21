@@ -1,0 +1,98 @@
+.-
+help for ^plotcoeffs^
+.-
+
+Plot coefficients after a regression
+-----------------------------------------------------------------------
+
+	syntax [anything], [estimates(string) b(string) se(string) graphs(string) label(string) cumulative(string) combine *]
+
+Description
+-----------
+
+^plotcoeffs^ plots regression coefficients in either a line, scatter, bar or connected plot. The 
+line and scatter plots include error lines. The graphs are plotted in the the order of the specified 
+coefficient estimates. 
+
+Note: This program understands factor variable syntax.  However, since its inputs do not include what
+regression you just ran, it does not know if any factor variables were dropped due to collinearity.  
+In such cases, giving plotcoeffs an input in factor variable syntax will lead it to plot the dropped 
+"0" coefficient(s) for collinear variables. To avoid this, do not use factor variable syntax if your 
+regression treated one or more of your factor variables as collinear.
+
+Options for use with ^plotcoeffs^
+---------------------------
+
+^estimates(string)^ is optional. It specifies which stored estimates, created using estimates 
+	store, to use for plotcoeffs. If omitted, then the current estimates  in the ereturn list will 
+	be used. Estimates() can take wildcards that appear at the end of 'words' (i.e., sequences of 	
+	symbols separated from other sequences by spaces).
+
+^b(string)^ is optional. It reads the name of a nx1 vector of coefficient point estimates. It cannot 
+	be specified with ^varlist(ts)^ and ^estimates(string)^. If ^b(string)^ is specified, so must 
+	^se(string)^. If omitted, then the estimates currently in ereturn list will be used.
+
+^se(string)^ is optional. It reads the name of a nx1 vector of coefficient standard error estimates. 
+	It cannot be specified with ^varlist(ts)^ and ^estimates(string)^. If ^se(string)^ is specified, 
+	so must ^b(string)^. If omitted, then the estimates currently in ereturn list will be used.
+
+^graphs(string)^ is optional when estimates() either is ommitted or contains one input. It 
+	specifies the graph type, which can be bar, line, linenose (line w/ no std errors)
+	err (i.e., scatter plot with error bars), nose (i.e., scatter plot without error bars), or 
+	connect (connected plot, no std errors). The default is err. If estimates() contains 
+	multiple inputs, then graphs() must contain an equal number and will be applied to the 
+	estimates() input in the corresponding order.
+
+^label(^string^)^ is optional. It specifies labels for the x-variables in ^varlist^ and applies them 
+	in the order they are listed in the command syntax. If the combine command is specified and 
+	estimates for the same variable appear in multiple stored estimates, then the labels are applied 
+	in the order of the stored estimates and variables as listed in the syntax.
+
+^combine^ is optional. It places all estimates in one 'time-series'. It can only be specified with 
+	estimates().
+
+^cumulative(^string^)^ is optional. It allows the user to specify whether to cumulatively sum the 
+	variable beta coefficients in the order that they appear. A "1" indicates to cumulatively sum 
+	the coefficients whereas as a "0" indicates otherwise. If multiple estimates are included in 
+	estimates(), then the number of binary indicators in cumulative() must match the number of 
+	estimates and they will correspond by their order. Note that cumulative() does not work with the 
+	b() and se() options.
+	
+One can include other options (indicated by *) that will be passed onto the graph. Default options 
+	are "scheme(s1mono) yline(0, lcolor(gs12)) ytitle(Coefficient) xtitle(Variable) xlabel(#`max', 
+	value angle(vertical)) legend(off)". Changing one default option will only overwrite that one 
+	default.  E.g. One can send just "ytitle(Big Coefficient)" without overwriting scheme or yline 
+	defaults.
+	
+Note: This program requires the installation of svmat2.
+
+Examples
+--------
+
+. ^reg y x1 x2 x3 x4^
+. ^plotcoeffs x1 x3 x4^
+
+. ^reg y x1 x2 x3 x4^
+. ^plotcoeffs x1 x3 x4, label("cows sheep grass") ytitle(Meat Production)^
+
+. ^reg y1 x1 x2 x3 x4^
+. ^estimates store reg1
+. ^reg y1 x1 x2 x3 x5^
+. ^estimates store reg2^
+. ^plotcoeffs x1 x2 x3, estimates(reg1 reg2) graphs(err line)^
+
+. ^foreach V in x1-x10 {^
+. 	^reg y `V'^
+. 	^matrix beta = nullmat(beta) \ _b[`V']^
+. 	^matrix stderr = nullmat(stderr) \ _se[`V']^
+. ^}^
+. ^plotcoeffs, b(beta) se(stderr)^
+
+
+
+Authors
+------
+
+Matthew Gentzkow
+Patrick DeJarnette
+James Mahon

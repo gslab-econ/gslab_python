@@ -1,0 +1,74 @@
+.-
+help for ^load_and_append^
+.-
+
+Syntax
+-----------------------------------------------------------------------
+
+	load_and_append filelist, [clear dir() insheet insheet_options() append_options()]
+
+Description
+-----------
+
+Load_and_append appends a group of files and loads the appended file into memory. The files can be
+either all dta or all delimited files. File names can contain wildcards.
+
+Load_and_append functions like the ^use^ command in the sense that the dataset in memory is replaced 
+with the new one if the clear option is specified and returns an error if the clear option is not 
+specified and the current dataset is non-empty.
+
+
+Options for use with load_and_append
+---------------------------
+
+clear: Replace current data in memory with new data.
+
+dir(): A directory name to be appended to the beginning of all filenames in filelist.
+
+insheet: Input files are delimited. Files loaded with ^insheet^ rather than ^use^.
+
+insheet_options: Options passed directly to the insheet command. Only valid if insheet option specified.
+
+append_options: Options passed directly to the append command.
+
+dsid(str): Creates a new numerical variable to identify from which dataset each observation originates.
+String specifies the name of the new variable.
+
+dsname(str): Creates a new string variable that identifies the original filename of each dataset.
+String specifies the name of the new variable.
+
+obsseq(str): Creates a new numerical variable that identifies the original order of each observation from each dataset.
+String specifies the name of the new variable.
+
+subset(string asis): Only specified variables (allows -if- and -in- clauses) are selected and appended from each dataset.
+
+fast: If specified, the original dataset is not preserved or restored if the function breaks or the user breaks.
+
+Examples
+--------
+
+. load_and_append ./temp/file1 ./temp/file2 ./temp/file3, clear
+. load_and_append ./temp/file1.dta ./temp/file2.dta ./temp/file3.dta, clear
+. load_and_append ./temp/delim/file1.csv ./temp/delim/file2.csv ./temp/delim/file3.csv, clear insheet
+. load_and_append file1 file2 file3, dir(./temp) clear
+
+. load_and_append file*, dir(./temp) clear
+. load_and_append file*.dta, dir(./temp) clear
+. load_and_append ./temp/file*.dta, clear
+. load_and_append ./temp/delim/file*.txt, clear insheet
+
+. load_and_append ./temp/delim/file1.csv ./temp/delim/file2.csv ./temp/delim/file3.csv, ///
+        clear insheet insheet_options(case)
+. load_and_append ./temp/file1 ./temp/file2 ./temp/file3, clear append_options(force)
+
+. load_and_append ./temp/file1 ./temp/file2, clear dsid(study_number)
+. load_and_append ./temp/file1 ./temp/file2 ./temp/file3, clear dsname(study_name) ///
+		obsseq(orig_order)
+
+. load_and_append ./temp/file1 ./temp/file2 ./temp/file3, clear subset(x)
+
+. load_and_append ./temp/file1 ./temp/file2, clear fast
+
+
+
+

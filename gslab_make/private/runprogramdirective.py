@@ -9,12 +9,8 @@ from exceptionclasses import CustomError, CritError, SyntaxError, LogicError
 import messages as messages
 import metadata as metadata
 
-######################################################
-# Run Program Directive
-######################################################
 
 class RunProgramDirective(object):
-
 
     def __init__(self, kwargs, program_bool = True):
         dict((k.lower(), v) for k, v in kwargs.iteritems())
@@ -268,10 +264,6 @@ class RunProgramDirective(object):
         os.remove(default_lst)
 
 
-######################################################
-# Run R Package Directive
-######################################################
-
 class RunRPackageDirective(RunProgramDirective):
 
 
@@ -296,10 +288,6 @@ class RunRPackageDirective(RunProgramDirective):
         if self.package and not os.path.isfile(self.package):
             raise CritError(messages.crit_error_no_package % self.package)
 
-
-######################################################
-# Run Command Directive
-######################################################
 
 class RunCommandDirective(RunProgramDirective):
 

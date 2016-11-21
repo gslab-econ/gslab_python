@@ -3,11 +3,11 @@ import os
 import shutil
 import sys
 
-sys.path.append('../../')
+sys.path.append('..')
 from gencat import gencat
 
 
-class TestCat(gencat.gencat):
+class TestCat(gencat):
     def makeZipDict(self):
         pass
 
@@ -82,7 +82,7 @@ class test_cleanDir(unittest.TestCase):
         os.removedirs('./a')
     
     def tearDown(self):
-        paths = ['./test_data', './test_temp', './test_out']
+        paths = ['./test_data', './test_temp', './test_out', './test']
         for path in paths:
             shutil.rmtree(path, ignore_errors = True)
 
