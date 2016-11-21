@@ -10,7 +10,8 @@ test_bad_extension (test_build_stata.testbuild_stata) ... ok
 test_bad_user_executable (test_build_stata.testbuild_stata) ... ok
 test_default (test_build_stata.testbuild_stata) ... ok
 test_user_executable (test_build_stata.testbuild_stata) ... ok
-test_default_string_target (test_build_tables.test_build_tables) ... ERROR
+test_default (test_build_tables.test_build_tables) ... ok
+test_default_string_target (test_build_tables.test_build_tables) ... ok
 test_target_extension (test_build_tables.test_build_tables)
 Test that build_tables() recognises an inappropriate file extension ... ok
 test_log_timestamp (test_log.test_log)
@@ -29,15 +30,7 @@ test_make_list_if_string (test_misc.test_misc) ... ok
 test_stata_command_unix (test_misc.test_misc) ... ok
 test_stata_command_win (test_misc.test_misc) ... skipped 'skipped test_stata_command_win because on a unix machine'
 
-======================================================================
-ERROR: test_default_string_target (test_build_tables.test_build_tables)
 ----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/Users/mrsull/Desktop/gslab_python/gslab_scons/tests/test_build_tables.py", line 48, in test_default_string_target
-    self.assertEqual(len(tag_data) + 13, len(filled_data))
-NameError: global name 'tag_data' is not defined
+Ran 25 tests in 9.787s
 
-----------------------------------------------------------------------
-Ran 24 tests in 10.343s
-
-FAILED (errors=1, skipped=1)
+OK (skipped=1)

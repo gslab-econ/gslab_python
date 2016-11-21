@@ -21,9 +21,14 @@ class testTablefill(unittest.TestCase):
             message = tablefill(input    = './input/tables_appendix.txt ./input/tables_appendix_two.txt', 
                                 template = './input/tablefill_template.lyx', 
                                 output   = './input/tablefill_template_filled.lyx')
-        self.assertIn('filled successfully', message)                        
-        tag_data = open('./input/tablefill_template.lyx', 'rU').readlines()
-        filled_data = open('./input/tablefill_template_filled.lyx', 'rU').readlines()
+        self.assertIn('filled successfully', message)  
+
+        # Read the empty and filled template files
+        with open('./input/tablefill_template.lyx', 'rU') as template_file:
+            tag_data = template_file.readlines()
+        with open('./input/tablefill_template_filled.lyx', 'rU') as filled_file:
+            filled_data = filled_file.readlines()
+
         self.assertEqual(len(tag_data) + 13, len(filled_data))
         for n in range(len(tag_data)):
             self.tag_compare(tag_data[n], filled_data[n + 13]) 

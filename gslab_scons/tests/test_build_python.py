@@ -8,7 +8,8 @@ import shutil
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append('../..')
 
-from gslab_scons import build_python, BadExtensionError
+from gslab_scons import build_python
+from gslab_scons._exceptions import BadExtensionError
 from gslab_make.tests import nostderrout
 
 

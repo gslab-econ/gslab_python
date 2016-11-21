@@ -11,6 +11,7 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append('../..')
 import gslab_scons
 import gslab_scons.misc as misc
+from gslab_scons._exceptions import BadExtensionError
 from gslab_make.tests import nostderrout
 
 
@@ -65,7 +66,7 @@ class test_misc(unittest.TestCase):
     	self.assertEqual(misc.check_code_extension('test.r',   'r'),      None)
     	self.assertEqual(misc.check_code_extension('test.lyx', 'lyx'),    None)
     	self.assertEqual(misc.check_code_extension('test.py',  'python'), None)
-    	with self.assertRaises(gslab_scons.BadExtensionError), nostderrout():
+    	with self.assertRaises(BadExtensionError), nostderrout():
     		misc.check_code_extension('test.badextension', 'python')
 
     def test_current_time(self):
