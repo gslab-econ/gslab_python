@@ -6,7 +6,8 @@ import os
 import shutil
 
 sys.path.append('../..')
-from gslab_scons import build_lyx, BadExtensionError
+from gslab_scons import build_lyx
+from gslab_scons._exception_classes import BadExtensionError
 
 
 class test_build_lyx(unittest.TestCase):

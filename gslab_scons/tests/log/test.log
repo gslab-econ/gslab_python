@@ -1,3 +1,11 @@
+/bin/sh: bad_user_executable: command not found
+Error: First argument, bad, must be a .lyx file
+Error: First argument, bad, must be a .py file
+Error: First argument, bad, must be a .r file
+Error: First argument, bad, must be a .do file
+Error: Could not find executable.
+Error: First argument, ./input/tablefill_template_filled.bad, must be a .lyx file
+Error: First argument, test.badextension, must be a .py file
 test_bad_extension (test_build_lyx.test_build_lyx)
 Test that build_lyx() recognises an inappropriate file extension ... ok
 test_default (test_build_lyx.test_build_lyx) ... ok
@@ -7,8 +15,7 @@ test_bad_extension (test_build_r.testbuild_r)
 Test that build_r() recognises an inappropriate file extension ... ok
 test_default (test_build_r.testbuild_r) ... ok
 test_bad_extension (test_build_stata.testbuild_stata) ... ok
-test_bad_user_executable (test_build_stata.testbuild_stata) ... /bin/sh: bad_user_executable: command not found
-ok
+test_bad_user_executable (test_build_stata.testbuild_stata) ... ok
 test_default (test_build_stata.testbuild_stata) ... ok
 test_user_executable (test_build_stata.testbuild_stata) ... ok
 test_target_extension (test_build_tables.test_build_tables)
@@ -30,13 +37,7 @@ test_stata_command_unix (test_misc.test_misc) ... ok
 test_stata_command_win (test_misc.test_misc) ... skipped 'skipped test_stata_command_win because on a unix machine'
 
 ----------------------------------------------------------------------
-Ran 23 tests in 14.681s
+Ran 23 tests in 9.277s
 
 OK (skipped=1)
-Error: First argument, bad, must be a .lyx file
-Error: First argument, bad, must be a .py file
-Error: First argument, bad, must be a .r file
-Error: First argument, bad, must be a .do file
-Error: Could not find executable.
-Error: First argument, ./input/tablefill_template_filled.bad, must be a .lyx file
-Error: First argument, test.badextension, must be a .py file
+

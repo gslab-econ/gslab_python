@@ -5,8 +5,8 @@ import sys
 import os
 
 sys.path.append('../..')
-from gslab_scons import build_tables, BadExtensionError
-
+from gslab_scons import build_tables
+from gslab_scons._exception_classes import BadExtensionError
 
 
 class test_build_tables(unittest.TestCase):

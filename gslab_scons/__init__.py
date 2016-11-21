@@ -12,7 +12,6 @@ this module for additonal information on their functionalities.
 
 from .release import release, upload_asset
 from .log import start_log, log_timestamp
-from ._exceptions import BadExecutableError, BadExtensionError, LFSError
 import misc
 
 from . import builders

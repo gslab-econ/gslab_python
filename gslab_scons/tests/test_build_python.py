@@ -5,7 +5,8 @@ import os
 import shutil
 
 sys.path.append('../..')
-from gslab_scons import build_python, BadExtensionError
+from gslab_scons import build_python
+from gslab_scons._exception_classes import BadExtensionError
 
 
 class testbuild_python(unittest.TestCase):

@@ -7,7 +7,7 @@ import re
 
 sys.path.append('..')
 import misc
-from exceptions import BadExtensionError
+from _exception_classes import BadExtensionError
 
 class test_misc(unittest.TestCase):
 

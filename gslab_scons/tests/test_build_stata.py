@@ -6,7 +6,8 @@ import os
 import shutil
 
 sys.path.append('../..')
-from gslab_scons  import build_stata, BadExecutableError, BadExtensionError
+from gslab_scons  import build_stata
+from gslab_scons._exception_classes import BadExecutableError, BadExtensionError
 from gslab_make import get_externals
 
 class testbuild_stata(unittest.TestCase):

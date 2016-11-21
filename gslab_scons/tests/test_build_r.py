@@ -6,7 +6,8 @@ import os
 import shutil
 
 sys.path.append('../..')
-from gslab_scons  import build_r, BadExtensionError
+from gslab_scons  import build_r
+from gslab_scons._exception_classes import BadExtensionError
 from gslab_make import get_externals
 
 
