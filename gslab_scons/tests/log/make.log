@@ -1,8 +1,8 @@
 test_bad_extension (test_build_lyx.test_build_lyx)
 Test that build_lyx() recognises an inappropriate file extension ... ok
 test_default (test_build_lyx.test_build_lyx) ... ok
-test_bad_extension (test_build_python.testbuild_python) ... ok
-test_default (test_build_python.testbuild_python) ... ok
+test_bad_extension (test_build_python.test_build_python) ... ok
+test_default (test_build_python.test_build_python) ... ok
 test_bad_extension (test_build_r.testbuild_r)
 Test that build_r() recognises an inappropriate file extension ... ok
 test_default (test_build_r.testbuild_r) ... ok
@@ -38,6 +38,6 @@ Traceback (most recent call last):
 NameError: global name 'tag_data' is not defined
 
 ----------------------------------------------------------------------
-Ran 24 tests in 13.439s
+Ran 24 tests in 10.343s
 
 FAILED (errors=1, skipped=1)

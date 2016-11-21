@@ -1,21 +1,21 @@
 #! /usr/bin/env python
-
 import unittest
 import sys
 import os
+import shutil
 
-# Ensure the script is run from its own directory 
+# Ensure that Python can find and load the GSLab libraries
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
-
 sys.path.append('../..')
+
 from gslab_scons import build_tables, BadExtensionError
 from gslab_make.tests import nostderrout
 
 class test_build_tables(unittest.TestCase):
 
     def setUp(self):
-        if not os.path.exists('../build/'):
-            os.mkdir('../build/')
+        if not os.path.exists('./build/'):
+            os.mkdir('./build/')
 
     def default(self):
 
@@ -23,10 +23,10 @@ class test_build_tables(unittest.TestCase):
         source = ['./input/tablefill_template.lyx', 
                   './input/tables_appendix.txt', 
                   './input/tables_appendix_two.txt']
-        target = ['./input/tablefill_template_filled.lyx']
+        target = ['./build/tablefill_template_filled.lyx']
         build_tables(target, source, '')
 
-        with open('./input/tablefill_template_filled.lyx', 'rU') as table_file:
+        with open('./build/tablefill_template_filled.lyx', 'rU') as table_file:
             filled_data = table_file.readlines()
 
         self.assertEqual(len(tag_data) + 13, len(filled_data))
@@ -39,10 +39,10 @@ class test_build_tables(unittest.TestCase):
         source = ['./input/tablefill_template.lyx', 
                   './input/tables_appendix.txt', 
                   './input/tables_appendix_two.txt']
-        target = './input/tablefill_template_filled.lyx'
+        target = './build/tablefill_template_filled.lyx'
         build_tables(target, source, '')
 
-        with open('./input/tablefill_template_filled.lyx', 'rU') as table_file:
+        with open('./build/tablefill_template_filled.lyx', 'rU') as table_file:
             filled_data = table_file.readlines()
 
         self.assertEqual(len(tag_data) + 13, len(filled_data))
@@ -56,7 +56,7 @@ class test_build_tables(unittest.TestCase):
         source = ['./input/tablefill_template.lyx', 
                   './input/tables_appendix.txt', 
                   './input/tables_appendix_two.txt']
-        target = './input/tablefill_template_filled.BAD'
+        target = './build/tablefill_template_filled.BAD'
         
         # Calling build_tables() with a target argument whose file extension
         # is unexpected should raise a BadExtensionError.
@@ -81,8 +81,12 @@ class test_build_tables(unittest.TestCase):
                 integer_part = re.split('\.', filled_line)[0]
                 if len(integer_part) > 3:
                     self.assertEqual(integer_part[-4], ',')
+    
+    def tearDown(self):
+        if os.path.exists('./build/'):
+            shutil.rmtree('./build/')
         
-        
+
 if __name__ == '__main__':
     os.getcwd()
     unittest.main()
