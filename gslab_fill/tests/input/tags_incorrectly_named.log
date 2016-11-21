@@ -1,8 +1,8 @@
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
       name:  badnames
-       log:  C:\Users\mwong4\Documents\GSLAB\trunk\lib\python\gslab_misc\test\input\../../log/stata_output_for_textfill/tags_incorrectly_named.log
+       log:  /Users/mrsull/gslab_python/gslab_fill/tests/test/input/../../log/stata_output_for_textfill/tags_incorrectly_named.log
   log type:  text
- opened on:  23 Apr 2014, 13:26:50
+ opened on:  21 Nov 2016, 08:07:25
 <different_test_long>
 
           x |      Freq.     Percent        Cum.
@@ -216,7 +216,7 @@
       Total |        100      100.00
 </different_test_long>
       name:  badnames
-       log:  C:\Users\mwong4\Documents\GSLAB\trunk\lib\python\gslab_misc\test\input\../../log/stata_output_for_textfill/tags_incorrectly_named.log
+       log:  /Users/mrsull/gslab_python/gslab_fill/tests/test/input/../../log/stata_output_for_textfill/tags_incorrectly_named.log
   log type:  text
- closed on:  23 Apr 2014, 13:26:50
+ closed on:  21 Nov 2016, 08:07:25
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
