@@ -11,14 +11,14 @@ sys.path.append('../..')
 from gslab_scons import build_tables, BadExtensionError
 from gslab_make.tests import nostderrout
 
+
 class test_build_tables(unittest.TestCase):
 
     def setUp(self):
         if not os.path.exists('./build/'):
             os.mkdir('./build/')
 
-    def default(self):
-
+    def test_default(self):
         # Specify the sources and the target before calling the build function.
         source = ['./input/tablefill_template.lyx', 
                   './input/tables_appendix.txt', 
