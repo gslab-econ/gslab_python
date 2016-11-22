@@ -3,7 +3,7 @@ This directory contains unit tests for `gslab_fill`. These tests can be run usin
 `python -m unittest discover`
 from `gslab_fill/` or from `gslab_fill/tests/`. To run the tests with logging, use:
 `python run_all_tests.py`
-from `gslab_scons/tests/`.
+from `gslab_fill/tests/`.
 
 The following inputs of these tests were created by running logs_for_textfill.do, 
 a Stata do file that is now stored in the subdirectory.
