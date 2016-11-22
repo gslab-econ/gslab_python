@@ -22,7 +22,7 @@ def build_r(target, source, env):
     source_file = str(source[0])
     target_file = str(target[0])
     target_dir  = os.path.dirname(target_file)
-    misc.check_code_extension(source_file, 'r')
+    misc.check_code_extension(source_file, '.r')
     log_file    = target_dir + '/sconscript.log'
 
     os.system('R CMD BATCH --no-save %s %s' % (source_file, log_file))

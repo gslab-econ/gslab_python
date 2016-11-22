@@ -22,7 +22,7 @@ def build_tables(target, source, env):
     source = misc.make_list_if_string(source)
     target = misc.make_list_if_string(target)
     
-    misc.check_code_extension(str(target[0]), 'lyx')
+    misc.check_code_extension(str(target[0]), '.lyx')
     
     tablefill(input    = ' '.join([str(a) for a in source[1:len(source)]]), 
               template = str(source[0]), 

@@ -31,7 +31,7 @@ def build_stata(target, source, env):
     target_file  = str(target[0])
 
     target_dir   = os.path.dirname(target_file)
-    misc.check_code_extension(source_file, 'stata')
+    misc.check_code_extension(source_file, '.do')
     log_file = target_dir + '/sconscript.log'
     loc_log  = os.path.basename(source_file).replace('.do','.log')
 

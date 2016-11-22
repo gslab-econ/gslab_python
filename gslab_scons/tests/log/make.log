@@ -31,6 +31,6 @@ test_stata_command_unix (test_misc.test_misc) ... ok
 test_stata_command_win (test_misc.test_misc) ... skipped 'skipped test_stata_command_win because on a unix machine'
 
 ----------------------------------------------------------------------
-Ran 25 tests in 9.413s
+Ran 25 tests in 9.803s
 
 OK (skipped=1)

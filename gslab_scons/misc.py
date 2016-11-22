@@ -88,19 +88,15 @@ def make_list_if_string(source):
     return source
 
 
-def check_code_extension(source_file, software):
+def check_code_extension(source_file, extension):
     '''
     This function raises an exception if `source_file`'s extension
     does not match the software package specified by `software`.
     '''
-    extensions = {'stata'  : '.do',
-                  'r'      : '.r', 
-                  'lyx'    : '.lyx',
-                  'python' : '.py'}
-    ext = extensions[software]
     source_file = str.lower(str(source_file))
-    if not source_file.endswith(ext):
-        raise BadExtensionError('First argument, ' + source_file + ', must be a ' + ext + ' file')
+    extension   = str.lower(str(extension))
+    if not source_file.endswith(extension):
+        raise BadExtensionError('First argument, ' + source_file + ', must be a ' + extension + ' file')
     return None
 
 
