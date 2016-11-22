@@ -1,4 +1,4 @@
-GSLab Python Library Collection 2.0.0
+GSLab Python Library Collection 2.0.1
 =====================================
 
 Overview
@@ -15,9 +15,11 @@ Installation
 ------------
 To install this repository's Python libraries, run the `setup.py` script at its root
 with the command:
+
 ```
 python setup.py install clean
 ```
+
 where the optional clean command deletes files used in installating the libraries
 after installation is complete.
 
@@ -33,3 +35,4 @@ which are the SSH and HTTPS protocol versions.
 
 Note that this installation procedure may require obtaining machine privileges through,
 say, a `sudo` command. 
+

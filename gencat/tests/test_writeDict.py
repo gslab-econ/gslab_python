@@ -4,7 +4,10 @@ import shutil
 import zipfile
 import sys
 
-sys.path.append('../')
+# Ensure theat Python can find and load gencaat.py
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+sys.path.append('..')
+
 from gencat import gencat
 
 class TestCat(gencat):

@@ -5,8 +5,11 @@ import sys
 import os
 import shutil
 
+# Ensure that Python can find and load the GSLab libraries
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append('../..')
-from gslab_scons  import build_r
+
+from gslab_scons import build_r
 from gslab_scons._exception_classes import BadExtensionError
 from gslab_make import get_externals
 
@@ -36,6 +39,7 @@ class testbuild_r(unittest.TestCase):
             shutil.rmtree('../build/')
         if os.path.exists('output.txt'):
             os.remove('output.txt')
+
 
 if __name__ == '__main__':
     os.getcwd()

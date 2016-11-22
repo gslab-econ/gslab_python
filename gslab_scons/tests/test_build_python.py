@@ -26,13 +26,16 @@ class testbuild_python(unittest.TestCase):
     def test_bad_extension(self):
         env = ''
         with self.assertRaises(BadExtensionError):
-            build_python('../build/py.py', ['bad', './input/python_test_script.py'], env)
+            build_python('../build/py.py', 
+                         ['bad', './input/python_test_script.py'], 
+                         env)
    
     def tearDown(self):
         if os.path.exists('../build/'):
             shutil.rmtree('../build/')
         if os.path.exists('output.txt'):
             os.remove('output.txt')
+
 
 if __name__ == '__main__':
     os.getcwd()

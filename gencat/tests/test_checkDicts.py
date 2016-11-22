@@ -4,7 +4,10 @@ import shutil
 import zipfile
 import sys
 
+# Ensure that Python can find and load gencat.py
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append('..')
+
 from gencat import gencat
 
 class test_checkDicts(unittest.TestCase): 
@@ -20,7 +23,8 @@ class test_checkDicts(unittest.TestCase):
     
     def test_default(self):
         '''
-        Test that no exception is raised when dictionaries exist and all keys are tuples.
+        Test that no exception is raised when dictionaries exist and all 
+        keys are tuples.
         '''
         class TestCat(gencat):
             def makeZipDict(self):
@@ -35,7 +39,8 @@ class test_checkDicts(unittest.TestCase):
     
     def test_notAllTuple(self):
         '''
-        Test that TypeError is raised when dictionaries exist but do not have tuple-valued keys.
+        Test that TypeError is raised when dictionaries exist but do not 
+        have tuple-valued keys.
         '''
         class TestCat(gencat):
             def makeZipDict(self):

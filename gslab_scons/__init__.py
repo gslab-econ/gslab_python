@@ -10,10 +10,8 @@ Please consult the docstrings of the gslab_scons builders belonging to
 this module for additonal information on their functionalities.
 '''
 
+import misc
 from .release import release, upload_asset
 from .log import start_log, log_timestamp
-import misc
-
 from . import builders
 from .builders import build_r, build_lyx, build_stata, build_tables, build_python
-
