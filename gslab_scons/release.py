@@ -4,6 +4,7 @@ import re
 import json
 import time
 import os
+from _exceptions_classes import ReleaseOptionsError
 
 def release(env, vers, DriveReleaseFiles = '', local_release = '', org = '', 
             repo = '', target_commitish = ''):
@@ -85,3 +86,58 @@ def upload_asset(token, org, repo, release_id, file_name, content_type = 'text/m
 
     r = session.post(upload_path, files = files, headers = header)
     return r.content
+
+
+if __name__ == '__main__':
+    # Make a release
+
+    # i) Read options from file in root of repository
+
+    # Example user_options.txt
+    #------------------------------------------------------
+    # name: template
+    # organization: gslab-econ
+    # release files: "test.txt", "other_test.rds"
+    #
+    #------------------------------------------------------
+
+    if not os.path.exists('user_options.txt'):
+        raise ReleaseOptionsError('No user_options.txt file found.')
+
+    with open('user_options.txt', 'rU') as options_file:
+        user_options = options_file.readlines()
+
+    # ii) Process the options into a dictionary
+    user_options = map(lambda s: s.split(': '), user_options)
+    options_dict = dict()
+    
+    for option in user_options:
+        options_dict[opt[0]] = opt[1].strip()
+
+    for required_field in ['name', 'organization', 'release files']:
+        if required_field not in options_dict.keys():
+            raise ReleaseOptionsError(required_field + ' missing from user_options.txt.')
+
+    
+    options_dict[release_files] = options_dict['release files'].split(',')
+    options_dict[release_files] = map(lambda s: re.sub('[\s]?\'', '', s), 
+                                      options_dict[release_files])
+
+    # iii) Determine the version number
+    try:
+        version = next(arg for arg in sys.argv if re.search("^version=", arg))
+    except:
+        raise ReleaseOptionsError('No version specified.')
+
+    version = re.sub('^version=', '', version)
+
+    # iv) Install files in their appropriate locations
+    USER = os.environ['USER']
+    local_release = '/Users/%s/Google Drive/release/%s/' % (USER. options_dict['name'])
+    local_release = local_release + version + '/'
+
+    release(env, version, 
+            DriveReleaseFiles = options_dict['release_files'], 
+            local_release     = local_release, 
+            org               = options_dict['organisation'], 
+            repo              = options_dict['name'])
