@@ -1,2 +1,0 @@
-rev	dir	file	outdir	outfile	notes
-15646	%svn%/analysis/Competition (Tables & Figs)/output/	*	./	""""

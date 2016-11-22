@@ -4,8 +4,12 @@ import unittest
 import sys
 import os
 
-sys.path.append('..')
-from log import log_timestamp
+# Ensure that Python can find and load the GSLab libraries
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+sys.path.append('../..')
+
+from gslab_scons import log_timestamp
+
 
 class test_log(unittest.TestCase):
 

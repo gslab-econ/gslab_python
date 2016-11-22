@@ -1,3 +1,0 @@
-url	outdir	outfile	notes	
-https://github.com/TaddyLab/politext/releases/download/v0.1/politext.pdf	./	""""
-https://github.com/TaddyLab/politext/releases/download/BrownTalk/politext_slides.pdf	./NewFolderName	""NewFileName.pdf""

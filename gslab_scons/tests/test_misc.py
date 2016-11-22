@@ -1,13 +1,18 @@
 #! /usr/bin/env python
-
 import unittest
 import sys
 import os
 import re
 
-sys.path.append('..')
-import misc
-from _exception_classes import BadExtensionError
+# Ensure that Python can find and load the GSLab libraries
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+sys.path.append('../..')
+
+import gslab_scons
+import gslab_scons.misc as misc
+from gslab_scons._exception_classes import BadExtensionError
+from gslab_make.tests import nostderrout
+
 
 class test_misc(unittest.TestCase):
 
@@ -56,12 +61,12 @@ class test_misc(unittest.TestCase):
         This method tests that check_code_extensions() associates software with 
         file extensions as intended.
         '''
-
-    	self.assertEqual(misc.check_code_extension('test.do', 'stata'),  None)
-    	self.assertEqual(misc.check_code_extension('test.r', 'r'),       None)
-    	self.assertEqual(misc.check_code_extension('test.lyx', 'lyx'),   None)
-    	self.assertEqual(misc.check_code_extension('test.py', 'python'), None)
-    	with self.assertRaises(BadExtensionError):
+    	self.assertEqual(misc.check_code_extension('test.do',  'stata'),  None)
+    	self.assertEqual(misc.check_code_extension('test.r',   'r'),      None)
+    	self.assertEqual(misc.check_code_extension('test.lyx', 'lyx'),    None)
+    	self.assertEqual(misc.check_code_extension('test.py',  'python'), None)
+    	
+        with self.assertRaises(BadExtensionError), nostderrout():
     		misc.check_code_extension('test.badextension', 'python')
 
     def test_current_time(self):
