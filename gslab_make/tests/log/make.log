@@ -76,7 +76,6 @@ test_independent_log (test_run_program.test_run_matlab.testRunMatlab) ... ok
 test_no_extension (test_run_program.test_run_matlab.testRunMatlab) ... ok
 test_no_program (test_run_program.test_run_matlab.testRunMatlab) ... ok
 test_option (test_run_program.test_run_matlab.testRunMatlab) ... ok
-test_wait (test_run_program.test_run_matlab.testRunMatlab) ... ok
 test_args (test_run_program.test_run_python.testRunPython) ... ok
 test_bad_executable (test_run_program.test_run_python.testRunPython) ... ok
 test_change_dir (test_run_program.test_run_python.testRunPython) ... ok
@@ -116,6 +115,6 @@ test_no_extension (test_run_program.test_run_stata.testRunStata) ... ok
 test_no_program (test_run_program.test_run_stata.testRunStata) ... ok
 
 ----------------------------------------------------------------------
-Ran 114 tests in 178.368s
+Ran 113 tests in 200.440s
 
 OK

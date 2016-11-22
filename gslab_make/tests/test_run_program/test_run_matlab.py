@@ -86,14 +86,6 @@ class testRunMatlab(unittest.TestCase):
         else:
             self.assertIn('matlab [-? ^| -h ^| -help]', logfile_data)
           
-    def test_wait(self):
-        with nostderrout():
-            run_matlab(program = './input/matlab_test_script_wait1.m')
-            run_matlab(program = './input/matlab_test_script_wait2.m')
-        file_data = open('../output/make.log', 'rU').read()
-        self.assertIn('1.716', file_data)
-        self.assertNotIn('Error', file_data)
-
     def assert_proper_output(self, filename):
         file_data = open(filename, 'rU').read()
         self.assertIn('0.8147', file_data)
