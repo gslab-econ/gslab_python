@@ -42,7 +42,7 @@ class test_misc(unittest.TestCase):
         pass
 
     def test_is_in_path(self):
-        self.assertEqual(misc.is_in_path('jabberwocky_long_program_name_that_fails'), None)
+        self.assertEqual(misc.is_in_path('jabberwocky_long_program_name_that_fails'), False)
         self.assertTrue(re.search('python', misc.is_in_path('python')))
 
     def test_is_exe(self):

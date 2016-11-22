@@ -73,7 +73,7 @@ def is_in_path(program):
             exe = os.path.join(path, program)
             if is_exe(exe):
                 return exe
-    return None
+    return False
 
 
 def is_exe(file_path):
