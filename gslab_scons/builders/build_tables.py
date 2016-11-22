@@ -19,12 +19,19 @@ def build_tables(target, source, env):
         sources should be the text files containing the data with which the
         tables are to be filled. 
     '''
+    # Prelims
     source = misc.make_list_if_string(source)
     target = misc.make_list_if_string(target)
     
-    misc.check_code_extension(str(target[0]), '.lyx')
+    # Setup source file (table format)
+    source_file = str(source[0])
+    misc.check_code_extension(source_file, '.lyx')
+
+    # Setup target file (filled table)
+    target_file = str(target[0])
+    misc.check_code_extension(target_file, '.lyx')
     
-    tablefill(input    = ' '.join([str(a) for a in source[1:len(source)]]), 
-              template = str(source[0]), 
-              output   = str(target[0]))
+    tablefill(input    = ' '.join([str(a) for a in source[1:]]), 
+              template = source_file, 
+              output   = target_file)
     return None

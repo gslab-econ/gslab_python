@@ -21,19 +21,27 @@ def build_lyx(target, source, env):
         be the .lyx file that the function will compile as a PDF.
 
     '''
+    # Prelims
     source      = misc.make_list_if_string(source)
     target      = misc.make_list_if_string(target)
     start_time  = misc.current_time()
+    
+    # Setup source file
     source_file = str(source[0])
+    misc.check_code_extension(source_file, '.lyx')
+
+    # Setup target file and log file
+    newpdf      = source_file.replace('.lyx','.pdf')
     target_file = str(target[0])
     target_dir  = os.path.dirname(target_file)
-    misc.check_code_extension(source_file, '.lyx')
-    newpdf      = source_file.replace('.lyx','.pdf')
     log_file    = target_dir + '/sconscript.log'
     
+    # System call
     os.system('lyx -e pdf2 %s > %s' % (source_file, log_file))
-    
     shutil.move(newpdf, target_file)
+
+    # Close log
     end_time    = misc.current_time()
     log_timestamp(start_time, end_time, log_file)
+    
     return None
