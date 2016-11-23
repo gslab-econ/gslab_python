@@ -4,9 +4,11 @@ import re
 import json
 import time
 import os
+import sys
+import shutil
 from _exception_classes import ReleaseOptionsError
 
-def release(env, vers, DriveReleaseFiles = '', local_release = '', org = '', 
+def release(vers, DriveReleaseFiles = '', local_release = '', org = '', 
             repo = '', target_commitish = ''):
     '''Publish a release
 
@@ -61,8 +63,15 @@ def release(env, vers, DriveReleaseFiles = '', local_release = '', org = '',
 
     ## Release Drive
     if DriveReleaseFiles != '':
-        env.Install(local_release, DriveReleaseFiles)
-        env.Alias('drive', local_release)
+        
+        # Install the DriveReleaseFiles in local_release
+        if not os.path.isdir(local_release):
+            os.makedirs(local_release)
+
+        for path in DriveReleaseFiles:
+            file = os.path.basename(path)
+            shutil.copy(path, os.path.join(local_release, file))
+
         DrivePath = DriveReleaseFiles
         
         for i in range(len(DrivePath)):
@@ -114,11 +123,10 @@ if __name__ == '__main__':
     for option in user_options:
         options_dict[option[0]] = option[1].strip()
 
-    for required_field in ['name', 'organization', 'release files']:
+    for required_field in ['name', 'repository', 'organization', 'release files']:
         if required_field not in options_dict.keys():
             raise ReleaseOptionsError(required_field + ' missing from user_options.txt.')
 
-    
     options_dict['release files'] = options_dict['release files'].split(',')
     options_dict['release files'] = map(lambda s: re.sub('[\s]?\'', '', s), 
                                       options_dict['release files'])
@@ -133,11 +141,11 @@ if __name__ == '__main__':
 
     # iv) Install files in their appropriate locations
     USER = os.environ['USER']
-    local_release = '/Users/%s/Google Drive/release/%s/' % (USER. options_dict['name'])
+    local_release = '/Users/%s/Google Drive/release/%s/' % (USER, options_dict['name'])
     local_release = local_release + version + '/'
 
-    release(env, version, 
+    release(vers              = version, 
             DriveReleaseFiles = options_dict['release files'], 
             local_release     = local_release, 
-            org               = options_dict['organisation'], 
-            repo              = options_dict['name'])
+            org               = options_dict['organization'], 
+            repo              = options_dict['repository'])
