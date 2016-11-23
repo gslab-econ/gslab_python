@@ -10,6 +10,6 @@ class LFSError(Exception):
 	def __init__(self, message = ''):
 		print 'Error: ' + message
 
-class ReleaseOptionsError(Exception):
+class ReleaseError(Exception):
     def __init__(self, message = ''):
         print 'Error: ' + message
