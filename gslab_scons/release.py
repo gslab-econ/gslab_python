@@ -112,7 +112,7 @@ if __name__ == '__main__':
     options_dict = dict()
     
     for option in user_options:
-        options_dict[opt[0]] = opt[1].strip()
+        options_dict[option[0]] = option[1].strip()
 
     for required_field in ['name', 'organization', 'release files']:
         if required_field not in options_dict.keys():
