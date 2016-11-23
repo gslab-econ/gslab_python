@@ -4,7 +4,7 @@ import re
 import json
 import time
 import os
-from _exceptions_classes import ReleaseOptionsError
+from _exception_classes import ReleaseOptionsError
 
 def release(env, vers, DriveReleaseFiles = '', local_release = '', org = '', 
             repo = '', target_commitish = ''):
