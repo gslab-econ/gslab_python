@@ -100,38 +100,43 @@ def upload_asset(token, org, repo, release_id, file_name, content_type = 'text/m
 if __name__ == '__main__':
     # Make a release
 
-    # i) Read options from file in root of repository
-
-    # Example user_options.txt
-    #------------------------------------------------------
-    # name: template
-    # organization: gslab-econ
-    # release files: "test.txt", "other_test.rds"
-    #
-    #------------------------------------------------------
-
-    if not os.path.exists('user_options.txt'):
-        raise ReleaseOptionsError('No user_options.txt file found.')
-
-    with open('user_options.txt', 'rU') as options_file:
-        user_options = options_file.readlines()
-
-    # ii) Process the options into a dictionary
-    user_options = map(lambda s: s.split(': '), user_options)
-    options_dict = dict()
+    # Read the config file in the repository's .git directory
+    with open('.git/config', 'rU') as config:
+        details = config.readlines()
     
-    for option in user_options:
-        options_dict[option[0]] = option[1].strip()
+    # Clean each line of this file's contents
+    details = map(lambda s: s.strip(), details)
+    
+    # Search for the line specifying information for origin
+    origin_line = [bool(re.search('\[remote "origin"\]', detail)) \
+                   for detail in details]
+    origin_line = origin_line.index(True)
+    
+    # The next line should contain the url for origin
+    incr = 1
+    url_line  = details[origin_line + incr]
+    # If not, keep looking for the url line
+    while not re.search('^url =', url_line) and origin_line + incr + 1 <= len(details):
+        incr += 1
+        url_line  = details[origin_line + increment]
+    
+    # Extract information from the url line
+    repo_info   = re.findall('github.com/([\w-]+)/([\w-]+)', url_line)
+    organisation = repo_info[0][0]
+    repo         = repo_info[0][1]
 
-    for required_field in ['name', 'repository', 'organization', 'release files']:
-        if required_field not in options_dict.keys():
-            raise ReleaseOptionsError(required_field + ' missing from user_options.txt.')
+    # Next, find the branch's name
+    with open('.git/HEAD', 'rU') as head:
+        branch_info = head.readlines()
+    branch = re.findall('ref: refs/heads/([\w-]+)', branch_info[0])[0]
+    # If the branch is master, just use the repository name. 
+    if branch == 'master':
+        branch = repo
+    # Otherwise, concatenate the repository and branch names with a hyphen.
+    else:
+        branch = "%s-%s" % (repo, branch)
 
-    options_dict['release files'] = options_dict['release files'].split(',')
-    options_dict['release files'] = map(lambda s: re.sub('[\s]?\'', '', s), 
-                                      options_dict['release files'])
-
-    # iii) Determine the version number
+    # Determine the version number
     try:
         version = next(arg for arg in sys.argv if re.search("^version=", arg))
     except:
@@ -139,13 +144,22 @@ if __name__ == '__main__':
 
     version = re.sub('^version=', '', version)
 
-    # iv) Install files in their appropriate locations
+     # Read a list of files to release to Google Drive
+    if not os.path.exists('release_files.txt'):
+        release_files = []
+    else:
+        with open('release_files.txt', 'rU') as release_file:
+            release_files = release_file.readlines()
+    
+    release_files = map(lambda x: x.strip(), release_files)
+
+    # Specify the local release directory
     USER = os.environ['USER']
-    local_release = '/Users/%s/Google Drive/release/%s/' % (USER, options_dict['name'])
+    local_release = '/Users/%s/Google Drive/release/%s/' % (USER, branch)
     local_release = local_release + version + '/'
 
     release(vers              = version, 
-            DriveReleaseFiles = options_dict['release files'], 
+            DriveReleaseFiles = release_files,
             local_release     = local_release, 
-            org               = options_dict['organization'], 
-            repo              = options_dict['repository'])
+            org               = organisation, 
+            repo              = repo)
