@@ -119,9 +119,9 @@ if __name__ == '__main__':
             raise ReleaseOptionsError(required_field + ' missing from user_options.txt.')
 
     
-    options_dict[release_files] = options_dict['release files'].split(',')
-    options_dict[release_files] = map(lambda s: re.sub('[\s]?\'', '', s), 
-                                      options_dict[release_files])
+    options_dict['release files'] = options_dict['release files'].split(',')
+    options_dict['release files'] = map(lambda s: re.sub('[\s]?\'', '', s), 
+                                      options_dict['release files'])
 
     # iii) Determine the version number
     try:
@@ -137,7 +137,7 @@ if __name__ == '__main__':
     local_release = local_release + version + '/'
 
     release(env, version, 
-            DriveReleaseFiles = options_dict['release_files'], 
+            DriveReleaseFiles = options_dict['release files'], 
             local_release     = local_release, 
             org               = options_dict['organisation'], 
             repo              = options_dict['name'])
