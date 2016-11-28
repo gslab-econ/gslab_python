@@ -8,9 +8,11 @@ import sys
 import shutil
 import subprocess
 
+from _exception_classes import ReleaseError
+
 
 def release(vers, DriveReleaseFiles = '', local_release = '', org = '', 
-            repo = '', target_commitish = ''):
+            repo = '', target_commitish = '', zip_release = True):
     '''Publish a release
 
     Parameters
@@ -52,8 +54,8 @@ def release(vers, DriveReleaseFiles = '', local_release = '', org = '',
 
     ## Get root directory name on Drive
     path = local_release.split('/')
-    ind = 0
-    i = 0
+    ind  = 0
+    i    = 0
     while ind == 0:
         if re.search('release', path[i]):
             ind = 1
@@ -62,27 +64,51 @@ def release(vers, DriveReleaseFiles = '', local_release = '', org = '',
             i = i + 1
     dir_name = path[i]
 
-    ## Release Drive
+    ## Release to Google Drive
     if DriveReleaseFiles != '':
-        
-        # Install the DriveReleaseFiles in local_release
         if not os.path.isdir(local_release):
             os.makedirs(local_release)
+       
+        if zip_release:
+            archive_files = 'release_content'
+            if os.path.isdir(archive_files):
+                shutil.rmtree(archive_files)
+            os.makedirs(archive_files)
+
+            destination_base = archive_files
+            drive_header = 'Google Drive: release/%s/%s/release_content.zip' % \
+                            (dir_name, vers)
+
+        else:
+            destination_base = local_release
+            drive_header = 'Google Drive:'
 
         for path in DriveReleaseFiles:
-            file = os.path.basename(path)
-            shutil.copy(path, os.path.join(local_release, file))
+            file_name   = os.path.basename(path)
+            folder_name = os.path.basename(os.path.dirname(path))
+            destination = os.path.join(destination_base, folder_name)
+            if not os.path.isdir(destination):
+                os.makedirs(destination)
+            shutil.copy(path, os.path.join(destination, file_name))
+        
+        if zip_release:
+            shutil.make_archive(archive_files, 'zip', archive_files)
+            shutil.rmtree(archive_files)
+            shutil.move(archive_files + '.zip', local_release + 'release_content.zip')
 
-        DrivePath = DriveReleaseFiles
-        
-        for i in range(len(DrivePath)):
-            path = DrivePath[i]
+        for i in range(len(DriveReleaseFiles)):
+            path = DriveReleaseFiles[i]
             path = path.split('/')
-            DrivePath[i] = 'release/%s/%s/%s' % (dir_name, vers, path[len(path) - 1])
-        
-        with open('gdrive_assets.txt', 'w') as f:
-            f.write('\n'.join(['Google Drive:'] + DrivePath))
-        
+            path = path[len(path) - 1]
+            if zip_release:
+                DriveReleaseFiles[i] = path
+            else:
+                DriveReleaseFiles[i] = 'release/%s/%s/%s' % \
+                                       (dir_name, vers, path)
+
+        with open('gdrive_assets.txt', 'wb') as f:
+            f.write('\n'.join([drive_header] + DriveReleaseFiles))
+
         upload_asset(token, org, repo, release_id, 'gdrive_assets.txt')
         os.remove('gdrive_assets.txt')
 
@@ -133,9 +159,12 @@ def extract_dot_git(path = '.git'):
     the option `path` argument.
     '''
     # Read the config file in the repository's .git directory
-    with open('%s/config' % path, 'rU') as config:
-        details = config.readlines()
-    
+    try:
+        with open('%s/config' % path, 'rU') as config:
+            details = config.readlines()
+    except:
+        raise ReleaseError("Could not read " + path + "/config. It may not exist")
+
     # Clean each line of this file's contents
     details = map(lambda s: s.strip(), details)
     
@@ -153,7 +182,10 @@ def extract_dot_git(path = '.git'):
         url_line  = details[origin_line + increment]
     
     # Extract information from the url line
-    repo_info   = re.findall('github.com/([\w-]+)/([\w-]+)', url_line)
+    # We expect one of:
+    # SSH: "url = git@github.com:<organisation>/<repository>/.git"
+    # HTTPS: "https://github.com/<organisation>/<repository>.git"
+    repo_info   = re.findall('github.com[:/]([\w-]+)/([\w-]+)', url_line)
     organisation = repo_info[0][0]
     repo         = repo_info[0][1]
 
@@ -161,11 +193,17 @@ def extract_dot_git(path = '.git'):
     with open('%s/HEAD' % path, 'rU') as head:
         branch_info = head.readlines()
     branch = re.findall('ref: refs/heads/([\w-]+)', branch_info[0])[0]
-    # If the branch is master, just use the repository name. 
-    if branch == 'master':
-        branch = repo
-    # Otherwise, concatenate the repository and branch names with a hyphen.
-    else:
-        branch = "%s-%s" % (repo, branch)
 
     return repo, organisation, branch
+
+
+def create_size_dictionary(path, exclusion_list = ''):
+    size_dictionary = dict()
+
+    for root, directories, files in os.walk(path):
+        for file_name in files:
+            file_path = os.path.join(root, file_name)
+            size      =  os.path.getsize(file_path)
+            size_dictionary[file_path] = size
+
+    return size_dictionary
