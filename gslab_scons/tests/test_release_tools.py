@@ -3,13 +3,15 @@ import unittest
 import sys
 import os
 import re
+import subprocess
+import shutil
 
 # Ensure that Python can find and load the GSLab libraries
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append('../..')
 
 import gslab_scons._release_tools as tools
-
+from gslab_make.tests import nostderrout
 
 
 class test_misc(unittest.TestCase):
@@ -25,7 +27,34 @@ class test_misc(unittest.TestCase):
         Test that up_to_date() correctly recognises
         an SCons directory as up-to-date or out of date.
         '''
-        pass
+
+        # Check out a stable commit of gslab-econ/template on which
+        # to test the function.
+        command = 'git clone git@github.com:gslab-econ/template.git .test_up_to_date'
+        null_out = open(os.devnull, 'wb')
+        subprocess.call(command, shell = True,
+                        stdout = null_out, 
+                        stderr = subprocess.STDOUT)
+        initial_wd = os.getcwd()
+        os.chdir('.test_up_to_date')
+        subprocess.call('git checkout 046ce99fb897f0d09', shell = True,
+                        stdout = null_out, 
+                        stderr = subprocess.STDOUT)
+        
+        # At freshly cloned commit, sconsign.dblite should be unmodified.
+        # But there should be unconstructed SCons targets.
+        self.assertTrue(tools.up_to_date(mode = 'git'))
+        self.assertFalse(tools.up_to_date(mode = 'scons'))
+        
+        # Calling SCons should build all targets and change sconsign.dblite.
+        subprocess.call('scons', shell = True,
+                        stdout = null_out, 
+                        stderr = subprocess.STDOUT)
+        self.assertFalse(tools.up_to_date(mode = 'git'))
+        self.assertTrue(tools.up_to_date(mode = 'scons'))
+        
+        null_out.close()
+        os.chdir(initial_wd)
 
     def test_extract_dot_git(self):
         '''
@@ -51,7 +80,7 @@ class test_misc(unittest.TestCase):
         # Check that test.txt and test.jpg are in the dictionary
         txt_path = [path for path in sizes.keys() if re.search('test.txt$', path)]
         jpg_path = [path for path in sizes.keys() if re.search('test.jpg$', path)]
-        print sizes
+
         self.assertTrue(bool(txt_path))
         self.assertTrue(bool(jpg_path))
 
@@ -59,7 +88,10 @@ class test_misc(unittest.TestCase):
         self.assertEqual(sizes[txt_path[0]], 93)
         self.assertEqual(sizes[jpg_path[0]], 149084)
 
-  
+    def tearDown(self):
+        if os.path.isdir('.test_up_to_date'):
+            shutil.rmtree('.test_up_to_date')
+
 
 if __name__ == '__main__':
     os.getcwd()

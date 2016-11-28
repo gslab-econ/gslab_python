@@ -20,23 +20,28 @@ from being zipped before their release to Google Drive.
 if __name__ == '__main__':
 
     # Ensure that the directory's targets are up to date
-    if not up_to_date():
+    if not up_to_date(mode = 'scons'):
         raise ReleaseError('SCons targets not up to date.')
+    if not up_to_date(mode = 'git'):
+        print "WARNING: `scons` has run since your latest git commit.\n"
+        response = raw_input("Would you like to continue anyway? (y|n)\n")
+        if response in ['N', 'n']: 
+            sys.exit()
 
     #== Issue warnings if the files versioned in release are too large ========
     # Set soft size limits in MB
     file_MB_limit  = 2
     total_MB_limit = 500 
-
+ 
     bytes_in_MB = 1000000
 
     # Compile a list of files that are not versioned.
     if os.path.exists('./.gitignore'):
         git_ignore = open('./.gitignore', 'rU')
         ignored_files = git_ignore.readlines()
-        ignored_files = map(lambda s: s.strip(), ignored_files)
+        ignored_files = map(lambda s: os.path.join('./', s.strip()), 
+                            ignored_files)
         git_ignore.close()
-
 
     release_sizes = create_size_dictionary('./release')
     versioned_sizes = dict()
@@ -49,16 +54,23 @@ if __name__ == '__main__':
             limit = file_MB_limit * bytes_in_MB
 
             if size > limit and file_name:
-                print "Warning: the version /release/ file " + file_name + \
-                    "is larger than " + str(file_MB_limit) + " MB."
-
+                print "\nWARNING: the versioned file " + file_name + \
+                    " is larger than " + str(file_MB_limit) + " MB.\n" + \
+                    "Versioning files of this size is discouraged.\n"
+                response = raw_input("Would you like to continue anyway? (y|n)\n")
+                if response in ['N', 'n']: 
+                    sys.exit()
 
     total_size  = sum(versioned_sizes.values())
     total_limit = total_MB_limit * bytes_in_MB
 
     if total_size > total_limit:
-        print "Warning: the versioned files in /release/ are together " + \
-            "larger than " + str(total_MB_limit) + " MB."
+        print "\nWARNING: the versioned files in /release/ are together " + \
+            "larger than " + str(total_MB_limit) + " MB.\n" + \
+            "Versioning this much content is discouraged.\n"
+        response = raw_input("Would you like to continue anyway? (y|n)\n")
+        if response in ['N', 'n']: 
+            sys.exit()
 
     #==========================================================================
 
@@ -80,13 +92,10 @@ if __name__ == '__main__':
     zip_release = not dont_zip
 
      # Read a list of files to release to Google Drive
-    if not os.path.exists('release_files.txt'):
-        release_files = []
-    else:
-        with open('release_files.txt', 'rU') as release_file:
-            release_files = release_file.readlines()
-    
-    release_files = map(lambda x: x.strip(), release_files)
+    release_files = list()
+    for root, _, files in os.walk('./release'):
+        for file_name in files:
+            release_files.append(os.path.join(root, file_name))
 
     # Specify the local release directory
     USER = os.environ['USER']

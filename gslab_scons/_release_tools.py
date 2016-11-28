@@ -85,7 +85,7 @@ def release(vers, DriveReleaseFiles = '', local_release = '', org = '',
 
         for path in DriveReleaseFiles:
             file_name   = os.path.basename(path)
-            folder_name = os.path.basename(os.path.dirname(path))
+            folder_name = os.path.dirname(path)
             destination = os.path.join(destination_base, folder_name)
             if not os.path.isdir(destination):
                 os.makedirs(destination)
@@ -94,17 +94,11 @@ def release(vers, DriveReleaseFiles = '', local_release = '', org = '',
         if zip_release:
             shutil.make_archive(archive_files, 'zip', archive_files)
             shutil.rmtree(archive_files)
-            shutil.move(archive_files + '.zip', local_release + 'release_content.zip')
+            shutil.move(archive_files + '.zip', local_release + 'release.zip')
 
-        for i in range(len(DriveReleaseFiles)):
-            path = DriveReleaseFiles[i]
-            path = path.split('/')
-            path = path[len(path) - 1]
-            if zip_release:
-                DriveReleaseFiles[i] = path
-            else:
-                DriveReleaseFiles[i] = 'release/%s/%s/%s' % \
-                                       (dir_name, vers, path)
+        if not zip_release:
+            DriveReleaseFiles = map(lambda s: 'release/%s/%s/%s' % (dir_name, vers, s), 
+                                    DriveReleaseFiles)
 
         with open('gdrive_assets.txt', 'wb') as f:
             f.write('\n'.join([drive_header] + DriveReleaseFiles))
@@ -124,28 +118,54 @@ def upload_asset(token, org, repo, release_id, file_name, content_type = 'text/m
     return r.content
 
 
-def up_to_date(directory = '.'):
+def up_to_date(mode = 'scons', directory = '.'):
     '''
-    This functions whether the targets of a directory run using SCons 
-    are up to date.
+    If mode = scons, this function checks whether the targets of a 
+    directory run using SCons are up to date. 
+    If mode = git, it checks whether the directory's sconsign.dblite has
+    changed since the latest commit.
     '''
-    # Preliminaries
-    command = 'scons ' + directory + ' --dry-run'
+    original_directory = os.getcwd()
+    os.chdir(directory)
+
+
+    if mode == 'scons':
+        # If mode = scons, conduct a dry run to check whether 
+        # all targets are up-to-date
+        command = 'scons ' + directory + ' --dry-run'
+    elif mode == 'git':
+        # If mode = git, check whether .sconsign.dblite has changed
+        # since the last commit.
+        original_directory = os.getcwd()
+        os.chdir(directory)
+        command = 'git status'
+    
     logpath = '.temp_log_up_to_date'
     
-    # Conduct a scons dry run, keeping the output
     with open(logpath, 'wb') as temp_log:
         subprocess.call(command, stdout = temp_log, shell = True)
     with open(logpath, 'rU') as temp_log:
-        scons_output = temp_log.readlines()
+        output = temp_log.readlines()
     os.remove(logpath)
     
     # Strip the output lines of white spaces.
-    scons_output = map(lambda s: s.strip(), scons_output)
-    # Determine if there is a line stating that the directory is up to date.
-    result = [True for out in scons_output if re.search('is up to date\.$', out)]
+    output = map(lambda s: s.strip(), output)
+    
+    if mode == 'scons':
+        # If mode = scons, look for a line stating that the directory is up to date.
+        result = [True for out in output if re.search('is up to date\.$', out)]
+    elif mode == 'git':  
+        # If mode = git, look for a line stating that sconsign.dblite has changed
+        # since the latest commit.
+        result = [out for out in output if re.search('sconsign\.dblite', out)]
+        result = [True for out in result if re.search('modified', out)]
+        result = not bool(result)
+
+    os.chdir(original_directory)
     # Return the result.
     return bool(result)
+
+
 
 
 def extract_dot_git(path = '.git'):
