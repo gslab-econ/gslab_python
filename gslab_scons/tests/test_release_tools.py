@@ -16,12 +16,6 @@ from gslab_make.tests import nostderrout
 
 class test_misc(unittest.TestCase):
 
-    def test_release(self):
-        pass
-
-    def test_upload_asset(self):
-        pass
-
     def test_up_to_date(self):
         '''
         Test that up_to_date() correctly recognises
