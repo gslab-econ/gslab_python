@@ -9,7 +9,7 @@ test_default (test_build_r.testbuild_r) ... ok
 test_bad_extension (test_build_stata.testbuild_stata) ... ok
 test_bad_user_executable (test_build_stata.testbuild_stata) ... ok
 test_default (test_build_stata.testbuild_stata) ... ok
-test_user_executable (test_build_stata.testbuild_stata) ... ok
+test_user_executable_unix (test_build_stata.testbuild_stata) ... skipped 'skipped test_user_executable_unix because on a windows machine'
 test_default (test_build_tables.test_build_tables) ... ok
 test_default_string_target (test_build_tables.test_build_tables) ... ok
 test_target_extension (test_build_tables.test_build_tables)
@@ -23,14 +23,14 @@ test_check_lfs (test_misc.test_misc) ... ok
 test_current_time (test_misc.test_misc)
 Test that current_time() prints times in the expected format ... ok
 test_is_64_windows (test_misc.test_misc) ... ok
-test_is_exe (test_misc.test_misc) ... ok
-test_is_in_path (test_misc.test_misc) ... ok
+test_is_exe (test_misc.test_misc) ... skipped 'skipped test_is_exe because on a windows machine'
+test_is_in_path (test_misc.test_misc) ... skipped 'skipped test_is_in_path because on a windows machine'
 test_is_unix (test_misc.test_misc) ... ok
 test_make_list_if_string (test_misc.test_misc) ... ok
-test_stata_command_unix (test_misc.test_misc) ... ok
-test_stata_command_win (test_misc.test_misc) ... skipped 'skipped test_stata_command_win because on a unix machine'
+test_stata_command_unix (test_misc.test_misc) ... skipped 'skipped test_stata_command_unix because on a windows machine'
+test_stata_command_win (test_misc.test_misc) ... ok
 
 ----------------------------------------------------------------------
-Ran 25 tests in 9.413s
+Ran 25 tests in 10.719s
 
-OK (skipped=1)
+OK (skipped=4)
