@@ -41,10 +41,14 @@ class test_misc(unittest.TestCase):
     def test_is_64_windows(self):
     	pass
 
+    @unittest.skipIf(sys.platform.startswith("win"), 
+    "skipped test_is_in_path because on a windows machine")
     def test_is_in_path(self):
     	self.assertEqual(misc.is_in_path('jabberwocky_long_program_name_that_fails'), None)
     	self.assertTrue(re.search('python', misc.is_in_path('python')))
 
+    @unittest.skipIf(sys.platform.startswith("win"), 
+    "skipped test_is_exe because on a windows machine")
     def test_is_exe(self):
     	pyth_exec = misc.is_in_path('python')
     	self.assertTrue(misc.is_exe(pyth_exec))
