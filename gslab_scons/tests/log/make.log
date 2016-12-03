@@ -9,7 +9,7 @@ test_default (test_build_r.testbuild_r) ... ok
 test_bad_extension (test_build_stata.testbuild_stata) ... ok
 test_bad_user_executable (test_build_stata.testbuild_stata) ... ok
 test_default (test_build_stata.testbuild_stata) ... ok
-test_user_executable (test_build_stata.testbuild_stata) ... ok
+test_user_executable (test_build_stata.testbuild_stata) ... ERROR
 test_default (test_build_tables.test_build_tables) ... ok
 test_default_string_target (test_build_tables.test_build_tables) ... ok
 test_target_extension (test_build_tables.test_build_tables)
@@ -23,14 +23,46 @@ test_check_lfs (test_misc.test_misc) ... ok
 test_current_time (test_misc.test_misc)
 Test that current_time() prints times in the expected format ... ok
 test_is_64_windows (test_misc.test_misc) ... ok
-test_is_exe (test_misc.test_misc) ... ok
-test_is_in_path (test_misc.test_misc) ... ok
+test_is_exe (test_misc.test_misc) ... ERROR
+test_is_in_path (test_misc.test_misc) ... ERROR
 test_is_unix (test_misc.test_misc) ... ok
 test_make_list_if_string (test_misc.test_misc) ... ok
-test_stata_command_unix (test_misc.test_misc) ... ok
-test_stata_command_win (test_misc.test_misc) ... skipped 'skipped test_stata_command_win because on a unix machine'
+test_stata_command_unix (test_misc.test_misc) ... skipped 'skipped test_stata_command_unix because on a windows machine'
+test_stata_command_win (test_misc.test_misc) ... ok
+
+======================================================================
+ERROR: test_user_executable (test_build_stata.testbuild_stata)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\lechi\GSLab\gslab_python\gslab_scons\tests\test_build_stata.py", line 35, in test_user_executable
+    build_stata('./build/stata.dta', './input/stata_test_script.do', env)
+  File "C:\PYTHON27\lib\site-packages\gslab_tools-2.0.1-py2.7.egg\gslab_scons\builders\build_stata.py", line 69, in build_stata
+    raise BadExecutableError('Could not find executable.')
+BadExecutableError
+
+======================================================================
+ERROR: test_is_exe (test_misc.test_misc)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\lechi\GSLab\gslab_python\gslab_scons\tests\test_misc.py", line 50, in test_is_exe
+    self.assertTrue(misc.is_exe(pyth_exec))
+  File "C:\PYTHON27\lib\site-packages\gslab_tools-2.0.1-py2.7.egg\gslab_scons\misc.py", line 81, in is_exe
+    return os.path.isfile(file_path) and os.access(file_path, os.X_OK)
+  File "C:\PYTHON27\lib\genericpath.py", line 37, in isfile
+    st = os.stat(path)
+TypeError: coercing to Unicode: need string or buffer, NoneType found
+
+======================================================================
+ERROR: test_is_in_path (test_misc.test_misc)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\lechi\GSLab\gslab_python\gslab_scons\tests\test_misc.py", line 46, in test_is_in_path
+    self.assertTrue(re.search('python', misc.is_in_path('python')))
+  File "C:\PYTHON27\lib\re.py", line 146, in search
+    return _compile(pattern, flags).search(string)
+TypeError: expected string or buffer
 
 ----------------------------------------------------------------------
-Ran 25 tests in 9.413s
+Ran 25 tests in 15.654s
 
-OK (skipped=1)
+FAILED (errors=3, skipped=1)
