@@ -28,7 +28,8 @@ def release(vers, DriveReleaseFiles = '', local_release = '', org = '',
     '''
     token         = getpass.getpass("Enter a GitHub token and then press enter: ") 
     tag_name      = vers
-    releases_path = 'https://%s:@api.github.com/repos/%s/%s/releases' % (token, org, repo)
+    releases_path = 'https://%s:@api.github.com/repos/%s/%s/releases' \
+                    % (token, org, repo)
     session       = requests.session()
 
     ## Create release
@@ -38,21 +39,22 @@ def release(vers, DriveReleaseFiles = '', local_release = '', org = '',
                'body':             '', 
                'draft':            'FALSE', 
                'prerelease':       'FALSE'}
+
     json_dump = json.dumps(payload)
     json_dump = re.sub('"FALSE"', 'false', json_dump)
     session.post(releases_path, data = json_dump)
 
-    ## Delay
+    # Delay
     time.sleep(1)
 
-    ## Get release ID
+    # Get release ID
     json_releases  = session.get(releases_path)
     json_output    = json_releases.content
     json_split     = json_output.split(',')
     tag_name_index = json_split.index('"tag_name":"%s"' % tag_name)
     release_id     = json_split[tag_name_index - 1].split(':')[1]
 
-    ## Get root directory name on Drive
+    # Get root directory name on Drive
     path = local_release.split('/')
     ind  = 0
     i    = 0
@@ -64,7 +66,7 @@ def release(vers, DriveReleaseFiles = '', local_release = '', org = '',
             i = i + 1
     dir_name = path[i]
 
-    ## Release to Google Drive
+    # Release to Google Drive
     if DriveReleaseFiles != '':
         if not os.path.isdir(local_release):
             os.makedirs(local_release)
@@ -107,10 +109,25 @@ def release(vers, DriveReleaseFiles = '', local_release = '', org = '',
         os.remove('gdrive_assets.txt')
 
 
-def upload_asset(token, org, repo, release_id, file_name, content_type = 'text/markdown'):
+def upload_asset(token, org, repo, release_id, file_name, 
+                 content_type = 'text/markdown'):
+    '''
+    This function uploads a release asset to GitHub.
+
+    --Parameters--
+    token: a GitHub token
+    org: the GitHub organisation to which the repository associated
+        with the release belongs
+    repo: the GitHub repository associated with the release
+    release_id: the release's ID
+    file_name: the name of the asset being released
+    content_type: the content type of the asset. This must be one of
+        types accepted by GitHub. 
+    '''
     session = requests.session()
-    files = {'file' : open(file_name, 'rb')}
-    header = {'Authorization':'token %s' % token, 'Content-Type': content_type}
+    files = {'file' : open(file_name, 'rU')}
+    header = {'Authorization': 'token %s' % token, 
+              'Content-Type':   content_type}
     upload_path = 'https://uploads.github.com/repos/%s/%s/releases/%s/assets?name=%s' % \
                   (org, repo, release_id, file_name)
 
