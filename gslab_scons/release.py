@@ -5,18 +5,6 @@ from _exception_classes import ReleaseError
 from _release_tools import (create_size_dictionary, up_to_date, 
                             extract_dot_git, release)
 
-'''
-Make a release from an SCons directory using:
-    python -m gslab_scons.release version=<version name here>
-where <version name here> is the name of the version that
-the user wishes to release. As an example, to release version
-v1.2.1 of a directory, one would run:
-    python -m gslab_scons.release version=v1.2.1
-from the root of the directory. 
-Including the option `no_zip` will prevent the release files
-from being zipped before their release to Google Drive.
-'''
-
 if __name__ == '__main__':
 
     # Ensure that the directory's targets are up to date
