@@ -234,7 +234,12 @@ def extract_dot_git(path = '.git'):
     return repo, organisation, branch
 
 
-def create_size_dictionary(path, exclusion_list = ''):
+def create_size_dictionary(path):
+    '''
+    This function creates a dictionary reporting the sizes of
+    files in the directory specified by `path`. The filenames
+    are the dictionary's keys and the sizes in bytes. 
+    '''
     size_dictionary = dict()
 
     for root, directories, files in os.walk(path):
