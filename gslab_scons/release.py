@@ -22,7 +22,7 @@ if __name__ == '__main__':
     # Ensure that the directory's targets are up to date
     if not up_to_date(mode = 'scons'):
         raise ReleaseError('SCons targets not up to date.')
-    if not up_to_date(mode = 'git'):
+    elif not up_to_date(mode = 'git'):
         print "WARNING: `scons` has run since your latest git commit.\n"
         response = raw_input("Would you like to continue anyway? (y|n)\n")
         if response in ['N', 'n']: 
@@ -37,11 +37,8 @@ if __name__ == '__main__':
 
     # Compile a list of files that are not versioned.
     if os.path.exists('./.gitignore'):
-        git_ignore = open('./.gitignore', 'rU')
-        ignored_files = git_ignore.readlines()
-        ignored_files = map(lambda s: os.path.join('./', s.strip()), 
-                            ignored_files)
-        git_ignore.close()
+        with open('./.gitignore', 'rU') as git_ignore:
+            ignored_files = [os.path.join('./', line.strip()) for line in git_ignore]
 
     release_sizes = create_size_dictionary('./release')
     versioned_sizes = dict()
