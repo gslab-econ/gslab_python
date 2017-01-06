@@ -1,9 +1,12 @@
 import re
 import os
 import sys
+from _release_tools     import (up_to_date, 
+                                create_size_dictionary,
+                                extract_dot_git, 
+                                release)
 from _exception_classes import ReleaseError
-from _release_tools import (create_size_dictionary, up_to_date, 
-                            extract_dot_git, release)
+
 
 if __name__ == '__main__':
 
