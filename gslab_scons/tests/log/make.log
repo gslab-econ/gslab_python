@@ -1,36 +1,39 @@
-test_bad_extension (test_build_lyx.test_build_lyx)
+test_bad_extension (tests.test_build_lyx.test_build_lyx)
 Test that build_lyx() recognises an inappropriate file extension ... ok
-test_default (test_build_lyx.test_build_lyx) ... ok
-test_bad_extension (test_build_python.testbuild_python) ... ok
-test_default (test_build_python.testbuild_python) ... ok
-test_bad_extension (test_build_r.testbuild_r)
+test_default (tests.test_build_lyx.test_build_lyx) ... ok
+test_bad_extension (tests.test_build_python.testbuild_python) ... ok
+test_default (tests.test_build_python.testbuild_python) ... ok
+test_bad_extension (tests.test_build_r.testbuild_r)
 Test that build_r() recognises an inappropriate file extension ... ok
-test_default (test_build_r.testbuild_r) ... ok
-test_bad_extension (test_build_stata.testbuild_stata) ... ok
-test_bad_user_executable (test_build_stata.testbuild_stata) ... ok
-test_default (test_build_stata.testbuild_stata) ... ok
-test_user_executable (test_build_stata.testbuild_stata) ... ok
-test_default (test_build_tables.test_build_tables) ... ok
-test_default_string_target (test_build_tables.test_build_tables) ... ok
-test_target_extension (test_build_tables.test_build_tables)
+test_default (tests.test_build_r.testbuild_r) ... ok
+test_bad_extension (tests.test_build_stata.testbuild_stata) ... ok
+test_bad_user_executable (tests.test_build_stata.testbuild_stata) ... ok
+test_default (tests.test_build_stata.testbuild_stata) ... ok
+test_user_executable (tests.test_build_stata.testbuild_stata) ... ok
+test_default (tests.test_build_tables.test_build_tables) ... ok
+test_default_string_target (tests.test_build_tables.test_build_tables) ... ok
+test_target_extension (tests.test_build_tables.test_build_tables)
 Test that build_tables() recognises an inappropriate file extension ... ok
-test_log_timestamp (test_log.test_log)
+test_log_timestamp (tests.test_log.test_log)
 Test that log_timestamp() correctly adds start/end times to a log ... ok
-test_start_log (test_log.test_log) ... ok
-test_check_code_extension (test_misc.test_misc)
+test_start_log (tests.test_log.test_log) ... ok
+test_check_code_extension (tests.test_misc.test_misc)
 Unit tests for check_code_extension() ... ok
-test_check_lfs (test_misc.test_misc) ... ok
-test_current_time (test_misc.test_misc)
+test_check_lfs (tests.test_misc.test_misc) ... ok
+test_current_time (tests.test_misc.test_misc)
 Test that current_time() prints times in the expected format ... ok
-test_is_64_windows (test_misc.test_misc) ... ok
-test_is_exe (test_misc.test_misc) ... ok
-test_is_in_path (test_misc.test_misc) ... ok
-test_is_unix (test_misc.test_misc) ... ok
-test_make_list_if_string (test_misc.test_misc) ... ok
-test_stata_command_unix (test_misc.test_misc) ... ok
-test_stata_command_win (test_misc.test_misc) ... skipped 'skipped test_stata_command_win because on a unix machine'
+test_is_64_windows (tests.test_misc.test_misc) ... ok
+test_is_exe (tests.test_misc.test_misc) ... ok
+test_is_in_path (tests.test_misc.test_misc) ... ok
+test_is_unix (tests.test_misc.test_misc) ... ok
+test_make_list_if_string (tests.test_misc.test_misc) ... ok
+test_stata_command_unix (tests.test_misc.test_misc) ... ok
+test_stata_command_win (tests.test_misc.test_misc) ... skipped 'skipped test_stata_command_win because on a unix machine'
+test_create_size_dictionary (tests.test_release_tools.test_misc) ... ok
+test_extract_dot_git (tests.test_release_tools.test_misc) ... ok
+test_up_to_date (tests.test_release_tools.test_misc) ... ok
 
 ----------------------------------------------------------------------
-Ran 25 tests in 9.413s
+Ran 28 tests in 155.838s
 
 OK (skipped=1)

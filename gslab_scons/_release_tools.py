@@ -145,7 +145,6 @@ def up_to_date(mode = 'scons', directory = '.'):
     original_directory = os.getcwd()
     os.chdir(directory)
 
-
     if mode == 'scons':
         # If mode = scons, conduct a dry run to check whether 
         # all targets are up-to-date
@@ -160,7 +159,7 @@ def up_to_date(mode = 'scons', directory = '.'):
     logpath = '.temp_log_up_to_date'
     
     with open(logpath, 'wb') as temp_log:
-        subprocess.call(command, stdout = temp_log, shell = True)
+        subprocess.call(command, stdout = temp_log, stderr = temp_log, shell = True)
     with open(logpath, 'rU') as temp_log:
         output = temp_log.readlines()
     os.remove(logpath)
@@ -169,9 +168,25 @@ def up_to_date(mode = 'scons', directory = '.'):
     output = map(lambda s: s.strip(), output)
     
     if mode == 'scons':
+        # First, determine whether the directory specified as a function
+        # argument is actually a SCons directory.
+        # We use the fact that running scons outside of SCons directory
+        # produces the message: "No SConstruct file found."
+        if [True for out in output if re.search('No SConstruct file found', out)]:
+            raise ReleaseError('up_to_date(mode = scons) must be run on a '
+                               'SCons directory.')
         # If mode = scons, look for a line stating that the directory is up to date.
         result = [True for out in output if re.search('is up to date\.$', out)]
+
     elif mode == 'git':  
+        # Determine whether the directory specified as a function
+        # argument is actually a git repository.
+        # We use the fact that running `git status` outside of a git directory
+        # produces the message: "fatal: Not a git repository"
+        if [True for out in output if re.search('Not a git repository', out)]:
+            raise ReleaseError('up_to_date(mode = git) must be run on a '
+                               'git repository.')
+
         # If mode = git, look for a line stating that sconsign.dblite has changed
         # since the latest commit.
         result = [out for out in output if re.search('sconsign\.dblite', out)]
@@ -179,10 +194,9 @@ def up_to_date(mode = 'scons', directory = '.'):
         result = not bool(result)
 
     os.chdir(original_directory)
+
     # Return the result.
     return bool(result)
-
-
 
 
 def extract_dot_git(path = '.git'):
