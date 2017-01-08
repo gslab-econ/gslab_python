@@ -166,7 +166,7 @@ def up_to_date(mode = 'scons', directory = '.'):
     
     # Strip the output lines of white spaces.
     output = map(lambda s: s.strip(), output)
-    
+
     if mode == 'scons':
         # First, determine whether the directory specified as a function
         # argument is actually a SCons directory.

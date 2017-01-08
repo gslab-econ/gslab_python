@@ -1,16 +1,16 @@
-#! /usr/bin/env python
 import unittest
 import sys
 import os
 import re
 import subprocess
 import shutil
-import tempfile
+import mock
 
 # Ensure that Python can find and load the GSLab libraries
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append('../..')
 
+import gslab_scons
 import gslab_scons._release_tools as tools
 from gslab_scons._exception_classes import ReleaseError
 from gslab_make.tests import nostderrout
@@ -18,64 +18,48 @@ from gslab_make.tests import nostderrout
 
 class test_misc(unittest.TestCase):
 
-    def setUp(self):
-        home = os.path.expanduser('~')
-
-        if os.path.isdir(os.path.join(home, '.test_up_to_date')):
-            shutil.rmtree(os.path.join(home, '.test_up_to_date'))
-        if os.path.isdir('.test_up_to_date_2'):
-            shutil.rmtree('.test_up_to_date_2')
-        if os.path.isdir(os.path.join(home, '.test_up_to_date_3')):
-            shutil.rmtree(os.path.join(home, '.test_up_to_date_3'))
-
-    def test_up_to_date(self):
+    @mock.patch('gslab_scons._release_tools.subprocess.call')
+    def test_up_to_date(self, mock_call):
         '''
         Test that up_to_date() correctly recognises
         an SCons directory as up-to-date or out of date.
         '''
-        # Check out a stable commit of gslab-econ/template on which
-        # to test the function.
-        command = 'git clone git@github.com:gslab-econ/template.git ~/.test_up_to_date'
-        null_out = open(os.devnull, 'wb')
-        
-        subprocess.call(command, shell = True,
-                        stdout = null_out, 
-                        stderr = subprocess.STDOUT)
-        initial_wd = os.getcwd()
+        # The mock of subprocess call should write pre-specified text
+        # to stdout. This mock prevents us from having to set up real
+        # SCons and git directories.
+        mock_call.side_effect = self.make_side_effect('Your branch is up-to-date')
+        self.assertTrue(gslab_scons._release_tools.up_to_date(mode = 'git'))
+        mock_call.side_effect = self.make_side_effect('modified:   .sconsign.dblite')
+        self.assertFalse(gslab_scons._release_tools.up_to_date(mode = 'git'))
 
-        home = os.path.expanduser('~')
-        os.chdir(os.path.join(home, '.test_up_to_date'))
-        subprocess.call('git checkout 046ce99fb897f0d09', shell = True,
-                        stdout = null_out, 
-                        stderr = subprocess.STDOUT)
+        mock_call.side_effect = self.make_side_effect("scons: `.' is up to date.")
+        self.assertTrue(gslab_scons._release_tools.up_to_date(mode = 'scons'))
+        mock_call.side_effect = self.make_side_effect('python some_script.py')
+        self.assertFalse(gslab_scons._release_tools.up_to_date(mode = 'scons'))
         
-        # At freshly cloned commit, sconsign.dblite should be unmodified.
-        # But there should be unconstructed SCons targets.
-        self.assertTrue(tools.up_to_date(mode = 'git'))
-        self.assertFalse(tools.up_to_date(mode = 'scons'))
-        
-        # Calling SCons should build all targets and change sconsign.dblite.
-        subprocess.call('scons', shell = True,
-                        stdout = null_out, 
-                        stderr = subprocess.STDOUT)
-        self.assertFalse(tools.up_to_date(mode = 'git'))
-        self.assertTrue(tools.up_to_date(mode = 'scons'))
-
-        null_out.close()
-        os.chdir(initial_wd)
-
         # The up_to_date() function shouldn't work in SCons or git mode
         # when it is called outside of a SCons directory or a git 
-        # repository, respectively.
-        os.makedirs('.test_up_to_date_2')
+        # repository, respectively.       
+        mock_call.side_effect = self.make_side_effect("Not a git repository")
         with self.assertRaises(ReleaseError), nostderrout():
-            tools.up_to_date(mode = 'scons', directory = '.test_up_to_date_2')   
+            gslab_scons._release_tools.up_to_date(mode = 'git')
 
-        test_directory_3 = os.path.join(home, '.test_up_to_date_3')
-        os.makedirs(test_directory_3)
+        mock_call.side_effect = self.make_side_effect("No SConstruct file found")
         with self.assertRaises(ReleaseError), nostderrout():
-            tools.up_to_date(mode = 'git', directory = test_directory_3)
+            gslab_scons._release_tools.up_to_date(mode = 'scons')   
 
+    @staticmethod
+    def make_side_effect(text):
+        '''
+        Return a side effect to be used with mock that
+        prints text to a file specified as the stderr
+        argument of function being mocked.
+        '''
+        def side_effect(*args, **kwargs):
+            log = kwargs['stdout']
+            log.write(text)
+            
+        return side_effect
 
     def test_extract_dot_git(self):
         '''
@@ -107,9 +91,6 @@ class test_misc(unittest.TestCase):
         # Check that the size dictionary reports these files' correct sizes in bytes
         self.assertEqual(sizes[txt_path[0]], 93)
         self.assertEqual(sizes[jpg_path[0]], 149084)
-
-    def tearDown(self):
-        self.setUp()
 
 if __name__ == '__main__':
     os.getcwd()
