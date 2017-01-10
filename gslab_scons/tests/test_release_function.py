@@ -190,42 +190,6 @@ class TestReleaseFunction(unittest.TestCase):
         mock_move.assert_not_called()
         mock_upload.assert_not_called()    
 
-    @mock.patch('gslab_scons._release_tools.upload_asset')
-    @mock.patch('gslab_scons._release_tools.requests.session')
-    @mock.patch('gslab_scons._release_tools.getpass.getpass')
-    @mock.patch('gslab_scons._release_tools.os.makedirs')
-    @mock.patch('gslab_scons._release_tools.os.path.isdir')
-    @mock.patch('gslab_scons._release_tools.shutil.rmtree')
-    @mock.patch('gslab_scons._release_tools.shutil.copy')
-    @mock.patch('gslab_scons._release_tools.shutil.make_archive')
-    @mock.patch('gslab_scons._release_tools.shutil.move')
-    def test_release_no_drive(self, mock_move, mock_make_archive, mock_copy, 
-                              mock_rmtree, mock_isdir, mock_makedirs, 
-                              mock_getpass, mock_session,
-                              mock_upload):
-        '''
-        Test that release() correctly prepares a release
-        that does not upload files to Google Drive.
-        '''
-        # Mock functions called by release() to simulate an actual call
-        mock_session.return_value.get.return_value.content = self.return_mock_release_data()
-
-        # Test without DriveReleaseFiles
-        tools.release('test_version', 
-                      DriveReleaseFiles = [], 
-                      local_release     = 'Google Drive/release/local_release/', 
-                      org               = 'org', 
-                      repo              = 'repo', 
-                      target_commitish  = 'test_branch')
-        # Check that no file operations occur when no files are specified for release
-        # to Google Drive.
-        mock_copy.assert_not_called()      
-        mock_makedirs.assert_not_called()
-        mock_rmtree.assert_not_called()
-        mock_make_archive.assert_not_called()
-        mock_move.assert_not_called()
-        mock_upload.assert_not_called()    
-
 
 if __name__ == '__main__':
     os.getcwd()
