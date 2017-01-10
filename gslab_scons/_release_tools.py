@@ -11,8 +11,11 @@ import subprocess
 from _exception_classes import ReleaseError
 
 
-def release(vers, DriveReleaseFiles = '', local_release = '', org = '', 
-            repo = '', target_commitish = '', zip_release = True):
+def release(vers, org, repo, 
+            DriveReleaseFiles = [],  
+            local_release     = '',  
+            target_commitish  = '', 
+            zip_release       = True):
     '''Publish a release
 
     Parameters
@@ -26,6 +29,9 @@ def release(vers, DriveReleaseFiles = '', local_release = '', org = '',
     repo: The name of the GitHub repository from which the user is making
         the release.
     '''
+    # Check the argument types
+
+
     token         = getpass.getpass("Enter a GitHub token and then press enter: ") 
     tag_name      = vers
     releases_path = 'https://%s:@api.github.com/repos/%s/%s/releases' \
@@ -42,15 +48,23 @@ def release(vers, DriveReleaseFiles = '', local_release = '', org = '',
 
     json_dump = json.dumps(payload)
     json_dump = re.sub('"FALSE"', 'false', json_dump)
-    session.post(releases_path, data = json_dump)
+    posting = session.post(releases_path, data = json_dump)
+    # Check that the GitHub release was successful
+    posting.raise_for_status()
 
     # Release to Google Drive
     if bool(DriveReleaseFiles):
         # Delay
         time.sleep(1)
     
+        if isinstance(DriveReleaseFiles, basestring):
+            DriveReleaseFiles = [DriveReleaseFiles]
+
         # Get release ID
         json_releases  = session.get(releases_path)
+        # Check that the request was successful
+        json_releases.raise_for_status()
+
         json_output    = json_releases.content
         json_split     = json_output.split(',')
         # The id for each tag appears immediately before its tag name
@@ -59,17 +73,17 @@ def release(vers, DriveReleaseFiles = '', local_release = '', org = '',
         release_id     = json_split[tag_name_index - 1].split(':')[1]
     
         # Get root directory name on Drive
-        path = local_release.split('/')
-        ind  = 0
-        i    = 0
-        while ind == 0:
-            if re.search('release', path[i]):
-                ind = 1
-                i = i + 1
-            else:
-                i = i + 1
-        dir_name = path[i]
+        path     = local_release.split('/')
+        layers   = len(path)
+        dir_name = None
 
+        for i in range(layers):
+            if path[i] == 'release' and i + 1 < layers:
+                dir_name = path[i + 1]
+                break
+
+        if dir_name is None:
+            raise ReleaseError("No /release/ superdirectory found in path given by local_release")
 
         if not os.path.isdir(local_release):
             os.makedirs(local_release)

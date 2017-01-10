@@ -83,7 +83,9 @@ if __name__ == '__main__':
     release_files = list()
     for root, _, files in os.walk('./release'):
         for file_name in files:
-            release_files.append(os.path.join(root, file_name))
+            # Do not release .DS_Store
+            if not re.search("\.DS_Store", file_name):
+                release_files.append(os.path.join(root, file_name))
 
     # Specify the local release directory
     USER = os.environ['USER']

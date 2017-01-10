@@ -32,6 +32,7 @@ test_stata_command_win (test_misc.test_misc) ... skipped 'skipped test_stata_com
 test_release_no_drive (test_release_function.TestReleaseFunction) ... ok
 test_release_nozip (test_release_function.TestReleaseFunction) ... ok
 test_release_standard (test_release_function.TestReleaseFunction) ... ok
+test_release_unintended_inputs (test_release_function.TestReleaseFunction) ... ok
 test_create_size_dictionary (test_release_tools.TestReleaseTools) ... ok
 test_extract_dot_git (test_release_tools.TestReleaseTools) ... ok
 test_up_to_date (test_release_tools.TestReleaseTools) ... ok
@@ -39,6 +40,6 @@ test_upload_asset_bad_file (test_release_tools.TestReleaseTools) ... ok
 test_upload_asset_standard (test_release_tools.TestReleaseTools) ... ok
 
 ----------------------------------------------------------------------
-Ran 33 tests in 15.462s
+Ran 34 tests in 24.886s
 
 OK (skipped=1)

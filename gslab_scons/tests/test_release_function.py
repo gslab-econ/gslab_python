@@ -4,6 +4,7 @@ import os
 import re
 import mock
 import shutil
+import requests
 
 # Ensure that Python can find and load the GSLab libraries
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -40,9 +41,12 @@ class TestReleaseFunction(unittest.TestCase):
         mock_session.return_value = mock.MagicMock(post = mock.MagicMock(),
                                                    get  = mock.MagicMock())
         mock_session.return_value.get.return_value.content = self.return_mock_release_data()
-        
+        # When org/repo refers to a nonexistent GitHub repository, 
+        # make the release request fail. 
+        mock_session.return_value.post.side_effect = self.post_side_effect
+
         # Add a side effect to mock_upload to preserve a listing of release assets
-        mock_upload.side_effect = self.get_side_effect
+        mock_upload.side_effect = self.upload_asset_side_effect
 
         DriveReleaseFiles = ['paper.pdf', 'plot.pdf']
         tools.release('test_version', 
@@ -109,7 +113,7 @@ class TestReleaseFunction(unittest.TestCase):
                  '"prerelease":false}]'])
 
     @staticmethod
-    def get_side_effect(*args, **kwargs):
+    def upload_asset_side_effect(*args, **kwargs):
         '''
         This side effect, intended for use with a mock of upload_asset, 
         copird the uploaded asset so that a version will remain to be checked 
@@ -117,6 +121,28 @@ class TestReleaseFunction(unittest.TestCase):
         '''
         assets_path    = kwargs['file_name']
         shutil.copyfile(assets_path, 'assets_listing.txt')    
+
+
+    @staticmethod
+    def post_side_effect(*args, **kwargs):
+      '''
+      This side effect returns a MagicMock that raises an error 
+      when its raise_for_status() method is called unless
+      a specific release_path is specified and there if a 
+      valid tag_name
+      '''
+      # The release path is specified by the first positional argument.
+      mock_output = mock.MagicMock(raise_for_status = mock.MagicMock())
+      release_path = args[0]
+      real_path = "https://test_token:@api.github.com/repos/org/repo/releases"
+
+      def raise_http_error():
+          raise requests.exceptions.HTTPError('404 Client Error')
+
+      if release_path != real_path:
+          mock_output.raise_for_status.side_effect = raise_http_error
+
+      return mock_output  
 
     @mock.patch('gslab_scons._release_tools.upload_asset')
     @mock.patch('gslab_scons._release_tools.requests.session')
@@ -189,6 +215,100 @@ class TestReleaseFunction(unittest.TestCase):
         mock_make_archive.assert_not_called()
         mock_move.assert_not_called()
         mock_upload.assert_not_called()    
+
+    @mock.patch('gslab_scons._release_tools.upload_asset')
+    @mock.patch('gslab_scons._release_tools.requests.session')
+    @mock.patch('gslab_scons._release_tools.getpass.getpass')
+    @mock.patch('gslab_scons._release_tools.time.sleep') 
+    @mock.patch('gslab_scons._release_tools.os.makedirs')
+    @mock.patch('gslab_scons._release_tools.os.path.isdir')
+    @mock.patch('gslab_scons._release_tools.shutil.rmtree')
+    @mock.patch('gslab_scons._release_tools.shutil.copy')
+    @mock.patch('gslab_scons._release_tools.shutil.make_archive')
+    @mock.patch('gslab_scons._release_tools.shutil.move')
+    def test_release_unintended_inputs(self, mock_move, mock_make_archive, mock_copy, 
+                                       mock_rmtree, mock_isdir, mock_makedirs, 
+                                       mock_sleep, mock_getpass, mock_session,
+                                       mock_upload):
+        '''
+        Test that release() responds as expected to 
+        unintended inputs.
+        '''
+        # Mock functions called by release() to simulate an actual call
+        mock_getpass.return_value = 'test_token'
+        mock_session.return_value.get.return_value.content = self.return_mock_release_data()
+        mock_session.return_value.post.side_effect = self.post_side_effect
+
+        # Inappropriate local_release argument should not if the DriveReleaseFiles
+        # argument is empty.
+        try:
+            tools.release('test_version', 
+                          DriveReleaseFiles = [], 
+                          local_release     = 1, 
+                          org               = 'org', 
+                          repo              = 'repo', 
+                          target_commitish  = 'test_branch')
+        except:
+            self.fail("Running release() with an invalid local_release argument and without"
+                      "files to be released to Google Drive shouldn't raise an error!")
+
+        # Providing a local_release argument of an inappropriate type should
+        # raise an error when we instruct release() to upload files to Google Drive
+        with self.assertRaises(AttributeError), nostderrout():
+            tools.release('test_version', 
+                          DriveReleaseFiles = ['paper.pdf', 'plot.pdf'], 
+                          local_release     = 1, 
+                          org               = 'org', 
+                          repo              = 'repo', 
+                          target_commitish  = 'test_branch')
+
+        # The local_release argument currently has to specify a /release/ directory.
+        # Capitalisation matters!
+        with self.assertRaises(ReleaseError), nostderrout():
+            tools.release('test_version', 
+                          DriveReleaseFiles = ['paper.pdf', 'plot.pdf'], 
+                          local_release     = 'root/Release/folder', 
+                          org               = 'org', 
+                          repo              = 'repo', 
+                          target_commitish  = 'test_branch')   
+
+        # When org/repo refers to a nonexistent GitHub repository, the  
+        # release request will fail. This should raise a requests error.
+        with self.assertRaises(requests.exceptions.HTTPError), nostderrout():
+            tools.release('test_version', 
+                          DriveReleaseFiles = ['paper.pdf', 'plot.pdf'], 
+                          local_release     = 'root/release', 
+                          org               = 'orgg', # Misspelling
+                          repo              = 'repo', 
+                          target_commitish  = 'test_branch')  
+
+        with self.assertRaises(requests.exceptions.HTTPError), nostderrout():
+            tools.release('test_version', 
+                          DriveReleaseFiles = ['paper.pdf', 'plot.pdf'], 
+                          local_release     = 'root/release', 
+                          org               = 'org', 
+                          repo              = 1, # Wrong type
+                          target_commitish  = 'test_branch')  
+
+        # Passing a non-container, non-string value for which bool() returns True to DriveReleaseFiles
+        # raises a TypeError
+        with self.assertRaises(TypeError), nostderrout():
+            tools.release('test_version', 
+                          DriveReleaseFiles = True, 
+                          local_release     = 'root/release/repo-test_branch', 
+                          org               = 'org', 
+                          repo              = 'repo', 
+                          target_commitish  = 'test_branch')    
+
+        # Passing a container holding non-string objects to DriveReleaseFiles
+        # raises an AttributeError
+        with self.assertRaises(AttributeError), nostderrout():
+            tools.release('test_version', 
+                          DriveReleaseFiles = [1, 2, 3], 
+                          local_release     = 'root/release/repo-test_branch', 
+                          org               = 'org', 
+                          repo              = 'repo', 
+                          target_commitish  = 'test_branch')  
 
 
 if __name__ == '__main__':
