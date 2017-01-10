@@ -3,7 +3,6 @@ import sys
 import os
 import re
 import mock
-import tempfile
 import shutil
 
 # Ensure that Python can find and load the GSLab libraries
