@@ -32,7 +32,7 @@ def release(vers, DriveReleaseFiles = '', local_release = '', org = '',
                     % (token, org, repo)
     session       = requests.session()
 
-    ## Create release
+    # Create release
     payload = {'tag_name':         tag_name, 
                'target_commitish': target_commitish, 
                'name':             tag_name, 
@@ -44,33 +44,38 @@ def release(vers, DriveReleaseFiles = '', local_release = '', org = '',
     json_dump = re.sub('"FALSE"', 'false', json_dump)
     session.post(releases_path, data = json_dump)
 
-    # Delay
-    time.sleep(1)
-
-    # Get release ID
-    json_releases  = session.get(releases_path)
-    json_output    = json_releases.content
-    json_split     = json_output.split(',')
-    tag_name_index = json_split.index('"tag_name":"%s"' % tag_name)
-    release_id     = json_split[tag_name_index - 1].split(':')[1]
-
-    # Get root directory name on Drive
-    path = local_release.split('/')
-    ind  = 0
-    i    = 0
-    while ind == 0:
-        if re.search('release', path[i]):
-            ind = 1
-            i = i + 1
-        else:
-            i = i + 1
-    dir_name = path[i]
-
     # Release to Google Drive
-    if DriveReleaseFiles != '':
+    if bool(DriveReleaseFiles):
+        # Delay
+        time.sleep(1)
+    
+        # Get release ID
+        json_releases  = session.get(releases_path)
+        json_output    = json_releases.content
+        json_split     = json_output.split(',')
+        # The id for each tag appears immeadiately before its tag name
+        # in the releases json object.
+        tag_name_index = json_split.index('"tag_name":"%s"' % tag_name)
+        release_id     = json_split[tag_name_index - 1].split(':')[1]
+    
+        # Get root directory name on Drive
+        path = local_release.split('/')
+        ind  = 0
+        i    = 0
+        while ind == 0:
+            if re.search('release', path[i]):
+                ind = 1
+                i = i + 1
+            else:
+                i = i + 1
+        dir_name = path[i]
+
+
         if not os.path.isdir(local_release):
             os.makedirs(local_release)
        
+        # If the files released to Google Drive are to be zipped,
+        # specify their copy destination as an intermediate directory
         if zip_release:
             archive_files = 'release_content'
             if os.path.isdir(archive_files):
@@ -80,7 +85,8 @@ def release(vers, DriveReleaseFiles = '', local_release = '', org = '',
             destination_base = archive_files
             drive_header = 'Google Drive: release/%s/%s/release_content.zip' % \
                             (dir_name, vers)
-
+        # Otherwise, send the release files directly to the local release
+        # Google Drive directory
         else:
             destination_base = local_release
             drive_header = 'Google Drive:'
@@ -96,7 +102,7 @@ def release(vers, DriveReleaseFiles = '', local_release = '', org = '',
         if zip_release:
             shutil.make_archive(archive_files, 'zip', archive_files)
             shutil.rmtree(archive_files)
-            shutil.move(archive_files + '.zip', local_release + 'release.zip')
+            shutil.move(archive_files + '.zip', os.path.join(local_release, 'release.zip'))
 
         if not zip_release:
             DriveReleaseFiles = map(lambda s: 'release/%s/%s/%s' % (dir_name, vers, s), 
@@ -105,7 +111,12 @@ def release(vers, DriveReleaseFiles = '', local_release = '', org = '',
         with open('gdrive_assets.txt', 'wb') as f:
             f.write('\n'.join([drive_header] + DriveReleaseFiles))
 
-        upload_asset(token, org, repo, release_id, 'gdrive_assets.txt')
+        upload_asset(token      = token, 
+                     org        = org, 
+                     repo       = repo, 
+                     release_id = release_id, 
+                     file_name  = 'gdrive_assets.txt')
+
         os.remove('gdrive_assets.txt')
 
 
@@ -125,12 +136,16 @@ def upload_asset(token, org, repo, release_id, file_name,
         types accepted by GitHub. 
     '''
     session = requests.session()
-    files = {'file' : open(file_name, 'rU')}
+
+    if not os.path.isfile(file_name):
+        raise ReleaseError('upload_asset() cannot find file_name')
+
+    files  = {'file' : open(file_name, 'rU')}
     header = {'Authorization': 'token %s' % token, 
-              'Content-Type':   content_type}
+              'Content-Type':  content_type}
     upload_path = 'https://uploads.github.com/repos/%s/%s/releases/%s/assets?name=%s' % \
                   (org, repo, release_id, file_name)
-
+ 
     r = session.post(upload_path, files = files, headers = header)
     return r.content
 
@@ -207,7 +222,7 @@ def extract_dot_git(path = '.git'):
     This functions returns the repository, organisation, and 
     branch name of a cloned GitHub repository. The user may
     specify an alternative path to the .git directory through
-    the option `path` argument.
+    the optional `path` argument.
     '''
     # Read the config file in the repository's .git directory
     try:
@@ -251,10 +266,14 @@ def extract_dot_git(path = '.git'):
 def create_size_dictionary(path):
     '''
     This function creates a dictionary reporting the sizes of
-    files in the directory specified by `path`. The filenames
-    are the dictionary's keys and the sizes in bytes. 
+    files in the directory specified by `path`, a string. 
+    The filenames are the dictionary's keys; their sizes in 
+    bytes are its values. 
     '''
     size_dictionary = dict()
+
+    if not os.path.isdir(path):
+        raise ReleaseError("The path argument does not specify an existing directory.")
 
     for root, directories, files in os.walk(path):
         for file_name in files:
