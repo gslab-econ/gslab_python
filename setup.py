@@ -17,6 +17,9 @@ class CleanRepo(build_py):
         if os.path.isdir('./dist'):
             shutil.rmtree('./dist')
 
+# Requirements
+requirements = []
+requirements.append('requests', 'mock') # gslab_scons requires the requests module.
 
 setup(name         = 'GSLab_Tools',
       version      = '3.0.0',
