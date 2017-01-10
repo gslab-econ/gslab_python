@@ -53,7 +53,7 @@ def release(vers, DriveReleaseFiles = '', local_release = '', org = '',
         json_releases  = session.get(releases_path)
         json_output    = json_releases.content
         json_split     = json_output.split(',')
-        # The id for each tag appears immeadiately before its tag name
+        # The id for each tag appears immediately before its tag name
         # in the releases json object.
         tag_name_index = json_split.index('"tag_name":"%s"' % tag_name)
         release_id     = json_split[tag_name_index - 1].split(':')[1]
