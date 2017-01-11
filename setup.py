@@ -18,18 +18,15 @@ class CleanRepo(build_py):
             shutil.rmtree('./dist')
 
 # Requirements
-requirements = []
-requirements.append('requests') # gslab_scons requires the requests module.
+requirements = ['requests']
 
-setup(name             = 'GSLab_Tools',
-      version          = '2.0.3',
-      description      = 'Python tools for GSLab',
-      url              = 'https://github.com/gslab-econ/gslab_python',
-      author           = 'Matthew Gentzkow, Jesse Shapiro',
-      author_email     = 'gentzkow@stanford.edu, jesse_shapiro_1@brown.edu',
-      license          = 'MIT',
-      packages         = find_packages(),
-      install_requires = requirements, 
-      zip_safe         = False,
-      cmdclass         = {'clean': CleanRepo})
-
+setup(name         = 'GSLab_Tools',
+      version      = '3.0.0',
+      description  = 'Python tools for GSLab',
+      url          = 'https://github.com/gslab-econ/gslab_python',
+      author       = 'Matthew Gentzkow, Jesse Shapiro',
+      author_email = 'gentzkow@stanford.edu, jesse_shapiro_1@brown.edu',
+      license      = 'MIT',
+      packages     = find_packages(),
+      zip_safe     = False,
+      cmdclass     = {'clean': CleanRepo})

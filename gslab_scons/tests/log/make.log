@@ -27,10 +27,19 @@ test_is_exe (test_misc.test_misc) ... skipped 'skipped test_is_exe because on a 
 test_is_in_path (test_misc.test_misc) ... skipped 'skipped test_is_in_path because on a windows machine'
 test_is_unix (test_misc.test_misc) ... ok
 test_make_list_if_string (test_misc.test_misc) ... ok
-test_stata_command_unix (test_misc.test_misc) ... skipped 'skipped test_stata_command_unix because on a windows machine'
-test_stata_command_win (test_misc.test_misc) ... ok
+test_stata_command_unix (test_misc.test_misc) ... ok
+test_stata_command_win (test_misc.test_misc) ... skipped 'skipped test_stata_command_win because on a unix machine'
+test_release_no_drive (test_release_function.TestReleaseFunction) ... ok
+test_release_nozip (test_release_function.TestReleaseFunction) ... ok
+test_release_standard (test_release_function.TestReleaseFunction) ... ok
+test_release_unintended_inputs (test_release_function.TestReleaseFunction) ... ok
+test_create_size_dictionary (test_release_tools.TestReleaseTools) ... ok
+test_extract_dot_git (test_release_tools.TestReleaseTools) ... ok
+test_up_to_date (test_release_tools.TestReleaseTools) ... ok
+test_upload_asset_bad_file (test_release_tools.TestReleaseTools) ... ok
+test_upload_asset_standard (test_release_tools.TestReleaseTools) ... ok
 
 ----------------------------------------------------------------------
-Ran 25 tests in 10.719s
+Ran 34 tests in 24.886s
 
 OK (skipped=4)
