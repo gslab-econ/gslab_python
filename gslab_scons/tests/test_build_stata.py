@@ -30,7 +30,9 @@ class testbuild_stata(unittest.TestCase):
         if os.path.isfile('./build/sconscript.log'):
             os.remove('./build/sconscript.log')
         
-    def test_user_executable(self):
+    @unittest.skipIf(sys.platform.startswith("win"), 
+    "skipped test_user_executable_unix because on a windows machine")
+    def test_user_executable_unix(self):
         env = {'user_flavor':'statamp'}
         build_stata('./build/stata.dta', './input/stata_test_script.do', env)
         logfile_data = open('./build/sconscript.log', 'rU').read()
