@@ -1,4 +1,5 @@
 import os
+import subprocess
 import shutil
 import gslab_scons.misc as misc
 from gslab_scons import log_timestamp
@@ -37,8 +38,17 @@ def build_lyx(target, source, env):
     log_file    = target_dir + '/sconscript.log'
     
     # System call
-    os.system('lyx -e pdf2 %s > %s' % (source_file, log_file))
-    shutil.move(newpdf, target_file)
+    try:
+        system_call = 'lyx -e pdf2 %s > %s' % (source_file, log_file)
+        subprocess.check_output(system_call,
+                               stderr = subprocess.STDOUT,
+                               shell = True)
+        # Move rendered pdf to the target
+        shutil.move(newpdf, target_file)
+    except subprocess.CalledProcessError:
+        message = '''Could not find executable for Lyx.  
+                     \nCommand tried: %s''' % (system_call)
+        raise BadExecutableError(message)
 
     # Close log
     end_time    = misc.current_time()

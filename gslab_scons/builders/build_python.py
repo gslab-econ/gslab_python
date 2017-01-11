@@ -1,4 +1,5 @@
 import os
+import subprocess
 import gslab_scons.misc as misc
 from gslab_scons import log_timestamp
 
@@ -31,7 +32,15 @@ def build_python(target, source, env):
     log_file    = log_dir + '/sconscript.log'
 
     # System call
-    os.system('python %s > %s' % (source_file, log_file))
+    try:
+        system_call = 'python %s > %s' % (source_file, log_file)
+        subprocess.check_output(system_call,
+                               stderr = subprocess.STDOUT,
+                               shell = True)
+    except subprocess.CalledProcessError:
+        message = '''Could not find executable for Python. 
+                     \nCommand tried: %s''' % (system_call)
+        raise BadExecutableError(message)
 
     # Close log
     end_time   =  misc.current_time()    
