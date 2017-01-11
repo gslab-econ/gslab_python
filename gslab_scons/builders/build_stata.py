@@ -1,7 +1,7 @@
 import os
 import subprocess
 import shutil
-import gslab_scons1.misc as misc
+import gslab_scons.misc as misc
 from gslab_scons import log_timestamp
 from gslab_scons._exception_classes import BadExecutableError
 from sys import platform
