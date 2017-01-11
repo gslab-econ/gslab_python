@@ -30,4 +30,3 @@ setup(name         = 'GSLab_Tools',
       packages     = find_packages(),
       zip_safe     = False,
       cmdclass     = {'clean': CleanRepo})
-
