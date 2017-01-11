@@ -2,10 +2,9 @@ import os
 import sys
 import shutil
 import subprocess
+import _exception_classes
 
 from datetime import datetime
-from sys import platform
-from _exception_classes import BadExtensionError
 
 
 def check_lfs():
@@ -17,8 +16,11 @@ def check_lfs():
             # init is a deprecated version of install
             output = subprocess.check_output("git-lfs init", shell = True) 
         except:
-            raise LFSError('''Either Git LFS is not installed or your Git LFS settings need to be updated. 
-                  Please install Git LFS or run 'git lfs install --force' if prompted above.''')
+            raise _exception_classes.LFSError('''
+                              Either Git LFS is not installed 
+                              or your Git LFS settings need to be updated. 
+                              Please install Git LFS or run 
+                              'git lfs install --force' if prompted above.''')
 
 
 def stata_command_unix(flavor):
@@ -49,7 +51,7 @@ def is_unix():
     otherwise.
     '''
     unix = ['darwin', 'linux', 'linux2']
-    return platform in unix
+    return sys.platform in unix
 
 
 def is_64_windows():
@@ -100,7 +102,9 @@ def check_code_extension(source_file, software):
     ext = extensions[software]
     source_file = str.lower(str(source_file))
     if not source_file.endswith(ext):
-        raise BadExtensionError('First argument, ' + source_file + ', must be a ' + ext + ' file')
+        error_message = 'First argument, %s, must be a %s file.' % \
+                        (source_file, ext)
+        raise _exception_classes.BadExtensionError(error_message)
     return None
 
 
