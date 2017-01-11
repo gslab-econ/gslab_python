@@ -14,15 +14,14 @@ from gslab_make  import get_externals
 from gslab_make.tests import nostderrout
 
 
-class testbuild_stata(unittest.TestCase):
+class TestBuildStata(unittest.TestCase):
 
     def setUp(self):
-        get_externals('./input/externals_stata_ado.txt', 
-                      '../external/', '', quiet = True)
         if not os.path.exists('./build/'):
             os.mkdir('./build/')
 
     def test_default(self):
+        self.assertEqual(2, 1 + 1)
         env = {'user_flavor' : None}
         build_stata('./build/stata.dta', './input/stata_test_script.do', env)
         logfile_data = open('./build/sconscript.log', 'rU').read()
@@ -30,9 +29,7 @@ class testbuild_stata(unittest.TestCase):
         if os.path.isfile('./build/sconscript.log'):
             os.remove('./build/sconscript.log')
         
-    @unittest.skipIf(sys.platform.startswith("win"), 
-    "skipped test_user_executable_unix because on a windows machine")
-    def test_user_executable_unix(self):
+    def test_user_executable(self):
         env = {'user_flavor':'statamp'}
         build_stata('./build/stata.dta', './input/stata_test_script.do', env)
         logfile_data = open('./build/sconscript.log', 'rU').read()
@@ -43,9 +40,7 @@ class testbuild_stata(unittest.TestCase):
     def test_bad_user_executable(self):
         env = {'user_flavor':'bad_user_executable'}
         with self.assertRaises(BadExecutableError):
-            print "Expecting a bad executable error..."
             build_stata('./build/stata.dta', './input/stata_test_script.do', env)
-
 
     def test_bad_extension(self):
         env = {'user_flavor':'bad_user_executable'}
@@ -56,10 +51,6 @@ class testbuild_stata(unittest.TestCase):
     def tearDown(self):
         if os.path.exists('./build/'):
             shutil.rmtree('./build/')
-        if os.path.exists('../external/'):
-            shutil.rmtree('../external/')
-        if os.path.exists('get_externals.log'):
-            os.remove('get_externals.log')
         if os.path.exists('output.txt'):
             os.remove('output.txt')
 

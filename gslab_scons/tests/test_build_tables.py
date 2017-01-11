@@ -14,7 +14,7 @@ from gslab_scons._exception_classes import BadExtensionError
 from gslab_make.tests import nostderrout
 
 
-class test_build_tables(unittest.TestCase):
+class TestBuildTables(unittest.TestCase):
 
     def setUp(self):
         if not os.path.exists('./build/'):
@@ -25,7 +25,6 @@ class test_build_tables(unittest.TestCase):
         Test that build_tables() constructs LyX tables correctly when
         its target argument is a list
         '''
-
         # Specify the sources and the target before calling the build function.
         source = ['./input/tablefill_template.lyx', 
                   './input/tables_appendix.txt', 
