@@ -36,3 +36,6 @@ which are the SSH and HTTPS protocol versions.
 Note that this installation procedure may require obtaining machine privileges through,
 say, a `sudo` command. 
 
+License
+-------
+See [here](https://github.com/gslab-econ/gslab_python/blob/master/LICENSE.txt).
