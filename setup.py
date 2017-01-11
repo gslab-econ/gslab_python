@@ -17,9 +17,11 @@ class CleanRepo(build_py):
         if os.path.isdir('./dist'):
             shutil.rmtree('./dist')
 
+# Requirements
+requirements = ['requests']
 
 setup(name         = 'GSLab_Tools',
-      version      = '2.0.2',
+      version      = '3.0.0',
       description  = 'Python tools for GSLab',
       url          = 'https://github.com/gslab-econ/gslab_python',
       author       = 'Matthew Gentzkow, Jesse Shapiro',
@@ -28,4 +30,3 @@ setup(name         = 'GSLab_Tools',
       packages     = find_packages(),
       zip_safe     = False,
       cmdclass     = {'clean': CleanRepo})
-

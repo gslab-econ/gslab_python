@@ -1,87 +1,106 @@
-import requests
-import getpass
 import re
-import json
-import time
 import os
-
-def release(env, vers, DriveReleaseFiles = '', local_release = '', org = '', 
-            repo = '', target_commitish = ''):
-    '''Publish a release
-
-    Parameters
-    ----------
-    env: an SCons environment object
-    vers: the version of the release
-    DriveReleaseFiles a optional list of files to be included in a
-        release to Google Drive.
-    local_release: The path of the release directory on the user's computer.
-    org: The GtHub organisaton hosting the repository specified by `repo`.
-    repo: The name of the GitHub repository from which the user is making
-        the release.
-    '''
-    token         = getpass.getpass("Enter a GitHub token and then press enter: ") 
-    tag_name      = vers
-    releases_path = 'https://%s:@api.github.com/repos/%s/%s/releases' % (token, org, repo)
-    session       = requests.session()
-
-    ## Create release
-    payload = {'tag_name':         tag_name, 
-               'target_commitish': target_commitish, 
-               'name':             tag_name, 
-               'body':             '', 
-               'draft':            'FALSE', 
-               'prerelease':       'FALSE'}
-    json_dump = json.dumps(payload)
-    json_dump = re.sub('"FALSE"', 'false', json_dump)
-    session.post(releases_path, data = json_dump)
-
-    ## Delay
-    time.sleep(1)
-
-    ## Get release ID
-    json_releases  = session.get(releases_path)
-    json_output    = json_releases.content
-    json_split     = json_output.split(',')
-    tag_name_index = json_split.index('"tag_name":"%s"' % tag_name)
-    release_id     = json_split[tag_name_index - 1].split(':')[1]
-
-    ## Get root directory name on Drive
-    path = local_release.split('/')
-    ind = 0
-    i = 0
-    while ind == 0:
-        if re.search('release', path[i]):
-            ind = 1
-            i = i + 1
-        else:
-            i = i + 1
-    dir_name = path[i]
-
-    ## Release Drive
-    if DriveReleaseFiles != '':
-        env.Install(local_release, DriveReleaseFiles)
-        env.Alias('drive', local_release)
-        DrivePath = DriveReleaseFiles
-        
-        for i in range(len(DrivePath)):
-            path = DrivePath[i]
-            path = path.split('/')
-            DrivePath[i] = 'release/%s/%s/%s' % (dir_name, vers, path[len(path) - 1])
-        
-        with open('gdrive_assets.txt', 'w') as f:
-            f.write('\n'.join(['Google Drive:'] + DrivePath))
-        
-        upload_asset(token, org, repo, release_id, 'gdrive_assets.txt')
-        os.remove('gdrive_assets.txt')
+import sys
+from _release_tools     import (up_to_date, 
+                                create_size_dictionary,
+                                extract_dot_git, 
+                                release)
+from _exception_classes import ReleaseError
 
 
-def upload_asset(token, org, repo, release_id, file_name, content_type = 'text/markdown'):
-    session = requests.session()
-    files = {'file' : open(file_name, 'rb')}
-    header = {'Authorization':'token %s' % token, 'Content-Type': content_type}
-    upload_path = 'https://uploads.github.com/repos/%s/%s/releases/%s/assets?name=%s' % \
-                  (org, repo, release_id, file_name)
+if __name__ == '__main__':
 
-    r = session.post(upload_path, files = files, headers = header)
-    return r.content
+    # Ensure that the directory's targets are up to date
+    if not up_to_date(mode = 'scons'):
+        raise ReleaseError('SCons targets not up to date.')
+    elif not up_to_date(mode = 'git'):
+        print "WARNING: `scons` has run since your latest git commit.\n"
+        response = raw_input("Would you like to continue anyway? (y|n)\n")
+        if response in ['N', 'n']: 
+            sys.exit()
+
+    #== Issue warnings if the files versioned in release are too large ========
+    # Set soft size limits in MB
+    file_MB_limit  = 2
+    total_MB_limit = 500 
+ 
+    bytes_in_MB = 1000000
+
+    # Compile a list of files that are not versioned.
+    if os.path.exists('./.gitignore'):
+        with open('./.gitignore', 'rU') as git_ignore:
+            ignored_files = [os.path.join('./', line.strip()) for line in git_ignore]
+
+    release_sizes = create_size_dictionary('./release')
+    versioned_sizes = dict()
+
+    for file_name in release_sizes.keys():
+        if file_name not in ignored_files:
+            versioned_sizes[file_name] = release_sizes[file_name]
+
+            size  = release_sizes[file_name]
+            limit = file_MB_limit * bytes_in_MB
+
+            if size > limit and file_name:
+                print "\nWARNING: the versioned file " + file_name + \
+                    " is larger than " + str(file_MB_limit) + " MB.\n" + \
+                    "Versioning files of this size is discouraged.\n"
+                response = raw_input("Would you like to continue anyway? (y|n)\n")
+                if response in ['N', 'n']: 
+                    sys.exit()
+
+    total_size  = sum(versioned_sizes.values())
+    total_limit = total_MB_limit * bytes_in_MB
+
+    if total_size > total_limit:
+        print "\nWARNING: the versioned files in /release/ are together " + \
+            "larger than " + str(total_MB_limit) + " MB.\n" + \
+            "Versioning this much content is discouraged.\n"
+        response = raw_input("Would you like to continue anyway? (y|n)\n")
+        if response in ['N', 'n']: 
+            sys.exit()
+
+    #==========================================================================
+
+    # Extract information about the clone's repository, organisation,
+    # and branch from its .git directory
+    repo, organisation, branch = extract_dot_git()
+
+    # Determine the version number
+    try:
+        version = next(arg for arg in sys.argv if re.search("^version=", arg))
+    except:
+        raise ReleaseError('No version specified.')
+
+    version = re.sub('^version=', '', version)
+
+    # Determine whether the user has specified the zip option as a
+    # command-line argument.
+    dont_zip    = 'no_zip' in sys.argv
+    zip_release = not dont_zip
+
+     # Read a list of files to release to Google Drive
+    release_files = list()
+    for root, _, files in os.walk('./release'):
+        for file_name in files:
+            # Do not release .DS_Store
+            if not re.search("\.DS_Store", file_name):
+                release_files.append(os.path.join(root, file_name))
+
+    # Specify the local release directory
+    USER = os.environ['USER']
+    if branch == 'master':
+        name   = repo
+        branch = ''
+    else:
+        name = "%s-%s" % (repo, branch)
+    local_release = '/Users/%s/Google Drive/release/%s/' % (USER, name)
+    local_release = local_release + version + '/'
+    
+    release(vers              = version, 
+            DriveReleaseFiles = release_files,
+            local_release     = local_release, 
+            org               = organisation, 
+            repo              = repo,
+            target_commitish  = branch,
+            zip_release       = zip_release)
