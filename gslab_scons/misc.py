@@ -8,6 +8,26 @@ from sys import platform
 from _exception_classes import BadExtensionError
 
 
+def state_of_repo(target, source, env):
+    maxit = 10
+    outfile = 'state_of_repo.log'
+    with open(outfile, 'wb') as f:
+        for root, dirs, files in os.walk(".", followlinks = True):
+            i = 1
+            for name in files:
+                if i <= maxit and not re.search('\./\.', os.path.join(root, name)):
+                    stat_info = os.stat(os.path.join(root, name))
+                    f.write(os.path.join(root, name) + ':\n')
+                    f.write('   modified on: %s\n' % time.strftime('%d %b %Y %H:%M:%S', time.localtime(stat_info.st_mtime)))
+                    f.write('   size of file: %s\n' % stat_info.st_size)
+                    i = i + 1
+                elif i > maxit:
+                    f.write('MAX ITERATIONS (%s) HIT IN DIRECTORY: %s\n' % (maxit, root))
+                    break
+        f.write('===================================\n\n SCONSIGN \n\n===================================')
+    os.system("sconsign .sconsign.dblite >> state_of_repo.log") 
+    return None
+
 def check_lfs():
     '''Check that Git LFS is installed'''
     try:
