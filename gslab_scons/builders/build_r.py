@@ -1,3 +1,4 @@
+import subprocess
 import os
 import gslab_scons.misc as misc
 from gslab_scons import log_timestamp
@@ -30,7 +31,15 @@ def build_r(target, source, env):
     log_file    = log_dir + '/sconscript.log'
 
     # System call
-    os.system('R CMD BATCH --no-save %s %s' % (source_file, log_file))
+    try:
+        system_call = 'R CMD BATCH --no-save %s %s' % (source_file, log_file)
+        subprocess.check_output(system_call,
+                               stderr = subprocess.STDOUT,
+                               shell = True)
+    except subprocess.CalledProcessError:
+        message = '''Could not find executable for R. 
+                     \nCommand tried: %s''' % (system_call)
+        raise BadExecutableError(message)
 
     # Close log
     end_time   =  misc.current_time()    

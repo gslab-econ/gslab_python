@@ -62,11 +62,14 @@ def build_stata(target, source, env):
                         break
 
     try:
-        subprocess.check_output(command % source_file, 
+        system_call = command % source_file
+        subprocess.check_output(system_call, 
                                 stderr = subprocess.STDOUT,
                                 shell  = True)
     except subprocess.CalledProcessError:
-        raise BadExecutableError('Could not find executable.')
+        message =  '''Could not find executable for Stata.
+                      \nCommand tried: %s''' % (system_call)
+        raise BadExecutableError(message)
 
     shutil.move(loc_log, log_file)
     end_time = misc.current_time()
