@@ -16,15 +16,23 @@ class testbuild_python(unittest.TestCase):
             os.mkdir('../build/')
 
     def test_default(self):
-        env = ''
+        env = {}
         build_python('../build/py.py', './input/python_test_script.py', env)
         logfile_data = open('../build/sconscript.log', 'rU').read()
         self.assertIn('Log created:', logfile_data)
         if os.path.isfile('../build/sconscript.log'):
             os.remove('../build/sconscript.log')
- 
+     
+    def test_clarg(self):
+        env = {'CL_ARG' : 'COMMANDLINE'}
+        build_python('../build/py.py', './input/python_test_script.py', env)
+        logfile_data = open('output.txt', 'rU').read()
+        self.assertIn('COMMANDLINE', logfile_data)
+        if os.path.isfile('../build/sconscript.log'):
+            os.remove('../build/sconscript.log')
+
     def test_bad_extension(self):
-        env = ''
+        env = {}
         with self.assertRaises(BadExtensionError):
             build_python('../build/py.py', 
                          ['bad', './input/python_test_script.py'], 
