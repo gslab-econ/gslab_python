@@ -25,7 +25,8 @@ class TestLog(unittest.TestCase):
 
     # Set the platform to darwin (sys.platform = 'darwin' on  Mac machines).
     @mock.patch('gslab_scons.log.misc.sys.platform', 'darwin')
-    def test_start_log_stdout_on_unix(self):
+    @mock.patch('gslab_scons.log.misc.check_lfs')
+    def test_start_log_stdout_on_unix(self, mock_lfs):
         '''
         Test that start_log() leads stdout to be captured in 
         a log file on Unix machines. 
@@ -44,7 +45,8 @@ class TestLog(unittest.TestCase):
     @mock.patch('gslab_scons.log.misc.sys.platform', 'darwin')
     @mock.patch('gslab_scons.log.os.popen')
     @mock.patch('gslab_scons.log.open')
-    def test_start_log_popen_on_unix(self, mock_open, mock_popen):
+    @mock.patch('gslab_scons.log.misc.check_lfs')
+    def test_start_log_popen_on_unix(self, mock_lfs, mock_open, mock_popen):
         '''
         Test that start_log() uses popen() to initialise its log
         on Unix machines.
@@ -58,7 +60,8 @@ class TestLog(unittest.TestCase):
 
     # Set the platform to Windows
     @mock.patch('gslab_scons.log.sys.platform', 'win32')
-    def test_start_log_stdout_on_windows(self):
+    @mock.patch('gslab_scons.log.misc.check_lfs')
+    def test_start_log_stdout_on_windows(self, mock_lfs):
         '''
         Test that start_log() leads stdout to be captured in 
         a log file on Windows machines. 
@@ -77,7 +80,8 @@ class TestLog(unittest.TestCase):
     @mock.patch('gslab_scons.log.misc.sys.platform', 'win32')
     @mock.patch('gslab_scons.log.os.popen')
     @mock.patch('gslab_scons.log.open')
-    def test_start_log_open_on_windows(self, mock_open, mock_popen):
+    @mock.patch('gslab_scons.log.misc.check_lfs')
+    def test_start_log_open_on_windows(self, mock_lfs, mock_open, mock_popen):
         '''
         Test that start_log() uses open() to initialise its log
         on Windows machines.
@@ -98,7 +102,8 @@ class TestLog(unittest.TestCase):
             gs.start_log()
 
     @mock.patch('gslab_scons.log.misc.sys.platform', 'cygwin')
-    def test_start_log_other_os(self):
+    @mock.patch('gslab_scons.log.misc.check_lfs')
+    def test_start_log_other_os(self, mock_lfs):
         '''
         Test start_log()'s behaviour when run on a platform other
         than Windows, Darwin, or Linux.
@@ -111,7 +116,8 @@ class TestLog(unittest.TestCase):
         self.assertEqual(initial_stdout, sys.stdout)
 
     @mock.patch('gslab_scons.log.misc.sys.platform', 'darwin')
-    def test_start_log_nonstring_input(self):
+    @mock.patch('gslab_scons.log.misc.check_lfs')
+    def test_start_log_nonstring_input(self, mock_lfs):
         '''
         Test start_log()'s behaviour when its log argument is
         not a string.
@@ -128,6 +134,8 @@ class TestLog(unittest.TestCase):
 
     def check_log_creation(self, log_names, initial_stdout):
         sys.stdout.close()
+        if isinstance(log_names, str):
+            log_names = [log_names]
         for log in log_names:
             self.assertTrue(os.path.isfile(log))
             os.remove(log)
@@ -149,8 +157,10 @@ class TestLog(unittest.TestCase):
         # as intended.
         with open('test.txt', 'rU') as f:
             content = f.read()
-        self.assertEqual(content, 'Log created:    ' + 'test_time_start'+ '\n' + 
-                                  'Log completed:  ' + 'test_time_end'  + '\n \n' + 
+        self.assertEqual(content, 'Log created:    ' + 'test_time_start' + 
+                                  '\n' + 
+                                  'Log completed:  ' + 'test_time_end'   + 
+                                  '\n \n' + 
                                   'TEST CONTENT')
         os.remove('test.txt')
        

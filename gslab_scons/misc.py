@@ -31,7 +31,7 @@ def stata_command_unix(flavor):
     options = {'darwin': '-e',
                'linux' : '-b',
                'linux2': '-b'}
-    option  = options[platform]
+    option  = options[sys.platform]
     command = flavor + ' ' + option + ' %s ' # %s will take filename later
     return command
 

@@ -10,13 +10,19 @@ test_bad_extension (test_build_stata.TestBuildStata) ... ok
 test_bad_user_executable (test_build_stata.TestBuildStata) ... ok
 test_default (test_build_stata.TestBuildStata) ... ok
 test_user_executable (test_build_stata.TestBuildStata) ... ok
-test_default (test_build_tables.test_build_tables) ... ok
-test_default_string_target (test_build_tables.test_build_tables) ... ok
-test_target_extension (test_build_tables.test_build_tables)
+test_default (test_build_tables.TestBuildTables) ... ok
+test_default_string_target (test_build_tables.TestBuildTables) ... ok
+test_target_extension (test_build_tables.TestBuildTables)
 Test that build_tables() recognises an inappropriate file extension ... ok
-test_log_timestamp (test_log.test_log)
+test_log_timestamp (test_log.TestLog)
 Test that log_timestamp() correctly adds start/end times to a log ... ok
-test_start_log (test_log.test_log) ... ok
+test_start_log_no_lfs (test_log.TestLog) ... ok
+test_start_log_nonstring_input (test_log.TestLog) ... ok
+test_start_log_open_on_windows (test_log.TestLog) ... ok
+test_start_log_other_os (test_log.TestLog) ... ok
+test_start_log_popen_on_unix (test_log.TestLog) ... ok
+test_start_log_stdout_on_unix (test_log.TestLog) ... ok
+test_start_log_stdout_on_windows (test_log.TestLog) ... ok
 test_check_code_extension (test_misc.test_misc)
 Unit tests for check_code_extension() ... ok
 test_check_lfs (test_misc.test_misc) ... ok
@@ -40,6 +46,6 @@ test_upload_asset_bad_file (test_release_tools.TestReleaseTools) ... ok
 test_upload_asset_standard (test_release_tools.TestReleaseTools) ... ok
 
 ----------------------------------------------------------------------
-Ran 34 tests in 1.790s
+Ran 40 tests in 3.211s
 
 OK (skipped=1)
