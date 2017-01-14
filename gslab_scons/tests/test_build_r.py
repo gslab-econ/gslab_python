@@ -90,5 +90,4 @@ class testbuild_r(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    os.getcwd()
     unittest.main()
