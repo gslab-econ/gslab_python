@@ -28,14 +28,14 @@ def build_r(target, source, env):
 
     # Setup log file
     log_dir     = os.path.dirname(str(target[0]))
-    log_file    = log_dir + '/sconscript.log'
+    log_file    = log_dir + 'sconscript.log'
 
     # System call
     try:
         system_call = 'R CMD BATCH --no-save %s %s' % (source_file, log_file)
         subprocess.check_output(system_call,
-                               stderr = subprocess.STDOUT,
-                               shell = True)
+                                stderr = subprocess.STDOUT,
+                                shell = True)
     except subprocess.CalledProcessError:
         message = '''Could not find executable for R. 
                      \nCommand tried: %s''' % (system_call)
@@ -44,5 +44,10 @@ def build_r(target, source, env):
     # Close log
     end_time   =  misc.current_time()    
     log_timestamp(start_time, end_time, log_file)
+
+    # Append builder-log to SConstruct log
+    scons_log   = open("SConstruct.log", "a")
+    builder_log = open(log_file, "r") 
+    scons_log.write(builder_log.read())
     
     return None

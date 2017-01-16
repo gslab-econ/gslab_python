@@ -53,5 +53,11 @@ def build_lyx(target, source, env):
     # Close log
     end_time    = misc.current_time()
     log_timestamp(start_time, end_time, log_file)
+
+    # Append builder-log to SConstruct log
+    scons_log   = open("SConstruct.log", "a")
+    builder_log = open(log_file, "r") 
+    scons_log.write(builder_log.read())
+    
     
     return None
