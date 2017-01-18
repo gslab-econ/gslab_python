@@ -21,6 +21,51 @@ def check_lfs():
                   Please install Git LFS or run 'git lfs install --force' if prompted above.''')
 
 
+def get_stata_executable(env):
+    '''Return OS command to call Stata.
+    
+    This helper function returns a command (str) for Unix Bash or
+    Windows cmd to carry a Stata batch job. 
+
+    The function will check for user input in Scons env with
+    the flag e.g. `sf=StataMP-64.exe`. With no user input,
+    the function loops through common Unix and Windows executables
+    and searches them in the system environment.
+    '''
+    # Get environment's user input flavor. Empty default = None.
+    user_flavor  = env['user_flavor']  
+
+    if user_flavor is not None:
+        return user_flavor
+    else:
+        flavors = ['stata-mp', 'stata-se', 'stata']
+        if is_unix():
+            for flavor in flavors:
+                if is_in_path(flavor): # check in $PATH
+                    return flavor
+        elif platform == 'win32':
+            try:
+                # Check in system environment variables
+                key_exist = os.environ['STATAEXE'] is not None
+                return "%%STATAEXE%%"
+            except KeyError:
+                # Try StataMP.exe and StataMP-64.exe, etc.
+                flavors = [(f.replace('-', '') + '.exe') for f in flavors]
+                if is_64_windows():
+                    flavors = [f.replace('.exe', '-64.exe') for f in flavors]
+                for flavor in flavors:
+                    if is_in_path(flavor):
+                        return flavor
+    
+
+def get_stata_command(executable):
+    if is_unix():
+        command = stata_command_unix(executable)
+    elif platform == 'win32':
+        command = stata_command_win(executable)
+    return command
+
+
 def stata_command_unix(flavor):
     '''
     This function returns the appropriate Stata command for a user's 
@@ -102,6 +147,6 @@ def check_code_extension(source_file, extension):
 
 def current_time():
     '''
-    This function returns the current time in a a Y-M-D H:M:S format.
+    This function returns the current t ime in a a Y-M-D H:M:S format.
     '''
     return datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')   

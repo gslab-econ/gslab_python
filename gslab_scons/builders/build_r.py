@@ -28,7 +28,7 @@ def build_r(target, source, env):
 
     # Setup log file
     log_dir     = os.path.dirname(str(target[0]))
-    log_file    = log_dir + 'sconscript.log'
+    log_file    = log_dir + '/sconscript.log'
 
     # System call
     try:

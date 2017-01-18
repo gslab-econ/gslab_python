@@ -16,7 +16,7 @@ def start_log(log = 'sconstruct.log'):
     elif platform == 'win32':
         sys.stdout = open(log, 'ab')
     sys.stderr = sys.stdout 
-    print("\n*****Starting a new build process at time " + misc.current_time())
+    print("\n*****New build: " + misc.current_time())
     return None
 
 
