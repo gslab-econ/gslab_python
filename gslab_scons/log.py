@@ -8,9 +8,17 @@ from sys import platform
 from misc import is_unix, check_lfs
 
 
-def start_log(log = 'sconstruct.log'):
+def start_log(mode, vers, log = 'sconstruct.log'):
     '''Begins logging a build process'''
     check_lfs()
+    
+    if not (mode in ['develop', 'cache', 'release']):
+        print("Error: %s is not a defined mode" % mode)
+        sys.exit()
+    if mode == 'release' and vers == '':
+        print("Error: Version must be defined in release mode")
+        sys.exit()
+
     start_message = "\n{0}{0}{0} New build: " + misc.current_time() + " {0}{0}{0}"
     with open(log, "a") as f:
         f.write(start_message.format("*"))
