@@ -39,15 +39,14 @@ def build_lyx(target, source, env):
     
     # System call
     try:
-        system_call = 'lyx -e pdf2 %s > %s' % (source_file, log_file)
-        subprocess.check_output(system_call,
-                               stderr = subprocess.STDOUT,
-                               shell = True)
+        command = 'lyx -e pdf2 %s > %s' % (source_file, log_file)
+        subprocess.check_output(command,
+                                stderr = subprocess.STDOUT,
+                                shell = True)
         # Move rendered pdf to the target
         shutil.move(newpdf, target_file)
     except subprocess.CalledProcessError:
-        message = '''Could not find executable for Lyx.  
-                     \nCommand tried: %s''' % (system_call)
+        message = system_call_error("lyx", command)
         raise BadExecutableError(message)
 
     # Close log

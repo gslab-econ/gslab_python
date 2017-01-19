@@ -145,6 +145,14 @@ def check_code_extension(source_file, extension):
     return None
 
 
+def command_error_msg(executable, call):
+    ''' This function prints an informative message given a CalledProcessError.'''
+    return '''Could not call %s.
+              Please check that the executable, source, and target files
+              are correctly specified. 
+              Command tried: %s''' % (executable, call) 
+
+
 def current_time():
     '''
     This function returns the current time in a a Y-M-D H:M:S format.

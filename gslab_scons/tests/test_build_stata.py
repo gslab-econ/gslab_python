@@ -26,7 +26,7 @@ class testbuild_stata(unittest.TestCase):
         env = {'user_flavor' : None}
         build_stata('./build/stata.dta', './input/stata_test_script.do', env)
         logfile_data = open('./build/sconscript.log', 'rU').read()
-        self.assertIn('Log created:', logfile_data)
+        self.assertIn('Builder log created:', logfile_data)
         if os.path.isfile('./build/sconscript.log'):
             os.remove('./build/sconscript.log')
         
@@ -36,7 +36,7 @@ class testbuild_stata(unittest.TestCase):
         env = {'user_flavor':'statamp'}
         build_stata('./build/stata.dta', './input/stata_test_script.do', env)
         logfile_data = open('./build/sconscript.log', 'rU').read()
-        self.assertIn('Log created:', logfile_data)
+        self.assertIn('Builder log created:', logfile_data)
         if os.path.isfile('./build/sconscript.log'):
             os.remove('./build/sconscript.log')
 

@@ -2,6 +2,8 @@ import subprocess
 import os
 import gslab_scons.misc as misc
 from gslab_scons import log_timestamp
+from gslab_scons._exception_classes import BadExecutableError
+
 
 def build_r(target, source, env):
     '''Build SCons targets using an R script
@@ -32,13 +34,12 @@ def build_r(target, source, env):
 
     # System call
     try:
-        system_call = 'R CMD BATCH --no-save %s %s' % (source_file, log_file)
-        subprocess.check_output(system_call,
+        command = 'R CMD BATCH --no-save %s %s' % (source_file, log_file)
+        subprocess.check_output(command,
                                 stderr = subprocess.STDOUT,
                                 shell = True)
     except subprocess.CalledProcessError:
-        message = '''Could not find executable for R. 
-                     \nCommand tried: %s''' % (system_call)
+        message = system_call_error("R", command)
         raise BadExecutableError(message)
 
     # Close log

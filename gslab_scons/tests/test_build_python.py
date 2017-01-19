@@ -19,7 +19,7 @@ class testbuild_python(unittest.TestCase):
         env = ''
         build_python('../build/py.py', './input/python_test_script.py', env)
         logfile_data = open('../build/sconscript.log', 'rU').read()
-        self.assertIn('Log created:', logfile_data)
+        self.assertIn('Builder log created:', logfile_data)
         if os.path.isfile('../build/sconscript.log'):
             os.remove('../build/sconscript.log')
  

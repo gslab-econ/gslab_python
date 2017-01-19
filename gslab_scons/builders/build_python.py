@@ -33,13 +33,12 @@ def build_python(target, source, env):
 
     # System call
     try:
-        system_call = 'python %s > %s' % (source_file, log_file)
-        subprocess.check_output(system_call,
-                               stderr = subprocess.STDOUT,
-                               shell = True)
+        command = 'python %s > %s' % (source_file, log_file)
+        subprocess.check_output(command,
+                                stderr = subprocess.STDOUT,
+                                shell = True)
     except subprocess.CalledProcessError:
-        message = '''Could not find executable for Python. 
-                     \nCommand tried: %s''' % (system_call)
+        message = system_call_error("Python", command)
         raise BadExecutableError(message)
 
     # Close log

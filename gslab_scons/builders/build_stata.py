@@ -35,17 +35,16 @@ def build_stata(target, source, env):
     log_file     = target_dir + '/sconscript.log'
     loc_log      = os.path.basename(source_file).replace('.do','.log')
 
-    executable   = misc.get_stata_executable(env)
-    command      = misc.get_stata_command(executable)
+    executable       = misc.get_stata_executable(env)
+    command_skeleton = misc.get_stata_command(executable)
 
     try:
-        system_call = command % source_file
-        subprocess.check_output(system_call, 
+        command = command_skeleton % source_file
+        subprocess.check_output(command, 
                                 stderr = subprocess.STDOUT,
                                 shell  = True)
     except subprocess.CalledProcessError:
-        message =  '''Could not find executable for Stata.
-                      Command tried:   %s''' % (system_call)
+        message = misc.command_error_msg("Stata", command)
         raise BadExecutableError(message)
 
     shutil.move(loc_log, log_file)
