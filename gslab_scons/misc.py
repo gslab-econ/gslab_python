@@ -147,6 +147,6 @@ def check_code_extension(source_file, extension):
 
 def current_time():
     '''
-    This function returns the current t ime in a a Y-M-D H:M:S format.
+    This function returns the current time in a a Y-M-D H:M:S format.
     '''
     return datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')   
