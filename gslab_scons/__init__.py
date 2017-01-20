@@ -9,7 +9,7 @@ platforms.
 Please consult the docstrings of the gslab_scons builders belonging to
 this module for additonal information on their functionalities.
 '''
-
+import os
 import misc
 from .log import start_log, log_timestamp
 from .builders.build_r      import build_r
