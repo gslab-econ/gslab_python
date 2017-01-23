@@ -1,3 +1,0 @@
-def main():
-    pass   
-main()     

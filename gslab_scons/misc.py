@@ -3,8 +3,7 @@ import sys
 import shutil
 import subprocess
 import _exception_classes
-
-from datetime import datetime
+import datetime
 
 
 def check_lfs():
@@ -112,4 +111,5 @@ def current_time():
     '''
     This function returns the current time in a a Y-M-D H:M:S format.
     '''
-    return datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')   
+    now = datetime.datetime.now()
+    return datetime.datetime.strftime(now, '%Y-%m-%d %H:%M:%S')   
