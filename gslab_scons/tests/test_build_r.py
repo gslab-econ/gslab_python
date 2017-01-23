@@ -21,16 +21,24 @@ class testbuild_r(unittest.TestCase):
             os.mkdir('../build/')
 
     def test_default(self):
-        env = ''
+        env = {}
         build_r('../build/r.rds', './input/R_test_script.R', env)
         logfile_data = open('../build/sconscript.log', 'rU').read()
         self.assertIn('Log created:', logfile_data)
         if os.path.isfile('../build/sconscript.log'):
             os.remove('../build/sconscript.log')
 
+    def test_clarg(self):
+        env = {'CL_ARG' : 'COMMANDLINE'}
+        build_r('../build/r.rds', './input/R_test_script.R', env)
+        logfile_data = open('../build/sconscript.log', 'rU').read()
+        self.assertIn('COMMANDLINE', logfile_data)
+        if os.path.isfile('../build/sconscript.log'):
+            os.remove('../build/sconscript.log')
+
     def test_bad_extension(self):
         '''Test that build_r() recognises an inappropriate file extension'''
-        env = ''
+        env = {}
         with self.assertRaises(BadExtensionError):
             build_r('../build/r.rds', ['bad', './input/R_test_script.R'], env)
 

@@ -20,8 +20,14 @@ def check_lfs():
             raise LFSError('''Either Git LFS is not installed or your Git LFS settings need to be updated. 
                   Please install Git LFS or run 'git lfs install --force' if prompted above.''')
 
+def command_line_arg(env):
+    try:
+        cl_arg = env['CL_ARG']
+    except KeyError:
+        cl_arg = ''
+    return cl_arg
 
-def stata_command_unix(flavor):
+def stata_command_unix(flavor, cl_arg):
     '''
     This function returns the appropriate Stata command for a user's 
     Unix platform.
@@ -30,16 +36,16 @@ def stata_command_unix(flavor):
                'linux' : '-b',
                'linux2': '-b'}
     option  = options[platform]
-    command = flavor + ' ' + option + ' %s ' # %s will take filename later
+    command = flavor + ' ' + option + ' %s ' + cl_arg # %s will take filename later
     return command
 
 
-def stata_command_win(flavor):
+def stata_command_win(flavor, cl_arg):
     '''
     This function returns the appropriate Stata command for a user's 
     Windows platform.
     '''
-    command  = flavor + ' /e do' + ' %s ' # %s will take filename later
+    command  = flavor + ' /e do' + ' %s ' + cl_arg # %s will take filename later
     return command
 
 

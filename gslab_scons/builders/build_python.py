@@ -24,8 +24,9 @@ def build_python(target, source, env):
     target_dir  = os.path.dirname(target_file)
     misc.check_code_extension(source_file, 'python')
     log_file    = target_dir + '/sconscript.log'
+    cl_arg      = misc.command_line_arg(env)
 
-    os.system('python %s > %s' % (source_file, log_file))
+    os.system('python %s %s > %s' % (source_file, cl_arg, log_file))
 
     end_time   =  misc.current_time()    
     log_timestamp(start_time, end_time, log_file)

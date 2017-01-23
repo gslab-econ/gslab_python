@@ -11,6 +11,8 @@ This repository contains the following GSLab Python libraries:
 
 Information about each of these packages is available in its internal documentation. 
 
+Note: In order to run the unit tests, `mock` (version 2.0.0 or higher) needs to be installed.
+
 Installation
 ------------
 To install this repository's Python libraries, run the `setup.py` script at its root
