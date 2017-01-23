@@ -41,21 +41,9 @@ test_create_size_dictionary (test_release_tools.TestReleaseTools) ... ok
 test_extract_dot_git (test_release_tools.TestReleaseTools) ... ok
 test_up_to_date (test_release_tools.TestReleaseTools) ... ok
 test_upload_asset_bad_file (test_release_tools.TestReleaseTools) ... ok
-test_upload_asset_standard (test_release_tools.TestReleaseTools) ... ERROR
-
-======================================================================
-ERROR: test_upload_asset_standard (test_release_tools.TestReleaseTools)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/Users/leviboxell/anaconda/lib/python2.7/site-packages/mock.py", line 1193, in patched
-    arg = patching.__enter__()
-  File "/Users/leviboxell/anaconda/lib/python2.7/site-packages/mock.py", line 1268, in __enter__
-    original, local = self.get_original()
-  File "/Users/leviboxell/anaconda/lib/python2.7/site-packages/mock.py", line 1242, in get_original
-    "%s does not have the attribute %r" % (target, name)
-AttributeError: <module 'gslab_scons._release_tools' from '../../gslab_scons/_release_tools.pyc'> does not have the attribute 'open'
+test_upload_asset_standard (test_release_tools.TestReleaseTools) ... ok
 
 ----------------------------------------------------------------------
-Ran 38 tests in 22.831s
+Ran 38 tests in 55.880s
 
-FAILED (errors=1, skipped=1)
+OK (skipped=1)
