@@ -2,6 +2,7 @@ import os
 import sys
 import shutil
 import subprocess
+import re
 
 from datetime import datetime
 from sys import platform
@@ -115,3 +116,12 @@ def current_time():
     This function returns the current time in a a Y-M-D H:M:S format.
     '''
     return datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')   
+
+
+def lyx_scan(node, env, path):
+    contents = node.get_contents()
+    SOURCE = [] 
+    for ext in env.EXTENSIONS:
+        src_find = re.compile(r'filename\s(\S+%s)' % ext, re.M)
+        SOURCE = SOURCE + [source.replace('"', '') for source in src_find.findall(contents)]
+    return SOURCE
