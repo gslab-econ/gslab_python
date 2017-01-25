@@ -28,7 +28,7 @@ def command_line_arg(env):
         cl_arg = ''
     return cl_arg
 
-def stata_command_unix(flavor, cl_arg):
+def stata_command_unix(flavor, cl_arg = ''):
     '''
     This function returns the appropriate Stata command for a user's 
     Unix platform.
@@ -41,7 +41,7 @@ def stata_command_unix(flavor, cl_arg):
     return command
 
 
-def stata_command_win(flavor, cl_arg):
+def stata_command_win(flavor, cl_arg = ''):
     '''
     This function returns the appropriate Stata command for a user's 
     Windows platform.
