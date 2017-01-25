@@ -44,6 +44,6 @@ test_upload_asset_bad_file (test_release_tools.TestReleaseTools) ... ok
 test_upload_asset_standard (test_release_tools.TestReleaseTools) ... ok
 
 ----------------------------------------------------------------------
-Ran 38 tests in 55.880s
+Ran 38 tests in 894.185s
 
 OK (skipped=1)
