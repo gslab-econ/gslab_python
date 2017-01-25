@@ -3,6 +3,7 @@ import unittest
 import sys
 import os
 import re
+import shutil
 
 # Ensure that Python can find and load the GSLab libraries
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -78,6 +79,27 @@ class test_misc(unittest.TestCase):
     	the_time = misc.current_time()
     	self.assertTrue(re.search('\d+-\d+-\d+\s\d+:\d+:\d+', the_time))
     
+    def test_state_of_repo(self):
+        env = target = source = ''
+
+        # Test general functionality
+        misc.state_of_repo(target, source, env)
+        logfile = open('state_of_repo.log', 'rU').read()
+        self.assertIn('GIT STATUS', logfile)
+        self.assertIn('FILE STATUS', logfile)
+
+        # Test maxit functionality
+        os.mkdir('state_of_repo')
+        for i in range(1, 20):
+            with open('state_of_repo/test_%s.txt' % i, 'wb') as f:
+                f.write('Test')
+        misc.state_of_repo(target, source, env)
+        logfile = open('state_of_repo.log', 'rU').read()
+        self.assertIn('MAX ITERATIONS', logfile)
+
+        # Cleanup
+        shutil.rmtree('state_of_repo')
+        os.remove('state_of_repo.log')
 
 if __name__ == '__main__':
     os.getcwd()
