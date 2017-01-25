@@ -30,6 +30,7 @@ test_is_64_windows (test_misc.test_misc) ... ok
 test_is_exe (test_misc.test_misc) ... ok
 test_is_in_path (test_misc.test_misc) ... ok
 test_is_unix (test_misc.test_misc) ... ok
+test_lyx_scan (test_misc.test_misc) ... ok
 test_make_list_if_string (test_misc.test_misc) ... ok
 test_stata_command_unix (test_misc.test_misc) ... ok
 test_stata_command_win (test_misc.test_misc) ... skipped 'skipped test_stata_command_win because on a unix machine'
@@ -44,6 +45,6 @@ test_upload_asset_bad_file (test_release_tools.TestReleaseTools) ... ok
 test_upload_asset_standard (test_release_tools.TestReleaseTools) ... ok
 
 ----------------------------------------------------------------------
-Ran 38 tests in 55.880s
+Ran 39 tests in 21.091s
 
 OK (skipped=1)
