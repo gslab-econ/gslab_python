@@ -31,9 +31,9 @@ def state_of_repo(target, source, env):
         for root, dirs, files in os.walk(".", followlinks = True):
             i = 1
             for name in files:
-                if i <= maxit and not 
-                            re.search('\./\.', os.path.join(root, name).replace('\\', '/')) and not
-                            re.search('.DS_Store', name):
+                if i <= maxit and not \
+                        re.search('\./\.', os.path.join(root, name).replace('\\', '/')) and not \
+                        re.search('.DS_Store', name):
                     stat_info = os.stat(os.path.join(root, name))
                     f.write(os.path.join(root, name) + ':\n')
                     f.write('   modified on: %s\n' % 
