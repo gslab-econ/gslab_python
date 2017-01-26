@@ -87,7 +87,7 @@ class test_misc(unittest.TestCase):
     	self.assertTrue(re.search('\d+-\d+-\d+\s\d+:\d+:\d+', the_time))
     
     def test_state_of_repo(self):
-        env = {'CL_ARG' : '10'}
+        env = {'MAXIT' : '10'}
         target = source = ''
 
         # Test general functionality

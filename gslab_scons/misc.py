@@ -12,6 +12,7 @@ from _exception_classes import BadExtensionError
 
 
 def state_of_repo(target, source, env):
+    env['CL_ARG'] = env['MAXIT']
     maxit = int(command_line_arg(env))
     outfile = 'state_of_repo.log'
     with open(outfile, 'wb') as f:
