@@ -18,22 +18,26 @@ def state_of_repo(target, source, env):
     with open(outfile, 'wb') as f:
         f.write("WARNING: Information about .sconsign.dblite may be misleading \n" +
                 "as it can be edited after state_of_repo.log finishes running\n\n" +
-                "===================================\n\n GIT STATUS \n\n===================================\n")
+                "===================================\n\n GIT STATUS" +
+                "\n\n===================================\n")
         f.write("Last commit:\n\n")
     os.system("git log -n 1 >> state_of_repo.log")
     with open(outfile, 'ab') as f:
         f.write("\n\nFiles changed since last commit:\n\n")
     os.system("git diff --name-only >> state_of_repo.log")
     with open(outfile, 'ab') as f:
-        f.write("\n===================================\n\n FILE STATUS \n\n===================================\n")
+        f.write("\n===================================\n\n FILE STATUS" + 
+                "\n\n===================================\n")
         for root, dirs, files in os.walk(".", followlinks = True):
             i = 1
             for name in files:
-                if i <= maxit and not re.search('\./\.', os.path.join(root, name)) \
-                                and not re.search('.DS_Store', name):
+                if i <= maxit and not 
+                            re.search('\./\.', os.path.join(root, name).replace('\\', '/')) and not
+                            re.search('.DS_Store', name):
                     stat_info = os.stat(os.path.join(root, name))
                     f.write(os.path.join(root, name) + ':\n')
-                    f.write('   modified on: %s\n' % time.strftime('%d %b %Y %H:%M:%S', time.localtime(stat_info.st_mtime)))
+                    f.write('   modified on: %s\n' % 
+                        time.strftime('%d %b %Y %H:%M:%S', time.localtime(stat_info.st_mtime)))
                     f.write('   size of file: %s\n' % stat_info.st_size)
                     i = i + 1
                 elif i > maxit:
