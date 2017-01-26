@@ -4,13 +4,15 @@ import sys
 import time
 import shutil
 import subprocess
+import re
+
 from datetime import datetime
 from sys import platform
 from _exception_classes import BadExtensionError
 
 
 def state_of_repo(target, source, env):
-    maxit = 10
+    maxit = int(command_line_arg(env))
     outfile = 'state_of_repo.log'
     with open(outfile, 'wb') as f:
         f.write("WARNING: Information about .sconsign.dblite may be misleading \n" +
@@ -51,8 +53,14 @@ def check_lfs():
             raise LFSError('''Either Git LFS is not installed or your Git LFS settings need to be updated. 
                   Please install Git LFS or run 'git lfs install --force' if prompted above.''')
 
+def command_line_arg(env):
+    try:
+        cl_arg = env['CL_ARG']
+    except KeyError:
+        cl_arg = ''
+    return cl_arg
 
-def stata_command_unix(flavor):
+def stata_command_unix(flavor, cl_arg = ''):
     '''
     This function returns the appropriate Stata command for a user's 
     Unix platform.
@@ -61,16 +69,16 @@ def stata_command_unix(flavor):
                'linux' : '-b',
                'linux2': '-b'}
     option  = options[platform]
-    command = flavor + ' ' + option + ' %s ' # %s will take filename later
+    command = flavor + ' ' + option + ' %s ' + cl_arg # %s will take filename later
     return command
 
 
-def stata_command_win(flavor):
+def stata_command_win(flavor, cl_arg = ''):
     '''
     This function returns the appropriate Stata command for a user's 
     Windows platform.
     '''
-    command  = flavor + ' /e do' + ' %s ' # %s will take filename later
+    command  = flavor + ' /e do' + ' %s ' + cl_arg # %s will take filename later
     return command
 
 
@@ -140,3 +148,12 @@ def current_time():
     This function returns the current time in a a Y-M-D H:M:S format.
     '''
     return datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')   
+
+
+def lyx_scan(node, env, path):
+    contents = node.get_contents()
+    SOURCE = [] 
+    for ext in env.EXTENSIONS:
+        src_find = re.compile(r'filename\s(\S+%s)' % ext, re.M)
+        SOURCE = SOURCE + [source.replace('"', '') for source in src_find.findall(contents)]
+    return SOURCE

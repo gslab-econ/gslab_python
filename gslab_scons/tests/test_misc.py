@@ -4,6 +4,7 @@ import sys
 import os
 import re
 import shutil
+import mock
 
 # Ensure that Python can find and load the GSLab libraries
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -23,24 +24,30 @@ class test_misc(unittest.TestCase):
     @unittest.skipIf(sys.platform.startswith("win"), 
         "skipped test_stata_command_unix because on a windows machine")
     def test_stata_command_unix(self):
-    	output = misc.stata_command_unix('flavor')
+        cl_arg = 'test'
+    	output = misc.stata_command_unix('flavor', cl_arg)
     	if sys.platform == 'darwin':
     		option = '-e'
     	else:
     		option = '-b'
-    	self.assertEqual(output, 'flavor %s' % (option) + ' %s ')
+    	self.assertEqual(output, 'flavor %s' % (option) + ' %s ' + cl_arg)
 
     @unittest.skipUnless(sys.platform.startswith("win"), 
         "skipped test_stata_command_win because on a unix machine")
     def test_stata_command_win(self):
-    	output = misc.stata_command_win('flavor')
-    	self.assertEqual(output, 'flavor %s' % ('/e do') + ' %s ')
+        cl_arg = 'test'
+    	output = misc.stata_command_win('flavor', cl_arg)
+    	self.assertEqual(output, 'flavor %s' % ('/e do') + ' %s ' + cl_arg)
 
     def test_is_unix(self):
     	self.assertEqual(misc.is_unix(), not sys.platform.startswith("win"))
 
     def test_is_64_windows(self):
     	pass
+
+    def test_command_line_arg(self):
+        self.assertEqual(misc.command_line_arg({'test' : ''}), '')
+        self.assertEqual(misc.command_line_arg({'CL_ARG' : 'Test'}), 'Test')
 
     @unittest.skipIf(sys.platform.startswith("win"), 
     "skipped test_is_in_path because on a windows machine")
@@ -80,7 +87,8 @@ class test_misc(unittest.TestCase):
     	self.assertTrue(re.search('\d+-\d+-\d+\s\d+:\d+:\d+', the_time))
     
     def test_state_of_repo(self):
-        env = target = source = ''
+        env = {'CL_ARG' : '10'}
+        target = source = ''
 
         # Test general functionality
         misc.state_of_repo(target, source, env)
@@ -100,6 +108,14 @@ class test_misc(unittest.TestCase):
         # Cleanup
         shutil.rmtree('state_of_repo')
         os.remove('state_of_repo.log')
+
+    def test_lyx_scan(self):
+        infile = open('./input/lyx_test_dependencies.lyx').read()
+        node   = mock.MagicMock(get_contents = lambda: infile)
+        env    = mock.MagicMock(EXTENSIONS = ['.lyx', '.txt'])
+        output = misc.lyx_scan(node, env, None)
+        self.assertEqual(output, ['lyx_test_file.lyx', 'tables_appendix.txt'])
+
 
 if __name__ == '__main__':
     os.getcwd()
