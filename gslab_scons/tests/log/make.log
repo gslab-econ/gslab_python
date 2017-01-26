@@ -34,6 +34,7 @@ test_lyx_scan (test_misc.test_misc) ... ok
 test_make_list_if_string (test_misc.test_misc) ... ok
 test_stata_command_unix (test_misc.test_misc) ... ok
 test_stata_command_win (test_misc.test_misc) ... skipped 'skipped test_stata_command_win because on a unix machine'
+test_state_of_repo (test_misc.test_misc) ... ok
 test_release_no_drive (test_release_function.TestReleaseFunction) ... ok
 test_release_nozip (test_release_function.TestReleaseFunction) ... ok
 test_release_standard (test_release_function.TestReleaseFunction) ... ok
@@ -45,6 +46,6 @@ test_upload_asset_bad_file (test_release_tools.TestReleaseTools) ... ok
 test_upload_asset_standard (test_release_tools.TestReleaseTools) ... ok
 
 ----------------------------------------------------------------------
-Ran 39 tests in 22.859s
+Ran 40 tests in 33.000s
 
 OK (skipped=1)

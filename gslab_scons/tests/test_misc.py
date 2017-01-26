@@ -3,6 +3,7 @@ import unittest
 import sys
 import os
 import re
+import shutil
 import mock
 
 # Ensure that Python can find and load the GSLab libraries
@@ -85,12 +86,36 @@ class test_misc(unittest.TestCase):
     	the_time = misc.current_time()
     	self.assertTrue(re.search('\d+-\d+-\d+\s\d+:\d+:\d+', the_time))
     
+    def test_state_of_repo(self):
+        env = {'MAXIT' : '10'}
+        target = source = ''
+
+        # Test general functionality
+        misc.state_of_repo(target, source, env)
+        logfile = open('state_of_repo.log', 'rU').read()
+        self.assertIn('GIT STATUS', logfile)
+        self.assertIn('FILE STATUS', logfile)
+
+        # Test maxit functionality
+        os.mkdir('state_of_repo')
+        for i in range(1, 20):
+            with open('state_of_repo/test_%s.txt' % i, 'wb') as f:
+                f.write('Test')
+        misc.state_of_repo(target, source, env)
+        logfile = open('state_of_repo.log', 'rU').read()
+        self.assertIn('MAX ITERATIONS', logfile)
+
+        # Cleanup
+        shutil.rmtree('state_of_repo')
+        os.remove('state_of_repo.log')
+
     def test_lyx_scan(self):
         infile = open('./input/lyx_test_dependencies.lyx').read()
         node   = mock.MagicMock(get_contents = lambda: infile)
         env    = mock.MagicMock(EXTENSIONS = ['.lyx', '.txt'])
         output = misc.lyx_scan(node, env, None)
         self.assertEqual(output, ['lyx_test_file.lyx', 'tables_appendix.txt'])
+
 
 if __name__ == '__main__':
     os.getcwd()
