@@ -27,8 +27,7 @@ class testbuild_matlab(unittest.TestCase):
     def test_clarg(self):
         env = {'CL_ARG' : 'COMMANDLINE'}
         build_matlab('../build/testCOMMANDLINE.mat', './input/matlab_test_script.m', env)
-        logfile_data = open('../build/sconscript.log', 'rU').read()
-        self.assertIn('COMMANDLINE', logfile_data)
+        self.assertTrue(os.path.isfile('../build/testCOMMANDLINE.mat'))
         if os.path.isfile('../build/sconscript.log'):
             os.remove('../build/sconscript.log')
 
