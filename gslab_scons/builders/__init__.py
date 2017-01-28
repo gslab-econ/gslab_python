@@ -10,3 +10,4 @@ from .build_r      import build_r
 from .build_tables import build_tables
 from .build_python import build_python
 from .build_stata  import build_stata
+from .build_matlab import build_matlab

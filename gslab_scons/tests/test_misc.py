@@ -76,7 +76,9 @@ class test_misc(unittest.TestCase):
     	self.assertEqual(misc.check_code_extension('test.do',  'stata'),  None)
     	self.assertEqual(misc.check_code_extension('test.r',   'r'),      None)
     	self.assertEqual(misc.check_code_extension('test.lyx', 'lyx'),    None)
-    	self.assertEqual(misc.check_code_extension('test.py',  'python'), None)
+        self.assertEqual(misc.check_code_extension('test.py',  'python'), None)
+        self.assertEqual(misc.check_code_extension('test.m',   'matlab'), None)
+        self.assertEqual(misc.check_code_extension('test.M',   'matlab'), None)
     	
         with self.assertRaises(BadExtensionError), nostderrout():
     		misc.check_code_extension('test.badextension', 'python')
