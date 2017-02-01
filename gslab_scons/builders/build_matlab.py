@@ -1,6 +1,7 @@
 import os
 import subprocess
 import shutil
+from sys import platform
 import gslab_scons.misc as misc
 from gslab_scons import log_timestamp
 
@@ -25,7 +26,7 @@ def build_matlab(target, source, env):
 
     if misc.is_unix():
         options = '-nosplash -nodesktop'
-    elif misc.is_64_windows():
+    elif platform == 'win32':
         options = '-nosplash -minimize -wait'
     else:
         raise Exception("Unknown OS")

@@ -13,5 +13,5 @@ this module for additonal information on their functionalities.
 import misc
 from .log import start_log, log_timestamp
 from . import builders
-from .builders import build_r, build_lyx, build_stata, build_tables, build_python, build_matlab
+from .builders import build_lyx, build_matlab, build_python, build_r, build_stata, build_tables
 
