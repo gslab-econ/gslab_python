@@ -44,7 +44,7 @@ def build_matlab(target, source, env):
     os.environ['CL_ARG'] = cl_arg
 
     shutil.copy(source_file, 'source.m')
-    command  = 'matlab %s -r source -logfile %s'
+    command  = 'matlab %s -r source > %s'
     os.system(command % (options, log_file))
     os.remove('source.m')
 
