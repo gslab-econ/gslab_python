@@ -27,7 +27,8 @@ class TestBuildLyX(unittest.TestCase):
     @mock.patch('gslab_scons.builders.build_lyx.os.system')
     def test_default(self, mock_system):
         '''
-        Test that build_lyx() behaves correctly when 
+        Test that build_lyx() behaves correctly when provided with
+        standard inputs. 
         '''
         mock_system.side_effect = self.os_system_side_effect
         target = './build/lyx.pdf'
