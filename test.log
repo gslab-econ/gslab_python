@@ -1,6 +1,7 @@
 running pytest
 running egg_info
 creating GSLab_Tools.egg-info
+writing requirements to GSLab_Tools.egg-info/requires.txt
 writing GSLab_Tools.egg-info/PKG-INFO
 writing top-level names to GSLab_Tools.egg-info/top_level.txt
 writing dependency_links to GSLab_Tools.egg-info/dependency_links.txt
@@ -11,7 +12,7 @@ running build_ext
 ============================= test session starts ==============================
 platform darwin -- Python 2.7.13, pytest-3.0.5, py-1.4.32, pluggy-0.4.0
 rootdir: /Users/leviboxell/Desktop/gslab_python, inifile: 
-collected 91 items
+collected 99 items
 
 gencat/tests/test_checkDicts.py ...
 gencat/tests/test_cleanDir.py ......
@@ -22,12 +23,13 @@ gencat/tests/test_zipFile.py ....
 gslab_fill/tests/test_tablefill.py ....
 gslab_fill/tests/test_textfill.py ........
 gslab_scons/tests/test_build_lyx.py ......
-gslab_scons/tests/test_build_python.py ....
-gslab_scons/tests/test_build_r.py ....
-gslab_scons/tests/test_build_stata.py .....
+gslab_scons/tests/test_build_matlab.py ...
+gslab_scons/tests/test_build_python.py .....
+gslab_scons/tests/test_build_r.py .....
+gslab_scons/tests/test_build_stata.py ......
 gslab_scons/tests/test_build_tables.py ....
 gslab_scons/tests/test_log.py ....F...
-gslab_scons/tests/test_misc.py ...............
+gslab_scons/tests/test_misc.py .................
 gslab_scons/tests/test_release_function.py ....
 gslab_scons/tests/test_release_tools.py .....
 
@@ -35,7 +37,7 @@ gslab_scons/tests/test_release_tools.py .....
 _______________________ TestLog.test_start_log_other_os ________________________
 
 self = <gslab_scons.tests.test_log.TestLog testMethod=test_start_log_other_os>
-mock_lfs = <MagicMock name='check_lfs' id='4405614608'>
+mock_lfs = <MagicMock name='check_lfs' id='4435443152'>
 
     @mock.patch('gslab_scons.log.misc.sys.platform', 'cygwin')
     @mock.patch('gslab_scons.log.misc.check_lfs')
@@ -49,16 +51,10 @@ mock_lfs = <MagicMock name='check_lfs' id='4405614608'>
         initial_stdout = sys.stdout
         gs.start_log()
 >       self.assertEqual(initial_stderr, sys.stderr)
-E       AssertionError: <_pytest.capture.EncodedFile object at 0x105b79890> != <_pytest.capture.EncodedFile object at 0x105b79810>
+E       AssertionError: <_pytest.capture.EncodedFile object at 0x1077f4650> != <_pytest.capture.EncodedFile object at 0x1077f45d0>
 
 test_log.py:115: AssertionError
-============================ pytest-warning summary ============================
-WC1 /Users/leviboxell/Desktop/gslab_python/gencat/tests/test_cleanDir.py cannot collect test class 'TestCat' because it has a __init__ constructor
-WC1 /Users/leviboxell/Desktop/gslab_python/gencat/tests/test_main.py cannot collect test class 'TestCat' because it has a __init__ constructor
-WC1 /Users/leviboxell/Desktop/gslab_python/gencat/tests/test_unzipFiles.py cannot collect test class 'TestCat' because it has a __init__ constructor
-WC1 /Users/leviboxell/Desktop/gslab_python/gencat/tests/test_writeDict.py cannot collect test class 'TestCat' because it has a __init__ constructor
-WC1 /Users/leviboxell/Desktop/gslab_python/gencat/tests/test_zipFile.py cannot collect test class 'TestCat' because it has a __init__ constructor
-============ 1 failed, 90 passed, 5 pytest-warnings in 1.10 seconds ============
+===================== 1 failed, 98 passed in 41.19 seconds =====================
 Name                                           Stmts   Miss Branch BrPart  Cover   Missing
 ------------------------------------------------------------------------------------------
 gencat/__init__.py                                 1      0      0      0   100%
@@ -85,18 +81,19 @@ gslab_make/private/metadata.py                     9      0      0      0   100%
 gslab_make/private/preliminaries.py              107     88     40      0    13%   17-26, 29-38, 43-56, 60-64, 67-72, 81-90, 97-113, 120-141, 144-146, 151-160
 gslab_make/private/runprogramdirective.py        207    185    104      0     7%   16-93, 97-107, 111-116, 121-134, 138-145, 149-163, 167-220, 224-240, 244-264, 271-282, 285-289, 296-302
 gslab_make/run_program.py                        238    217     80      0     7%   129-162, 178-202, 208-225, 231-248, 254-275, 281-298, 304-321, 332-392, 398-423, 429-447, 453-488, 494-499
-gslab_scons/__init__.py                            8      0      0      0   100%
+gslab_scons/__init__.py                            9      0      0      0   100%
 gslab_scons/_exception_classes.py                 12      0      0      0   100%
 gslab_scons/_release_tools.py                    135      5     52      7    94%   61, 89, 113, 261-262, 60->61, 88->89, 95->97, 112->113, 181->188, 210->225, 260->261
 gslab_scons/builders/__init__.py                   0      0      0      0   100%
 gslab_scons/builders/build_lyx.py                 20      0      0      0   100%
-gslab_scons/builders/build_python.py              18      0      2      0   100%
-gslab_scons/builders/build_r.py                   18      0      2      0   100%
-gslab_scons/builders/build_stata.py               49     14     20      4    59%   43-44, 52-63, 41->43, 47->52, 48->65, 49->48
+gslab_scons/builders/build_matlab.py              28      3      4      1    81%   29-32, 27->29
+gslab_scons/builders/build_python.py              20      0      2      0   100%
+gslab_scons/builders/build_r.py                   21      0      4      0   100%
+gslab_scons/builders/build_stata.py               50     14     20      4    60%   45-46, 54-65, 43->45, 49->54, 50->67, 51->50
 gslab_scons/builders/build_tables.py               8      0      0      0   100%
 gslab_scons/log.py                                20      0      4      0   100%
-gslab_scons/misc.py                               53      0     10      0   100%
+gslab_scons/misc.py                               93      0     20      0   100%
 gslab_scons/release.py                            59     59     32      0     0%   1-100
 setup.py                                          21     10      6      1    44%   9-12, 18-24, 8->9
 ------------------------------------------------------------------------------------------
-TOTAL                                           2170   1244    820     28    37%
+TOTAL                                           2245   1247    836     29    39%
