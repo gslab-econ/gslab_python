@@ -2,6 +2,7 @@ import unittest
 import sys
 import os
 import re
+import shutil
 import mock
 import datetime
 
@@ -94,6 +95,12 @@ class TestMisc(unittest.TestCase):
         output = misc.stata_command_unix('stata')
         self.assertEqual(output.strip(), 'stata -e %s')
 
+        output = misc.stata_command_unix('stata', cl_arg = 'cl_arg')
+        self.assertEqual(output.strip(), 'stata -e %s cl_arg')
+
+        output = misc.stata_command_unix('stata', cl_arg = 1)
+        self.assertEqual(output.strip(), 'stata -e %s 1')
+
     @mock.patch('gslab_scons.misc.sys.platform', 'linux')
     def test_stata_command_unix_linux(self):
         '''
@@ -103,6 +110,10 @@ class TestMisc(unittest.TestCase):
         output = misc.stata_command_unix('stata-se')
         self.assertEqual(output.strip(), 'stata-se -b %s')
 
+        output = misc.stata_command_unix('stata', cl_arg = 'cl_arg')
+        self.assertEqual(output.strip(), 'stata -b %s cl_arg')
+
+
     @mock.patch('gslab_scons.misc.sys.platform', 'win32')
     def test_stata_command_unix_windows(self):
         '''
@@ -111,6 +122,9 @@ class TestMisc(unittest.TestCase):
         '''
         with self.assertRaises(KeyError):
             output = misc.stata_command_unix('stata-mp')
+
+        with self.assertRaises(KeyError):
+            output = misc.stata_command_unix('stata-mp', cl_arg = 'cl_arg')           
         
     @mock.patch('gslab_scons.misc.sys.platform', 'cygwin')
     def test_stata_command_unix_other(self):
@@ -124,7 +138,13 @@ class TestMisc(unittest.TestCase):
     @mock.patch('gslab_scons.misc.sys.platform', 'win32')        
     def test_stata_command_win_windows(self):
         output = misc.stata_command_win('stata-mp')
-        self.assertEqual(output, 'stata-mp /e do %s ')
+        self.assertEqual(output.strip(), 'stata-mp /e do %s')
+
+        output = misc.stata_command_win('stata-mp', cl_arg = 'cl_arg')
+        self.assertEqual(output.strip(), 'stata-mp /e do %s cl_arg') 
+
+        output = misc.stata_command_win('stata-mp', cl_arg = 1)
+        self.assertEqual(output.strip(), 'stata-mp /e do %s 1')              
 
     @mock.patch('gslab_scons.misc.sys.platform', 'darwin')        
     def test_stata_command_win_unix(self):
@@ -133,7 +153,13 @@ class TestMisc(unittest.TestCase):
         command even on a non-Windows machine. 
         '''
         output = misc.stata_command_win('stata-mp')
-        self.assertEqual(output, 'stata-mp /e do %s ')
+        self.assertEqual(output.strip(), 'stata-mp /e do %s')
+
+        output = misc.stata_command_win('stata-mp', cl_arg = 'cl_arg')
+        self.assertEqual(output.strip(), 'stata-mp /e do %s cl_arg')   
+
+        output = misc.stata_command_win('stata-mp', cl_arg = 1)
+        self.assertEqual(output.strip(), 'stata-mp /e do %s 1')               
     #================================================================
     
     def test_is_unix(self):
@@ -166,18 +192,17 @@ class TestMisc(unittest.TestCase):
         with mock.patch(environ, dict()):
             self.assertFalse(misc.is_64_windows())
 
-
     @mock.patch('gslab_scons.misc.os.environ', {'PATH': '/bin:usrs/local'})
     @mock.patch('gslab_scons.misc.os.pathsep', ':')
-    @mock.patch('gslab_scons.misc.is_exe')
-    def test_is_in_path(self, mock_is_exe):
+    @mock.patch('gslab_scons.misc.os.access')
+    def test_is_in_path(self, mock_access):
         '''
         Test that is_in_path() returns i) the full path of 
-        a recognised executables that the function takes as
+        a recognised executable that the function takes as
         an argument and ii) None if the function's argument
         is not recognised as an executable. 
         '''
-        mock_is_exe.side_effect = self.is_exe_side_effect
+        mock_access.side_effect = self.access_side_effect
 
         self.assertEqual(misc.is_in_path('stata'), 
                          '/bin/stata')
@@ -187,41 +212,6 @@ class TestMisc(unittest.TestCase):
                          None)
                             
     @staticmethod
-    def is_exe_side_effect(*args, **kwargs):
-        '''
-        Mock a system on which the only paths recognised as 
-        executable are the members of avaialble_files.
-        '''
-        available_files = ['executable_file', '/bin/stata']
-        file_path = args[0]
-        return file_path in available_files
-
-    @mock.patch('gslab_scons.misc.os.access')
-    @mock.patch('gslab_scons.misc.os.path.isfile')
-    def test_is_exe(self, mock_isfile, mock_access):
-        '''
-        Test that is_exe() returns True if its argument
-        can be executed and False otherwise.
-        '''
-        mock_isfile.side_effect = self.isfile_side_effect
-        mock_access.side_effect = self.access_side_effect
-
-        self.assertTrue(misc.is_exe('/Applications/stata-mp'))
-        self.assertFalse(misc.is_exe('./test_script.do'))
-        self.assertFalse(misc.is_exe('../nonexisting_file.txt'))
-
-    @staticmethod
-    def isfile_side_effect(*args, **kwargs):
-        '''
-        This function is intended to mock os.path.isfile()
-        so only members of a set list of paths are recognised
-        as existing files.
-        '''
-        files = ['test_script.do', '/Applications/stata-mp']
-        file_path = args[0]
-        return file_path in files   
-
-    @staticmethod
     def access_side_effect(*args, **kwargs):
         '''
         This function mocks os.access by defining which
@@ -229,8 +219,11 @@ class TestMisc(unittest.TestCase):
         otherwise access. 
         '''
         # Define the files to which we have access
-        execute_files = ['/Applications/stata-mp'] # All types of access
-        other_files   = ['test_script.do'] # All types of access except execution
+        # Total access        
+        execute_files = ['/bin/stata',
+                         'executable_file']
+        # Total access except execution
+        other_files   = ['test_script.do']
         
         # Access the arguments of the os.access() call.
         path = args[0]
@@ -243,6 +236,10 @@ class TestMisc(unittest.TestCase):
         else:
             result = False
         return result 
+
+    def test_command_line_arg(self):
+        self.assertEqual(misc.command_line_arg({'test' : ''}), '')
+        self.assertEqual(misc.command_line_arg({'CL_ARG' : 'Test'}), 'Test')
 
     def test_make_list_if_string(self):
         self.assertEqual(misc.make_list_if_string(['test', 'test']), ['test', 'test'])
@@ -268,11 +265,12 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(misc.check_code_extension('test.R',   'r'),      None)
         self.assertEqual(misc.check_code_extension('test.lyx', 'lyx'),    None)
         self.assertEqual(misc.check_code_extension('test.py',  'python'), None)
+        self.assertEqual(misc.check_code_extension('test.M',   'matlab'), None)
         
         with self.assertRaises(ex_classes.BadExtensionError), nostderrout():
             misc.check_code_extension('test.badextension', 'python')
         with self.assertRaises(KeyError):
-            misc.check_code_extension('test.m', 'matlab')
+            misc.check_code_extension('test.m', 'Matlab')
         with self.assertRaises(KeyError):
             misc.check_code_extension('test.r', 'R')
 
@@ -285,6 +283,36 @@ class TestMisc(unittest.TestCase):
         '''                            
         the_time = misc.current_time()
         self.assertEqual('2017-01-20 15:02:18', the_time)
+
+    def test_state_of_repo(self):
+        env = {'MAXIT': '10'}
+        target = source = ''
+
+        # Test general functionality
+        misc.state_of_repo(target, source, env)
+        logfile = open('state_of_repo.log', 'rU').read()
+        self.assertIn('GIT STATUS', logfile)
+        self.assertIn('FILE STATUS', logfile)
+
+        # Test maxit functionality
+        os.mkdir('state_of_repo')
+        for i in range(1, 20):
+            with open('state_of_repo/test_%s.txt' % i, 'wb') as f:
+                f.write('Test')
+        misc.state_of_repo(target, source, env)
+        logfile = open('state_of_repo.log', 'rU').read()
+        self.assertIn('MAX ITERATIONS', logfile)
+
+        # Cleanup
+        shutil.rmtree('state_of_repo')
+        os.remove('state_of_repo.log')
+
+    def test_lyx_scan(self):
+        infile = open('./input/lyx_test_dependencies.lyx').read()
+        node   = mock.MagicMock(get_contents = lambda: infile)
+        env    = mock.MagicMock(EXTENSIONS = ['.lyx', '.txt'])
+        output = misc.lyx_scan(node, env, None)
+        self.assertEqual(output, ['lyx_test_file.lyx', 'tables_appendix.txt'])
 
 
 if __name__ == '__main__':

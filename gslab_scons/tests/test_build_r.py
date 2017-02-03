@@ -31,7 +31,7 @@ class TestBuildR(unittest.TestCase):
         mock_system.side_effect = self.os_system_side_effect
         gs.build_r(target = './build/r.rds', 
                    source = './input/script.R', 
-                   env    = '')
+                   env    = {})
         self.check_log('./build/sconscript.log')
 
     @staticmethod
@@ -82,34 +82,47 @@ class TestBuildR(unittest.TestCase):
         targets = ['./build/r.rds', 'additional_target']
         gs.build_r(target = targets, 
                    source = './script.R', 
-                   env    = '')
+                   env    = {})
         # We expect build_r() to write its log to its 
         # first target's directory
         self.check_log('./build/sconscript.log')
+
+    def test_clarg(self):
+        env = {'CL_ARG' : 'COMMANDLINE'}
+        gs.build_r('./build/r.rds', './input/R_test_script.R', env)
+
+        logfile_data = open('./build/sconscript.log', 'rU').read()
+        self.assertIn('COMMANDLINE', logfile_data)
+
+        if os.path.isfile('./build/sconscript.log'):
+            os.remove('./build/sconscript.log')
 
     def test_bad_extension(self):
         '''Test that build_r() recognises an inappropriate file extension'''
         with self.assertRaises(BadExtensionError), nostderrout():
             gs.build_r(target = './build/r.rds', 
                        source = ['bad', './script.R'], 
-                       env    = '')
+                       env    = {})
 
     @mock.patch('gslab_scons.builders.build_r.os.system')
     def test_unintended_inputs(self, mock_system):
-        # We don't expect the env argument to affect the function's
-        # behaviour in any way or to raise errors
+        # We expect build_r() to raise an error if its env
+        # argument does not support indexing by strings. 
         mock_system.side_effect = self.os_system_side_effect
 
-        gs.build_r('output.txt', 'script.R', True)
-        self.check_log('./sconscript.log')
+        with self.assertRaises(TypeError), nostderrout():
+            gs.build_r('output.txt', 'script.R', True)
+            self.check_log('./sconscript.log')
+        
+        with self.assertRaises(TypeError), nostderrout():
+            gs.build_r('output.txt', 'script.R', (1, 2, 3))
+            self.check_log('./sconscript.log')
 
-        gs.build_r('output.txt', 'script.R', (1, 2, 3))
-        self.check_log('./sconscript.log')
+        with self.assertRaises(TypeError), nostderrout():
+            gs.build_r('output.txt', 'script.R', TypeError)
+            self.check_log('./sconscript.log')
 
-        gs.build_r('output.txt', 'script.R', TypeError)
-        self.check_log('./sconscript.log')
-
-        env = None
+        env = {}
         # We need a string or list of strings in the first argument...
         with self.assertRaises(TypeError), nostderrout():
             gs.build_r(None, 'script.R', env)

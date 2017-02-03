@@ -5,17 +5,23 @@ test_env_argument (test_build_lyx.TestBuildLyX) ... ok
 test_list_arguments (test_build_lyx.TestBuildLyX) ... ok
 test_nonexistent_source (test_build_lyx.TestBuildLyX) ... ok
 test_nonexistent_target_directory (test_build_lyx.TestBuildLyX) ... ok
+test_bad_extension (test_build_matlab.testbuild_matlab) ... ok
+test_clarg (test_build_matlab.testbuild_matlab) ... ok
+test_default (test_build_matlab.testbuild_matlab) ... ok
 test_bad_extension (test_build_python.TestBuildPython) ... ok
+test_clarg (test_build_python.TestBuildPython) ... ok
 test_log_creation (test_build_python.TestBuildPython) ... ok
 test_target_creation_unnecessary (test_build_python.TestBuildPython) ... ok
 test_unintended_inputs (test_build_python.TestBuildPython) ... ok
 test_bad_extension (test_build_r.TestBuildR)
 Test that build_r() recognises an inappropriate file extension ... ok
+test_clarg (test_build_r.TestBuildR) ... ok
 test_standard (test_build_r.TestBuildR) ... ok
 test_target_list (test_build_r.TestBuildR) ... ok
 test_unintended_inputs (test_build_r.TestBuildR) ... ok
 test_bad_extension (test_build_stata.TestBuildStata) ... ok
 test_bad_user_executable (test_build_stata.TestBuildStata) ... ok
+test_clarg (test_build_stata.TestBuildStata) ... ok
 test_default (test_build_stata.TestBuildStata) ... ok
 test_unavailable_executable (test_build_stata.TestBuildStata) ... ok
 test_user_executable (test_build_stata.TestBuildStata) ... ok
@@ -37,11 +43,12 @@ test_check_code_extension (test_misc.TestMisc)
 Unit tests for check_code_extension() ... ok
 test_check_lfs_failure (test_misc.TestMisc) ... ok
 test_check_lfs_success (test_misc.TestMisc) ... ok
+test_command_line_arg (test_misc.TestMisc) ... ok
 test_current_time (test_misc.TestMisc) ... ok
 test_is_64_windows (test_misc.TestMisc) ... ok
-test_is_exe (test_misc.TestMisc) ... ok
 test_is_in_path (test_misc.TestMisc) ... ok
 test_is_unix (test_misc.TestMisc) ... ok
+test_lyx_scan (test_misc.TestMisc) ... ok
 test_make_list_if_string (test_misc.TestMisc) ... ok
 test_stata_command_unix_linux (test_misc.TestMisc) ... ok
 test_stata_command_unix_mac (test_misc.TestMisc) ... ok
@@ -49,6 +56,7 @@ test_stata_command_unix_other (test_misc.TestMisc) ... ok
 test_stata_command_unix_windows (test_misc.TestMisc) ... ok
 test_stata_command_win_unix (test_misc.TestMisc) ... ok
 test_stata_command_win_windows (test_misc.TestMisc) ... ok
+test_state_of_repo (test_misc.TestMisc) ... ok
 test_release_no_drive (test_release_function.TestReleaseFunction) ... ok
 test_release_nozip (test_release_function.TestReleaseFunction) ... ok
 test_release_standard (test_release_function.TestReleaseFunction) ... ok
@@ -60,6 +68,6 @@ test_upload_asset_bad_file (test_release_tools.TestReleaseTools) ... ok
 test_upload_asset_standard (test_release_tools.TestReleaseTools) ... ok
 
 ----------------------------------------------------------------------
-Ran 55 tests in 0.665s
+Ran 63 tests in 22.211s
 
 OK
