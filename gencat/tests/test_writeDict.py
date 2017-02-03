@@ -10,14 +10,14 @@ sys.path.append('..')
 
 from gencat import gencat
 
-class TestCat(gencat):
+class MockCat(gencat):
     def makeZipDict(self):
         pass
     def makeConcatDict(self):
         pass
 
 
-testcat = TestCat('./test_data', './test_temp', './test_out')
+testcat = MockCat('./test_data', './test_temp', './test_out')
 
 
 class test_writeDict(unittest.TestCase):
