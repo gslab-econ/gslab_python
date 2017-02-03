@@ -42,7 +42,7 @@ class TestBuildStata(unittest.TestCase):
         logfile_data = open('./sconscript.log', 'rU').read()
         self.assertIn('Log created:', logfile_data)
         if os.path.isfile('./sconscript.log'):
-            os.remove('./sconscript.log')
+            os.remove('./sconscript.log')        
       
     @staticmethod
     def is_in_path_side_effect(*args, **kwargs):
@@ -74,8 +74,18 @@ class TestBuildStata(unittest.TestCase):
 
         env = {'user_flavor': 'stata-mp'}
         gs.build_stata('./build/stata.dta', './input/stata_test_script.do', env)
+
         logfile_data = open('./build/sconscript.log', 'rU').read()
         self.assertIn('Log created:', logfile_data)
+
+        if os.path.isfile('./build/sconscript.log'):
+            os.remove('./build/sconscript.log')
+
+    def test_clarg(self):
+        env = {'user_flavor' : None, 'CL_ARG' : 'COMMANDLINE'}
+        gs.build_stata('./build/stata.dta', './input/stata_test_script.do', env)
+        logfile_data = open('./build/sconscript.log', 'rU').read()
+        self.assertIn('COMMANDLINE', logfile_data)
         if os.path.isfile('./build/sconscript.log'):
             os.remove('./build/sconscript.log')
 

@@ -11,7 +11,7 @@ sys.path.append('../')
 from gencat import gencat
 
 
-class TestCat(gencat):
+class MockCat(gencat):
 
     def makeZipDict(self):
         self.zip_dict = {} 
@@ -43,7 +43,7 @@ class test_main(unittest.TestCase):
         Test that the lines in main run in the intended order and produce predictable output 
         when given simple input. 
         '''
-        testcat = TestCat('./test_data', './test_temp', './test_out')
+        testcat = MockCat('./test_data', './test_temp', './test_out')
         testcat.main()
         
         self.assertFalse(os.path.isdir('./test_temp'))
