@@ -9,9 +9,10 @@ if sys.argv[-1] == 'test': # https://www.pydanny.com/python-dot-py-tricks.html
     os.system("python setup.py install clean")
     if sys.platform != 'win32':
         os.system("coverage run --branch --source ./ setup.py test1 2>&1 | tee test.log")
+        os.system("coverage report -m  2>&1 | tee -a test.log") # http://unix.stackexchange.com/questions/80707/how-to-output-text-to-both-screen-and-file-inside-a-shell-script
     else:
-        os.system("coverage run --branch --source ./ setup.py test1 2>&1 | tee test.log")
-    os.system("coverage report -m >> test.log")
+        os.system("coverage run --branch --source ./ setup.py > test.log")
+        os.system("coverage report -m >> test.log")
     sys.exit()
 
 class CleanRepo(build_py):
