@@ -1,9 +1,15 @@
 import os
+import sys
 import shutil
 from setuptools import setup, find_packages
 from setuptools.command.build_py import build_py
 from glob import glob
-
+ 
+if sys.argv[-1] == 'test': # https://www.pydanny.com/python-dot-py-tricks.html
+  os.system("python setup.py install clean")
+  os.system("coverage run --branch --source ./ setup.py test1 > test.log")
+  os.system("coverage report -m >> test.log")
+  sys.exit()
 
 class CleanRepo(build_py):
     '''Build command for clearing setup directories after installation'''
@@ -30,5 +36,5 @@ setup(name         = 'GSLab_Tools',
       packages     = find_packages(),
       zip_safe     = False,
       cmdclass     = {'clean': CleanRepo},
-      setup_requires = ['pytest-runner'],
-      tests_require = ['pytest'])
+      setup_requires = ['pytest-runner', 'coverage'],
+      tests_require = ['pytest', 'coverage'])
