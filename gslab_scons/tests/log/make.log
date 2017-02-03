@@ -1,6 +1,9 @@
 test_bad_extension (test_build_lyx.test_build_lyx)
 Test that build_lyx() recognises an inappropriate file extension ... ok
 test_default (test_build_lyx.test_build_lyx) ... ok
+test_bad_extension (test_build_matlab.testbuild_matlab) ... ok
+test_clarg (test_build_matlab.testbuild_matlab) ... ok
+test_default (test_build_matlab.testbuild_matlab) ... ok
 test_bad_extension (test_build_python.testbuild_python) ... ok
 test_clarg (test_build_python.testbuild_python) ... ok
 test_default (test_build_python.testbuild_python) ... ok
@@ -46,6 +49,6 @@ test_upload_asset_bad_file (test_release_tools.TestReleaseTools) ... ok
 test_upload_asset_standard (test_release_tools.TestReleaseTools) ... ok
 
 ----------------------------------------------------------------------
-Ran 40 tests in 33.000s
+Ran 43 tests in 61.940s
 
 OK (skipped=1)
