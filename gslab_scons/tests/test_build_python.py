@@ -23,8 +23,8 @@ class TestBuildPython(unittest.TestCase):
         target's directory.
         '''
         gs.build_python(target = './build/py.py', 
-                       source = './input/python_test_script.py', 
-                       env    = '')
+                        source = './input/python_test_script.py', 
+                        env    = {})
         self.check_log('./build/sconscript.log')
 
     def check_log(self, log_path = './build/sconscript.log'):
@@ -42,20 +42,36 @@ class TestBuildPython(unittest.TestCase):
         with self.assertRaises(BadExtensionError):
             gs.build_python('./build/py.py', 
                            ['bad', './input/python_test_script.py'], 
-                           env = '')
+                           env = {})
+
+    def test_clarg(self):
+        env = {'CL_ARG' : 'COMMANDLINE'}
+        gs.build_python('./build/py.py', './input/python_test_script.py', env)
+        logfile_data = open('output.txt', 'rU').read()
+        self.assertIn('COMMANDLINE', logfile_data)
+        if os.path.isfile('./build/sconscript.log'):
+            os.remove('./build/sconscript.log')
+
+
+        with self.assertRaises(BadExtensionError):
+            gs.build_python('./build/py.py', 
+                           ['bad', './input/python_test_script.py'], 
+                           env = {})
 
     def test_unintended_inputs(self):
         '''
         Test that build_python() handles unintended inputs
         as we expect it to. 
         '''
-        env    = None
+        env    = {}
         source = './input/python_test_script.py'
         target = './build/py.py'
         log    = './build/sconscript.log'
-        # env can be None
-        gs.build_python(target, source, env)
-        self.check_log(log)
+        # env's class must support indexing by strings
+        with self.assertRaises(TypeError):
+            gs.build_python(target, source, None)
+        with self.assertRaises(TypeError):
+            gs.build_python(target, source, 'env')            
 
         #== target ===============
         # Containers of strings should not raise errors
@@ -73,17 +89,18 @@ class TestBuildPython(unittest.TestCase):
         #== source ===============
         # We can have multiple sources, and we can 
         # specify sources that don't exist...
+        env = {}
         gs.build_python(target = '', 
                         source = ['./input/python_test_script.py', 
                                  'nonexistent_data.txt'], 
-                        env    = None)           
+                        env    = env)           
         self.check_log('./sconscript.log')
         # ...but a .py script must be the first source.
         with self.assertRaises(BadExtensionError):
             gs.build_python(target = '', 
                             source = ['nonexistent_data.txt',
                                    './input/python_test_script.py'], 
-                            env    = None)
+                            env    = env)
         # build_python() does not raise an error if this .py file
         # doesn't actually exist (this may be undesirable).
         # Instead, we expect it to print an error message to the 
@@ -92,7 +109,7 @@ class TestBuildPython(unittest.TestCase):
         gs.build_python(target = '', 
                         source = ['nonexistent_data.py',
                               './input/python_test_script.py'], 
-                         env    = None)
+                         env    = env)
         print "No longer expecting an error message.\n"
         self.check_log('./sconscript.log')
 
@@ -103,11 +120,13 @@ class TestBuildPython(unittest.TestCase):
         '''
         source = './input/test_script.py'
         target = './build/test_target.txt'
+
         with open(source, 'wb') as test_script:
             test_script.write('def main():\n'
                               '    pass   \n'
                               'main()     \n')
-        gs.build_python(target, source, env = '')
+
+        gs.build_python(target, source, env = {})
         # The target doesn't exist...
         with self.assertRaises(IOError):
             open(target, 'rU')
