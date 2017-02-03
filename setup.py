@@ -29,4 +29,6 @@ setup(name         = 'GSLab_Tools',
       license      = 'MIT',
       packages     = find_packages(),
       zip_safe     = False,
-      cmdclass     = {'clean': CleanRepo})
+      cmdclass     = {'clean': CleanRepo},
+      setup_requires = ['pytest-runner'],
+      tests_require = ['pytest'])
