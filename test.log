@@ -37,7 +37,7 @@ gslab_scons/tests/test_release_tools.py .....
 _______________________ TestLog.test_start_log_other_os ________________________
 
 self = <gslab_scons.tests.test_log.TestLog testMethod=test_start_log_other_os>
-mock_lfs = <MagicMock name='check_lfs' id='4435443152'>
+mock_lfs = <MagicMock name='check_lfs' id='4388875664'>
 
     @mock.patch('gslab_scons.log.misc.sys.platform', 'cygwin')
     @mock.patch('gslab_scons.log.misc.check_lfs')
@@ -51,10 +51,10 @@ mock_lfs = <MagicMock name='check_lfs' id='4435443152'>
         initial_stdout = sys.stdout
         gs.start_log()
 >       self.assertEqual(initial_stderr, sys.stderr)
-E       AssertionError: <_pytest.capture.EncodedFile object at 0x1077f4650> != <_pytest.capture.EncodedFile object at 0x1077f45d0>
+E       AssertionError: <_pytest.capture.EncodedFile object at 0x104b10650> != <_pytest.capture.EncodedFile object at 0x104b105d0>
 
 test_log.py:115: AssertionError
-===================== 1 failed, 98 passed in 41.19 seconds =====================
+===================== 1 failed, 98 passed in 18.35 seconds =====================
 Name                                           Stmts   Miss Branch BrPart  Cover   Missing
 ------------------------------------------------------------------------------------------
 gencat/__init__.py                                 1      0      0      0   100%
@@ -94,6 +94,6 @@ gslab_scons/builders/build_tables.py               8      0      0      0   100%
 gslab_scons/log.py                                20      0      4      0   100%
 gslab_scons/misc.py                               93      0     20      0   100%
 gslab_scons/release.py                            59     59     32      0     0%   1-100
-setup.py                                          21     10      6      1    44%   9-12, 18-24, 8->9
+setup.py                                          23     12      8      1    39%   9-15, 21-27, 8->9
 ------------------------------------------------------------------------------------------
-TOTAL                                           2245   1247    836     29    39%
+TOTAL                                           2247   1249    838     29    39%

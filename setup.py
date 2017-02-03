@@ -6,10 +6,13 @@ from setuptools.command.build_py import build_py
 from glob import glob
  
 if sys.argv[-1] == 'test': # https://www.pydanny.com/python-dot-py-tricks.html
-  os.system("python setup.py install clean")
-  os.system("coverage run --branch --source ./ setup.py test1 > test.log")
-  os.system("coverage report -m >> test.log")
-  sys.exit()
+    os.system("python setup.py install clean")
+    if sys.platform != 'win32':
+        os.system("coverage run --branch --source ./ setup.py test1 2>&1 | tee test.log")
+    else:
+        os.system("coverage run --branch --source ./ setup.py test1 2>&1 | tee test.log")
+    os.system("coverage report -m >> test.log")
+    sys.exit()
 
 class CleanRepo(build_py):
     '''Build command for clearing setup directories after installation'''
