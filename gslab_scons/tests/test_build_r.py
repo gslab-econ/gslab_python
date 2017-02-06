@@ -6,6 +6,7 @@ import os
 import shutil
 import mock
 import re
+import _test_helpers as helpers
 
 # Ensure that Python can find and load the GSLab libraries
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -32,7 +33,7 @@ class TestBuildR(unittest.TestCase):
         gs.build_r(target = './build/r.rds', 
                    source = './input/script.R', 
                    env    = {})
-        self.check_log('./build/sconscript.log')
+        helpers.check_log(self, './build/sconscript.log')
 
     @staticmethod
     def os_system_side_effect(*args, **kwargs):
@@ -61,18 +62,6 @@ class TestBuildR(unittest.TestCase):
             with open(log.strip(), 'wb') as log_file:
                 log_file.write('Test log\n')
 
-    def check_log(self, log_path = './build/sconscript.log'):
-        '''
-        Check that log_path is a file that has a 
-        log-creation timestamp.
-        '''
-        self.assertTrue(os.path.isfile(log_path))
-        
-        with open(log_path, 'rU') as log_file:
-            log_data = log_file.read()
-        self.assertIn('Log created:', log_data)
-
-        os.remove(log_path)
 
     @mock.patch('gslab_scons.builders.build_r.os.system')
     def test_target_list(self, mock_system):
@@ -83,62 +72,48 @@ class TestBuildR(unittest.TestCase):
         gs.build_r(target = targets, 
                    source = './script.R', 
                    env    = {})
-        # We expect build_r() to write its log to its 
-        # first target's directory
-        self.check_log('./build/sconscript.log')
+        # We expect build_r() to write its log to its first target's directory
+        helpers.check_log(self, './build/sconscript.log')
 
+    @mock.patch('gslab_scons.builders.build_r.os.system')
     def test_clarg(self):
         env = {'CL_ARG' : 'COMMANDLINE'}
         gs.build_r('./build/r.rds', './input/R_test_script.R', env)
 
-        logfile_data = open('./build/sconscript.log', 'rU').read()
-        self.assertIn('COMMANDLINE', logfile_data)
+        helpers.check_log(self, './build/sconscript.log',
+                          expected_text = 'COMMANDLINE')
 
-        if os.path.isfile('./build/sconscript.log'):
-            os.remove('./build/sconscript.log')
-
-    def test_bad_extension(self):
-        '''Test that build_r() recognises an inappropriate file extension'''
-        with self.assertRaises(BadExtensionError), nostderrout():
-            gs.build_r(target = './build/r.rds', 
-                       source = ['bad', './script.R'], 
-                       env    = {})
-
+    # Test that build_r() recognises an inappropriate file extension
+    test_bad_extension = \
+        lambda self: helpers.bad_extension(self, gs.build_r, good = 'test.r')
+   
     @mock.patch('gslab_scons.builders.build_r.os.system')
     def test_unintended_inputs(self, mock_system):
         # We expect build_r() to raise an error if its env
         # argument does not support indexing by strings. 
         mock_system.side_effect = self.os_system_side_effect
 
-        with self.assertRaises(TypeError), nostderrout():
-            gs.build_r('output.txt', 'script.R', True)
-            self.check_log('./sconscript.log')
+        for env in [True, (1, 2), TypeError]:
+            with self.assertRaises(TypeError), nostderrout():
+                gs.build_r('output.txt', 'script.R', env)
         
-        with self.assertRaises(TypeError), nostderrout():
-            gs.build_r('output.txt', 'script.R', (1, 2, 3))
-            self.check_log('./sconscript.log')
-
-        with self.assertRaises(TypeError), nostderrout():
-            gs.build_r('output.txt', 'script.R', TypeError)
-            self.check_log('./sconscript.log')
-
         env = {}
         # We need a string or list of strings in the first argument...
-        with self.assertRaises(TypeError), nostderrout():
-            gs.build_r(None, 'script.R', env)
-        with self.assertRaises(TypeError), nostderrout():
-            gs.build_r(1, 'script.R', env)                     
+        for source in (None, 1):
+            with self.assertRaises(TypeError), nostderrout():
+                gs.build_r(1, 'script.R', env)                     
+        
         # ...but it can be an empty string.
         gs.build_r('', 'script.R', env)
-        self.check_log('./sconscript.log')
+        helpers.check_log(self, './sconscript.log')
 
         # Empty lists won't work.
         with self.assertRaises(IndexError), nostderrout():
             gs.build_r([], 'script.R', env)  
 
     def tearDown(self):
-        if os.path.exists('../build/'):
-            shutil.rmtree('../build/')
+        if os.path.exists('./build/'):
+            shutil.rmtree('./build/')
         if os.path.exists('output.txt'):
             os.remove('output.txt')
 

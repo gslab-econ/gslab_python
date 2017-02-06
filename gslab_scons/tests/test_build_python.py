@@ -25,7 +25,7 @@ class TestBuildPython(unittest.TestCase):
         gs.build_python(target = './build/py.py', 
                         source = './input/python_test_script.py', 
                         env    = {})
-        self.check_log('./build/sconscript.log')
+        helpers.check_log(self, './build/sconscript.log')
 
     def check_log(self, log_path = './build/sconscript.log'):
         with open(log_path, 'rU') as log_file:

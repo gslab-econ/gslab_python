@@ -5,6 +5,7 @@ import os
 import shutil
 import mock
 import re
+import _test_helpers as helpers
 
 # Ensure that Python can find and load the GSLab libraries
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -34,8 +35,9 @@ class TestBuildLyX(unittest.TestCase):
         target = './build/lyx.pdf'
 
         gs.build_lyx(target, source = './input/lyx_test_file.lyx', env = '')
-        self.check_output(log_path = './build/sconscript.log',
-                          target   = target)
+
+        helpers.check_log(self, './build/sconscript.log')
+        self.assertTrue(os.path.isfile(target))
 
     @staticmethod
     def os_system_side_effect(*args, **kwargs):
@@ -82,23 +84,6 @@ class TestBuildLyX(unittest.TestCase):
             with open(out_path, 'wb') as out_file:
                 out_file.write('Mock .pdf output')
 
-
-    def check_output(self, 
-                     log_path = './build/sconscript.log', 
-                     target   = './build/lyx.pdf'):
-        '''
-        Check that the file specified by log_path has a 
-        log creation timestamp and that target exits.
-        '''
-        with open(log_path, 'rU') as log_file:
-            log_data = log_file.read()
-
-        self.assertIn('Log created:', log_data)
-        os.remove(log_path)
-
-        self.assertTrue(os.path.isfile(target))
-
-
     @mock.patch('gslab_scons.builders.build_lyx.os.system')
     def test_list_arguments(self, mock_system):
         '''
@@ -109,15 +94,11 @@ class TestBuildLyX(unittest.TestCase):
         target = './build/lyx.pdf'
 
         gs.build_lyx(target, source  = ['./input/lyx_test_file.lyx'], env = '')
-        self.check_output('./build/sconscript.log', target)
+        helpers.check_log(self, './build/sconscript.log')
+        self.assertTrue(os.path.isfile(target))
 
-
-    def test_bad_extension(self):
-        '''Test that build_lyx() recognises an inappropriate file extension'''
-        with self.assertRaises(BadExtensionError), nostderrout():
-            gs.build_lyx(target = './build/lyx.pdf', 
-                         source = ['bad', './input/lyx_test_file.lyx'], 
-                         env    = '')
+    test_bad_extension = \
+        lambda self: helpers.bad_extension(self, gs.build_lyx, good = 'test.lyx')
    
     @mock.patch('gslab_scons.builders.build_lyx.os.system')
     def test_env_argument(self, mock_system):
@@ -130,21 +111,10 @@ class TestBuildLyX(unittest.TestCase):
         source = ['./input/lyx_test_file.lyx']
         log    = './build/sconscript.log'
 
-        gs.build_lyx(target, source, env = True)
-        self.check_output(log, target)
-
-        gs.build_lyx(target, source, env = [1, 2, 3])
-        self.check_output(log, target)  
-
-        gs.build_lyx(target, source, env = ('a', 'b'))
-        self.check_output(log, target) 
-
-        gs.build_lyx(target, source, env = None)
-        self.check_output(log, target)    
-
-        gs.build_lyx(target, source, env = TypeError)
-        self.check_output('./build/sconscript.log')  
-
+        for env in [True, [1, 2, 3], ('a', 'b'), None, TypeError]:
+            gs.build_lyx(target, source, env = env)
+            helpers.check_log(self, log)
+            self.assertTrue(os.path.isfile(target))
 
     @mock.patch('gslab_scons.builders.build_lyx.os.system')
     def test_nonexistent_source(self, mock_system):
@@ -174,7 +144,6 @@ class TestBuildLyX(unittest.TestCase):
             gs.build_lyx('./nonexistent_directory/lyx.pdf', 
                          ['./input/lyx_test_file.lyx'], env = True)
 
-
     def tearDown(self):
         if os.path.exists('./build/'):
             shutil.rmtree('./build/')
@@ -182,6 +151,7 @@ class TestBuildLyX(unittest.TestCase):
             os.remove('output.txt')
         if os.path.exists('./input/lyx_test_file.lyx'):
             os.remove('./input/lyx_test_file.lyx')
-                
+       
+
 if __name__ == '__main__':
     unittest.main()

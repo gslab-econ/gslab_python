@@ -4,6 +4,7 @@ import os
 import shutil
 import mock
 import re
+import _test_helpers as helpers
 
 sys.path.append('../..')
 import gslab_scons as gs
@@ -29,13 +30,8 @@ class TestBuildMatlab(unittest.TestCase):
                         source = './input/matlab_test_script.m', 
                         env    = {})
 
-        self.check_log('./build/sconscript.log')
-
-        mock_system.assert_called_once()
-        command = mock_system.call_args[0][0]
-        self.assertIn('-nosplash',  command.split(' '))
-        self.assertIn('-nodesktop', command.split(' '))
-        self.assertTrue(re.search('^matlab', command))
+        helpers.check_log(self, './build/sconscript.log')
+        self.check_call(mock_system, ['-nosplash', '-nodesktop'])
     
     @staticmethod
     def system_side_effect(*args, **kwargs):
@@ -53,12 +49,21 @@ class TestBuildMatlab(unittest.TestCase):
 
         return None
 
-    def check_log(self, log_path = './build/sconscript.log'):
-        with open(log_path, 'rU') as log_file:
-            log_data = log_file.read()
+    def check_call(self, mock_system, options):
+        '''
+        Check that build_matlab() made a Matlab system command
+        with the correct options. 
 
-        self.assertIn('Log created:', log_data)
-        os.remove(log_path)
+        mock_system should be the mock of os.system used
+        when calling build_matlab().
+        '''
+        mock_system.assert_called_once()
+        command = mock_system.call_args[0][0]
+
+        for option in options:
+            self.assertIn(option,  command.split(' '))
+
+        self.assertTrue(re.search('^matlab', command))        
 
     @mock.patch('gslab_scons.builders.build_matlab.misc.sys.platform', 'win32')
     @mock.patch('gslab_scons.builders.build_matlab.sys.platform', 'win32')
@@ -74,15 +79,22 @@ class TestBuildMatlab(unittest.TestCase):
                         source = './input/matlab_test_script.m', 
                         env    = {})
 
-        self.check_log('./build/sconscript.log')
+        helpers.check_log(self, './build/sconscript.log')
+        self.check_call(mock_system, ['-nosplash', '-minimize', '-wait'])
 
-        mock_system.assert_called_once()
-        command = mock_system.call_args[0][0]
-        self.assertIn('-nosplash', command.split(' '))
-        self.assertIn('-minimize', command.split(' '))
-        self.assertIn('-wait',     command.split(' '))
-
-        self.assertTrue(re.search('^matlab', command))
+    @mock.patch('gslab_scons.builders.build_matlab.misc.sys.platform', 'riscos')
+    @mock.patch('gslab_scons.builders.build_matlab.sys.platform', 'riscos')
+    @mock.patch('gslab_scons.builders.build_matlab.os.system')
+    def test_other_os(self, mock_system):
+        '''
+        Test that build_matlab() raises an exception when run on a
+        non-Unix, non-Windows operating system.
+        '''
+        mock_system.side_effect = self.system_side_effect
+        with self.assertRaises(Exception):
+            gs.build_matlab(target = './build/test.mat', 
+                            source = './input/matlab_test_script.m', 
+                            env    = {})
 
     @mock.patch('gslab_scons.builders.build_matlab.os.system')
     def test_clarg(self, mock_system):
@@ -97,19 +109,12 @@ class TestBuildMatlab(unittest.TestCase):
                         source = './input/matlab_test_script.m', 
                         env    = env)
 
-        self.check_log('./build/sconscript.log')
+        helpers.check_log(self, './build/sconscript.log')
         mock_system.assert_called_once()
         self.assertEqual(os.environ['CL_ARG'], env['CL_ARG'])
 
-    def test_bad_extension(self):
-        '''
-        Test that build_matlab() raises the correct error when
-        its first source does not have a valid file extension.  
-        '''
-        with self.assertRaises(BadExtensionError):
-            gs.build_matlab(target = './build/test.mat', 
-                            source = ['bad', './input/matlab_test_script.m'], 
-                            env    = {})
+    test_bad_extension_alt = \
+        lambda self: helpers.bad_extension(self, gs.build_matlab, good = 'test.m')
    
     def tearDown(self):
         if os.path.exists('./build/'):

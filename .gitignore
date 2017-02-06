@@ -3,3 +3,4 @@
 .cache
 .coverage
 .DS_Store
+*.Rhistory

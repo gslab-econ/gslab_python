@@ -6,6 +6,7 @@ import shutil
 import mock
 import subprocess
 import re
+import _test_helpers as helpers
 
 # Ensure that Python can find and load the GSLab libraries
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -38,7 +39,7 @@ class TestBuildStata(unittest.TestCase):
         env = {'user_flavor' : None}
 
         gs.build_stata('./test_output.dta', './test_script.do', env)
-        self.check_log('./sconscript.log')
+        helpers.check_log(self, './sconscript.log')
 
     @staticmethod
     def make_check_side_effect(recognised_command):
@@ -66,16 +67,6 @@ class TestBuildStata(unittest.TestCase):
 
         return check_side_effect
 
-    def check_log(self, log_path = './sconscript.log'):
-        '''Check for the existence of a time-stamped log.'''
-        with open(log_path, 'rU') as log_file:
-            log_data = log_file.read()
-
-        self.assertIn('Log created:', log_data)
-
-        if os.path.isfile('./sconscript.log'):
-            os.remove('./sconscript.log')   
-
     @mock.patch('gslab_scons.builders.build_stata.misc.sys.platform', 'win32')
     @mock.patch('gslab_scons.builders.build_stata.sys.platform', 'win32')
     @mock.patch('gslab_scons.builders.build_stata.misc.is_in_path')
@@ -97,7 +88,7 @@ class TestBuildStata(unittest.TestCase):
         gs.build_stata(target = './test_output.dta', 
                        source = './test_script.do', 
                        env    = env)
-        self.check_log('./sconscript.log')  
+        helpers.check_log(self, './sconscript.log') 
 
         # ii) 64-bit Windows without a STATAEXE environment variable
         mock_check.side_effect = self.make_check_side_effect('statamp-64.exe')
@@ -108,7 +99,7 @@ class TestBuildStata(unittest.TestCase):
         gs.build_stata(target = './test_output.dta', 
                        source = './test_script.do', 
                        env    = env)
-        self.check_log('./sconscript.log') 
+        helpers.check_log(self, './sconscript.log')
 
 
         # ii) Windows with a STATAEXE environment variable
@@ -121,7 +112,7 @@ class TestBuildStata(unittest.TestCase):
             gs.build_stata(target = './test_output.dta', 
                            source = './test_script.do', 
                            env    = env)
-        self.check_log('./sconscript.log') 
+        helpers.check_log(self, './sconscript.log')
 
 
     @mock.patch('gslab_scons.builders.build_stata.misc.sys.platform', 'darwin')
@@ -151,11 +142,7 @@ class TestBuildStata(unittest.TestCase):
                        source = './input/stata_test_script.do', 
                        env    = env)
 
-        logfile_data = open('./build/sconscript.log', 'rU').read()
-        self.assertIn('Log created:', logfile_data)
-
-        if os.path.isfile('./build/sconscript.log'):
-            os.remove('./build/sconscript.log')
+        helpers.check_log(self, './build/sconscript.log')
 
     def test_clarg(self):
         env = {'user_flavor' : None, 'CL_ARG' : 'COMMANDLINE'}

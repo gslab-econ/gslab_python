@@ -47,8 +47,7 @@ class TestBuildTables(unittest.TestCase):
         # Check that build_tables() called tablefill(()
         mock_tablefill.assert_called_once()
 
-        # Check that build_tables() passed arguments to
-        # tablefill() correctly.
+        # Check that build_tables() passed arguments to tablefill() correctly.
         kwargs = mock_tablefill.call_args[1]
 
         # i) The input argument should be the sources, 
@@ -61,8 +60,7 @@ class TestBuildTables(unittest.TestCase):
         # ii) The template argument should be the first source
         self.assertEqual(str(source[0]), kwargs['template'])
 
-        # iii) The output argument should be build_tables()'s 
-        #      target argument.
+        # iii) The output argument should be build_tables()'s target argument.
         if isinstance(target, str):
             target = [target]
         self.assertEqual(target[0], kwargs['output'])
@@ -109,21 +107,10 @@ class TestBuildTables(unittest.TestCase):
         std_target = './build/tablefill_template_filled.lyx'
 
         #== env =============
-        # We expect that build_tables() will aaccept any env argument
-        gs.build_tables(std_target, std_source, env = '')
-        self.check_call(std_source, std_target, mock_tablefill)    
-
-        gs.build_tables(std_target, std_source, env = None)
-        self.check_call(std_source, std_target, mock_tablefill)      
-        
-        gs.build_tables(std_target, std_source, env = Exception)
-        self.check_call(std_source, std_target, mock_tablefill)  
-
-        gs.build_tables(std_target, std_source, env = "the environment")
-        self.check_call(std_source, std_target, mock_tablefill)  
-
-        gs.build_tables(std_target, std_source, env = (1, 2, 3))
-        self.check_call(std_source, std_target, mock_tablefill)   
+        # We expect that build_tables() will accept any env argument
+        for env in ['', None, Exception, "the environment", (1, 2, 3)]:
+            gs.build_tables(std_target, std_source, env = env)
+            self.check_call(std_source, std_target, mock_tablefill)    
 
         #== target ==========
         # We expect build_tables() to raise an error if its
