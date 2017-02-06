@@ -24,16 +24,16 @@ def build_stata(target, source, env):
     Note: the user can specify a flavour by typing `scons sf=StataMP` 
     (By default, SCons will try to find each flavour). 
     '''
-    start_time =  misc.current_time()
     cl_arg     = misc.command_line_arg(env)
 
-    source       = misc.make_list_if_string(source)
-    target       = misc.make_list_if_string(target)
-    source_file  = str(source[0])
-    target_file  = str(target[0])
+    source      = misc.make_list_if_string(source)
+    target      = misc.make_list_if_string(target)
+    source_file = str(source[0])
+    target_file = str(target[0])
+    target_dir  = misc.get_directory(target_file)
 
+    start_time =  misc.current_time()
 
-    target_dir  = os.path.dirname(target_file)
     misc.check_code_extension(source_file, 'stata')
     log_file = target_dir + '/sconscript.log'
     loc_log  = os.path.basename(source_file).replace('.do','.log')
@@ -42,7 +42,7 @@ def build_stata(target, source, env):
     if user_flavor is not None:
         if misc.is_unix():
             command = misc.stata_command_unix(user_flavor, cl_arg)
-        elif platform == 'win32':
+        elif sys.platform == 'win32':
             command = misc.stata_command_win(user_flavor, cl_arg)
     else:
         flavors = ['stata-mp', 'stata-se', 'stata']

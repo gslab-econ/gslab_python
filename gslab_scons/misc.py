@@ -107,7 +107,7 @@ def is_unix():
 def is_64_windows():
     '''
     This function return True if the user's platform is Windows (64 bit)
-    and false otherwise.
+    and False otherwise.
     '''
     return 'PROGRAMFILES(X86)' in os.environ
 
@@ -173,3 +173,15 @@ def lyx_scan(node, env, path):
                  for source in src_find.findall(contents)]
 
     return SOURCE
+
+def get_directory(path):
+    '''
+    Determine the directory of a file. This function returns
+    './' rather than '' when `path` does not include a directory.
+    '''
+    directory = os.path.dirname(path)
+    if directory == '':
+        directory = './'
+
+    return directory
+

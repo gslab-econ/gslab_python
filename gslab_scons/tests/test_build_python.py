@@ -78,8 +78,9 @@ class TestBuildPython(unittest.TestCase):
         gs.build_python(('a', 'b'), source, env)           
         self.check_log('./sconscript.log')
         # Neither should empty strings
-        gs.build_python('', source, env)           
-        self.check_log('./sconscript.log')       
+        gs.build_python('', source, env)                
+        self.check_log('./sconscript.log')
+  
         # Other non-string inputs should
         with self.assertRaises(TypeError):
             gs.build_python(None, source, env)

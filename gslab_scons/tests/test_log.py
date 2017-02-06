@@ -107,14 +107,20 @@ class TestLog(unittest.TestCase):
         '''
         Test start_log()'s behaviour when run on a platform other
         than Windows, Darwin, or Linux.
-        (We don't expect it to change sys.stderr or sys.stdout.)
+        (We don't expect it to change sys.stdout, but we expect it
+        to set sys.stderr to sys.stdout.)
         '''
         initial_stderr = sys.stderr
         initial_stdout = sys.stdout
         gs.start_log()
-        self.assertEqual(initial_stderr, sys.stderr)
+        self.assertEqual(initial_stdout, sys.stderr)
         self.assertEqual(initial_stdout, sys.stdout)
 
+        test_file  = mock.MagicMock()
+        sys.stdout = test_file
+        gs.start_log()
+        self.assertEqual(sys.stderr, test_file)
+        
     @mock.patch('gslab_scons.log.misc.sys.platform', 'darwin')
     @mock.patch('gslab_scons.log.misc.check_lfs')
     def test_start_log_nonstring_input(self, mock_lfs):
