@@ -5,6 +5,7 @@ import os
 import shutil
 import mock
 import re
+# Import gslab_scons testing helper modules
 import _test_helpers as helpers
 import _side_effects as fx
 
@@ -14,7 +15,9 @@ sys.path.append('../..')
 
 import gslab_scons.builders.build_lyx as gs
 from gslab_scons._exception_classes import BadExtensionError
-from gslab_make.tests import nostderrout
+
+# Define path to the builder for use in patching
+path = 'gslab_scons.builders.build_lyx'
 
 
 class TestBuildLyX(unittest.TestCase):
@@ -22,11 +25,8 @@ class TestBuildLyX(unittest.TestCase):
     def setUp(self):
         if not os.path.exists('./build/'):
             os.mkdir('./build/')
-        if not os.path.exists('./input/lyx_test_file.lyx'):
-            with open('./input/lyx_test_file.lyx', 'wb') as test_file:
-                test_file.write('Test LyX file\n')
 
-    @mock.patch('gslab_scons.builders.build_lyx.os.system')
+    @mock.patch('%s.os.system' % path)
     def test_default(self, mock_system):
         '''
         Test that build_lyx() behaves correctly when provided with
@@ -40,7 +40,7 @@ class TestBuildLyX(unittest.TestCase):
         self.assertTrue(os.path.isfile(target))
 
 
-    @mock.patch('gslab_scons.builders.build_lyx.os.system')
+    @mock.patch('%s.os.system' % path)
     def test_list_arguments(self, mock_system):
         '''
         Check that build_lyx() works when its source and target 
@@ -49,14 +49,14 @@ class TestBuildLyX(unittest.TestCase):
         mock_system.side_effect = fx.lyx_side_effect
         target = './build/lyx.pdf'
 
-        gs.build_lyx(target, source  = ['./input/lyx_test_file.lyx'], env = '')
-        helpers.check_log(self, './build/sconscript.log')
+        helpers.standard_test(self, gs.build_lyx, 'lyx', 
+                              system_mock = mock_system, target = target)
         self.assertTrue(os.path.isfile(target))
 
     test_bad_extension = \
         lambda self: helpers.bad_extension(self, gs.build_lyx, good = 'test.lyx')
    
-    @mock.patch('gslab_scons.builders.build_lyx.os.system')
+    @mock.patch('%s.os.system' % path)
     def test_env_argument(self, mock_system):
         '''
         Test that numerous types of objects can be passed to 
@@ -72,7 +72,7 @@ class TestBuildLyX(unittest.TestCase):
             helpers.check_log(self, log)
             self.assertTrue(os.path.isfile(target))
 
-    @mock.patch('gslab_scons.builders.build_lyx.os.system')
+    @mock.patch('%s.os.system' % path)
     def test_nonexistent_source(self, mock_system):
         '''
         Test build_lyx()'s behaviour when the source file
@@ -80,33 +80,29 @@ class TestBuildLyX(unittest.TestCase):
         '''
         mock_system.side_effect = fx.lyx_side_effect
         # i) Directory doesn't exist
-        with self.assertRaises(IOError), nostderrout():
+        with self.assertRaises(IOError):
             gs.build_lyx('./build/lyx.pdf', 
-                         ['./nonexistent_directory/lyx_test_file.lyx'], env = True)
+                         ['./bad_dir/lyx_test_file.lyx'], env = {})
         # ii) Directory exists, but file doesn't
-        with self.assertRaises(IOError), nostderrout():
+        with self.assertRaises(IOError):
             gs.build_lyx('./build/lyx.pdf', 
-                         ['./input/nonexistent_file.lyx'], env = True)   
+                         ['./input/nonexistent_file.lyx'], env = {})   
 
 
-    @mock.patch('gslab_scons.builders.build_lyx.os.system')
+    @mock.patch('%s.os.system' % path)
     def test_nonexistent_target_directory(self, mock_system):
         '''
         Test build_lyx()'s behaviour when the target file's
         directory does not exist.
         '''
         mock_system.side_effect = fx.lyx_side_effect
-        with self.assertRaises(IOError), nostderrout():
+        with self.assertRaises(IOError):
             gs.build_lyx('./nonexistent_directory/lyx.pdf', 
                          ['./input/lyx_test_file.lyx'], env = True)
 
     def tearDown(self):
         if os.path.exists('./build/'):
             shutil.rmtree('./build/')
-        if os.path.exists('output.txt'):
-            os.remove('output.txt')
-        if os.path.exists('./input/lyx_test_file.lyx'):
-            os.remove('./input/lyx_test_file.lyx')
        
 
 if __name__ == '__main__':

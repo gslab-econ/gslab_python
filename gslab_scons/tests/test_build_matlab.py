@@ -4,6 +4,7 @@ import os
 import shutil
 import mock
 import re
+# Import gslab_scons testing helper modules
 import _test_helpers as helpers
 import _side_effects as fx
 
