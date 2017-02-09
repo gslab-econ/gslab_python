@@ -45,7 +45,7 @@ def build_matlab(target, source, env):
 
     misc.check_code_extension(source_file, 'matlab')
     log_file = target_dir + '/sconscript.log'
-    cl_arg   = misc.command_line_arg(env)
+    cl_arg   = misc.command_line_args(env)
 
     os.environ['CL_ARG'] = cl_arg
 

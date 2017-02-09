@@ -6,6 +6,7 @@ import shutil
 import mock
 import re
 import _test_helpers as helpers
+import _side_effects as fx
 
 # Ensure that Python can find and load the GSLab libraries
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -31,58 +32,13 @@ class TestBuildLyX(unittest.TestCase):
         Test that build_lyx() behaves correctly when provided with
         standard inputs. 
         '''
-        mock_system.side_effect = self.os_system_side_effect
+        mock_system.side_effect = fx.lyx_side_effect
         target = './build/lyx.pdf'
 
-        gs.build_lyx(target, source = './input/lyx_test_file.lyx', env = '')
-
-        helpers.check_log(self, './build/sconscript.log')
+        helpers.standard_test(self, gs.build_lyx, 'lyx', 
+                              system_mock = mock_system, target = target)
         self.assertTrue(os.path.isfile(target))
 
-    @staticmethod
-    def os_system_side_effect(*args, **kwargs):
-        '''
-        This side effect mocks the behaviour of a system call.
-        The mocked machine has lyx set up as a command-line executable
-        and can export .lyx files to .pdf files only using 
-        the "-e pdf2" option.
-        '''
-        # Get and parse the command passed to os.system()
-        command = args[0]
-        match = re.match('\s*'
-                            '(?P<executable>\w+)'
-                            '\s+'
-                            '(?P<option>-\w+ \w+)?'
-                            '\s*'
-                            '(?P<source>[\.\/\w]+\.\w+)?'
-                            '\s*'
-                            '(?P<log_redirect>\> [\.\/\w]+\.\w+)?',
-                         command)
-
-        executable   = match.group('executable')
-        option       = match.group('option')
-        source       = match.group('source')
-        log_redirect = match.group('log_redirect')
-
-        option_type    = re.findall('^(-\w+)',  option)[0]
-        option_setting = re.findall('\s(\w+)$', option)[0]
-
-        is_lyx = bool(re.search('^lyx$', executable, flags = re.I))
-
-        # As long as output is redirected, create a log
-        if log_redirect:
-            log_path = re.sub('>\s*', '', log_redirect)
-            with open(log_path, 'wb') as log_file:
-                log_file.write('Test log\n')
-
-        # If LyX is the executable, the options are correctly specified,
-        # and the source exists, produce a .pdf file with the same base 
-        # name as the source file.
-        if is_lyx and option_type == '-e' and option_setting == 'pdf2' \
-                  and os.path.isfile(source):
-            out_path = re.sub('lyx$', 'pdf', source, flags = re.I)
-            with open(out_path, 'wb') as out_file:
-                out_file.write('Mock .pdf output')
 
     @mock.patch('gslab_scons.builders.build_lyx.os.system')
     def test_list_arguments(self, mock_system):
@@ -90,7 +46,7 @@ class TestBuildLyX(unittest.TestCase):
         Check that build_lyx() works when its source and target 
         arguments are lists
         '''
-        mock_system.side_effect = self.os_system_side_effect
+        mock_system.side_effect = fx.lyx_side_effect
         target = './build/lyx.pdf'
 
         gs.build_lyx(target, source  = ['./input/lyx_test_file.lyx'], env = '')
@@ -106,7 +62,7 @@ class TestBuildLyX(unittest.TestCase):
         Test that numerous types of objects can be passed to 
         build_lyx() without affecting the function's operation.
         '''
-        mock_system.side_effect = self.os_system_side_effect
+        mock_system.side_effect = fx.lyx_side_effect
         target = './build/lyx.pdf'
         source = ['./input/lyx_test_file.lyx']
         log    = './build/sconscript.log'
@@ -122,7 +78,7 @@ class TestBuildLyX(unittest.TestCase):
         Test build_lyx()'s behaviour when the source file
         does not exist.
         '''
-        mock_system.side_effect = self.os_system_side_effect
+        mock_system.side_effect = fx.lyx_side_effect
         # i) Directory doesn't exist
         with self.assertRaises(IOError), nostderrout():
             gs.build_lyx('./build/lyx.pdf', 
@@ -139,7 +95,7 @@ class TestBuildLyX(unittest.TestCase):
         Test build_lyx()'s behaviour when the target file's
         directory does not exist.
         '''
-        mock_system.side_effect = self.os_system_side_effect
+        mock_system.side_effect = fx.lyx_side_effect
         with self.assertRaises(IOError), nostderrout():
             gs.build_lyx('./nonexistent_directory/lyx.pdf', 
                          ['./input/lyx_test_file.lyx'], env = True)

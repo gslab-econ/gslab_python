@@ -10,7 +10,7 @@ import datetime
 
 def state_of_repo(target, source, env):
     env['CL_ARG'] = env['MAXIT']
-    maxit = int(command_line_arg(env))
+    maxit = int(command_line_args(env))
     outfile = 'state_of_repo.log'
     with open(outfile, 'wb') as f:
         f.write("WARNING: Information about .sconsign.dblite may be misleading \n" +
@@ -62,11 +62,24 @@ def check_lfs():
                               'git lfs install --force' if prompted above.''')
 
 
-def command_line_arg(env):
+def command_line_args(env):
+    '''
+    Return the content of env['CL_ARG'] as a string
+    with spaces separating entries. If env['CL_ARG']
+    doesn't exist, return an empty string. 
+    '''
     try:
         cl_arg = env['CL_ARG']
+        if not isinstance(cl_arg, str):
+            try:
+                # Join arguments as strings by spaces
+                cl_arg = ' '.join(map(str, cl_arg))
+            except TypeError:
+                cl_arg = str(cl_arg)
+                
     except KeyError:
         cl_arg = ''
+
     return cl_arg
 
 
@@ -173,6 +186,7 @@ def lyx_scan(node, env, path):
                  for source in src_find.findall(contents)]
 
     return SOURCE
+
 
 def get_directory(path):
     '''

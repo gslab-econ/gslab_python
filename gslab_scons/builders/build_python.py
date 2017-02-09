@@ -27,11 +27,11 @@ def build_python(target, source, env):
     misc.check_code_extension(source_file, 'python')
     log_file = target_dir + '/sconscript.log'
     
-    os.system('python %s > %s' % (source_file, log_file))
-    cl_arg = misc.command_line_arg(env)
+    cl_arg = misc.command_line_args(env)
 
     os.system('python %s %s > %s' % (source_file, cl_arg, log_file))
 
     end_time   =  misc.current_time()    
     log_timestamp(start_time, end_time, log_file)
+    
     return None

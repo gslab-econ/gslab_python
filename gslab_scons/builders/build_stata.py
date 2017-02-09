@@ -24,7 +24,7 @@ def build_stata(target, source, env):
     Note: the user can specify a flavour by typing `scons sf=StataMP` 
     (By default, SCons will try to find each flavour). 
     '''
-    cl_arg     = misc.command_line_arg(env)
+    cl_arg     = misc.command_line_args(env)
 
     source      = misc.make_list_if_string(source)
     target      = misc.make_list_if_string(target)
@@ -63,7 +63,7 @@ def build_stata(target, source, env):
                     if misc.is_in_path(flavor):
                         command = misc.stata_command_win(flavor, cl_arg)
                         break
-
+                        
     try:
         subprocess.check_output(command % source_file, 
                                 stderr = subprocess.STDOUT,

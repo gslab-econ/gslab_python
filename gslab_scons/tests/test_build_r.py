@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-
 import unittest
 import sys
 import os
@@ -7,6 +6,7 @@ import shutil
 import mock
 import re
 import _test_helpers as helpers
+import _side_effects as fx
 
 # Ensure that Python can find and load the GSLab libraries
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -16,6 +16,8 @@ import gslab_scons as gs
 from gslab_scons._exception_classes import BadExtensionError
 from gslab_make.tests import nostderrout
 
+system_patch = mock.patch('gslab_scons.builders.build_r.os.system')
+
 
 class TestBuildR(unittest.TestCase):
 
@@ -23,49 +25,16 @@ class TestBuildR(unittest.TestCase):
         if not os.path.exists('./build/'):
             os.mkdir('./build/')
 
-    @mock.patch('gslab_scons.builders.build_r.os.system')
+    @system_patch
     def test_standard(self, mock_system):
-        '''
-        Test that build_r() behaves as expected when used 
-        in a standard way.
-        '''
-        mock_system.side_effect = self.os_system_side_effect
-        gs.build_r(target = './build/r.rds', 
-                   source = './input/script.R', 
-                   env    = {})
-        helpers.check_log(self, './build/sconscript.log')
+        '''Test build_r()'s behaviour when given standard inputs.'''
+        mock_system.side_effect = fx.r_side_effect
+        helpers.standard_test(self, gs.build_r, 'R', 
+                              system_mock = mock_system)
 
-    @staticmethod
-    def os_system_side_effect(*args, **kwargs):
-        '''
-        This side effect mocks the behaviour of a system call
-        on a machine with R set up for command-line use.
-        '''
-        # Get and parse the command passed to os.system()
-        command = args[0]
-        match = re.match('\s*'
-                            '(?P<executable>R CMD BATCH)'
-                            '\s+'
-                            '(?P<option>--no-save)?'
-                            '\s*'
-                            '(?P<source>[\.\/\w]+(\.\w+)?)?'
-                            '\s*'
-                            '(?P<log>[\.\/\w]+(\.\w+)?)?',
-                         command)
-
-        executable = match.group('executable')
-        log        = match.group('log')
-
-        # As long as the executable is correct and a log path 
-        # is specified, write a log.
-        if executable == "R CMD BATCH" and log:
-            with open(log.strip(), 'wb') as log_file:
-                log_file.write('Test log\n')
-
-
-    @mock.patch('gslab_scons.builders.build_r.os.system')
+    @system_patch
     def test_target_list(self, mock_system):
-        mock_system.side_effect = self.os_system_side_effect
+        mock_system.side_effect = fx.r_side_effect
         # We don't expect that the targets actually need
         # to be created.
         targets = ['./build/r.rds', 'additional_target']
@@ -75,41 +44,39 @@ class TestBuildR(unittest.TestCase):
         # We expect build_r() to write its log to its first target's directory
         helpers.check_log(self, './build/sconscript.log')
 
-    @mock.patch('gslab_scons.builders.build_r.os.system')
-    def test_clarg(self):
-        env = {'CL_ARG' : 'COMMANDLINE'}
-        gs.build_r('./build/r.rds', './input/R_test_script.R', env)
+    @system_patch
+    def test_no_target(self, mock_system):
+        '''Check that build_r() can run without creating its targets'''
+        mock_system.side_effect = fx.r_side_effect
+        gs.build_r(target = '', source = './script.R', env    = {})
+        helpers.check_log(self, './sconscript.log')
 
-        helpers.check_log(self, './build/sconscript.log',
-                          expected_text = 'COMMANDLINE')
+    @system_patch
+    def test_cl_arg(self, mock_system):
+        mock_system.side_effect = fx.r_side_effect
+        helpers.test_cl_args(self, gs.build_r, mock_system, 'R')
 
     # Test that build_r() recognises an inappropriate file extension
     test_bad_extension = \
         lambda self: helpers.bad_extension(self, gs.build_r, good = 'test.r')
    
-    @mock.patch('gslab_scons.builders.build_r.os.system')
+    @system_patch
     def test_unintended_inputs(self, mock_system):
         # We expect build_r() to raise an error if its env
         # argument does not support indexing by strings. 
-        mock_system.side_effect = self.os_system_side_effect
+        mock_system.side_effect = fx.r_side_effect
 
-        for env in [True, (1, 2), TypeError]:
-            with self.assertRaises(TypeError), nostderrout():
-                gs.build_r('output.txt', 'script.R', env)
-        
-        env = {}
-        # We need a string or list of strings in the first argument...
-        for source in (None, 1):
-            with self.assertRaises(TypeError), nostderrout():
-                gs.build_r(1, 'script.R', env)                     
-        
-        # ...but it can be an empty string.
-        gs.build_r('', 'script.R', env)
-        helpers.check_log(self, './sconscript.log')
+        check = lambda **kwargs: helpers.input_check(self, gs.build_r, 
+                                                     'r', **kwargs)
 
-        # Empty lists won't work.
-        with self.assertRaises(IndexError), nostderrout():
-            gs.build_r([], 'script.R', env)  
+        for bad_env in [True, (1, 2), TypeError]:
+            check(env = bad_env, error = TypeError)
+        
+        for bad_target in (None, 1):
+            check(target = bad_target, error = TypeError)
+        check(target = [], error = IndexError)     
+
+        check(target = '', error = None)
 
     def tearDown(self):
         if os.path.exists('./build/'):

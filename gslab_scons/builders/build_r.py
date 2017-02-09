@@ -27,9 +27,11 @@ def build_r(target, source, env):
     misc.check_code_extension(source_file, 'r')
     log_file = target_dir + '/sconscript.log'
     
-    cl_arg = misc.command_line_arg(env)
+    cl_arg = misc.command_line_args(env)
+
     if cl_arg != '':
         cl_arg = "'--args %s'" % cl_arg
+
     os.system("R CMD BATCH --no-save %s %s %s" % (cl_arg, source_file, log_file))
 
     end_time = misc.current_time()    

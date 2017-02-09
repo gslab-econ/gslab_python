@@ -5,11 +5,17 @@ import os
 import shutil
 import mock
 import subprocess
+import re
+import _test_helpers as helpers
+import _side_effects as fx
 
 sys.path.append('../..')
 import gslab_scons.builders.build_python as gs
 from gslab_scons._exception_classes import BadExtensionError
 from gslab_make.tests import nostderrout
+
+# Define path to the builder for use in patching
+path = 'gslab_scons.builders.build_python'
 
 class TestBuildPython(unittest.TestCase):
 
@@ -17,102 +23,58 @@ class TestBuildPython(unittest.TestCase):
         if not os.path.exists('./build/'):
             os.mkdir('./build/')
 
-    def test_log_creation(self):
+    @mock.patch('%s.os.system' % path)
+    def test_log_creation(self, mock_system):
+        '''Test build_python()'s behaviour when given standard inputs.'''
+        mock_system.side_effect = fx.python_side_effect
+        helpers.standard_test(self, gs.build_python, 'py', 
+                              system_mock = mock_system)
+
+    # Test that build_python() recognises an inappropriate file extension
+    test_bad_extension = \
+        lambda self: helpers.bad_extension(self, gs.build_python, 
+                                           good = 'test.r')
+   
+    @mock.patch('%s.os.system' % path)
+    def test_cl_arg(self, mock_system):
+        mock_system.side_effect = fx.python_side_effect
+        helpers.test_cl_args(self, gs.build_python, mock_system, 'py')
+
+    @mock.patch('%s.os.system' % path)
+    def test_unintended_inputs(self, mock_system):
         '''
-        Test that build_python() creates a log in its
-        target's directory.
+        Test that build_python() handles unintended inputs 
+        as expected. 
         '''
-        gs.build_python(target = './build/py.py', 
-                        source = './input/python_test_script.py', 
-                        env    = {})
-        helpers.check_log(self, './build/sconscript.log')
+        mock_system.side_effect = fx.python_side_effect
 
-    def check_log(self, log_path = './build/sconscript.log'):
-        with open(log_path, 'rU') as log_file:
-            log_data = log_file.read()
+        check = lambda **kwargs: helpers.input_check(self, gs.build_python, 
+                                                     'py', **kwargs)
 
-        self.assertIn('Log created:', log_data)
-        os.remove(log_path)
-
-    def test_bad_extension(self):
-        '''
-        Test that build_python() raises the appropriate error
-        when the first source lacks the appropriate file extension.
-        '''
-        with self.assertRaises(BadExtensionError):
-            gs.build_python('./build/py.py', 
-                           ['bad', './input/python_test_script.py'], 
-                           env = {})
-
-    def test_clarg(self):
-        env = {'CL_ARG' : 'COMMANDLINE'}
-        gs.build_python('./build/py.py', './input/python_test_script.py', env)
-        logfile_data = open('output.txt', 'rU').read()
-        self.assertIn('COMMANDLINE', logfile_data)
-        if os.path.isfile('./build/sconscript.log'):
-            os.remove('./build/sconscript.log')
-
-
-        with self.assertRaises(BadExtensionError):
-            gs.build_python('./build/py.py', 
-                           ['bad', './input/python_test_script.py'], 
-                           env = {})
-
-    def test_unintended_inputs(self):
-        '''
-        Test that build_python() handles unintended inputs
-        as we expect it to. 
-        '''
-        env    = {}
-        source = './input/python_test_script.py'
-        target = './build/py.py'
-        log    = './build/sconscript.log'
         # env's class must support indexing by strings
-        with self.assertRaises(TypeError):
-            gs.build_python(target, source, None)
-        with self.assertRaises(TypeError):
-            gs.build_python(target, source, 'env')            
+        check(env = None,  error = TypeError)
+        check(env = 'env', error = TypeError)        
 
-        #== target ===============
-        # Containers of strings should not raise errors
-        gs.build_python(('a', 'b'), source, env)           
-        self.check_log('./sconscript.log')
-        # Neither should empty strings
-        gs.build_python('', source, env)                
-        self.check_log('./sconscript.log')
-  
-        # Other non-string inputs should
-        with self.assertRaises(TypeError):
-            gs.build_python(None, source, env)
-        with self.assertRaises(TypeError):
-            gs.build_python(1, source, env)
+        # The target should be a string or a container
+        for ok_target in [('a', 'b'), '', [1, 2]]:
+            check(target = ok_target, error = None) 
+        for bad_target in [None, 1]:
+            check(target = bad_target, error = TypeError) 
 
-        #== source ===============
-        # We can have multiple sources, and we can 
-        # specify sources that don't exist...
-        env = {}
-        gs.build_python(target = '', 
-                        source = ['./input/python_test_script.py', 
-                                 'nonexistent_data.txt'], 
-                        env    = env)           
-        self.check_log('./sconscript.log')
-        # ...but a .py script must be the first source.
-        with self.assertRaises(BadExtensionError):
-            gs.build_python(target = '', 
-                            source = ['nonexistent_data.txt',
-                                   './input/python_test_script.py'], 
-                            env    = env)
-        # build_python() does not raise an error if this .py file
-        # doesn't actually exist (this may be undesirable).
-        # Instead, we expect it to print an error message to the 
-        # console and continue. 
-        print "Expecting console output suggesting an error:\n"
-        gs.build_python(target = '', 
-                        source = ['nonexistent_data.py',
-                              './input/python_test_script.py'], 
-                         env    = env)
-        print "No longer expecting an error message.\n"
-        self.check_log('./sconscript.log')
+        test_source = ['./test_script.py', 'nonexistent_data.txt']
+        check(source = test_source, error = None)
+        test_source.reverse()
+        check(source = test_source, error = BadExtensionError)
+
+    def test_nonexistent_input(self):
+        '''
+        Test that build_python() doesn't raise errors if
+        its source script doesn't exist.
+        '''
+        if os.path.exists('test.py'):
+            os.remove('test.py')
+
+        helpers.standard_test(self, gs.build_python, source = 'test.py')
 
     def test_target_creation_unnecessary(self):
         '''
@@ -132,7 +94,7 @@ class TestBuildPython(unittest.TestCase):
         with self.assertRaises(IOError):
             open(target, 'rU')
         # ...but the log does.
-        self.check_log('./build/sconscript.log')
+        helpers.check_log(self, './build/sconscript.log')
         os.remove(source)
 
     def tearDown(self):

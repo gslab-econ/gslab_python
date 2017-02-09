@@ -187,7 +187,8 @@ class TestMisc(unittest.TestCase):
         os.environ.
         '''
         environ = 'gslab_scons.misc.os.environ'
-        with mock.patch(environ, {'PROGRAMFILES(X86)': 'C:/Program Files (x86)'}):
+        mocked_environ = {'PROGRAMFILES(X86)': 'C:/Program Files (x86)'}
+        with mock.patch(environ, mocked_environ):
             self.assertTrue(misc.is_64_windows())
         with mock.patch(environ, dict()):
             self.assertFalse(misc.is_64_windows())
@@ -237,12 +238,25 @@ class TestMisc(unittest.TestCase):
             result = False
         return result 
 
-    def test_command_line_arg(self):
-        self.assertEqual(misc.command_line_arg({'test' : ''}), '')
-        self.assertEqual(misc.command_line_arg({'CL_ARG' : 'Test'}), 'Test')
+    def test_command_line_args(self):
+        env = {'test' : ''}
+        self.assertEqual(misc.command_line_args(env), '')
+
+        env = {'CL_ARG' : 'Test'}
+        self.assertEqual(misc.command_line_args(env), 'Test')
+
+        env = {'CL_ARG' : 1}
+        self.assertEqual(misc.command_line_args(env), '1')
+
+        env = {'CL_ARG' : ['Test_1', 'Test_2']}
+        self.assertEqual(misc.command_line_args(env), 'Test_1 Test_2')
+
+        env = {'CL_ARG' : [True, None, 'Test']}
+        self.assertEqual(misc.command_line_args(env), 'True None Test')             
 
     def test_make_list_if_string(self):
-        self.assertEqual(misc.make_list_if_string(['test', 'test']), ['test', 'test'])
+        self.assertEqual(misc.make_list_if_string(['test', 'test']), 
+                                                  ['test', 'test'])
         self.assertEqual(misc.make_list_if_string('test'), ['test'])
         self.assertEqual(misc.make_list_if_string(['test']), ['test'])
         
