@@ -1,4 +1,4 @@
-GSLab Python Library Collection 3.0.0
+GSLab Python Library Collection 3.0.4
 =====================================
 
 Overview
@@ -10,6 +10,8 @@ This repository contains the following GSLab Python libraries:
  - gencat
 
 Information about each of these packages is available in its internal documentation. 
+
+Note: In order to run the unit tests, `mock` (version 2.0.0 or higher) needs to be installed.
 
 Installation
 ------------

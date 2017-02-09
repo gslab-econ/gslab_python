@@ -24,7 +24,8 @@ def build_stata(target, source, env):
     (By default, SCons will try to find each flavour). 
     '''
     start_time =  misc.current_time()
-    
+    cl_arg     = misc.command_line_arg(env)
+
     source       = misc.make_list_if_string(source)
     target       = misc.make_list_if_string(target)
     source_file  = str(source[0])

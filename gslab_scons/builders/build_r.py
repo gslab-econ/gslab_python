@@ -27,14 +27,19 @@ def build_r(target, source, env):
     # Setup source file
     source_file = str(source[0])
     misc.check_code_extension(source_file, '.r')
-
+ 
     # Setup log file
     log_dir     = os.path.dirname(str(target[0]))
     log_file    = log_dir + '/sconscript.log'
 
+    # Allow command line arguments 
+    cl_arg      = misc.command_line_arg(env)
+    if cl_arg != '':
+        cl_arg = "'--args %s'" % cl_arg
+
     # System call
     try:
-        command = 'R CMD BATCH --no-save %s %s' % (source_file, log_file)
+        command = 'R CMD BATCH --no-save %s %s %s' % (cl_arg, source_file, log_file)
         subprocess.check_output(command,
                                 stderr = subprocess.STDOUT,
                                 shell = True)

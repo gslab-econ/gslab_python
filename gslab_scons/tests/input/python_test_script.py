@@ -1,12 +1,13 @@
 #! /usr/bin/env python
-import argparse, pdb
+import sys
 
-parser = argparse.ArgumentParser()    
-parser.add_argument('-i', dest='input', nargs='+')
-args = parser.parse_args()
-
-if args.input:
-    message = args.input
+try:
+	arg = sys.argv[1]
+except:
+	arg = ''
+	
+if arg != '':
+    message = arg
 else:
     message = 'Test Output \n'
 output_name = 'output.txt'
