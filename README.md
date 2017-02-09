@@ -38,6 +38,20 @@ which are the SSH and HTTPS protocol versions.
 Note that this installation procedure may require obtaining machine privileges through,
 say, a `sudo` command. 
 
+
+Testing
+-------
+
+We recommend that users use [coverage](https://pypi.python.org/pypi/coverage/) 
+to run this repository's unit tests. Upon installing coverage (this can be done with
+pip using the command `pip install coverage`), one may test `gslab_python`'s contents
+and then produce a code coverage report the commands:
+
+```bash
+coverage run setup.py test
+coverage report -m
+```
+
 License
 -------
 See [here](https://github.com/gslab-econ/gslab_python/blob/master/LICENSE.txt).
