@@ -1,5 +1,8 @@
 import os
 import re
+import mock
+import requests
+import shutil
 import subprocess
 import _test_helpers as helpers
 
@@ -129,3 +132,49 @@ def lyx_side_effect(*args, **kwargs):
         out_path = re.sub('lyx$', 'pdf', source, flags = re.I)
         with open(out_path, 'wb') as out_file:
             out_file.write('Mock .pdf output')
+
+
+def make_call_side_effect(text):
+    '''
+    Intended for mocking subprocess.call in testing
+    _release_tools.up_to_date(). Return a side effect that
+    prints text to mocked function's the stdout argument.
+    '''
+    def side_effect(*args, **kwargs):
+        log = kwargs['stdout']
+        log.write(text)
+        
+    return side_effect
+
+
+def upload_asset_side_effect(*args, **kwargs):
+    '''
+    This side effect, intended for mocking 
+    _release_tools.upload_asset() in testing release(), 
+    copies an asset so it can be checked by tests. 
+    '''
+    assets_path    = kwargs['file_name']
+    shutil.copyfile(assets_path, 'assets_listing.txt')    
+
+
+def post_side_effect(*args, **kwargs):
+  '''
+  Intended for mocking requests.session.post in testing release().
+  This side effect returns a MagicMock that raises an error 
+  when its raise_for_status() method is called unless
+  a specific release_path is specified and there if a 
+  valid tag_name
+  '''
+  # The release path is specified by the first positional argument.
+  mock_output = mock.MagicMock(raise_for_status = mock.MagicMock())
+  release_path = args[0]
+  real_path = "https://test_token:@api.github.com/repos/org/repo/releases"
+
+  def raise_http_error():
+      raise requests.exceptions.HTTPError('404 Client Error')
+
+  if release_path != real_path:
+      mock_output.raise_for_status.side_effect = raise_http_error
+
+  return mock_output  
+

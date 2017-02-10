@@ -5,6 +5,8 @@ import re
 import mock
 import tempfile
 import shutil
+# Import module containing gslab_scons testing side effects
+import _side_effects as fx
 
 # Ensure that Python can find and load the GSLab libraries
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -85,39 +87,34 @@ class TestReleaseTools(unittest.TestCase):
         # The mock of subprocess call should write pre-specified text
         # to stdout. This mock prevents us from having to set up real
         # SCons and git directories.
-        mock_call.side_effect = self.make_call_side_effect('Your branch is up-to-date')
+        mock_call.side_effect = \
+            fx.make_call_side_effect('Your branch is up-to-date')
         self.assertTrue(gslab_scons._release_tools.up_to_date(mode = 'git'))
-        mock_call.side_effect = self.make_call_side_effect('modified:   .sconsign.dblite')
+
+        mock_call.side_effect = \
+            fx.make_call_side_effect('modified:   .sconsign.dblite')
         self.assertFalse(gslab_scons._release_tools.up_to_date(mode = 'git'))
 
-        mock_call.side_effect = self.make_call_side_effect("scons: `.' is up to date.")
+        mock_call.side_effect = \
+            fx.make_call_side_effect("scons: `.' is up to date.")
         self.assertTrue(gslab_scons._release_tools.up_to_date(mode = 'scons'))
-        mock_call.side_effect = self.make_call_side_effect('python some_script.py')
+        
+        mock_call.side_effect = \
+            fx.make_call_side_effect('python some_script.py')
         self.assertFalse(gslab_scons._release_tools.up_to_date(mode = 'scons'))
 
         # The up_to_date() function shouldn't work in SCons or git mode
         # when it is called outside of a SCons directory or a git 
         # repository, respectively.       
-        mock_call.side_effect = self.make_call_side_effect("Not a git repository")
+        mock_call.side_effect = \
+            fx.make_call_side_effect("Not a git repository")
         with self.assertRaises(ReleaseError), nostderrout():
             gslab_scons._release_tools.up_to_date(mode = 'git')
 
-        mock_call.side_effect = self.make_call_side_effect("No SConstruct file found")
+        mock_call.side_effect = \
+            fx.make_call_side_effect("No SConstruct file found")
         with self.assertRaises(ReleaseError), nostderrout():
             gslab_scons._release_tools.up_to_date(mode = 'scons')   
-
-    @staticmethod
-    def make_call_side_effect(text):
-        '''
-        Return a side effect to be used with mock that
-        prints text to a file specified as the stderr
-        argument of function being mocked.
-        '''
-        def side_effect(*args, **kwargs):
-            log = kwargs['stdout']
-            log.write(text)
-            
-        return side_effect
 
     def test_extract_dot_git(self):
         '''
@@ -151,8 +148,10 @@ class TestReleaseTools(unittest.TestCase):
         sizes    = tools.create_size_dictionary(test_dir)
 
         # Check that test.txt and test.jpg are in the dictionary
-        txt_path = [path for path in sizes.keys() if re.search('test.txt$', path)]
-        jpg_path = [path for path in sizes.keys() if re.search('test.jpg$', path)]
+        txt_path = [path for path in sizes.keys() \
+                    if re.search('test.txt$', path)]
+        jpg_path = [path for path in sizes.keys() \
+                    if re.search('test.jpg$', path)]
 
         self.assertTrue(bool(txt_path))
         self.assertTrue(bool(jpg_path))
@@ -171,5 +170,4 @@ class TestReleaseTools(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    os.getcwd()
     unittest.main()
