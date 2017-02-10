@@ -1,0 +1,99 @@
+running pytest
+running egg_info
+creating GSLab_Tools.egg-info
+writing requirements to GSLab_Tools.egg-info/requires.txt
+writing GSLab_Tools.egg-info/PKG-INFO
+writing top-level names to GSLab_Tools.egg-info/top_level.txt
+writing dependency_links to GSLab_Tools.egg-info/dependency_links.txt
+writing manifest file 'GSLab_Tools.egg-info/SOURCES.txt'
+reading manifest file 'GSLab_Tools.egg-info/SOURCES.txt'
+writing manifest file 'GSLab_Tools.egg-info/SOURCES.txt'
+running build_ext
+============================= test session starts ==============================
+platform darwin -- Python 2.7.13, pytest-3.0.5, py-1.4.32, pluggy-0.4.0
+rootdir: /Users/leviboxell/Desktop/gslab_python, inifile: 
+collected 99 items
+
+gencat/tests/test_checkDicts.py ...
+gencat/tests/test_cleanDir.py ......
+gencat/tests/test_main.py .
+gencat/tests/test_unzipFiles.py ......
+gencat/tests/test_writeDict.py ....
+gencat/tests/test_zipFile.py ....
+gslab_fill/tests/test_tablefill.py ....
+gslab_fill/tests/test_textfill.py ........
+gslab_scons/tests/test_build_lyx.py ......
+gslab_scons/tests/test_build_matlab.py ...
+gslab_scons/tests/test_build_python.py .....
+gslab_scons/tests/test_build_r.py .....
+gslab_scons/tests/test_build_stata.py ......
+gslab_scons/tests/test_build_tables.py ....
+gslab_scons/tests/test_log.py ....F...
+gslab_scons/tests/test_misc.py .................
+gslab_scons/tests/test_release_function.py ....
+gslab_scons/tests/test_release_tools.py .....
+
+=================================== FAILURES ===================================
+_______________________ TestLog.test_start_log_other_os ________________________
+
+self = <gslab_scons.tests.test_log.TestLog testMethod=test_start_log_other_os>
+mock_lfs = <MagicMock name='check_lfs' id='4402826640'>
+
+    @mock.patch('gslab_scons.log.misc.sys.platform', 'cygwin')
+    @mock.patch('gslab_scons.log.misc.check_lfs')
+    def test_start_log_other_os(self, mock_lfs):
+        '''
+            Test start_log()'s behaviour when run on a platform other
+            than Windows, Darwin, or Linux.
+            (We don't expect it to change sys.stderr or sys.stdout.)
+            '''
+        initial_stderr = sys.stderr
+        initial_stdout = sys.stdout
+        gs.start_log()
+>       self.assertEqual(initial_stderr, sys.stderr)
+E       AssertionError: <_pytest.capture.EncodedFile object at 0x1058fa650> != <_pytest.capture.EncodedFile object at 0x1058fa5d0>
+
+test_log.py:115: AssertionError
+===================== 1 failed, 98 passed in 16.97 seconds =====================
+Name                                           Stmts   Miss Branch BrPart  Cover   Missing
+------------------------------------------------------------------------------------------
+gencat/__init__.py                                 1      0      0      0   100%
+gencat/gencat.py                                  79      6     28      4    91%   72-73, 81, 89, 97, 101, 57->exit, 71->72, 96->97, 100->101
+gslab_fill/__init__.py                             2      0      0      0   100%
+gslab_fill/tablefill.py                          123      4     48      7    94%   54, 101, 135, 138, 33->36, 36->38, 53->54, 86->83, 100->101, 131->135, 137->138
+gslab_fill/tablefill_info.py                       0      0      0      0   100%
+gslab_fill/textfill.py                           135      2     60      5    96%   44, 170, 32->35, 35->37, 43->44, 100->exit, 169->170
+gslab_fill/textfill_info.py                        0      0      0      0   100%
+gslab_make/__init__.py                            10      0      0      0   100%
+gslab_make/dir_mod.py                            151    130     70      0    10%   28-31, 43-54, 69-145, 159-205, 216-220, 224-226, 230-237, 241-249
+gslab_make/get_externals.py                       22     16      2      0    25%   78-98
+gslab_make/get_externals_github.py                22     15      2      0    29%   57-79
+gslab_make/make_link_logs.py                      36     28     16      0    15%   61-75, 86-106
+gslab_make/make_links.py                          18     12      4      0    27%   60-78
+gslab_make/make_log.py                           166    146     66      0     9%   35-63, 77-100, 113-128, 146-172, 191-217, 250-262, 279-297, 313-345
+gslab_make/private/__init__.py                     1      0      0      0   100%
+gslab_make/private/exceptionclasses.py            11      2      0      0    82%   5, 7
+gslab_make/private/getexternalsdirectives.py     200    167     86      0    12%   17-23, 26-44, 48-49, 53-55, 59-70, 74-75, 79-83, 87-108, 112-123, 127, 136-151, 155-204, 208, 213-217, 222-230, 239-253, 257-264, 269-278, 286-299, 303-307, 311-316
+gslab_make/private/linkdirectives.py             108     92     56      0    10%   14-34, 39-44, 48-49, 53-62, 66-87, 90-102, 106-114, 117-140, 144-157
+gslab_make/private/linkslist.py                   55     46     30      0    11%   13-42, 45-49, 52-70
+gslab_make/private/messages.py                    48      0      0      0   100%
+gslab_make/private/metadata.py                     9      0      0      0   100%
+gslab_make/private/preliminaries.py              107     88     40      0    13%   17-26, 29-38, 43-56, 60-64, 67-72, 81-90, 97-113, 120-141, 144-146, 151-160
+gslab_make/private/runprogramdirective.py        207    185    104      0     7%   16-93, 97-107, 111-116, 121-134, 138-145, 149-163, 167-220, 224-240, 244-264, 271-282, 285-289, 296-302
+gslab_make/run_program.py                        238    217     80      0     7%   129-162, 178-202, 208-225, 231-248, 254-275, 281-298, 304-321, 332-392, 398-423, 429-447, 453-488, 494-499
+gslab_scons/__init__.py                            9      0      0      0   100%
+gslab_scons/_exception_classes.py                 12      0      0      0   100%
+gslab_scons/_release_tools.py                    135      5     52      7    94%   61, 89, 113, 261-262, 60->61, 88->89, 95->97, 112->113, 181->188, 210->225, 260->261
+gslab_scons/builders/__init__.py                   0      0      0      0   100%
+gslab_scons/builders/build_lyx.py                 20      0      0      0   100%
+gslab_scons/builders/build_matlab.py              28      3      4      1    81%   29-32, 27->29
+gslab_scons/builders/build_python.py              20      0      2      0   100%
+gslab_scons/builders/build_r.py                   21      0      4      0   100%
+gslab_scons/builders/build_stata.py               50     14     20      4    60%   45-46, 54-65, 43->45, 49->54, 50->67, 51->50
+gslab_scons/builders/build_tables.py               8      0      0      0   100%
+gslab_scons/log.py                                20      0      4      0   100%
+gslab_scons/misc.py                               93      0     20      0   100%
+gslab_scons/release.py                            59     59     32      0     0%   1-100
+setup.py                                          24     13      8      1    38%   9-16, 22-28, 8->9
+------------------------------------------------------------------------------------------
+TOTAL                                           2248   1250    838     29    39%
