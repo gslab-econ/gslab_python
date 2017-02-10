@@ -9,16 +9,19 @@ from glob import glob
 class TestRepo(build_py):
     '''Build command for running tests in repo'''
     def run(self):
+        coverage_command = 'coverage report -m --omit=setup.py,*/__init__.py'
+
         if sys.platform != 'win32':
             os.system("coverage run --branch --source ./ setup.py test1 2>&1 "
                       "| tee test.log")
             # http://unix.stackexchange.com/questions/80707/
             #     how-to-output-text-to-both-screen-and-file-inside-a-shell-script
-            os.system("coverage report -m  2>&1 | tee -a test.log") 
+            os.system("%s  2>&1 | tee -a test.log" % coverage_command) 
         else:
             os.system("coverage run --branch --source ./ setup.py "
                       "> test.log")
-            os .system("coverage report -m >> test.log")
+            os.system("%s >> test.log" % coverage_command)
+
         sys.exit()
 
 class CleanRepo(build_py):
