@@ -1,17 +1,20 @@
 running pytest
+Searching for pytest
+Best match: pytest 3.0.6
+Processing pytest-3.0.6-py2.7.egg
+
+Using /Users/mrsull/Desktop/gslab_python/.eggs/pytest-3.0.6-py2.7.egg
 running egg_info
-creating GSLab_Tools.egg-info
 writing requirements to GSLab_Tools.egg-info/requires.txt
 writing GSLab_Tools.egg-info/PKG-INFO
 writing top-level names to GSLab_Tools.egg-info/top_level.txt
 writing dependency_links to GSLab_Tools.egg-info/dependency_links.txt
-writing manifest file 'GSLab_Tools.egg-info/SOURCES.txt'
 reading manifest file 'GSLab_Tools.egg-info/SOURCES.txt'
 writing manifest file 'GSLab_Tools.egg-info/SOURCES.txt'
 running build_ext
 ============================= test session starts ==============================
-platform darwin -- Python 2.7.13, pytest-3.0.5, py-1.4.32, pluggy-0.4.0
-rootdir: /Users/leviboxell/Desktop/gslab_python, inifile: 
+platform darwin -- Python 2.7.12, pytest-3.0.6, py-1.4.31, pluggy-0.4.0
+rootdir: /Users/mrsull/Desktop/gslab_python, inifile: 
 collected 99 items
 
 gencat/tests/test_checkDicts.py ...
@@ -37,7 +40,7 @@ gslab_scons/tests/test_release_tools.py .....
 _______________________ TestLog.test_start_log_other_os ________________________
 
 self = <gslab_scons.tests.test_log.TestLog testMethod=test_start_log_other_os>
-mock_lfs = <MagicMock name='check_lfs' id='4402826640'>
+mock_lfs = <MagicMock name='check_lfs' id='4397338192'>
 
     @mock.patch('gslab_scons.log.misc.sys.platform', 'cygwin')
     @mock.patch('gslab_scons.log.misc.check_lfs')
@@ -51,10 +54,10 @@ mock_lfs = <MagicMock name='check_lfs' id='4402826640'>
         initial_stdout = sys.stdout
         gs.start_log()
 >       self.assertEqual(initial_stderr, sys.stderr)
-E       AssertionError: <_pytest.capture.EncodedFile object at 0x1058fa650> != <_pytest.capture.EncodedFile object at 0x1058fa5d0>
+E       AssertionError: <_pytest.capture.EncodedFile object at 0x1057f0350> != <_pytest.capture.EncodedFile object at 0x1057f02d0>
 
 test_log.py:115: AssertionError
-===================== 1 failed, 98 passed in 16.97 seconds =====================
+===================== 1 failed, 98 passed in 39.71 seconds =====================
 Name                                           Stmts   Miss Branch BrPart  Cover   Missing
 ------------------------------------------------------------------------------------------
 gencat/__init__.py                                 1      0      0      0   100%
@@ -94,6 +97,6 @@ gslab_scons/builders/build_tables.py               8      0      0      0   100%
 gslab_scons/log.py                                20      0      4      0   100%
 gslab_scons/misc.py                               93      0     20      0   100%
 gslab_scons/release.py                            59     59     32      0     0%   1-100
-setup.py                                          24     13      8      1    38%   9-16, 22-28, 8->9
+setup.py                                          24     12      6      0    40%   12-22, 28-34
 ------------------------------------------------------------------------------------------
-TOTAL                                           2248   1250    838     29    39%
+TOTAL                                           2248   1249    836     28    39%
