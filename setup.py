@@ -1,15 +1,31 @@
 import os
+import re
 import sys
 import shutil
 from setuptools import setup, find_packages
 from setuptools.command.build_py import build_py
 from glob import glob
  
+# Determine if the user has specified which paths to report coverage for
+is_include_arg = map(lambda x: bool(re.search('^--include=', x)), 
+                     sys.argv)
+
+if True in is_include_arg:
+    include_arg = sys.argv[is_include_arg.index(True)]
+    include_arg = sys.argv[is_include_arg.index(True)]
+    del sys.argv[is_include_arg.index(True)]
+else:
+    include_arg = None
+
 
 class TestRepo(build_py):
     '''Build command for running tests in repo'''
     def run(self):
-        coverage_command = 'coverage report -m --omit=setup.py,*/__init__.py'
+        if include_arg:
+            coverage_command = 'coverage report -m %s' % include_arg
+        else:
+            coverage_command = 'coverage report -m --omit=setup.py,*/__init__.py'
+
 
         if sys.platform != 'win32':
             os.system("coverage run --branch --source ./ setup.py test1 2>&1 "
@@ -23,6 +39,7 @@ class TestRepo(build_py):
             os.system("%s >> test.log" % coverage_command)
 
         sys.exit()
+
 
 class CleanRepo(build_py):
     '''Build command for clearing setup directories after installation'''
