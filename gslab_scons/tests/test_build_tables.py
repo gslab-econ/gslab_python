@@ -50,8 +50,7 @@ class TestBuildTables(unittest.TestCase):
         # Check that build_tables() passed arguments to tablefill() correctly.
         kwargs = mock_tablefill.call_args[1]
 
-        # i) The input argument should be the sources, 
-        #    excluding only the first, joined by spaces.
+        # i) input should be the sources (except the first) joined by spaces
         inputs = kwargs['input'].split()
         for path in source[1:len(source)]:
             self.assertIn(str(path), inputs)
@@ -65,7 +64,6 @@ class TestBuildTables(unittest.TestCase):
             target = [target]
         self.assertEqual(target[0], kwargs['output'])
 
-        # Reset the mock
         mock_tablefill.reset_mock()
 
     @mock.patch('gslab_scons.builders.build_tables.tablefill')
@@ -125,18 +123,13 @@ class TestBuildTables(unittest.TestCase):
             gs.build_tables((True, False, False), std_source, None)
 
         #== source ==========
-        # We do not expect build_tables() to raise errors when not
-        # passed a path to a .lyx file as an argument.
-        # (We may expect problems to arise in tablefill, which is mocked
-        # out here, if no input is a valid LyX file, though...)
+        # We don't errors when the source isn't a .lyx path
         source = ['nonexistent_file']
         gs.build_tables(std_target, source, None)
         self.check_call(source, std_target, mock_tablefill) 
 
-        # We do not expect build_tables() to raise errors before its
-        # tablefill() call if provided with a container of nonstrings.
-        # Instead, we expect it to convert the container's members to
-        # strings and pass them to tablefill().
+        # We don't expect errors when source is a container of nonstrings.
+        # We expect build_table() to convert containers' members to strings.
         source = (True, False, False)
         gs.build_tables(std_target, source, None)
         self.check_call(source, std_target, mock_tablefill)   
