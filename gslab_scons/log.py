@@ -39,5 +39,5 @@ def log_timestamp(start_time, end_time, filename = 'sconstruct.log'):
         content = f.read()
         f.seek(0, 0)
         f.write('\n*** Builder log created:    ' + start_time + '\n' + 
-                '*** Builder log completed:  ' + end_time   + '\n \n' + content)
+                 '*** Builder log completed:  ' + end_time   + '\n \n' + content)
     return None

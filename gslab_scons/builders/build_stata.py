@@ -23,24 +23,29 @@ def build_stata(target, source, env):
     Note: the user can specify a flavour by typing `scons sf=StataMP` 
     (By default, SCons will try to find each flavour). 
     '''
-    start_time =  misc.current_time()
-    cl_arg     = misc.command_line_arg(env)
 
+    #Prelims
     source       = misc.make_list_if_string(source)
     target       = misc.make_list_if_string(target)
-    source_file  = str(source[0])
-    target_file  = str(target[0])
+    start_time =  misc.current_time()
 
-    target_dir   = os.path.dirname(target_file)
+    # Setup source file and the original location of the log
+    source_file = str(source[0])
     misc.check_code_extension(source_file, '.do')
-    log_file     = target_dir + '/sconscript.log'
-    loc_log      = os.path.basename(source_file).replace('.do','.log')
+    loc_log  = os.path.basename(source_file).replace('.do','.log')
+
+    # Setup log file destination
+    log_dir     = os.path.dirname(str(target[0]))
+    log_file    = log_dir + '/sconscript.log'
+    
+    # Setup command line arguments
+    cl_arg      = misc.command_line_arg(env)
 
     executable       = misc.get_stata_executable(env)
     command_skeleton = misc.get_stata_command(executable)
 
     try:
-        command = command_skeleton % source_file
+        command = command_skeleton % (source_file, cl_arg)
         subprocess.check_output(command, 
                                 stderr = subprocess.STDOUT,
                                 shell  = True)

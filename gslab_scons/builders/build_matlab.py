@@ -35,7 +35,7 @@ def build_matlab(target, source, env):
     target       = misc.make_list_if_string(target)
     
     source_file  = str(source[0])
-    misc.check_code_extension(source_file, 'matlab')
+    misc.check_code_extension(source_file, '.m')
 
     target_dir   = os.path.dirname(str(target[0]))
     log_file     = target_dir + '/sconscript.log'

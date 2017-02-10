@@ -59,6 +59,7 @@ def check_lfs():
                   Please install Git LFS or run 'git lfs install --force' if prompted above.''')
     return None
 
+
 def command_line_arg(env):
     try:
         cl_arg = env['CL_ARG']
@@ -113,7 +114,7 @@ def get_stata_command(executable):
     return command
 
 
-def stata_command_unix(flavor, cl_arg = ''):
+def stata_command_unix(flavor):
     '''
     This function returns the appropriate Stata command for a user's 
     Unix platform.
@@ -122,16 +123,16 @@ def stata_command_unix(flavor, cl_arg = ''):
                'linux' : '-b',
                'linux2': '-b'}
     option  = options[platform]
-    command = flavor + ' ' + option + ' %s ' + cl_arg # %s will take filename later
+    command = flavor + ' ' + option + ' %s %s'  # %s will take filename later
     return command
 
 
-def stata_command_win(flavor, cl_arg = ''):
+def stata_command_win(flavor):
     '''
     This function returns the appropriate Stata command for a user's 
     Windows platform.
     '''
-    command  = flavor + ' /e do' + ' %s ' + cl_arg # %s will take filename later
+    command  = flavor + ' /e do' + ' %s %s'  # %s will take filename later
     return command
 
 
@@ -180,19 +181,11 @@ def make_list_if_string(source):
     return source
 
 
-def check_code_extension(source_file, software):
+def check_code_extension(source_file, extension):
     '''
     This function raises an exception if `source_file`'s extension
     does not match the software package specified by `software`.
     '''
-
-    extensions = {'stata'  : '.do',
-                  'r'      : '.r', 
-                  'lyx'    : '.lyx',
-                  'python' : '.py',
-                  'matlab' : '.m'}
-    ext = extensions[software]
-
     source_file = str.lower(str(source_file))
     extension   = str.lower(str(extension))
     if not source_file.endswith(extension):

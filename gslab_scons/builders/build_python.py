@@ -31,9 +31,12 @@ def build_python(target, source, env):
     log_dir     = os.path.dirname(str(target[0]))
     log_file    = log_dir + '/sconscript.log'
 
+    # Setup command line arguments
+    cl_arg      = misc.command_line_arg(env)
+
     # System call
     try:
-        command = 'python %s > %s' % (source_file, log_file)
+        command = 'python %s %s > %s' % (source_file, cl_arg, log_file)
         subprocess.check_output(command,
                                 stderr = subprocess.STDOUT,
                                 shell = True)

@@ -24,20 +24,18 @@ class test_misc(unittest.TestCase):
     @unittest.skipIf(sys.platform.startswith("win"), 
         "skipped test_stata_command_unix because on a windows machine")
     def test_stata_command_unix(self):
-        cl_arg = 'test'
-    	output = misc.stata_command_unix('flavor', cl_arg)
+    	output = misc.stata_command_unix('flavor')
     	if sys.platform == 'darwin':
     		option = '-e'
     	else:
     		option = '-b'
-    	self.assertEqual(output, 'flavor %s' % (option) + ' %s ' + cl_arg)
+    	self.assertEqual(output, 'flavor %s' % (option) + ' %s %s')
 
     @unittest.skipUnless(sys.platform.startswith("win"), 
         "skipped test_stata_command_win because on a unix machine")
     def test_stata_command_win(self):
-        cl_arg = 'test'
-    	output = misc.stata_command_win('flavor', cl_arg)
-    	self.assertEqual(output, 'flavor %s' % ('/e do') + ' %s ' + cl_arg)
+    	output = misc.stata_command_win('flavor')
+    	self.assertEqual(output, 'flavor %s' % ('/e do') + ' %s %s' )
 
     def test_is_unix(self):
         self.assertEqual(misc.is_unix(), not sys.platform.startswith("win"))
@@ -73,15 +71,15 @@ class test_misc(unittest.TestCase):
         This method tests that check_code_extensions() associates software with 
         file extensions as intended.
         '''
-    	self.assertEqual(misc.check_code_extension('test.do',  'stata'),  None)
-    	self.assertEqual(misc.check_code_extension('test.r',   'r'),      None)
-    	self.assertEqual(misc.check_code_extension('test.lyx', 'lyx'),    None)
-        self.assertEqual(misc.check_code_extension('test.py',  'python'), None)
-        self.assertEqual(misc.check_code_extension('test.m',   'matlab'), None)
-        self.assertEqual(misc.check_code_extension('test.M',   'matlab'), None)
+    	self.assertEqual(misc.check_code_extension('test.do',  '.do'),  None)
+    	self.assertEqual(misc.check_code_extension('test.r',   '.r'),      None)
+    	self.assertEqual(misc.check_code_extension('test.lyx', '.lyx'),    None)
+        self.assertEqual(misc.check_code_extension('test.py',  '.py'), None)
+        self.assertEqual(misc.check_code_extension('test.m',   '.m'), None)
+        self.assertEqual(misc.check_code_extension('test.M',   '.M'), None)
     	
         with self.assertRaises(BadExtensionError), nostderrout():
-            misc.check_code_extension('test.badextension', 'python')
+            misc.check_code_extension('test.badextension', '.py')
 
     def test_current_time(self):
         '''Test that current_time() prints times in the expected format'''
