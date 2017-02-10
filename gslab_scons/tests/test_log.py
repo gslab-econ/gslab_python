@@ -3,6 +3,8 @@ import sys
 import os
 import mock
 import time
+# Import gslab_scons testing helpers
+import _test_helpers as helpers
 
 # Ensure that Python can find and load the GSLab libraries
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -12,6 +14,10 @@ import gslab_scons.log as gs
 import gslab_scons.misc as misc
 import gslab_scons._exception_classes as ex_classes
 from gslab_make.tests import nostderrout
+
+# Define path to the builder for use in patching
+path = 'gslab_scons.log.misc'
+
 
 class TestLog(unittest.TestCase):
 
@@ -23,8 +29,8 @@ class TestLog(unittest.TestCase):
         if os.path.isfile('sconstruct.log'):
             os.remove('sconstruct.log')
 
-    # Set the platform to darwin (sys.platform = 'darwin' on  Mac machines).
-    @mock.patch('gslab_scons.log.misc.sys.platform', 'darwin')
+    # Mock a Unix platform (sys.platform = 'darwin' on  Mac machines).
+    @helpers.platform_patch('darwin', path)
     @mock.patch('gslab_scons.log.misc.check_lfs')
     def test_start_log_stdout_on_unix(self, mock_lfs):
         '''
@@ -42,7 +48,7 @@ class TestLog(unittest.TestCase):
             log_contents = f.read()
         self.assertEqual("Test message", log_contents.strip())
 
-    @mock.patch('gslab_scons.log.misc.sys.platform', 'darwin')
+    @helpers.platform_patch('darwin', path)
     @mock.patch('gslab_scons.log.os.popen')
     @mock.patch('gslab_scons.log.open')
     @mock.patch('gslab_scons.log.misc.check_lfs')
@@ -59,7 +65,7 @@ class TestLog(unittest.TestCase):
         mock_open.assert_not_called()
 
     # Set the platform to Windows
-    @mock.patch('gslab_scons.log.sys.platform', 'win32')
+    @helpers.platform_patch('win32', path)
     @mock.patch('gslab_scons.log.misc.check_lfs')
     def test_start_log_stdout_on_windows(self, mock_lfs):
         '''
@@ -77,7 +83,7 @@ class TestLog(unittest.TestCase):
             log_contents = f.read()
         self.assertEqual("Test message", log_contents.strip())
 
-    @mock.patch('gslab_scons.log.misc.sys.platform', 'win32')
+    @helpers.platform_patch('win32', path)
     @mock.patch('gslab_scons.log.os.popen')
     @mock.patch('gslab_scons.log.open')
     @mock.patch('gslab_scons.log.misc.check_lfs')
@@ -101,7 +107,7 @@ class TestLog(unittest.TestCase):
         with self.assertRaises(ex_classes.LFSError), nostderrout():
             gs.start_log()
 
-    @mock.patch('gslab_scons.log.misc.sys.platform', 'cygwin')
+    @helpers.platform_patch('cygwin', path)
     @mock.patch('gslab_scons.log.misc.check_lfs')
     def test_start_log_other_os(self, mock_lfs):
         '''
@@ -121,7 +127,7 @@ class TestLog(unittest.TestCase):
         gs.start_log()
         self.assertEqual(sys.stderr, test_file)
         
-    @mock.patch('gslab_scons.log.misc.sys.platform', 'darwin')
+    @helpers.platform_patch('darwin', path)
     @mock.patch('gslab_scons.log.misc.check_lfs')
     def test_start_log_nonstring_input(self, mock_lfs):
         '''
