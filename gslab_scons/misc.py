@@ -183,7 +183,7 @@ def make_list_if_string(source):
 
 def check_code_extension(source_file, extension):
     '''
-    This function raises an exception if `source_file`'s extension
+    This function raises an exception if the extension in `source_file`
     does not match the software package specified by `software`.
     '''
     source_file = str.lower(str(source_file))
@@ -203,7 +203,7 @@ def command_error_msg(executable, call):
 
 def current_time():
     '''
-    This function returns the current time in a a Y-M-D H:M:S format.
+    This function returns the current time in a Y-M-D H:M:S format.
     '''
     return datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')   
 

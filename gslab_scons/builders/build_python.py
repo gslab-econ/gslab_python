@@ -16,6 +16,7 @@ def build_python(target, source, env):
     source: string or list
         The source(s) of the SCons command. The first source specified
         should be the Python script that the builder is intended to execute. 
+    env: SCons construction environment, see SCons user guide 7.2
     '''
 
     # Prelims
@@ -23,15 +24,15 @@ def build_python(target, source, env):
     target      = misc.make_list_if_string(target)
     start_time  = misc.current_time()
 
-    # Setup source file
+    # Set up source file
     source_file = str(source[0])
     misc.check_code_extension(source_file, '.py')
 
-    # Setup log file
+    # Set up log file
     log_dir     = os.path.dirname(str(target[0]))
     log_file    = log_dir + '/sconscript.log'
 
-    # Setup command line arguments
+    # Set up command line arguments
     cl_arg      = misc.command_line_arg(env)
 
     # System call
@@ -39,9 +40,9 @@ def build_python(target, source, env):
         command = 'python %s %s > %s' % (source_file, cl_arg, log_file)
         subprocess.check_output(command,
                                 stderr = subprocess.STDOUT,
-                                shell = True)
+                                shell  = True)
     except subprocess.CalledProcessError:
-        message = system_call_error("Python", command)
+        message = command_error_msg("Python", command)
         raise BadExecutableError(message)
 
     # Close log

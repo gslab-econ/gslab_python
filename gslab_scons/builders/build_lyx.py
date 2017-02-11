@@ -20,6 +20,7 @@ def build_lyx(target, source, env):
     source: string or list
         The source of the SCons command. This should
         be the .lyx file that the function will compile as a PDF.
+    env: SCons construction environment, see SCons user guide 7.2
 
     '''
     # Prelims
@@ -27,11 +28,11 @@ def build_lyx(target, source, env):
     target      = misc.make_list_if_string(target)
     start_time  = misc.current_time()
     
-    # Setup source file
+    # Set up source file
     source_file = str(source[0])
     misc.check_code_extension(source_file, '.lyx')
 
-    # Setup target file and log file
+    # Set up target file and log file
     newpdf      = source_file.replace('.lyx','.pdf')
     target_file = str(target[0])
     target_dir  = os.path.dirname(target_file)
@@ -42,11 +43,11 @@ def build_lyx(target, source, env):
         command = 'lyx -e pdf2 %s > %s' % (source_file, log_file)
         subprocess.check_output(command,
                                 stderr = subprocess.STDOUT,
-                                shell = True)
+                                shell  = True)
         # Move rendered pdf to the target
         shutil.move(newpdf, target_file)
     except subprocess.CalledProcessError:
-        message = system_call_error("lyx", command)
+        message = command_error_msg("lyx", command)
         raise BadExecutableError(message)
 
     # Close log

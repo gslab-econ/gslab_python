@@ -19,6 +19,7 @@ def build_stata(target, source, env):
     source: string or list
         The source(s) of the SCons command. The first source specified
         should be the Stata .do script that the builder is intended to execute. 
+    env: SCons construction environment, see SCons user guide 7.2
 
     Note: the user can specify a flavour by typing `scons sf=StataMP` 
     (By default, SCons will try to find each flavour). 
@@ -29,16 +30,16 @@ def build_stata(target, source, env):
     target       = misc.make_list_if_string(target)
     start_time =  misc.current_time()
 
-    # Setup source file and the original location of the log
+    # Set up source file and the original location of the log
     source_file = str(source[0])
     misc.check_code_extension(source_file, '.do')
     loc_log  = os.path.basename(source_file).replace('.do','.log')
 
-    # Setup log file destination
+    # Set up log file destination
     log_dir     = os.path.dirname(str(target[0]))
     log_file    = log_dir + '/sconscript.log'
     
-    # Setup command line arguments
+    # Set up command line arguments
     cl_arg      = misc.command_line_arg(env)
 
     executable       = misc.get_stata_executable(env)

@@ -20,6 +20,7 @@ def build_matlab(target, source, env):
     source: string or list
         The source(s) of the SCons command. The first source specified
         should be the Matlab .M script that the builder is intended to execute. 
+    env: SCons construction environment, see SCons user guide 7.2
 
 	'''
     start_time =  misc.current_time()

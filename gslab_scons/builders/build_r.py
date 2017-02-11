@@ -18,17 +18,18 @@ def build_r(target, source, env):
     source: string or list
         The source(s) of the SCons command. The first source specified
         should be the R script that the builder is intended to execute. 
+    env: SCons construction environment, see SCons user guide 7.2
     '''
     # Prelims
     source      = misc.make_list_if_string(source)
     target      = misc.make_list_if_string(target)
     start_time  = misc.current_time()
 
-    # Setup source file
+    # Set up source file
     source_file = str(source[0])
     misc.check_code_extension(source_file, '.r')
  
-    # Setup log file
+    # Set up log file
     log_dir     = os.path.dirname(str(target[0]))
     log_file    = log_dir + '/sconscript.log'
 
@@ -42,9 +43,9 @@ def build_r(target, source, env):
         command = 'R CMD BATCH --no-save %s %s %s' % (cl_arg, source_file, log_file)
         subprocess.check_output(command,
                                 stderr = subprocess.STDOUT,
-                                shell = True)
+                                shell  = True)
     except subprocess.CalledProcessError:
-        message = system_call_error("R", command)
+        message = command_error_msg("R", command)
         raise BadExecutableError(message)
 
     # Close log

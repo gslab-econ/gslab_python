@@ -1,31 +1,23 @@
 import os
 import sys
-import shutil
-import subprocess
 import gslab_scons.misc as misc
-from datetime import datetime
-from sys import platform
-from misc import is_unix, check_lfs
-
 
 def start_log(mode, vers, log = 'sconstruct.log'):
     '''Begins logging a build process'''
-    check_lfs()
+    misc.check_lfs()
     
     if not (mode in ['develop', 'cache', 'release']):
-        print("Error: %s is not a defined mode" % mode)
-        sys.exit()
+        raise Exception("Error: %s is not a defined mode" % mode)
     if mode == 'release' and vers == '':
-        print("Error: Version must be defined in release mode")
-        sys.exit()
+        raise Exception("Error: Version must be defined in release mode")
 
-    start_message = "\n{0}{0}{0} New build: " + misc.current_time() + " {0}{0}{0}"
+    start_message = "\n{0}{0}{0} New build: %s {0}{0}{0}" % misc.current_time()
     with open(log, "a") as f:
         f.write(start_message.format("*"))
 
-    if is_unix():
+    if misc.is_unix():
         sys.stdout = os.popen('tee -a %s' % log, 'wb')
-    elif platform == 'win32':
+    elif sys.platform == 'win32':
         sys.stdout = open(log, 'ab')
     sys.stderr = sys.stdout 
     print start_message.format("^")
@@ -38,6 +30,9 @@ def log_timestamp(start_time, end_time, filename = 'sconstruct.log'):
     with open(filename, mode = 'r+U') as f:
         content = f.read()
         f.seek(0, 0)
-        f.write('\n*** Builder log created:    ' + start_time + '\n' + 
-                 '*** Builder log completed:  ' + end_time   + '\n \n' + content)
+        f.write('''
+                *** Builder log created: %s 
+                *** Builder log completed: %s
+                %s
+                ''' % (start_time, end_time, content))
     return None
