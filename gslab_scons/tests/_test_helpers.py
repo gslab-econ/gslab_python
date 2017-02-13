@@ -194,3 +194,31 @@ def test_cl_args(test_object, builder, system_mock, extension,
 
     test_object.assertEqual(len(args.split(' ')), 3)
     check_log(test_object, './sconscript.log')
+
+def mock_release_data(args):
+    org              = args['org']
+    repo             = args['repo']
+    version          = args['vers']
+    target_commitish = args['target_commitish']
+
+    mock_release_data = \
+        ','.join([
+              '[{"url":'
+                  '"https://api.github.com/'
+                  'repos/%s/%s/releases/test_ID"' % (org, repo),
+               '"assets_url":'
+                  'https://api.github.com/'
+                  'repos/%s/%s/releases/test_ID/assets"' % (org, repo),
+               '"upload_url":'
+                  '"https://uploads.github.com/'
+                  'repos/%s/%s/releases/test_ID/assets{?name,label}"' % (org, repo),
+               '"html_url":'
+                  '"https://github.com/'
+                  '%s/%s/releases/tag/%s"' % (org, repo, version),
+               '"id":test_ID',
+               '"tag_name":"%s"' % version,
+               '"target_commitish":"%s"' % target_commitish,
+               '"name":"%s"' % version,
+               '"draft":false',
+               '"prerelease":false}]']) 
+    return mock_release_data

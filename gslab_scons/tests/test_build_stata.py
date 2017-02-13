@@ -78,6 +78,32 @@ class TestBuildStata(unittest.TestCase):
             helpers.standard_test(self, gs.build_stata, 'do', 
                               env = env, system_mock = mock_check)
 
+    @helpers.platform_patch('cygwin', path)
+    @mock.patch('%s.misc.is_in_path'         % path)
+    @mock.patch('%s.subprocess.check_output' % path)
+    def test_other_platform(self, mock_check, mock_path):
+        '''
+        Test build_stata()'s standard behaviour on a non-Unix,
+        non-win32 machine.
+        '''
+        mock_check.side_effect = fx.make_stata_side_effect('stata-mp')
+        # Mock is_in_path() to finds just one flavor of Stata 
+        mock_path.side_effect = lambda *args, **kwargs: args[0] == 'stata-mp'
+
+        # build_stata() will fail to define a command irrespective of
+        # whether a user_flavour is specified
+        env = {'user_flavor' : 'stata-mp'}
+        with self.assertRaises(NameError):
+            gs.build_stata(target = './test_output.txt', 
+                           source = './test_script.do', 
+                           env    = env)
+
+        env = {'user_flavor' : None}
+        with self.assertRaises(NameError):
+            gs.build_stata(target = './test_output.txt', 
+                           source = './test_script.do', 
+                           env    = env)
+    
 
     @helpers.platform_patch('darwin', path)
     @mock.patch('%s.subprocess.check_output' % path)
@@ -110,6 +136,31 @@ class TestBuildStata(unittest.TestCase):
             gs.build_stata(target = './test_output.txt', 
                            source = './test_script.do', 
                            env    = env)
+
+    @mock.patch('%s.misc.is_in_path'         % path)
+    @mock.patch('%s.subprocess.check_output' % path)
+    def test_no_executable_in_path(self, mock_check, mock_path):
+        '''
+        Test build_stata()'s behaviour when there no valid Stata
+        executables in the user's path variable
+        '''
+        # We mock the system to only find an executable called Rscript
+        # in the path.
+        mock_check.side_effect = fx.make_stata_side_effect('Rscript')
+        # Mock is_in_path() to finds just one flavor of Stata 
+        mock_path.side_effect = lambda *args, **kwargs: args[0] == 'Rscript'
+
+        env = {'user_flavor': None}
+        with helpers.platform_patch('darwin', path), self.assertRaises(NameError):
+            gs.build_stata(target = './test_output.txt', 
+                           source = './test_script.do', 
+                           env    = env)
+
+        with helpers.platform_patch('win32', path), self.assertRaises(NameError):
+            gs.build_stata(target = './test_output.txt', 
+                           source = './test_script.do', 
+                           env    = env)
+
 
     @mock.patch('%s.subprocess.check_output' % path)
     def test_unavailable_executable(self, mock_check):

@@ -19,7 +19,8 @@ def build_stata(target, source, env):
         The target(s) of the SCons command.
     source: string or list
         The source(s) of the SCons command. The first source specified
-        should be the Stata .do script that the builder is intended to execute. 
+        should be the Stata .do script that the builder is intended to 
+        execute. 
 
     Note: the user can specify a flavour by typing `scons sf=StataMP` 
     (By default, SCons will try to find each flavour). 
