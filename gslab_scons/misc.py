@@ -176,8 +176,11 @@ def is_exe(file_path):
 
 def make_list_if_string(source):
     '''Convert a string input into a singleton list containing that string.'''
-    if isinstance(source, str):
-        source = [source]
+    if not isinstance(source, list):
+        if isinstance(source, str):
+            source = [source]
+        else:
+            raise TypeError("Scons source/target input must be either list or string.")
     return source
 
 
