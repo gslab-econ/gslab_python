@@ -33,7 +33,7 @@ def end_log(log = 'sconstruct.log'):
         f.write(end_message)
 
     # scan sconstruct.log for start time (if looks unpythonic, see xkcd 1171)
-    with open('sconstruct.log', "r") as f:
+    with open('sconstruct.log', "rU") as f:
         s = f.readline()
         s = s[s.find('{')+1: s.find('}')]
         start_time = datetime.strptime(s, "%Y-%m-%d %H:%M:%S")

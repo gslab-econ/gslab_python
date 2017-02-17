@@ -33,7 +33,7 @@ def build_lyx(target, source, env):
     misc.check_code_extension(source_file, '.lyx')
 
     # Set up target file and log file
-    newpdf      = source_file.replace('.lyx','.pdf')
+    newpdf      = source_file[:-4] + '.pdf'
     target_file = str(target[0])
     target_dir  = os.path.dirname(target_file)
     log_file    = target_dir + '/sconscript.log'
