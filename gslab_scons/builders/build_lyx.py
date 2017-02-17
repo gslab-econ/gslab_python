@@ -47,7 +47,7 @@ def build_lyx(target, source, env):
         # Move rendered pdf to the target
         shutil.move(newpdf, target_file)
     except subprocess.CalledProcessError:
-        message = command_error_msg("lyx", command)
+        message = misc.command_error_msg("lyx", command)
         raise BadExecutableError(message)
 
     # Close log

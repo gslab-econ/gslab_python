@@ -42,7 +42,7 @@ def build_python(target, source, env):
                                 stderr = subprocess.STDOUT,
                                 shell  = True)
     except subprocess.CalledProcessError:
-        message = command_error_msg("Python", command)
+        message = misc.command_error_msg("Python", command)
         raise BadExecutableError(message)
 
     # Close log

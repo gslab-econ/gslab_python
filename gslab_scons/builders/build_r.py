@@ -45,7 +45,7 @@ def build_r(target, source, env):
                                 stderr = subprocess.STDOUT,
                                 shell  = True)
     except subprocess.CalledProcessError:
-        message = command_error_msg("R", command)
+        message = misc.command_error_msg("R", command)
         raise BadExecutableError(message)
 
     # Close log
