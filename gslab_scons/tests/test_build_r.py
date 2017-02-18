@@ -24,7 +24,7 @@ class testbuild_r(unittest.TestCase):
         env = {}
         build_r('../build/r.rds', './input/R_test_script.R', env)
         logfile_data = open('../build/sconscript.log', 'rU').read()
-        self.assertIn('Log created:', logfile_data)
+        self.assertIn('Builder log created:', logfile_data)
         if os.path.isfile('../build/sconscript.log'):
             os.remove('../build/sconscript.log')
 

@@ -57,6 +57,8 @@ def check_lfs():
         except:
             raise LFSError('''Either Git LFS is not installed or your Git LFS settings need to be updated. 
                   Please install Git LFS or run 'git lfs install --force' if prompted above.''')
+    return None
+
 
 def command_line_arg(env):
     try:
@@ -65,7 +67,54 @@ def command_line_arg(env):
         cl_arg = ''
     return cl_arg
 
-def stata_command_unix(flavor, cl_arg = ''):
+
+def get_stata_executable(env):
+    '''Return OS command to call Stata.
+    
+    This helper function returns a command (str) for Unix Bash or
+    Windows cmd to carry a Stata batch job. 
+
+    The function will check for user input in Scons env with
+    the flag e.g. `sf=StataMP-64.exe`. With no user input,
+    the function loops through common Unix and Windows executables
+    and searches them in the system environment.
+    '''
+    # Get environment's user input flavor. Empty default = None.
+    user_flavor  = env['user_flavor']  
+
+    if user_flavor is not None:
+        return user_flavor
+    else:
+        flavors = ['stata-mp', 'stata-se', 'stata']
+        if is_unix():
+            for flavor in flavors:
+                if is_in_path(flavor): # check in $PATH
+                    return flavor
+        elif platform == 'win32':
+            try:
+                # Check in system environment variables
+                key_exist = os.environ['STATAEXE'] is not None
+                return "%%STATAEXE%%"
+            except KeyError:
+                # Try StataMP.exe and StataMP-64.exe, etc.
+                flavors = [(f.replace('-', '') + '.exe') for f in flavors]
+                if is_64_windows():
+                    flavors = [f.replace('.exe', '-64.exe') for f in flavors]
+                for flavor in flavors:
+                    if is_in_path(flavor):
+                        return flavor
+    return None
+
+
+def get_stata_command(executable):
+    if is_unix():
+        command = stata_command_unix(executable)
+    elif platform == 'win32':
+        command = stata_command_win(executable)
+    return command
+
+
+def stata_command_unix(flavor):
     '''
     This function returns the appropriate Stata command for a user's 
     Unix platform.
@@ -74,16 +123,16 @@ def stata_command_unix(flavor, cl_arg = ''):
                'linux' : '-b',
                'linux2': '-b'}
     option  = options[platform]
-    command = flavor + ' ' + option + ' %s ' + cl_arg # %s will take filename later
+    command = flavor + ' ' + option + ' %s %s'  # %s will take filename and cl_arg later
     return command
 
 
-def stata_command_win(flavor, cl_arg = ''):
+def stata_command_win(flavor):
     '''
     This function returns the appropriate Stata command for a user's 
     Windows platform.
     '''
-    command  = flavor + ' /e do' + ' %s ' + cl_arg # %s will take filename later
+    command  = flavor + ' /e do' + ' %s %s'  # %s will take filename later
     return command
 
 
@@ -117,7 +166,7 @@ def is_in_path(program):
             exe = os.path.join(path, program)
             if is_exe(exe):
                 return exe
-    return None
+    return False
 
 
 def is_exe(file_path):
@@ -127,31 +176,37 @@ def is_exe(file_path):
 
 def make_list_if_string(source):
     '''Convert a string input into a singleton list containing that string.'''
-    if isinstance(source, str):
-        source = [source]
+    if not isinstance(source, list):
+        if isinstance(source, str):
+            source = [source]
+        else:
+            raise TypeError("Scons source/target input must be either list or string.")
     return source
 
 
-def check_code_extension(source_file, software):
+def check_code_extension(source_file, extension):
     '''
-    This function raises an exception if `source_file`'s extension
+    This function raises an exception if the extension in `source_file`
     does not match the software package specified by `software`.
     '''
-    extensions = {'stata'  : '.do',
-                  'r'      : '.r', 
-                  'lyx'    : '.lyx',
-                  'python' : '.py',
-                  'matlab' : '.m'}
-    ext = extensions[software]
     source_file = str.lower(str(source_file))
-    if not source_file.endswith(ext):
-        raise BadExtensionError('First argument, ' + source_file + ', must be a ' + ext + ' file')
+    extension   = str.lower(str(extension))
+    if not source_file.endswith(extension):
+        raise BadExtensionError('First argument, ' + source_file + ', must be a ' + extension + ' file')
     return None
+
+
+def command_error_msg(executable, call):
+    ''' This function prints an informative message given a CalledProcessError.'''
+    return '''Could not call %s.
+              Please check that the executable, source, and target files
+              are correctly specified. 
+              Command tried: %s''' % (executable, call) 
 
 
 def current_time():
     '''
-    This function returns the current time in a a Y-M-D H:M:S format.
+    This function returns the current time in a Y-M-D H:M:S format.
     '''
     return datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')   
 

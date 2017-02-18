@@ -28,9 +28,8 @@ class test_log(unittest.TestCase):
         # as intended.
         with open('test.txt', 'rU') as f:
             content = f.read()
-        self.assertEqual(content, 'Log created:    ' + 'test_time_start'+ '\n' + 
-                                  'Log completed:  ' + 'test_time_end'  + '\n \n' + 
-                                  'TEST CONTENT')
+        test_message = '*** Builder log created: {test_time_start} \n*** Builder log completed: {test_time_end} \n TEST CONTENT'
+        self.assertEqual(content, test_message)
         os.remove('test.txt')
        
 
