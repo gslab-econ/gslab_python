@@ -123,7 +123,7 @@ def stata_command_unix(flavor):
                'linux' : '-b',
                'linux2': '-b'}
     option  = options[platform]
-    command = flavor + ' ' + option + ' %s %s'  # %s will take filename later
+    command = flavor + ' ' + option + ' %s %s'  # %s will take filename and cl_arg later
     return command
 
 

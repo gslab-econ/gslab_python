@@ -2,6 +2,7 @@ import os
 import subprocess
 import gslab_scons.misc as misc
 from gslab_scons import log_timestamp
+from gslab_scons._exception_classes import BadExecutableError
 
 def build_python(target, source, env):
     '''Build SCons targets using a Python script

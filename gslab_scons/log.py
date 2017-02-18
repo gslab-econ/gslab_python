@@ -47,8 +47,8 @@ def end_log(log = 'sconstruct.log'):
     this_run_list = sorted(this_run_dict, key=this_run_dict.get, reverse=True)
 
     with open('sconstruct.log', "a") as sconstruct:
-        for file in this_run_list:
-            with open(file, 'rU') as sconscript:
+        for f in this_run_list:
+            with open(f, 'rU') as sconscript:
                 sconstruct.write(sconscript.read())
 
     return None
@@ -70,13 +70,13 @@ def collect_builder_logs(parent_dir):
     builder_log_collect = {}
 
     for root, dirs, files in os.walk(parent_dir): # take a walk in parent and child dirs
-        for file in files:
-            if file.endswith("sconscript.log"):
-                full_file = os.path.join(root, file)
-                with open(full_file, 'rU') as f:
+        for f in files:
+            if f.endswith("sconscript.log"):
+                f_full = os.path.join(root, f)
+                with open(f_full, 'rU') as f:
                     s = f.readlines()[1] # skip a line
                     s = s[s.find('{')+1: s.find('}')] # find {} time identifier 
                     builder_log_end_time = datetime.strptime(s, "%Y-%m-%d %H:%M:%S")
-                builder_log_collect[full_file] = builder_log_end_time
+                builder_log_collect[f_full] = builder_log_end_time
 
     return builder_log_collect
