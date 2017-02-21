@@ -44,7 +44,6 @@ class TestBuildTables(unittest.TestCase):
         using its source argument, its target argument, and a mock 
         for gslab_fill.table_fill()
         '''
-        # Check that build_tables() called tablefill(()
         mock_tablefill.assert_called_once()
 
         # Check that build_tables() passed arguments to tablefill() correctly.

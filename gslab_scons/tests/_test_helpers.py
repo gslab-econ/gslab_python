@@ -32,6 +32,7 @@ def platform_patch(platform, path):
     return total_patch
 
 def command_match(command, executable, which = None):
+    '''Parse Python, R, and Stata system calls as re.match objects'''
     if executable in ['python', 'py']:
         match = re.match('\s*'
                          '(?P<executable>python)'
@@ -91,7 +92,8 @@ def check_log(test_object, log_path, timestamp = True):
 def bad_extension(test_object, builder, 
                   bad  = 'bad',
                   good = None,
-                  env = {}):
+                  env  = {}):
+    '''Ensure builders fail when their first sources have bad extensions'''
     if good:
         source = [bad, good]
     else:
@@ -108,7 +110,7 @@ def standard_test(test_object, builder,
                   source = None,
                   target = None,
                   env    = None):
-
+    '''Test that builders run without errors and create logs properly.'''
     if not source:
         source = './test_script.%s' % extension
     if not target:
@@ -136,6 +138,7 @@ def input_check(test_object, builder, extension,
                 target = 'missing',
                 env    = 'missing',
                 error  = 'missing'):
+    '''Test builders' behaviour when passed unconventional arguments.'''
     # If alternatives are not provided, define 
     # standard builder arguments
     if source == 'missing':
@@ -153,9 +156,11 @@ def input_check(test_object, builder, extension,
             builder(source = source, target = target, env = env)
 
 
-def test_cl_args(test_object, builder, system_mock, extension,
-                 env = {}):
-    
+def test_cl_args(test_object, builder, system_mock, extension, env = {}):
+    '''
+    Ensure that builders correctly include command line arguments in
+    their system calls.
+    '''
     source = './test_script.%s' % extension
     target = './test_output.txt'
 
@@ -195,7 +200,15 @@ def test_cl_args(test_object, builder, system_mock, extension,
     test_object.assertEqual(len(args.split(' ')), 3)
     check_log(test_object, './sconscript.log')
 
+
 def mock_release_data(args):
+    '''
+    Create a mock of the content attribute of a requests.session 
+    object's get() method for a GitHub api session. The `args` argument
+    should be a dictionary storing a GitHub repo's name and organisation,
+    the version of a release, and a value for get().content's
+    target_commitish field. 
+    '''
     org              = args['org']
     repo             = args['repo']
     version          = args['vers']

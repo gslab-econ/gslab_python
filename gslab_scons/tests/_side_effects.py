@@ -178,6 +178,7 @@ def post_side_effect(*args, **kwargs):
 
   return mock_output  
 
+
 def dot_git_open_side_effect(repo   = 'repo',
                              org    = 'org',
                              branch = 'branch',
@@ -223,7 +224,6 @@ def dot_git_open_side_effect(repo   = 'repo',
 #== Side effects for testing create_size_dictionary() ===
 # These functions mock a directory containing files of various sizes
 # and a system that recognises no directory other than that one.
-
 def isdir_side_effect(*args, **kwargs):
     '''
     Mock os.path.isdir() so that it only recognises ./test_files/
@@ -234,6 +234,7 @@ def isdir_side_effect(*args, **kwargs):
         raise TypeError('coercing to Unicode: need string or buffer, '
                         '%s found' % type(path))
     return path == 'test_files'
+
 
 def walk_side_effect(*args, **kwargs):
     '''
@@ -250,6 +251,7 @@ def walk_side_effect(*args, **kwargs):
 
     for i in range(len(roots)):
         yield (roots[i], directories[i], files[i])
+
 
 def getsize_side_effect(*args, **kwargs):
     '''

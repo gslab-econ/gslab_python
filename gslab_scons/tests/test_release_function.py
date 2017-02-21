@@ -110,8 +110,6 @@ class TestReleaseFunction(unittest.TestCase):
         # Did it create the temporary directory for to-be-zipped release files?
         mock_makedirs.assert_any_call('release_content')
 
-
-
     def check_release(self, args, mock_session, mock_upload, mock_copy, 
                       mock_make_archive, mock_move):
         
@@ -289,41 +287,32 @@ class TestReleaseFunction(unittest.TestCase):
                       "Drive shouldn't raise an error!")
 
         # local_release is of an inappropriate type 
-        test_args = copy.deepcopy(args)
-        test_args['local_release'] = 1
-        with self.assertRaises(AttributeError):
-            tools.release(**test_args)
-
+        self.check_failure({'local_release': 1}, AttributeError)
         # local_release doesn't contain a /release/ subdirectory. Caps matter!
-        test_args = copy.deepcopy(args)
-        test_args['local_release'] = 'root/Release/folder'      
-        with self.assertRaises(ReleaseError):
-            tools.release(**test_args)   
+        self.check_failure({'local_release': 'root/Release/folder'}, 
+                           ReleaseError)
 
-        # org/repo refers to a nonexistent GitHub repository
-        test_args = copy.deepcopy(args)
-        test_args['org'] = 'orgg' # Misspelling
-        with self.assertRaises(requests.exceptions.HTTPError):
+        # org/repo referss to a nonexistent GitHub repository
+        self.check_failure({'org': 'orgg'}, requests.exceptions.HTTPError)
+        self.check_failure({'repo': 1}, requests.exceptions.HTTPError)
+
+        # Some error-inducing DriveReleaseFiles arguments
+        self.check_failure({'DriveReleaseFiles': True}, TypeError)
+        self.check_failure({'DriveReleaseFiles': [1, 2, 3]}, AttributeError)
+
+    def check_failure(self, changes, expected_error):
+        '''
+        Check that release() fails with `expected_error` when
+        its arguments deviate from standard ones as specified in `changes`.
+        '''
+        test_args = copy.deepcopy(standard_args)
+
+        for changed_arg in changes.keys():
+            test_args[changed_arg] = changes[changed_arg]
+
+        with self.assertRaises(expected_error):
             tools.release(**test_args)  
-        
-        test_args = copy.deepcopy(args)
-        test_args['repo'] = 1 # Incorrect type
-        with self.assertRaises(requests.exceptions.HTTPError):
-            tools.release(**test_args)  
-
-        # DriveReleaseFiles is non-container, non-string that bool() 
-        # evaluates as True
-        test_args = copy.deepcopy(args)
-        test_args['DriveReleaseFiles'] = True         
-        with self.assertRaises(TypeError):
-            tools.release(**test_args)    
-
-        # DriveReleaseFiles holds non-strings
-        test_args = copy.deepcopy(args)
-        test_args['DriveReleaseFiles'] = [1, 2, 3]         
-        with self.assertRaises(AttributeError):
-            tools.release(**test_args)           
-
+    
 
 if __name__ == '__main__':
     unittest.main()

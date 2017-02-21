@@ -39,7 +39,6 @@ class TestBuildLyX(unittest.TestCase):
                               system_mock = mock_system, target = target)
         self.assertTrue(os.path.isfile(target))
 
-
     @mock.patch('%s.os.system' % path)
     def test_list_arguments(self, mock_system):
         '''
@@ -87,7 +86,6 @@ class TestBuildLyX(unittest.TestCase):
         with self.assertRaises(IOError):
             gs.build_lyx('./build/lyx.pdf', 
                          ['./input/nonexistent_file.lyx'], env = {})   
-
 
     @mock.patch('%s.os.system' % path)
     def test_nonexistent_target_directory(self, mock_system):

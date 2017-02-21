@@ -31,7 +31,7 @@ class TestRepo(build_py):
             os.system("coverage run --branch --source ./ setup.py test1 2>&1 "
                       "| tee test.log")
             # http://unix.stackexchange.com/questions/80707/
-            #     how-to-output-text-to-both-screen-and-file-inside-a-shell-script
+            #   how-to-output-text-to-both-screen-and-file-inside-a-shell-script
             os.system("%s  2>&1 | tee -a test.log" % coverage_command) 
         else:
             os.system("coverage run --branch --source ./ setup.py "

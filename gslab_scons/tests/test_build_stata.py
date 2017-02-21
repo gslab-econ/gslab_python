@@ -161,7 +161,6 @@ class TestBuildStata(unittest.TestCase):
                            source = './test_script.do', 
                            env    = env)
 
-
     @mock.patch('%s.subprocess.check_output' % path)
     def test_unavailable_executable(self, mock_check):
         '''
