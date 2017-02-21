@@ -6,7 +6,7 @@ import mock
 import shutil
 import requests
 import copy
-# Import module containing gslab_scons testing side effects
+# Import modules containing gslab_scons test helper functions
 import _test_helpers as helpers
 import _side_effects as fx
 
@@ -20,10 +20,16 @@ from gslab_scons._exception_classes import ReleaseError
 
 #== Preliminaries ===================================================
 # Create a patch for use in testing release()
+# This patch allows test methods to introduce mocks in the place of
+# numerous system commands used in release(). These mocks should be
+# specified as arguments in test methods in the opposite order as the
+# patches are listed below. 
+#
+# Note that time.sleep is just mocked to do nothing.
 path = 'gslab_scons._release_tools'
 patch_collection = \
     lambda f: mock.patch('%s.time.sleep'    % path, mock.MagicMock())(\
-              mock.patch('%s.os.path.isdir' % path, mock.MagicMock())(\
+              mock.patch('%s.os.path.isdir' % path)(\
               mock.patch('%s.shutil.rmtree' % path)(                  \
               mock.patch('%s.upload_asset'  % path)(                  \
               mock.patch('%s.requests.session' % path)(               \
@@ -60,7 +66,8 @@ class TestReleaseFunction(unittest.TestCase):
                               mock_getpass, 
                               mock_session,
                               mock_upload, 
-                              mock_rmtree):
+                              mock_rmtree,
+                              mock_isdir):
         '''
         Test that release() correctly prepares a release
         that uploads zipped files to Google Drive.
@@ -90,6 +97,19 @@ class TestReleaseFunction(unittest.TestCase):
         args['DriveReleaseFiles'] = 'plot.pdf'
         self.check_release(args, mock_session, mock_upload, mock_copy,
                            mock_make_archive, mock_move)
+
+        # Test release() when required directories don't exist
+        local_release = args['local_release']
+        mock_isdir.return_value = False
+
+        self.check_release(args, mock_session, mock_upload, mock_copy,
+                           mock_make_archive, mock_move)
+
+        # Did release() create the local_release subdirectory?
+        mock_makedirs.assert_any_call(local_release)
+        # Did it create the temporary directory for to-be-zipped release files?
+        mock_makedirs.assert_any_call('release_content')
+
 
 
     def check_release(self, args, mock_session, mock_upload, mock_copy, 
@@ -127,24 +147,33 @@ class TestReleaseFunction(unittest.TestCase):
         self.assertEqual(mock_upload.call_args[1]['release_id'], 'test_ID')
 
         # Check that release() prepared files for release correctly,
-        if isinstance(args['DriveReleaseFiles'], list):
-            for filename in args['DriveReleaseFiles']:
-                mock_copy.assert_any_call(filename, 
-                                          'release_content/%s' % filename)
+        # If we are zipping before releasing, then we should move
+        # our release files into an intermediate folder to be zipped.
+        if args['zip_release']:
+            base = 'release_content'
+        # Otherwise, we should move them directly into our 
+        # local_release directory.
         else:
-            filename = args['DriveReleaseFiles']
-            mock_copy.assert_any_call(filename, 
-                                      'release_content/%s' % filename)
+            base = args['local_release']
+
+        drive_files = args['DriveReleaseFiles']
+        if isinstance(drive_files, basestring):
+            drive_files = [drive_files]
+
+        for filename in drive_files:
+            mock_copy.assert_any_call(filename, '%s/%s' % (base, filename))
+
+
         # ...that it zipped them if zip_release == True, ...
         if args['zip_release']:
             mock_make_archive.assert_called_with('release_content', 'zip', 
                                                  'release_content')
+            # ...and that it moved them to the local_release directory
+            mock_move.assert_called_with('release_content.zip', 
+                                         '%s/release.zip' % args['local_release'])       
         else:
             mock_make_archive.assert_not_called()
 
-        # ...and that it moved them to the local_release directory
-        mock_move.assert_called_with('release_content.zip', 
-                                     '%s/release.zip' % args['local_release'])
         # Check that the assets listed in the file whose path is
         # passed to upload_asset() are those specified by release()'s 
         # DriveReleaseFiles argument.
@@ -154,7 +183,10 @@ class TestReleaseFunction(unittest.TestCase):
     
             for line in lines:
                 if not line == lines[0]:
-                    self.assertIn(line.strip(), args['DriveReleaseFiles'])
+                    # Extract the filename from the line of the assets listing
+                    filename = os.path.basename(line.strip())
+                    # Check that the filename is listed.
+                    self.assertIn(filename, args['DriveReleaseFiles'])
 
             os.remove('assets_listing.txt')
 
@@ -167,7 +199,8 @@ class TestReleaseFunction(unittest.TestCase):
                            mock_getpass, 
                            mock_session,
                            mock_upload, 
-                           mock_rmtree):
+                           mock_rmtree,
+                           mock_isdir):
         '''
         Test that release() correctly prepares a release
         that uploads unzipped files to Google Drive.
@@ -175,11 +208,14 @@ class TestReleaseFunction(unittest.TestCase):
         # Mock functions called by release() to simulate an actual call
         mock_getpass.return_value = 'test_token'
         args = copy.deepcopy(standard_args)
+        args['zip_release'] = False
 
         release_data = helpers.mock_release_data(args)
         mock_session.return_value.get.return_value.content = release_data
 
-        args['zip_release'] = False
+        # Give mock_upload a side effect preserving release assets listing
+        mock_upload.side_effect = fx.upload_asset_side_effect
+
         self.check_release(args, mock_session, mock_upload, mock_copy,
                            mock_make_archive, mock_move)
 
@@ -192,7 +228,8 @@ class TestReleaseFunction(unittest.TestCase):
                               mock_getpass, 
                               mock_session,
                               mock_upload, 
-                              mock_rmtree):
+                              mock_rmtree,
+                              mock_isdir):
         '''
         Test that release() correctly prepares a release
         that does not upload files to Google Drive.
@@ -224,7 +261,8 @@ class TestReleaseFunction(unittest.TestCase):
                                        mock_getpass, 
                                        mock_session,
                                        mock_upload, 
-                                       mock_rmtree):
+                                       mock_rmtree,
+                                       mock_isdir):
         '''
         Test that release() responds as expected to 
         unintended inputs.

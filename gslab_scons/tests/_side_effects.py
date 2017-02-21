@@ -178,3 +178,95 @@ def post_side_effect(*args, **kwargs):
 
   return mock_output  
 
+def dot_git_open_side_effect(repo   = 'repo',
+                             org    = 'org',
+                             branch = 'branch',
+                             url    = True):
+
+    def open_side_effect(*args, **kwargs):
+        path = args[0]
+        if path not in ['.git/config', '.git/HEAD']:
+            raise Exception('Cannot open %s' % path)
+
+        # If specified by the url argument, include a url in the 
+        # mock .git file.
+        github_url = '\turl = https://github.com/%s/%s\n' % (org, repo)
+        github_url = ['', github_url][int(url)]
+
+        if path == '.git/config':
+            # These are the mocked contents of a .git/config file
+            lines = ['[core]\n', 
+                         '\trepositoryformatversion = 0\n', 
+                         '\tfilemode = true\n', 
+                         '\tbare = false\n', 
+                         '\tlogallrefupdates = true\n', 
+                         '\tignorecase = true\n', 
+                         '\tprecomposeunicode = true\n', 
+                     '[remote "origin"]\n', 
+                         github_url, 
+                         '\tfetch = +refs/heads/*:refs/remotes/origin/*\n', 
+                     '[branch "master"]\n', 
+                         '\tremote = origin\n', 
+                     '\tmerge = refs/heads/master\n']
+        elif path == '.git/HEAD':
+            # These are the mocked contents of a .git/HEAD file
+            lines = ['ref: refs/heads/%s\n' % branch]
+
+
+        file_object = mock.MagicMock(readlines = lambda: lines)
+
+        return file_object
+
+    return open_side_effect
+
+
+#== Side effects for testing create_size_dictionary() ===
+# These functions mock a directory containing files of various sizes
+# and a system that recognises no directory other than that one.
+
+def isdir_side_effect(*args, **kwargs):
+    '''
+    Mock os.path.isdir() so that it only recognises ./test_files/
+    as an existing directory.
+    '''
+    path = args[0]
+    if not isinstance(path, str):
+        raise TypeError('coercing to Unicode: need string or buffer, '
+                        '%s found' % type(path))
+    return path == 'test_files'
+
+def walk_side_effect(*args, **kwargs):
+    '''
+    Mock os.walk() for a mock directory called ./test_files/.
+    '''
+    path = args[0]
+
+    if path != 'test_files':
+        raise StopIteration
+
+    roots       = ['test_files',      'test_files/size_test']
+    directories = [['size_test'],     []]
+    files       = [['root_file.txt'], ['test.txt', 'test.pdf']]
+
+    for i in range(len(roots)):
+        yield (roots[i], directories[i], files[i])
+
+def getsize_side_effect(*args, **kwargs):
+    '''
+    Mock os.path.getsize() to return mock sizes of files in our
+    mock ./test_files/ directory.
+    '''
+    path = args[0]
+    if path == 'test_files/root_file.txt':
+        size = 100
+    elif path == 'test_files/size_test/test.txt':
+        size = 200
+    elif path == 'test_files/size_test/test.pdf':
+        size = 1000
+    else:
+        raise OSError("[Errno 2] No such file or directory: '%s'" % path)
+
+    return size
+
+
+
