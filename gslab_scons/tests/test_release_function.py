@@ -112,6 +112,11 @@ class TestReleaseFunction(unittest.TestCase):
 
     def check_release(self, args, mock_session, mock_upload, mock_copy, 
                       mock_make_archive, mock_move):
+        '''
+        This helper method checks that test.release() works correctly
+        with a given collection of arguments and a system configuration
+        mocked by its assorted mock_* arguments.  
+        '''
         
         for mock_object in [mock_session, mock_upload, mock_copy,
                            mock_make_archive, mock_move]:
@@ -160,7 +165,6 @@ class TestReleaseFunction(unittest.TestCase):
 
         for filename in drive_files:
             mock_copy.assert_any_call(filename, '%s/%s' % (base, filename))
-
 
         # ...that it zipped them if zip_release == True, ...
         if args['zip_release']:

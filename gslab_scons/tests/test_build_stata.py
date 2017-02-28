@@ -144,11 +144,10 @@ class TestBuildStata(unittest.TestCase):
         Test build_stata()'s behaviour when there no valid Stata
         executables in the user's path variable
         '''
-        # We mock the system to only find an executable called Rscript
-        # in the path.
-        mock_check.side_effect = fx.make_stata_side_effect('Rscript')
+        # We mock the system to not find any executable in the path.
+        mock_check.side_effect = fx.make_stata_side_effect('')
         # Mock is_in_path() to finds just one flavor of Stata 
-        mock_path.side_effect = lambda *args, **kwargs: args[0] == 'Rscript'
+        mock_path.side_effect = lambda *args, **kwargs: args[0] == ''
 
         env = {'user_flavor': None}
         with helpers.platform_patch('darwin', path), self.assertRaises(NameError):

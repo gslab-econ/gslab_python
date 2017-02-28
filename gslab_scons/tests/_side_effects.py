@@ -20,8 +20,8 @@ def r_side_effect(*args, **kwargs):
     log        = match.group('log')
 
     if log is None:
-        # If no log path is specified, the R script's after 
-        # removing .R (if present) and adding .Rout.
+        # If no log path is specified, create one by using the 
+        # R script's path after replacing .R (if present) with .Rout.
         source = match.group('source')
         log    = '%s.Rout' % re.sub('\.R', '', source)
 
@@ -70,14 +70,14 @@ def make_stata_side_effect(recognised_command):
         if match.group('executable') == recognised_command:
             # Find the Stata script's name
             script_name = match.group('source')
-            stata_log   = os.path.basename(script_name).replace('.do','.log')
+            stata_log   = os.path.basename(script_name).replace('.do', '.log')
             
             # Write a log
             with open(stata_log, 'wb') as logfile:
                 logfile.write('Test Stata log.\n')
 
         else:
-            # Raise an error if the exectuable is not the only recognised one.
+            # Raise an error if the executable is not recognised.
             raise subprocess.CalledProcessError(1, command)
 
     return stata_side_effect
@@ -92,15 +92,7 @@ def lyx_side_effect(*args, **kwargs):
     '''
     # Get and parse the command passed to os.system()
     command = args[0]
-    match = re.match('\s*'
-                        '(?P<executable>\w+)'
-                        '\s+'
-                        '(?P<option>-\w+ \w+)?'
-                        '\s*'
-                        '(?P<source>[\.\/\w]+\.\w+)?'
-                        '\s*'
-                        '(?P<log_redirect>\> [\.\/\w]+\.\w+)?',
-                     command)
+    match = helpers.command_match(command, 'lyx')
 
     executable   = match.group('executable')
     option       = match.group('option')
@@ -122,7 +114,9 @@ def lyx_side_effect(*args, **kwargs):
     # and the source exists, produce a .pdf file with the same base 
     # name as the source file.
 
-    # Make a mocked-up comprehensive list of existing files
+    # Mock a list of the files that LyX sees as existing
+    # source_exists should be True only if the source script 
+    # specified in the system command belongs to existing_files. 
     existing_files = ['test_script.lyx', './input/lyx_test_file.lyx']
     source_exists  = os.path.abspath(source) in \
                          map(os.path.abspath, existing_files)
@@ -136,9 +130,9 @@ def lyx_side_effect(*args, **kwargs):
 
 def make_call_side_effect(text):
     '''
-    Intended for mocking subprocess.call in testing
+    Intended for mocking the subprocess.call() in testing
     _release_tools.up_to_date(). Return a side effect that
-    prints text to mocked function's the stdout argument.
+    prints text to mocked function's stdout argument.
     '''
     def side_effect(*args, **kwargs):
         log = kwargs['stdout']
@@ -162,8 +156,7 @@ def post_side_effect(*args, **kwargs):
   Intended for mocking requests.session.post in testing release().
   This side effect returns a MagicMock that raises an error 
   when its raise_for_status() method is called unless
-  a specific release_path is specified and there if a 
-  valid tag_name
+  a specific release_path is specified.
   '''
   # The release path is specified by the first positional argument.
   mock_output = mock.MagicMock(raise_for_status = mock.MagicMock())
@@ -183,14 +176,19 @@ def dot_git_open_side_effect(repo   = 'repo',
                              org    = 'org',
                              branch = 'branch',
                              url    = True):
+    '''
+    This function produces a side effect mocking the behaviour of
+    open() when used to read the lines of the 'config' or 'HEAD' file
+    in a GitHub repository's '.git' directory.
+    '''
 
     def open_side_effect(*args, **kwargs):
         path = args[0]
         if path not in ['.git/config', '.git/HEAD']:
             raise Exception('Cannot open %s' % path)
 
-        # If specified by the url argument, include a url in the 
-        # mock .git file.
+        # If specified by the url argument, include the url of the origin
+        # in the mock .git file, as is standard. 
         github_url = '\turl = https://github.com/%s/%s\n' % (org, repo)
         github_url = ['', github_url][int(url)]
 
@@ -209,11 +207,13 @@ def dot_git_open_side_effect(repo   = 'repo',
                      '[branch "master"]\n', 
                          '\tremote = origin\n', 
                      '\tmerge = refs/heads/master\n']
+
         elif path == '.git/HEAD':
             # These are the mocked contents of a .git/HEAD file
             lines = ['ref: refs/heads/%s\n' % branch]
 
-
+        # Ultimately return a mock whose readlines() method
+        # just returns a list of lines from our mocked-up file.
         file_object = mock.MagicMock(readlines = lambda: lines)
 
         return file_object

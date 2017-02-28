@@ -140,8 +140,9 @@ class TestReleaseTools(unittest.TestCase):
         with self.assertRaises(ReleaseError):
             repo_info = tools.extract_dot_git('not/git')
 
-        # ii) Mock the .git/config file so that the url line doesn't 
-        #      immeadiately follow the remote "origin" line.
+        # ii) Mock the .git/config file so that url information is missing
+        #      from its "[remote "origin"]" section. (We parse organisaton,
+        #      repo, and branch information from this url.)
         mock_open.side_effect = fx.dot_git_open_side_effect(url = False)
         with self.assertRaises(ReleaseError):
             repo_info = tools.extract_dot_git('.git')

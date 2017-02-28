@@ -48,9 +48,14 @@ pip using the command `pip install coverage`), one may test `gslab_python`'s con
 and then produce a code coverage report the commands:
 
 ```bash
-coverage run setup.py test
-coverage report -m
+python setup.py test [--include=<paths>]
 ```
+
+Here, the optional `--include=` argument specifies the files whose test results
+should be included in the coverage report produced by the command. 
+It works as `coverage`'s argument of the same name does. The command should be
+run without this option before committing to `gslab_python`.
+
 
 License
 -------

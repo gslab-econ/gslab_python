@@ -22,7 +22,7 @@ def build_matlab(target, source, env):
         The target(s) of the SCons command.
     source: string or list
         The source(s) of the SCons command. The first source 
-        specified should be the Matlab .M script that the 
+        specified should be the Matlab .m script that the 
         builder is intended to execute. 
 
 	'''

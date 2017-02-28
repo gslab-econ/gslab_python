@@ -70,6 +70,17 @@ def command_match(command, executable, which = None):
                          '(?P<args>.*)',
                          command)
 
+    elif executable == 'lyx':
+        match = re.match('\s*'
+                         '(?P<executable>\w+)'
+                         '\s+'
+                         '(?P<option>-\w+ \w+)?'
+                         '\s*'
+                         '(?P<source>[\.\/\w]+\.\w+)?'
+                         '\s*'
+                         '(?P<log_redirect>\> [\.\/\w]+\.\w+)?',
+                         command)
+     
     if which:
         return match.group(which)
     else:
@@ -77,7 +88,7 @@ def command_match(command, executable, which = None):
 
 
 def check_log(test_object, log_path, timestamp = True):
-    '''Check for the existence of a timestamped log'''
+    '''Check for the existence of a (timestamped) log'''
     with open(log_path, 'rU') as log_file:
         log_data = log_file.read()
 
@@ -95,13 +106,15 @@ def bad_extension(test_object, builder,
                   env  = {}):
     '''Ensure builders fail when their first sources have bad extensions'''
     if good:
+        # We expect a failure even when a source with a "good" extension
+        # is included but is not the first source. 
         source = [bad, good]
     else:
         source = [bad]
 
     with test_object.assertRaises(BadExtensionError):
         builder(target = './test_output.txt', 
-                source = [bad, good], 
+                source = source, 
                 env    = env)
 
 def standard_test(test_object, builder, 
@@ -170,7 +183,7 @@ def test_cl_args(test_object, builder, system_mock, extension, env = {}):
     else:
         env = {'CL_ARG': 'test'}
     
-    builder(source = source, target = target, env    = env)
+    builder(source = source, target = target, env = env)
 
     # The system command is the first positional argument
     command = system_mock.call_args[0][0] 

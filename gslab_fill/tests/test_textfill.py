@@ -7,10 +7,7 @@ import types
 import HTMLParser
 import shutil
 
-# Ensure that Python can find and load the GSLab libraries
-#os.chdir("gslab_fill/tests/")
 sys.path.append('../..')
-
 from gslab_fill.textfill import (textfill, read_text, 
                                  remove_trailing_leading_blanklines)
 from gslab_make.tests import nostderrout
