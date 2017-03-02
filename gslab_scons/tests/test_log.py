@@ -37,13 +37,19 @@ class TestLog(unittest.TestCase):
         Test that start_log() leads stdout to be captured in 
         a log file on Unix machines. 
         '''    
+        # Save the initial standard output
         initial_stdout = sys.stdout
 
+        # Call start_log(), which redirects standard output to a log
         gs.start_log()
         print "Test message"
         sys.stdout.close()
+
+        # Restore the initial standard output
         sys.stdout = initial_stdout
 
+        # Ensure that start_log() actually redicted standard output
+        # to a log at the expected path.
         with open('sconstruct.log', 'rU') as f:
             log_contents = f.read()
         self.assertEqual("Test message", log_contents.strip())
