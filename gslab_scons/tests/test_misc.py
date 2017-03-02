@@ -322,10 +322,15 @@ class TestMisc(unittest.TestCase):
         os.remove('state_of_repo.log')
 
     def test_lyx_scan(self):
+        # Open a test LyX file containing dependency statements
         infile = open('./input/lyx_test_dependencies.lyx').read()
+        # Mock an SCons node object to return this file's contents
+        # when its get_contents() method is called.
         node   = mock.MagicMock(get_contents = lambda: infile)
+        # Mock an SCons environment object with an EXTENSIONS data attribute
         env    = mock.MagicMock(EXTENSIONS = ['.lyx', '.txt'])
         output = misc.lyx_scan(node, env, None)
+        # Ensure lyx_scan scanned the test file correctly
         self.assertEqual(output, ['lyx_test_file.lyx', 'tables_appendix.txt'])
 
 
