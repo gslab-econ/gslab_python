@@ -230,12 +230,16 @@ class TestMisc(unittest.TestCase):
         path = args[0]
         mode = args[1]
 
+        # If mode == os.X_OK, return True only for files with execute access
         if mode == os.X_OK and path in execute_files:
             result = True
+        # For other modes return True if the file exists in our mocked set-up
         elif mode != os.X_OK and path in (execute_files + other_files):
             result = True
+        # If the file doesn't "exist":
         else:
             result = False
+
         return result 
 
     def test_command_line_args(self):
