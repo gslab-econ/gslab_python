@@ -179,9 +179,8 @@ def dot_git_open_side_effect(repo   = 'repo',
     '''
     This function produces a side effect mocking the behaviour of
     open() when used to read the lines of the 'config' or 'HEAD' file
-    in a GitHub repository's '.git' directory.
+    of a GitHub repository's '.git' directory.
     '''
-
     def open_side_effect(*args, **kwargs):
         path = args[0]
         if path not in ['.git/config', '.git/HEAD']:

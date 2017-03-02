@@ -34,6 +34,7 @@ def platform_patch(platform, path):
 def command_match(command, executable, which = None):
     '''Parse Python, R, and Stata system calls as re.match objects'''
     if executable in ['python', 'py']:
+        # e.g. "python script.py cl_arg > script.log"
         match = re.match('\s*'
                          '(?P<executable>python)'
                          '\s*'
@@ -45,6 +46,7 @@ def command_match(command, executable, which = None):
                          command)
 
     elif executable in ['r', 'R']:
+        # e.g. "R CMD BATCH --no-save '--args cl_arg' script.R script.log"
         match = re.match('\s*'
                          '(?P<executable>R CMD BATCH)'
                          '\s+'
@@ -58,6 +60,7 @@ def command_match(command, executable, which = None):
                          command)  
 
     elif executable in ['stata', 'do']: 
+        # e.g. "stata-mp -e do script.do cl_arg"
         match = re.match('\s*'
                          '(?P<executable>\S+)'
                          '\s+'
@@ -71,6 +74,7 @@ def command_match(command, executable, which = None):
                          command)
 
     elif executable == 'lyx':
+        # e.g. "lyx -e pdf2 file.lyx > ./sconscript.log"
         match = re.match('\s*'
                          '(?P<executable>\w+)'
                          '\s+'
