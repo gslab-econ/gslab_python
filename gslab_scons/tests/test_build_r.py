@@ -57,9 +57,9 @@ class TestBuildR(unittest.TestCase):
         mock_system.side_effect = fx.r_side_effect
         helpers.test_cl_args(self, gs.build_r, mock_system, 'R')
 
-    # Test that build_r() recognises an inappropriate file extension
-    test_bad_extension = \
-        lambda self: helpers.bad_extension(self, gs.build_r, good = 'test.r')
+    def test_bad_extension(self): 
+        '''Test that build_r() recognises an inappropriate file extension'''
+        helpers.bad_extension(self, gs.build_r, good = 'test.r')
    
     @system_patch
     def test_unintended_inputs(self, mock_system):

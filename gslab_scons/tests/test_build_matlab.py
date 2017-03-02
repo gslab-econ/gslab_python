@@ -95,9 +95,9 @@ class TestBuildMatlab(unittest.TestCase):
                               system_mock = mock_system, env = env)
         self.assertEqual(os.environ['CL_ARG'], env['CL_ARG'])
 
-    test_bad_extension = \
-        lambda self: helpers.bad_extension(self, gs.build_matlab, 
-                                           good = 'test.m')
+    def test_bad_extension(self): 
+        '''Test that build_matlab() recognises an improper file extension'''
+        helpers.bad_extension(self, gs.build_matlab, good = 'test.m')
    
 
 if __name__ == '__main__':

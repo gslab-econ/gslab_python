@@ -52,8 +52,9 @@ class TestBuildLyX(unittest.TestCase):
                               system_mock = mock_system, target = target)
         self.assertTrue(os.path.isfile(target))
 
-    test_bad_extension = \
-        lambda self: helpers.bad_extension(self, gs.build_lyx, good = 'test.lyx')
+    def test_bad_extension(self):
+        '''Test that build_lyx() recognises an improper file extension'''
+        helpers.bad_extension(self, gs.build_lyx, good = 'test.lyx')
    
     @mock.patch('%s.os.system' % path)
     def test_env_argument(self, mock_system):

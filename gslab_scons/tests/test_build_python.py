@@ -30,10 +30,9 @@ class TestBuildPython(unittest.TestCase):
         helpers.standard_test(self, gs.build_python, 'py', 
                               system_mock = mock_system)
 
-    # Test that build_python() recognises an inappropriate file extension
-    test_bad_extension = \
-        lambda self: helpers.bad_extension(self, gs.build_python, 
-                                           good = 'test.py')
+    def test_bad_extension(self):
+        '''Test that build_python() recognises an improper file extension'''
+        helpers.bad_extension(self, gs.build_python, good = 'test.py')
    
     @mock.patch('%s.os.system' % path)
     def test_cl_arg(self, mock_system):
