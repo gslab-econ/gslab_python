@@ -33,7 +33,7 @@ class TestBuildPython(unittest.TestCase):
     # Test that build_python() recognises an inappropriate file extension
     test_bad_extension = \
         lambda self: helpers.bad_extension(self, gs.build_python, 
-                                           good = 'test.r')
+                                           good = 'test.py')
    
     @mock.patch('%s.os.system' % path)
     def test_cl_arg(self, mock_system):
