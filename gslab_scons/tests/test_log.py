@@ -21,10 +21,6 @@ path = 'gslab_scons.log.misc'
 
 class TestLog(unittest.TestCase):
 
-    # I think that we should mock check_lfs in all tests
-    # so that the tests run irrespectively of whether the
-    # user has git_lfs
-
     def setUp(self):
         if os.path.isfile('sconstruct.log'):
             os.remove('sconstruct.log')
