@@ -120,16 +120,12 @@ def bad_extension(test_object, builder,
 def standard_test(test_object, builder, 
                   extension   = None,  
                   system_mock = None,
-                  source = None,
-                  target = None,
-                  env    = None):
+                  source      = None,
+                  target = './test_output.txt',
+                  env    = {}):
     '''Test that builders run without errors and create logs properly.'''
     if not source:
-        source = './test_script.%s' % extension
-    if not target:
-        target = './test_output.txt'
-    if not env:
-        env = {}
+        source = './test_script.%s' % extension,
 
     builder(source = source, target = target, env = env)
     
@@ -148,18 +144,14 @@ def standard_test(test_object, builder,
 
 def input_check(test_object, builder, extension,
                 source = 'missing',
-                target = 'missing',
-                env    = 'missing',
-                error  = 'missing'):
+                target = './test_output.txt',
+                env    = {},
+                error  = None):
     '''Test builders' behaviour when passed unconventional arguments.'''
     # If alternatives are not provided, define 
     # standard builder arguments
     if source == 'missing':
         source = 'test_script.%s' % extension
-    if target == 'missing':
-        target = './test_output.txt'
-    if env == 'missing':
-        env    = {}
 
     if not error:
         builder(source = source, target = target, env = env)
