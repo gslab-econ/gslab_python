@@ -29,8 +29,7 @@ class TestBuildMatlab(unittest.TestCase):
         a matlab system command on a Unix machine.
         '''
         # Mock copy so that it just creates the destination file
-        mock_copy.side_effect = \
-            lambda *args, **kwargs: open(args[1], 'wb').write('test')
+        mock_copy.side_effect   = fx.matlab_copy_effect
         mock_system.side_effect = fx.matlab_side_effect
 
         helpers.standard_test(self, gs.build_matlab, 'm')
@@ -55,8 +54,7 @@ class TestBuildMatlab(unittest.TestCase):
         Test that build_matlab() creates a log and properly submits
         a matlab system command on a Windows machine.
         '''
-        mock_copy.side_effect = \
-            lambda *args, **kwargs: open(args[1], 'wb').write('test')
+        mock_copy.side_effect   = fx.matlab_copy_effect
         mock_system.side_effect = fx.matlab_side_effect
 
         helpers.standard_test(self, gs.build_matlab, 'm')
@@ -69,9 +67,7 @@ class TestBuildMatlab(unittest.TestCase):
         Test that build_matlab() raises an exception when run on a
         non-Unix, non-Windows operating system.
         '''
-        mock_copy.side_effect = \
-            lambda *args, **kwargs: open(args[1], 'wb').write('test')
-
+        mock_copy.side_effect   = fx.matlab_copy_effect
         mock_system.side_effect = fx.matlab_side_effect
         with self.assertRaises(Exception):
             gs.build_matlab(target = './build/test.mat', 
@@ -84,8 +80,7 @@ class TestBuildMatlab(unittest.TestCase):
         Test that build_matlab() properly sets command-line arguments
         in its env argument as system environment variables.
         '''
-        mock_copy.side_effect = \
-            lambda *args, **kwargs: open(args[1], 'wb').write('test')
+        mock_copy.side_effect   = fx.matlab_copy_effect
         mock_system.side_effect = fx.matlab_side_effect
 
         env = {'CL_ARG': 'COMMANDLINE'}

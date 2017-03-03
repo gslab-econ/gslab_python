@@ -56,6 +56,9 @@ def matlab_side_effect(*args, **kwargs):
 
     return None
 
+def matlab_copy_effect(*args, **kwargs):
+    '''Mock copy so that it creates a file with the destination's path'''
+    open(args[1], 'wb').write('test')
 
 def make_stata_side_effect(recognised_command):
     '''
@@ -82,6 +85,14 @@ def make_stata_side_effect(recognised_command):
 
     return stata_side_effect
 
+def make_stata_path_effect(executable):
+    '''
+    Return a side effect for misc.is_in_path() that returns
+    True iff the function's argument equals `executable`.
+    '''
+    def side_effect(*args, **kwargs):
+        return (args[0] == executable)
+    return side_effect
 
 def lyx_side_effect(*args, **kwargs):
     '''

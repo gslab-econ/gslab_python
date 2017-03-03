@@ -32,7 +32,7 @@ class TestBuildStata(unittest.TestCase):
         '''Test build_stata()'s standard behaviour on Unix machines'''
         mock_check.side_effect = fx.make_stata_side_effect('stata-mp')
         # Mock is_in_path() to finds just one flavor of Stata 
-        mock_path.side_effect = lambda *args, **kwargs: args[0] == 'stata-mp'
+        mock_path.side_effect  = fx.make_stata_path_effect('stata-mp')
         env = {'user_flavor' : None}
 
         helpers.standard_test(self, gs.build_stata, 'do', 
@@ -50,8 +50,7 @@ class TestBuildStata(unittest.TestCase):
         '''
         # i) Non-64-bit Windows without a STATAEXE environment variable
         mock_check.side_effect = fx.make_stata_side_effect('statamp.exe')
-        mock_path.side_effect  = \
-            lambda *args, **kwargs: args[0] == 'statamp.exe'
+        mock_path.side_effect  = fx.make_stata_path_effect('statamp.exe')
         mock_is_64.return_value = False
 
         env = {'user_flavor' : None}
@@ -60,8 +59,7 @@ class TestBuildStata(unittest.TestCase):
 
         # ii) 64-bit Windows without a STATAEXE environment variable
         mock_check.side_effect = fx.make_stata_side_effect('statamp-64.exe')
-        mock_path.side_effect  = \
-            lambda *args, **kwargs: args[0] == 'statamp-64.exe'
+        mock_path.side_effect  = fx.make_stata_path_effect('statamp-64.exe')
         mock_is_64.return_value = True
 
         helpers.standard_test(self, gs.build_stata, 'do', 
@@ -69,8 +67,7 @@ class TestBuildStata(unittest.TestCase):
 
         # ii) Windows with a STATAEXE environment variable
         mock_check.side_effect = fx.make_stata_side_effect(r'%STATAEXE%')
-        mock_path.side_effect  = \
-            lambda *args, **kwargs: args[0] == r'%STATAEXE%'
+        mock_path.side_effect  = fx.make_stata_path_effect(r'%STATAEXE%')
 
         with mock.patch('%s.os.environ' % path, 
                         {'STATAEXE': 'statamp.exe'}):
@@ -86,8 +83,7 @@ class TestBuildStata(unittest.TestCase):
         non-win32 machine.
         '''
         mock_check.side_effect = fx.make_stata_side_effect('stata-mp')
-        # Mock is_in_path() to finds just one flavor of Stata 
-        mock_path.side_effect = lambda *args, **kwargs: args[0] == 'stata-mp'
+        mock_path.side_effect  = fx.make_stata_path_effect('stata-mp')
 
         # build_stata() will fail to define a command irrespective of
         # whether a user_flavour is specified
@@ -145,8 +141,7 @@ class TestBuildStata(unittest.TestCase):
         '''
         # We mock the system to not find any executable in the path.
         mock_check.side_effect = fx.make_stata_side_effect('')
-        # Mock is_in_path() to finds just one flavor of Stata 
-        mock_path.side_effect = lambda *args, **kwargs: args[0] == ''
+        mock_path.side_effect  = fx.make_stata_path_effect('')
 
         env = {'user_flavor': None}
         with helpers.platform_patch('darwin', path), self.assertRaises(NameError):
