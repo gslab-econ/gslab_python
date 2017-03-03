@@ -35,20 +35,18 @@ class TestBuildMatlab(unittest.TestCase):
 
         helpers.standard_test(self, gs.build_matlab, 'm')
         self.check_call(mock_system, ['-nosplash', '-nodesktop'])
-    
+        
     def check_call(self, mock_system, options):
         '''
-        Check that build_matlab() made a Matlab system command
-        properly. Here, mock_system should be the mock of 
-        os.system used when calling build_matlab().
+        Check that build_matlab() called Matlab correctly. 
+        mock_system should be the mock of os.system in build_matlab().
         '''
-        mock_system.assert_called_once()
+        # Extract the system command
         command = mock_system.call_args[0][0]
-
+        # Look for the expected executable and options
+        self.assertTrue(re.search('^matlab', command))  
         for option in options:
-            self.assertIn(option, command.split(' '))
-
-        self.assertTrue(re.search('^matlab', command))        
+            self.assertIn(option, command.split(' '))       
 
     @helpers.platform_patch('win32', path)
     @main_patch

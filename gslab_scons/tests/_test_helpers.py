@@ -145,7 +145,6 @@ def standard_test(test_object, builder,
         system_mock.assert_called_once()
         system_mock.reset_mock()
 
-
 def input_check(test_object, builder, extension,
                 source = 'missing',
                 target = './test_output.txt',

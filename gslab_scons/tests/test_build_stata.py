@@ -55,7 +55,6 @@ class TestBuildStata(unittest.TestCase):
         mock_is_64.return_value = False
 
         env = {'user_flavor' : None}
-
         helpers.standard_test(self, gs.build_stata, 'do', 
                               env = env, system_mock = mock_check)
 

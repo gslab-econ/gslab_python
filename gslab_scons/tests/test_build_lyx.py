@@ -34,9 +34,9 @@ class TestBuildLyX(unittest.TestCase):
         '''
         mock_system.side_effect = fx.lyx_side_effect
         target = './build/lyx.pdf'
-
         helpers.standard_test(self, gs.build_lyx, 'lyx', 
-                              system_mock = mock_system, target = target)
+                              system_mock = mock_system, 
+                              target = target)
         self.assertTrue(os.path.isfile(target))
 
     @mock.patch('%s.os.system' % path)
@@ -46,11 +46,12 @@ class TestBuildLyX(unittest.TestCase):
         arguments are lists
         '''
         mock_system.side_effect = fx.lyx_side_effect
-        target = './build/lyx.pdf'
-
+        target = ['./build/lyx.pdf']
         helpers.standard_test(self, gs.build_lyx, 'lyx', 
-                              system_mock = mock_system, target = target)
-        self.assertTrue(os.path.isfile(target))
+                              system_mock = mock_system, 
+                              source = ['./test_script.lyx'],
+                              target = target)
+        self.assertTrue(os.path.isfile(target[0]))
 
     def test_bad_extension(self):
         '''Test that build_lyx() recognises an improper file extension'''
