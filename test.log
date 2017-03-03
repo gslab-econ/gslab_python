@@ -1,4 +1,9 @@
 running pytest
+Searching for pytest
+Best match: pytest 3.0.6
+Processing pytest-3.0.6-py2.7.egg
+
+Using /Users/mrsull/Desktop/gslab_python/.eggs/pytest-3.0.6-py2.7.egg
 running egg_info
 writing requirements to GSLab_Tools.egg-info/requires.txt
 writing GSLab_Tools.egg-info/PKG-INFO
@@ -8,8 +13,8 @@ reading manifest file 'GSLab_Tools.egg-info/SOURCES.txt'
 writing manifest file 'GSLab_Tools.egg-info/SOURCES.txt'
 running build_ext
 ============================= test session starts ==============================
-platform darwin -- Python 2.7.13, pytest-3.0.5, py-1.4.32, pluggy-0.4.0
-rootdir: /Users/leviboxell/Desktop/gslab_python, inifile: 
+platform darwin -- Python 2.7.12, pytest-3.0.6, py-1.4.31, pluggy-0.4.0
+rootdir: /Users/mrsull/Desktop/gslab_python, inifile: 
 collected 105 items
 
 gencat/tests/test_checkDicts.py ...
@@ -31,7 +36,7 @@ gslab_scons/tests/test_misc.py .................
 gslab_scons/tests/test_release_function.py ....
 gslab_scons/tests/test_release_tools.py .....
 
-========================== 105 passed in 6.18 seconds ==========================
+========================== 105 passed in 2.01 seconds ==========================
 Name                                           Stmts   Miss Branch BrPart  Cover   Missing
 ------------------------------------------------------------------------------------------
 gencat/gencat.py                                  79      6     28      4    91%   72-73, 81, 89, 97, 101, 57->exit, 71->72, 96->97, 100->101
@@ -84,7 +89,7 @@ gslab_scons/tests/test_build_r.py                 44      2     14      4    90%
 gslab_scons/tests/test_build_stata.py             90      1      2      1    98%   180, 179->180
 gslab_scons/tests/test_build_tables.py            65      1      8      1    97%   144, 143->144
 gslab_scons/tests/test_log.py                    104      3     12      3    95%   26, 185, 189, 25->26, 184->185, 188->189
-gslab_scons/tests/test_misc.py                   174      9     14      4    93%   36-37, 43-44, 50-51, 70, 238, 342, 65->72, 67->70, 237->238, 341->342
+gslab_scons/tests/test_misc.py                   174      9     14      4    93%   36-37, 43-44, 50-51, 70, 236, 340, 65->72, 67->70, 235->236, 339->340
 gslab_scons/tests/test_release_function.py       122      3     22      2    97%   288-289, 322, 182->exit, 321->322
 gslab_scons/tests/test_release_tools.py           82      1      2      1    98%   190, 189->190
 ------------------------------------------------------------------------------------------
