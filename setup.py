@@ -24,7 +24,7 @@ class TestRepo(build_py):
         if include_arg:
             coverage_command = 'coverage report -m %s' % include_arg
         else:
-            coverage_command = 'coverage report -m --omit=setup.py,*/__init__.py'
+            coverage_command = 'coverage report -m --omit=setup.py,*/__init__.py,.eggs/*'
 
 
         if sys.platform != 'win32':
