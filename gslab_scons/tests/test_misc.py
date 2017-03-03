@@ -82,7 +82,6 @@ class TestMisc(unittest.TestCase):
             mock_check.side_effect = self.make_side_effect(['checkout'])
             misc.check_lfs()
 
-
     #== Tests for stata_command_unix() and stata_command_win() ======
     # The tests below patch sys.platform to mock various 
     # operating systems. 
@@ -112,7 +111,6 @@ class TestMisc(unittest.TestCase):
 
         output = misc.stata_command_unix('stata', cl_arg = 'cl_arg')
         self.assertEqual(output.strip(), 'stata -b %s cl_arg')
-
 
     @mock.patch('gslab_scons.misc.sys.platform', 'win32')
     def test_stata_command_unix_windows(self):
