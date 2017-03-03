@@ -118,7 +118,7 @@ class TestMisc(unittest.TestCase):
     def test_stata_command_unix_windows(self):
         '''
         Test that stata_command_unix() raises an error when
-        when on Windows computers.
+        when on run Windows computers.
         '''
         with self.assertRaises(KeyError):
             output = misc.stata_command_unix('stata-mp')
