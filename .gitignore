@@ -1,2 +1,7 @@
 *.pyc
+*.egg*
+.cache
+.coverage
 .DS_Store
+*.Rhistory
+*.coveragerc

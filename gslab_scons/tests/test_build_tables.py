@@ -4,73 +4,80 @@ import sys
 import os
 import shutil
 import re
+import mock
 
 # Ensure that Python can find and load the GSLab libraries
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append('../..')
 
-from gslab_scons import build_tables
+import gslab_scons.builders.build_tables as gs
 from gslab_scons._exception_classes import BadExtensionError
 from gslab_make.tests import nostderrout
 
 
-class test_build_tables(unittest.TestCase):
+class TestBuildTables(unittest.TestCase):
 
-    def setUp(self):
-        if not os.path.exists('./build/'):
-            os.mkdir('./build/')
-
-    def test_default(self):
+    @mock.patch('gslab_scons.builders.build_tables.tablefill')
+    def test_standard(self, mock_tablefill):
         '''
-        Test that build_tables() constructs LyX tables correctly when
-        its target argument is a list
+        Test that build_tables() correctly prepares and passes
+        inputs to the gslab_fill.tablefill() function
         '''
-
-        # Specify the sources and the target before calling the build function.
+        # Specify the sources and the target arguments of build_tables()
         source = ['./input/tablefill_template.lyx', 
-                  './input/tables_appendix.txt', 
-                  './input/tables_appendix_two.txt']
+                  './input/tables_appendix.txt',
+                  './input/tables_appendix.txt']
         target = ['./build/tablefill_template_filled.lyx']
-        build_tables(target, source, '')
+        
+        # Call build_tables() and check that it behaved as expected.
+        gs.build_tables(target, source, '')
+        self.check_call(source, target, mock_tablefill)
 
-        # Read the empty and filled template files
-        with open('./input/tablefill_template.lyx', 'rU') as template_file:
-            tag_data = template_file.readlines()
-        with open('./build/tablefill_template_filled.lyx', 'rU') as table_file:
-            filled_data = table_file.readlines()
+        # The target can also be a tuple
+        target = ('./build/tablefill_template_filled.lyx')
+        gs.build_tables(target, source, '')
+        self.check_call(source, target, mock_tablefill)
 
-        # The filled LyX file should be longer than its template by a fixed 
-        # number of lines because build_tables() adds a note to this template
-        # in addition to filling it in.
-        self.assertEqual(len(tag_data) + 13, len(filled_data))
+    def check_call(self, source, target, mock_tablefill):
+        '''
+        This method checks that the build_tables() behaves as expected
+        using its source argument, its target argument, and a mock 
+        for gslab_fill.table_fill()
+        '''
+        mock_tablefill.assert_called_once()
 
-        # Check that build_tables() filled the template's tags correctly.
-        for n in range(len(tag_data)):
-            self.tag_compare(tag_data[n], filled_data[n + 13])         
- 
-    def test_default_string_target(self):
+        # Check that build_tables() passed arguments to tablefill() correctly.
+        kwargs = mock_tablefill.call_args[1]
+
+        # i) input should be the sources (except the first) joined by spaces
+        inputs = kwargs['input'].split()
+        for path in source[1:len(source)]:
+            self.assertIn(str(path), inputs)
+        self.assertEqual(len(source) - 1, len(inputs))
+
+        # ii) The template argument should be the first source
+        self.assertEqual(str(source[0]), kwargs['template'])
+
+        # iii) The output argument should be build_tables()'s target argument.
+        if isinstance(target, str):
+            target = [target]
+        self.assertEqual(target[0], kwargs['output'])
+
+        mock_tablefill.reset_mock()
+
+    @mock.patch('gslab_scons.builders.build_tables.tablefill')
+    def test_default_string_target(self, mock_tablefill):
         '''
         Test that build_tables() constructs LyX tables correctly when
         its target argument is a string.
         '''
-        
-        # Specify the sources and the target before calling the build function.
         source = ['./input/tablefill_template.lyx', 
                   './input/tables_appendix.txt', 
                   './input/tables_appendix_two.txt']
         target = './build/tablefill_template_filled.lyx'
-        build_tables(target, source, '')
+        gs.build_tables(target, source, '')
 
-        # Read the empty and filled template files
-        with open('./input/tablefill_template.lyx', 'rU') as template_file:
-            tag_data = template_file.readlines()
-        with open('./build/tablefill_template_filled.lyx', 'rU') as table_file:
-            filled_data = table_file.readlines()
-
-        self.assertEqual(len(tag_data) + 13, len(filled_data))
-
-        for n in range(len(tag_data)):
-            self.tag_compare(tag_data[n], filled_data[n + 13])         
+        self.check_call(source, target, mock_tablefill)      
 
     def test_target_extension(self):
         '''Test that build_tables() recognises an inappropriate file extension'''
@@ -84,36 +91,54 @@ class test_build_tables(unittest.TestCase):
         # Calling build_tables() with a target argument whose file extension
         # is unexpected should raise a BadExtensionError.
         with self.assertRaises(BadExtensionError), nostderrout():
-            build_tables(target, source, '')    
+            gs.build_tables(target, source, '')    
+       
+    @mock.patch('gslab_scons.builders.build_tables.tablefill')
+    def test_unintended_inputs(self, mock_tablefill):
+        '''
+        Test build_tables()'s behaviour when provided with 
+        inputs other than those we intend it to be given. 
+        '''
+        std_source = ['./input/tablefill_template.lyx', 
+                      './input/tables_appendix.txt']
+        std_target = './build/tablefill_template_filled.lyx'
 
-    def tag_compare(self, tag_line, filled_line):
-        '''
-        Check that a line in a template LyX file containing a tag was
-        properly filled by build_tables()
-        '''
-        if re.match('^.*#\d+#', tag_line) or re.match('^.*#\d+,#', tag_line):
-            entry_tag = re.split('#', tag_line)[1]
-            decimal_places = int(entry_tag.replace(',', ''))
-            
-            if decimal_places > 0:
-                self.assertTrue(re.search('\.', filled_line))
-                decimal_part = re.split('\.', filled_line)[1]
-                non_decimal = re.compile(r'[^\d.]+')
-                decimal_part = non_decimal.sub('', decimal_part)
-                self.assertEqual(len(decimal_part), decimal_places)
-            else:
-                self.assertFalse(re.search('\.', filled_line))
-            
-            if re.match('^.*#\d+,#', tag_line):
-                integer_part = re.split('\.', filled_line)[0]
-                if len(integer_part) > 3:
-                    self.assertEqual(integer_part[-4], ',')
-    
-    def tearDown(self):
-        if os.path.exists('./build/'):
-            shutil.rmtree('./build/')
-        
+        #== env =============
+        # We expect that build_tables() will accept any env argument
+        for env in ['', None, Exception, "the environment", (1, 2, 3)]:
+            gs.build_tables(std_target, std_source, env = env)
+            self.check_call(std_source, std_target, mock_tablefill)    
+
+        #== target ==========
+        # We expect build_tables() to raise an error if its
+        # target argument is not a string or container of strings
+        with self.assertRaises(TypeError):
+            gs.build_tables(1, std_source, None)
+        with self.assertRaises(TypeError):
+            gs.build_tables(None, std_source, None)    
+        # If the target is a container of non-strings, we expect 
+        # a BadExtensionError.
+        with self.assertRaises(BadExtensionError):
+            gs.build_tables((True, False, False), std_source, None)
+
+        #== source ==========
+        # We don't errors when the source isn't a .lyx path
+        source = ['nonexistent_file']
+        gs.build_tables(std_target, source, None)
+        self.check_call(source, std_target, mock_tablefill) 
+
+        # We don't expect errors when source is a container of nonstrings.
+        # We expect build_table() to convert containers' members to strings.
+        source = (True, False, False)
+        gs.build_tables(std_target, source, None)
+        self.check_call(source, std_target, mock_tablefill)   
+
+        # When given non-strings, non-iterables with no len() values
+        # we expect that build_table() will raise an exception.
+        source = 1
+        with self.assertRaises(TypeError):
+            gs.build_tables(std_target, source, None)
+
 
 if __name__ == '__main__':
-    os.getcwd()
     unittest.main()

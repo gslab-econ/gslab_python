@@ -11,7 +11,7 @@ sys.path.append('../../')
 from gencat import gencat
 
 
-class TestCat(gencat):
+class MockCat(gencat):
     def makeZipDict(self):
         pass
 
@@ -36,7 +36,7 @@ class test_zipFiles(unittest.TestCase):
         '''
         Test that contentation functions for a single file.
         '''
-        testcat = TestCat('./test_data', './test_temp', './test_out')
+        testcat = MockCat('./test_data', './test_temp', './test_out')
         testcat.zip_dict = {} 
         testcat.zip_dict['zip1'] = ('concat1', )
         testcat.concat_dict = {}
@@ -59,7 +59,7 @@ class test_zipFiles(unittest.TestCase):
         '''
         Test that two text files are concatenated into one without loss of content.
         '''
-        testcat = TestCat('./test_data', './test_temp', './test_out')
+        testcat = MockCat('./test_data', './test_temp', './test_out')
         testcat.zip_dict = {} 
         testcat.zip_dict['zip1'] = ('concat1', )
         testcat.concat_dict = {}
@@ -84,7 +84,7 @@ class test_zipFiles(unittest.TestCase):
         '''
         Test that two files can be concatenated to different text files and stored in separate zip files.
         ''' 
-        testcat = TestCat('./test_data', './test_temp', './test_out')
+        testcat = MockCat('./test_data', './test_temp', './test_out')
         testcat.zip_dict = {} 
         testcat.zip_dict['zip1'] = ('concat1', )
         testcat.zip_dict['zip2'] = ('concat2', )
@@ -116,7 +116,7 @@ class test_zipFiles(unittest.TestCase):
         '''
         Test that two files can be concatenated to different text files and stored in the same zip file.
         '''
-        testcat = TestCat('./test_data', './test_temp', './test_out')
+        testcat = MockCat('./test_data', './test_temp', './test_out')
         testcat.zip_dict = {} 
         testcat.zip_dict['zip1'] = ('concat1', ) + ('concat2', )
         testcat.concat_dict = {}

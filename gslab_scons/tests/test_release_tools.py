@@ -5,6 +5,8 @@ import re
 import mock
 import tempfile
 import shutil
+# Import module containing gslab_scons testing side effects
+import _side_effects as fx
 
 # Ensure that Python can find and load the GSLab libraries
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -82,94 +84,107 @@ class TestReleaseTools(unittest.TestCase):
         Test that up_to_date() correctly recognises
         an SCons directory as up-to-date or out of date.
         '''
+        # The mode argument needs to be one of the valid options
+        with self.assertRaises(ReleaseError), nostderrout():
+            gslab_scons._release_tools.up_to_date(mode = 'invalid')  
+
         # The mock of subprocess call should write pre-specified text
         # to stdout. This mock prevents us from having to set up real
         # SCons and git directories.
-        mock_call.side_effect = self.make_call_side_effect('Your branch is up-to-date')
+        mock_call.side_effect = \
+            fx.make_call_side_effect('Your branch is up-to-date')
         self.assertTrue(gslab_scons._release_tools.up_to_date(mode = 'git'))
-        mock_call.side_effect = self.make_call_side_effect('modified:   .sconsign.dblite')
+
+        mock_call.side_effect = \
+            fx.make_call_side_effect('modified:   .sconsign.dblite')
         self.assertFalse(gslab_scons._release_tools.up_to_date(mode = 'git'))
 
-        mock_call.side_effect = self.make_call_side_effect("scons: `.' is up to date.")
+        mock_call.side_effect = \
+            fx.make_call_side_effect("scons: `.' is up to date.")
         self.assertTrue(gslab_scons._release_tools.up_to_date(mode = 'scons'))
-        mock_call.side_effect = self.make_call_side_effect('python some_script.py')
+        
+        mock_call.side_effect = \
+            fx.make_call_side_effect('python some_script.py')
         self.assertFalse(gslab_scons._release_tools.up_to_date(mode = 'scons'))
 
         # The up_to_date() function shouldn't work in SCons or git mode
         # when it is called outside of a SCons directory or a git 
         # repository, respectively.       
-        mock_call.side_effect = self.make_call_side_effect("Not a git repository")
+        mock_call.side_effect = \
+            fx.make_call_side_effect("Not a git repository")
         with self.assertRaises(ReleaseError), nostderrout():
             gslab_scons._release_tools.up_to_date(mode = 'git')
 
-        mock_call.side_effect = self.make_call_side_effect("No SConstruct file found")
+        mock_call.side_effect = \
+            fx.make_call_side_effect("No SConstruct file found")
         with self.assertRaises(ReleaseError), nostderrout():
-            gslab_scons._release_tools.up_to_date(mode = 'scons')   
+            gslab_scons._release_tools.up_to_date(mode = 'scons')  
 
-    @staticmethod
-    def make_call_side_effect(text):
-        '''
-        Return a side effect to be used with mock that
-        prints text to a file specified as the stderr
-        argument of function being mocked.
-        '''
-        def side_effect(*args, **kwargs):
-            log = kwargs['stdout']
-            log.write(text)
-            
-        return side_effect
-
-    def test_extract_dot_git(self):
+    @mock.patch('gslab_scons._release_tools.open')
+    def test_extract_dot_git(self, mock_open):
         '''
         Test that extract_dot_git() correctly extracts repository
         information from a .git folder's config file.
         '''
-        test_dir  = os.path.dirname(os.path.realpath(__file__))
-        git_dir   = os.path.join(test_dir, '../../.git')
-        repo_info = tools.extract_dot_git(git_dir)
-        self.assertEqual(repo_info[0], 'gslab_python')
-        self.assertEqual(repo_info[1], 'gslab-econ')
 
-        # Ensure that extract_dot_git() raises an error the directory
+        mock_open.side_effect = fx.dot_git_open_side_effect()
+
+        repo_info = tools.extract_dot_git('.git')
+        self.assertEqual(repo_info[0], 'repo')
+        self.assertEqual(repo_info[1], 'org')
+        self.assertEqual(repo_info[2], 'branch')
+
+        # Ensure that extract_dot_git() raises an error when the directory
         # argument is not a .git folder.
-        # i) The directory argument identifies an empry folder
-        temp_dir = tempfile.mkdtemp()
-        with self.assertRaises(ReleaseError), nostderrout():
-            repo_info = tools.extract_dot_git(test_dir)
-        os.rmdir(temp_dir)
-        # ii) The directory argument does not identify a real directory
-        with self.assertRaises(ReleaseError), nostderrout():
-            repo_info = tools.extract_dot_git('Not a directory')
+        # i) The directory argument identifies an empty folder
+        with self.assertRaises(ReleaseError):
+            repo_info = tools.extract_dot_git('not/git')
 
-    def test_create_size_dictionary(self):
+        # ii) Mock the .git/config file so that url information is missing
+        #      from its "[remote "origin"]" section. (We parse organisaton,
+        #      repo, and branch information from this url.)
+        mock_open.side_effect = fx.dot_git_open_side_effect(url = False)
+        with self.assertRaises(ReleaseError):
+            repo_info = tools.extract_dot_git('.git')
+
+    @mock.patch('gslab_scons._release_tools.os.path.getsize')
+    @mock.patch('gslab_scons._release_tools.os.walk')
+    @mock.patch('gslab_scons._release_tools.os.path.isdir')
+    def test_create_size_dictionary(self, mock_isdir, mock_walk, mock_getsize):
         '''
         Test that create_size_dictionary() correctly reports
         files' sizes in bytes.
         '''
-        test_dir = os.path.dirname(os.path.realpath(__file__))
-        test_dir = os.path.join(test_dir, 'input/size_test') 
-        sizes    = tools.create_size_dictionary(test_dir)
+        # Assign side effects
+        mock_isdir.side_effect   = fx.isdir_side_effect        
+        mock_walk.side_effect    = fx.walk_side_effect
+        mock_getsize.side_effect = fx.getsize_side_effect 
+
+        sizes = tools.create_size_dictionary('test_files')
+
+        self.assertEqual(len(sizes), 3)
 
         # Check that test.txt and test.jpg are in the dictionary
-        txt_path = [path for path in sizes.keys() if re.search('test.txt$', path)]
-        jpg_path = [path for path in sizes.keys() if re.search('test.jpg$', path)]
+        root_path = [path for path in sizes.keys() \
+                    if re.search('root_file.txt$', path)]
+        pdf_path  = [path for path in sizes.keys() \
+                     if re.search('test.pdf$', path)]
 
-        self.assertTrue(bool(txt_path))
-        self.assertTrue(bool(jpg_path))
+        self.assertTrue(bool(root_path))
+        self.assertTrue(bool(pdf_path))
 
         # Check that the size dictionary reports these files' correct sizes in bytes
-        self.assertEqual(sizes[txt_path[0]], 93)
-        self.assertEqual(sizes[jpg_path[0]], 149084)
+        self.assertEqual(sizes[root_path[0]], 100)
+        self.assertEqual(sizes[pdf_path[0]], 1000)
 
         # Check that the function raises an error when its path argument
         # is not a directory.
         with self.assertRaises(ReleaseError), nostderrout():
-            sizes = tools.create_size_dictionary('Not a directory')
+            sizes = tools.create_size_dictionary('nonexistent_directory')
         # The path argument must be a string
         with self.assertRaises(TypeError), nostderrout():
             sizes = tools.create_size_dictionary(10)
 
 
 if __name__ == '__main__':
-    os.getcwd()
     unittest.main()

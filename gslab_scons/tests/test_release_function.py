@@ -5,6 +5,10 @@ import re
 import mock
 import shutil
 import requests
+import copy
+# Import modules containing gslab_scons test helper functions
+import _test_helpers as helpers
+import _side_effects as fx
 
 # Ensure that Python can find and load the GSLab libraries
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -13,25 +17,57 @@ sys.path.append('../..')
 import gslab_scons
 import gslab_scons._release_tools as tools
 from gslab_scons._exception_classes import ReleaseError
-from gslab_make.tests import nostderrout
 
+#== Preliminaries ===================================================
+# Create a patch for use in testing release()
+# This patch allows test methods to introduce mocks in the place of
+# numerous system commands used in release(). These mocks should be
+# specified as arguments in test methods in the opposite order as the
+# patches are listed below. 
+#
+# Note that time.sleep is just mocked to do nothing.
+path = 'gslab_scons._release_tools'
+patch_collection = \
+    lambda f: mock.patch('%s.time.sleep'    % path, mock.MagicMock())(\
+              mock.patch('%s.os.path.isdir' % path)(\
+              mock.patch('%s.shutil.rmtree' % path)(                  \
+              mock.patch('%s.upload_asset'  % path)(                  \
+              mock.patch('%s.requests.session' % path)(               \
+              mock.patch('%s.getpass.getpass' % path)(
+              mock.patch('%s.os.makedirs' % path)(
+              mock.patch('%s.shutil.copy' % path)(
+              mock.patch('%s.shutil.make_archive' % path)(
+              mock.patch('%s.shutil.move' % path)(\
+                f \
+              ))))))))))
+
+# Standard release() arguments
+standard_args = {'vers':              'test_version',
+                 'DriveReleaseFiles': ['paper.pdf', 'plot.pdf'],
+                 'local_release':     'root/release/repo-test_branch',
+                 'org':               'org',
+                 'repo':              'repo',
+                 'target_commitish':  'test_branch',
+                 'zip_release':       True}
+
+# This is mocked-up output from requests.session.get(path) based on 
+# members of standard_args
+org_repo = (standard_args['org'], standard_args['repo'])
+#====================================================================
 
 class TestReleaseFunction(unittest.TestCase):
 
-    @mock.patch('gslab_scons._release_tools.upload_asset')
-    @mock.patch('gslab_scons._release_tools.requests.session')
-    @mock.patch('gslab_scons._release_tools.getpass.getpass')
-    @mock.patch('gslab_scons._release_tools.time.sleep') # For skipping time delay
-    @mock.patch('gslab_scons._release_tools.os.makedirs')
-    @mock.patch('gslab_scons._release_tools.os.path.isdir')
-    @mock.patch('gslab_scons._release_tools.shutil.rmtree')
-    @mock.patch('gslab_scons._release_tools.shutil.copy')
-    @mock.patch('gslab_scons._release_tools.shutil.make_archive')
-    @mock.patch('gslab_scons._release_tools.shutil.move')
-    def test_release_standard(self, mock_move, mock_make_archive, mock_copy, 
-                              mock_rmtree, mock_isdir, mock_makedirs, 
-                              mock_sleep, mock_getpass, mock_session,
-                              mock_upload):
+    @patch_collection
+    def test_release_standard(self, 
+                              mock_move, 
+                              mock_make_archive, 
+                              mock_copy, 
+                              mock_makedirs, 
+                              mock_getpass, 
+                              mock_session,
+                              mock_upload, 
+                              mock_rmtree,
+                              mock_isdir):
         '''
         Test that release() correctly prepares a release
         that uploads zipped files to Google Drive.
@@ -40,37 +76,70 @@ class TestReleaseFunction(unittest.TestCase):
         mock_getpass.return_value = 'test_token'
         mock_session.return_value = mock.MagicMock(post = mock.MagicMock(),
                                                    get  = mock.MagicMock())
-        mock_session.return_value.get.return_value.content = self.return_mock_release_data()
+
+        args = copy.deepcopy(standard_args)
+        release_data = helpers.mock_release_data(args)
+        mock_session.return_value.get.return_value.content = release_data
+
         # When org/repo refers to a nonexistent GitHub repository, 
         # make the release request fail. 
-        mock_session.return_value.post.side_effect = self.post_side_effect
+        mock_session.return_value.post.side_effect = fx.post_side_effect
 
-        # Add a side effect to mock_upload to preserve a listing of release assets
-        mock_upload.side_effect = self.upload_asset_side_effect
+        # Give mock_upload a side effect preserving release assets listing
+        mock_upload.side_effect = fx.upload_asset_side_effect
 
-        DriveReleaseFiles = ['paper.pdf', 'plot.pdf']
-        tools.release('test_version', 
-                      DriveReleaseFiles = DriveReleaseFiles, 
-                      local_release     = 'Google Drive/release/local_release/', 
-                      org               = 'org', 
-                      repo              = 'repo', 
-                      target_commitish  = 'test_branch', 
-                      zip_release       = True)
+        args['zip_release'] = True
+
+        self.check_release(args, mock_session, mock_upload, mock_copy,
+                           mock_make_archive, mock_move)
+
+        # Test release() when DriveReleaseFiles is a string
+        args['DriveReleaseFiles'] = 'plot.pdf'
+        self.check_release(args, mock_session, mock_upload, mock_copy,
+                           mock_make_archive, mock_move)
+
+        # Test release() when required directories don't exist
+        local_release = args['local_release']
+        mock_isdir.return_value = False
+
+        self.check_release(args, mock_session, mock_upload, mock_copy,
+                           mock_make_archive, mock_move)
+
+        # Did release() create the local_release subdirectory?
+        mock_makedirs.assert_any_call(local_release)
+        # Did it create the temporary directory for to-be-zipped release files?
+        mock_makedirs.assert_any_call('release_content')
+
+    def check_release(self, args, mock_session, mock_upload, mock_copy, 
+                      mock_make_archive, mock_move):
+        '''
+        This helper method checks that test.release() works correctly
+        with a given collection of arguments and a system configuration
+        mocked by its assorted mock_* arguments.  
+        '''
+        
+        for mock_object in [mock_session, mock_upload, mock_copy,
+                           mock_make_archive, mock_move]:
+            mock_object.reset_mock()
+
+        tools.release(**args)
 
         mock_session.return_value.post.assert_called_once()
         post_args = mock_session.return_value.post.call_args
 
         # Check that the first positional argument of session.post() is 
         # the url to which we desire to make our release.
-        desired_release_url = 'https://test_token:@api.github.com/repos/org/repo/releases'
+        desired_release_url = \
+            'https://test_token:@api.github.com/repos/org/repo/releases'
         self.assertEqual(post_args[0][0], desired_release_url)
 
         # Check that the correct data was passed to session.post()
         data = post_args[1]['data']
         self.assertTrue(re.search('"body": ""', data))
-        self.assertTrue(re.search('"name": "test_version"', data))
-        self.assertTrue(re.search('"target_commitish": "test_branch"', data))
-        self.assertTrue(re.search('"tag_name": "test_version"', data))
+        self.assertTrue(re.search('"name": "%s"' % args['vers'], data))
+        self.assertTrue(re.search('"target_commitish": "%s"' % \
+                                  args['target_commitish'], data))
+        self.assertTrue(re.search('"tag_name": "%s"' % args['vers'], data))
         self.assertTrue(re.search('"prerelease": false', data))
         self.assertTrue(re.search('"draft": false', data))
 
@@ -80,133 +149,102 @@ class TestReleaseFunction(unittest.TestCase):
         # of session.get()
         self.assertEqual(mock_upload.call_args[1]['release_id'], 'test_ID')
 
-        # Check that release() zipped the files released to Google Drive correctly...
-        mock_copy.assert_any_call('paper.pdf', 'release_content/paper.pdf')
-        mock_copy.assert_any_call('plot.pdf',  'release_content/plot.pdf')
-        mock_make_archive.assert_called_with('release_content', 'zip', 'release_content')
-        # ...and moved them to the local_release Google Drive directory
-        mock_move.assert_called_with('release_content.zip', 
-                                     'Google Drive/release/local_release/release.zip')
+        # Check that release() prepared files for release correctly,
+        # If we are zipping before releasing, then we should move
+        # our release files into an intermediate folder to be zipped.
+        if args['zip_release']:
+            base = 'release_content'
+        # Otherwise, we should move them directly into our 
+        # local_release directory.
+        else:
+            base = args['local_release']
+
+        drive_files = args['DriveReleaseFiles']
+        if isinstance(drive_files, basestring):
+            drive_files = [drive_files]
+
+        for filename in drive_files:
+            mock_copy.assert_any_call(filename, '%s/%s' % (base, filename))
+
+        # ...that it zipped them if zip_release == True, ...
+        if args['zip_release']:
+            mock_make_archive.assert_called_with('release_content', 'zip', 
+                                                 'release_content')
+            # ...and that it moved them to the local_release directory
+            mock_move.assert_called_with('release_content.zip', 
+                                         '%s/release.zip' % args['local_release'])       
+        else:
+            mock_make_archive.assert_not_called()
+
         # Check that the assets listed in the file whose path is
         # passed to upload_asset() are those specified by release()'s 
         # DriveReleaseFiles argument.
-        with open('assets_listing.txt', 'rU') as assets:
-            lines = assets.readlines()
-        self.assertIn(lines[1].strip(), DriveReleaseFiles)
-        self.assertIn(lines[2].strip(), DriveReleaseFiles)
+        if args['DriveReleaseFiles']:
+            with open('assets_listing.txt', 'rU') as assets:
+                lines = assets.readlines()
+    
+            for line in lines:
+                if not line == lines[0]:
+                    # Extract the filename from the line of the assets listing
+                    filename = os.path.basename(line.strip())
+                    # Check that the filename is listed.
+                    self.assertIn(filename, args['DriveReleaseFiles'])
 
-        os.remove('assets_listing.txt')
+            os.remove('assets_listing.txt')
 
-    @staticmethod
-    def return_mock_release_data():
-        '''This is mocked-up output from session.get(path)'''
-        return  ','.join([
-                '[{"url":"https://api.github.com/repos/org/repo/releases/test_ID"',
-                 '"assets_url":"https://api.github.com/repos/org/repo/releases/test_ID/assets"',
-                 '"upload_url":"https://uploads.github.com/repos/org/repo/releases/test_ID/assets{?name,label}"',
-                 '"html_url":"https://github.com/org/repo/releases/tag/test_version"',
-                 '"id":test_ID',
-                 '"tag_name":"test_version"',
-                 '"target_commitish":"test_branch"',
-                 '"name":"test_version"',
-                 '"draft":false',
-                 '"prerelease":false}]'])
-
-    @staticmethod
-    def upload_asset_side_effect(*args, **kwargs):
-        '''
-        This side effect, intended for use with a mock of upload_asset, 
-        copird the uploaded asset so that a version will remain to be checked 
-        by unit tests. 
-        '''
-        assets_path    = kwargs['file_name']
-        shutil.copyfile(assets_path, 'assets_listing.txt')    
-
-
-    @staticmethod
-    def post_side_effect(*args, **kwargs):
-      '''
-      This side effect returns a MagicMock that raises an error 
-      when its raise_for_status() method is called unless
-      a specific release_path is specified and there if a 
-      valid tag_name
-      '''
-      # The release path is specified by the first positional argument.
-      mock_output = mock.MagicMock(raise_for_status = mock.MagicMock())
-      release_path = args[0]
-      real_path = "https://test_token:@api.github.com/repos/org/repo/releases"
-
-      def raise_http_error():
-          raise requests.exceptions.HTTPError('404 Client Error')
-
-      if release_path != real_path:
-          mock_output.raise_for_status.side_effect = raise_http_error
-
-      return mock_output  
-
-    @mock.patch('gslab_scons._release_tools.upload_asset')
-    @mock.patch('gslab_scons._release_tools.requests.session')
-    @mock.patch('gslab_scons._release_tools.getpass.getpass')
-    @mock.patch('gslab_scons._release_tools.time.sleep') 
-    @mock.patch('gslab_scons._release_tools.os.makedirs')
-    @mock.patch('gslab_scons._release_tools.os.path.isdir')
-    @mock.patch('gslab_scons._release_tools.shutil.rmtree')
-    @mock.patch('gslab_scons._release_tools.shutil.copy')
-    @mock.patch('gslab_scons._release_tools.shutil.make_archive')
-    @mock.patch('gslab_scons._release_tools.shutil.move')
-    def test_release_nozip(self, mock_move, mock_make_archive, mock_copy, 
-                           mock_rmtree, mock_isdir, mock_makedirs, 
-                           mock_sleep, mock_getpass, mock_session,
-                           mock_upload):
+    @patch_collection
+    def test_release_nozip(self,
+                           mock_move, 
+                           mock_make_archive, 
+                           mock_copy, 
+                           mock_makedirs, 
+                           mock_getpass, 
+                           mock_session,
+                           mock_upload, 
+                           mock_rmtree,
+                           mock_isdir):
         '''
         Test that release() correctly prepares a release
         that uploads unzipped files to Google Drive.
         '''
         # Mock functions called by release() to simulate an actual call
         mock_getpass.return_value = 'test_token'
-        mock_session.return_value.get.return_value.content = self.return_mock_release_data()
+        args = copy.deepcopy(standard_args)
+        args['zip_release'] = False
 
-        DriveReleaseFiles = ['paper.pdf', 'plot.pdf']
-        tools.release('test_version', 
-                      DriveReleaseFiles = DriveReleaseFiles, 
-                      local_release     = 'Google Drive/release/local_release/', 
-                      org               = 'org', 
-                      repo              = 'repo', 
-                      target_commitish  = 'test_branch', 
-                      zip_release       = False)
-        # The release() call should not have created a zip archive...
-        mock_make_archive.assert_not_called()
-        # ...but it should have moved the release files into the local_release directory.
-        mock_copy.assert_any_call('paper.pdf', 'Google Drive/release/local_release/paper.pdf')
-        mock_copy.assert_any_call('plot.pdf',  'Google Drive/release/local_release/plot.pdf')
+        release_data = helpers.mock_release_data(args)
+        mock_session.return_value.get.return_value.content = release_data
 
-    @mock.patch('gslab_scons._release_tools.upload_asset')
-    @mock.patch('gslab_scons._release_tools.requests.session')
-    @mock.patch('gslab_scons._release_tools.getpass.getpass')
-    @mock.patch('gslab_scons._release_tools.os.makedirs')
-    @mock.patch('gslab_scons._release_tools.os.path.isdir')
-    @mock.patch('gslab_scons._release_tools.shutil.rmtree')
-    @mock.patch('gslab_scons._release_tools.shutil.copy')
-    @mock.patch('gslab_scons._release_tools.shutil.make_archive')
-    @mock.patch('gslab_scons._release_tools.shutil.move')
-    def test_release_no_drive(self, mock_move, mock_make_archive, mock_copy, 
-                              mock_rmtree, mock_isdir, mock_makedirs, 
-                              mock_getpass, mock_session,
-                              mock_upload):
+        # Give mock_upload a side effect preserving release assets listing
+        mock_upload.side_effect = fx.upload_asset_side_effect
+
+        self.check_release(args, mock_session, mock_upload, mock_copy,
+                           mock_make_archive, mock_move)
+
+    @patch_collection
+    def test_release_no_drive(self,
+                              mock_move, 
+                              mock_make_archive, 
+                              mock_copy, 
+                              mock_makedirs, 
+                              mock_getpass, 
+                              mock_session,
+                              mock_upload, 
+                              mock_rmtree,
+                              mock_isdir):
         '''
         Test that release() correctly prepares a release
         that does not upload files to Google Drive.
         '''
         # Mock functions called by release() to simulate an actual call
-        mock_session.return_value.get.return_value.content = self.return_mock_release_data()
+        args = copy.deepcopy(standard_args)
+        args['DriveReleaseFiles'] = []
+
+        release_data = helpers.mock_release_data(args)
+        mock_session.return_value.get.return_value.content = release_data
 
         # Test without DriveReleaseFiles
-        tools.release('test_version', 
-                      DriveReleaseFiles = [], 
-                      local_release     = 'Google Drive/release/local_release/', 
-                      org               = 'org', 
-                      repo              = 'repo', 
-                      target_commitish  = 'test_branch')
+        tools.release(**args)
         # Check that no file operations occur when no files are specified for release
         # to Google Drive.
         mock_copy.assert_not_called()      
@@ -216,101 +254,69 @@ class TestReleaseFunction(unittest.TestCase):
         mock_move.assert_not_called()
         mock_upload.assert_not_called()    
 
-    @mock.patch('gslab_scons._release_tools.upload_asset')
-    @mock.patch('gslab_scons._release_tools.requests.session')
-    @mock.patch('gslab_scons._release_tools.getpass.getpass')
-    @mock.patch('gslab_scons._release_tools.time.sleep') 
-    @mock.patch('gslab_scons._release_tools.os.makedirs')
-    @mock.patch('gslab_scons._release_tools.os.path.isdir')
-    @mock.patch('gslab_scons._release_tools.shutil.rmtree')
-    @mock.patch('gslab_scons._release_tools.shutil.copy')
-    @mock.patch('gslab_scons._release_tools.shutil.make_archive')
-    @mock.patch('gslab_scons._release_tools.shutil.move')
-    def test_release_unintended_inputs(self, mock_move, mock_make_archive, mock_copy, 
-                                       mock_rmtree, mock_isdir, mock_makedirs, 
-                                       mock_sleep, mock_getpass, mock_session,
-                                       mock_upload):
+    @patch_collection
+    def test_release_unintended_inputs(self,
+                                       mock_move, 
+                                       mock_make_archive, 
+                                       mock_copy, 
+                                       mock_makedirs, 
+                                       mock_getpass, 
+                                       mock_session,
+                                       mock_upload, 
+                                       mock_rmtree,
+                                       mock_isdir):
         '''
         Test that release() responds as expected to 
         unintended inputs.
         '''
         # Mock functions called by release() to simulate an actual call
         mock_getpass.return_value = 'test_token'
-        mock_session.return_value.get.return_value.content = self.return_mock_release_data()
-        mock_session.return_value.post.side_effect = self.post_side_effect
+        args = copy.deepcopy(standard_args)
 
-        # Inappropriate local_release argument should not if the DriveReleaseFiles
-        # argument is empty.
+        release_data = helpers.mock_release_data(args)
+        mock_session.return_value.get.return_value.content = release_data
+        mock_session.return_value.post.side_effect = fx.post_side_effect
+
+        args = copy.deepcopy(standard_args)
+
+        # Inappropriate local_release argument and DriveReleaseFiles is empty.
+        test_args = copy.deepcopy(args)
+        test_args['DriveReleaseFiles'] = []
+        test_args['local_release']     = 1
         try:
-            tools.release('test_version', 
-                          DriveReleaseFiles = [], 
-                          local_release     = 1, 
-                          org               = 'org', 
-                          repo              = 'repo', 
-                          target_commitish  = 'test_branch')
+            tools.release(**test_args)
         except:
-            self.fail("Running release() with an invalid local_release argument and without"
-                      "files to be released to Google Drive shouldn't raise an error!")
+            self.fail("Running release() with an invalid local_release "
+                      "argument and without files to be released to Google "
+                      "Drive shouldn't raise an error!")
 
-        # Providing a local_release argument of an inappropriate type should
-        # raise an error when we instruct release() to upload files to Google Drive
-        with self.assertRaises(AttributeError), nostderrout():
-            tools.release('test_version', 
-                          DriveReleaseFiles = ['paper.pdf', 'plot.pdf'], 
-                          local_release     = 1, 
-                          org               = 'org', 
-                          repo              = 'repo', 
-                          target_commitish  = 'test_branch')
+        # local_release is of an inappropriate type 
+        self.check_failure({'local_release': 1}, AttributeError)
+        # local_release doesn't contain a /release/ subdirectory. Caps matter!
+        self.check_failure({'local_release': 'root/Release/folder'}, 
+                           ReleaseError)
 
-        # The local_release argument currently has to specify a /release/ directory.
-        # Capitalisation matters!
-        with self.assertRaises(ReleaseError), nostderrout():
-            tools.release('test_version', 
-                          DriveReleaseFiles = ['paper.pdf', 'plot.pdf'], 
-                          local_release     = 'root/Release/folder', 
-                          org               = 'org', 
-                          repo              = 'repo', 
-                          target_commitish  = 'test_branch')   
+        # org/repo referss to a nonexistent GitHub repository
+        self.check_failure({'org': 'orgg'}, requests.exceptions.HTTPError)
+        self.check_failure({'repo': 1}, requests.exceptions.HTTPError)
 
-        # When org/repo refers to a nonexistent GitHub repository, the  
-        # release request will fail. This should raise a requests error.
-        with self.assertRaises(requests.exceptions.HTTPError), nostderrout():
-            tools.release('test_version', 
-                          DriveReleaseFiles = ['paper.pdf', 'plot.pdf'], 
-                          local_release     = 'root/release', 
-                          org               = 'orgg', # Misspelling
-                          repo              = 'repo', 
-                          target_commitish  = 'test_branch')  
+        # Some error-inducing DriveReleaseFiles arguments
+        self.check_failure({'DriveReleaseFiles': True}, TypeError)
+        self.check_failure({'DriveReleaseFiles': [1, 2, 3]}, AttributeError)
 
-        with self.assertRaises(requests.exceptions.HTTPError), nostderrout():
-            tools.release('test_version', 
-                          DriveReleaseFiles = ['paper.pdf', 'plot.pdf'], 
-                          local_release     = 'root/release', 
-                          org               = 'org', 
-                          repo              = 1, # Wrong type
-                          target_commitish  = 'test_branch')  
+    def check_failure(self, changes, expected_error):
+        '''
+        Check that release() fails with `expected_error` when
+        its arguments deviate from standard ones as specified in `changes`.
+        '''
+        test_args = copy.deepcopy(standard_args)
 
-        # Passing a non-container, non-string value for which bool() returns True to DriveReleaseFiles
-        # raises a TypeError
-        with self.assertRaises(TypeError), nostderrout():
-            tools.release('test_version', 
-                          DriveReleaseFiles = True, 
-                          local_release     = 'root/release/repo-test_branch', 
-                          org               = 'org', 
-                          repo              = 'repo', 
-                          target_commitish  = 'test_branch')    
+        for changed_arg in changes.keys():
+            test_args[changed_arg] = changes[changed_arg]
 
-        # Passing a container holding non-string objects to DriveReleaseFiles
-        # raises an AttributeError
-        with self.assertRaises(AttributeError), nostderrout():
-            tools.release('test_version', 
-                          DriveReleaseFiles = [1, 2, 3], 
-                          local_release     = 'root/release/repo-test_branch', 
-                          org               = 'org', 
-                          repo              = 'repo', 
-                          target_commitish  = 'test_branch')  
-
+        with self.assertRaises(expected_error):
+            tools.release(**test_args)  
+    
 
 if __name__ == '__main__':
-    os.getcwd()
     unittest.main()

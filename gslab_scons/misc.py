@@ -4,16 +4,13 @@ import sys
 import time
 import shutil
 import subprocess
-import re
-
-from datetime import datetime
-from sys import platform
-from _exception_classes import BadExtensionError
+import _exception_classes
+import datetime
 
 
 def state_of_repo(target, source, env):
     env['CL_ARG'] = env['MAXIT']
-    maxit = int(command_line_arg(env))
+    maxit = int(command_line_args(env))
     outfile = 'state_of_repo.log'
     with open(outfile, 'wb') as f:
         f.write("WARNING: Information about .sconsign.dblite may be misleading \n" +
@@ -31,17 +28,20 @@ def state_of_repo(target, source, env):
         for root, dirs, files in os.walk(".", followlinks = True):
             i = 1
             for name in files:
+                path = os.path.join(root, name).replace('\\', '/')
                 if i <= maxit and not \
-                        re.search('\./\.', os.path.join(root, name).replace('\\', '/')) and not \
+                        re.search('\./\.', path) and not \
                         re.search('.DS_Store', name):
                     stat_info = os.stat(os.path.join(root, name))
                     f.write(os.path.join(root, name) + ':\n')
                     f.write('   modified on: %s\n' % 
-                        time.strftime('%d %b %Y %H:%M:%S', time.localtime(stat_info.st_mtime)))
+                        time.strftime('%d %b %Y %H:%M:%S', 
+                                      time.localtime(stat_info.st_mtime)))
                     f.write('   size of file: %s\n' % stat_info.st_size)
                     i = i + 1
                 elif i > maxit:
-                    f.write('MAX ITERATIONS (%s) HIT IN DIRECTORY: %s\n' % (maxit, root))
+                    f.write('MAX ITERATIONS (%s) HIT IN DIRECTORY: %s\n' % \
+                            (maxit, root))
                     break
     return None
 
@@ -55,15 +55,33 @@ def check_lfs():
             # init is a deprecated version of install
             output = subprocess.check_output("git-lfs init", shell = True) 
         except:
-            raise LFSError('''Either Git LFS is not installed or your Git LFS settings need to be updated. 
-                  Please install Git LFS or run 'git lfs install --force' if prompted above.''')
+            raise _exception_classes.LFSError('''
+                              Either Git LFS is not installed 
+                              or your Git LFS settings need to be updated. 
+                              Please install Git LFS or run 
+                              'git lfs install --force' if prompted above.''')
 
-def command_line_arg(env):
+
+def command_line_args(env):
+    '''
+    Return the content of env['CL_ARG'] as a string
+    with spaces separating entries. If env['CL_ARG']
+    doesn't exist, return an empty string. 
+    '''
     try:
         cl_arg = env['CL_ARG']
+        if not isinstance(cl_arg, str):
+            try:
+                # Join arguments as strings by spaces
+                cl_arg = ' '.join(map(str, cl_arg))
+            except TypeError:
+                cl_arg = str(cl_arg)
+                
     except KeyError:
         cl_arg = ''
+
     return cl_arg
+
 
 def stata_command_unix(flavor, cl_arg = ''):
     '''
@@ -73,8 +91,10 @@ def stata_command_unix(flavor, cl_arg = ''):
     options = {'darwin': '-e',
                'linux' : '-b',
                'linux2': '-b'}
-    option  = options[platform]
-    command = flavor + ' ' + option + ' %s ' + cl_arg # %s will take filename later
+
+    option  = options[sys.platform]
+    # %s will take filename later
+    command = flavor + ' ' + option + ' %s ' + str(cl_arg)
     return command
 
 
@@ -83,7 +103,8 @@ def stata_command_win(flavor, cl_arg = ''):
     This function returns the appropriate Stata command for a user's 
     Windows platform.
     '''
-    command  = flavor + ' /e do' + ' %s ' + cl_arg # %s will take filename later
+    # %s will take filename later
+    command  = flavor + ' /e do' + ' %s ' + str(cl_arg)
     return command
 
 
@@ -93,13 +114,13 @@ def is_unix():
     otherwise.
     '''
     unix = ['darwin', 'linux', 'linux2']
-    return platform in unix
+    return sys.platform in unix
 
 
 def is_64_windows():
     '''
     This function return True if the user's platform is Windows (64 bit)
-    and false otherwise.
+    and False otherwise.
     '''
     return 'PROGRAMFILES(X86)' in os.environ
 
@@ -109,20 +130,16 @@ def is_in_path(program):
     This general helper function checks whether `program` exists in the 
     user's path environment variable.
     '''
-    if is_exe(program):
+    if os.access(program, os.X_OK):
         return program
     else:
         for path in os.environ['PATH'].split(os.pathsep):
             path = path.strip("'")
             exe = os.path.join(path, program)
-            if is_exe(exe):
+            if os.access(exe, os.X_OK):
                 return exe
+                
     return None
-
-
-def is_exe(file_path):
-    '''Check that a path refers to a file that exists and can be exectuted.'''
-    return os.path.isfile(file_path) and os.access(file_path, os.X_OK)
 
 
 def make_list_if_string(source):
@@ -145,7 +162,9 @@ def check_code_extension(source_file, software):
     ext = extensions[software]
     source_file = str.lower(str(source_file))
     if not source_file.endswith(ext):
-        raise BadExtensionError('First argument, ' + source_file + ', must be a ' + ext + ' file')
+        error_message = 'First argument, %s, must be a %s file.' % \
+                        (source_file, ext)
+        raise _exception_classes.BadExtensionError(error_message)
     return None
 
 
@@ -153,7 +172,8 @@ def current_time():
     '''
     This function returns the current time in a a Y-M-D H:M:S format.
     '''
-    return datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')   
+    now = datetime.datetime.now()
+    return datetime.datetime.strftime(now, '%Y-%m-%d %H:%M:%S')   
 
 
 def lyx_scan(node, env, path):
@@ -161,5 +181,21 @@ def lyx_scan(node, env, path):
     SOURCE = [] 
     for ext in env.EXTENSIONS:
         src_find = re.compile(r'filename\s(\S+%s)' % ext, re.M)
-        SOURCE = SOURCE + [source.replace('"', '') for source in src_find.findall(contents)]
+
+        SOURCE = SOURCE + [source.replace('"', '') \
+                 for source in src_find.findall(contents)]
+
     return SOURCE
+
+
+def get_directory(path):
+    '''
+    Determine the directory of a file. This function returns
+    './' rather than '' when `path` does not include a directory.
+    '''
+    directory = os.path.dirname(path)
+    if directory == '':
+        directory = './'
+
+    return directory
+

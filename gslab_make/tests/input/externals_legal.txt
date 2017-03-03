@@ -1,7 +1,0 @@
-rev	dir	file	outdir	outfile	notes
-15646	%svn%/analysis/Competition (Tables & Figs)/output/	des*.eps	./figures/duplicates/	""""
-4908	%svn%/analysis/voting/output/reply	*	./reply/	""""	
-4908	%svn%/analysis/voting/output/text/     *	./text    """"	  
-4908	%svn%/analysis/voting/output/	tables.txt	.	""""	
-		onlinetables.txt	.	""""	These are the online tables
-2325	%svn%/analysis/voting/spreadsheets/	Duplicate readers analysis - independence model.xlsx	./spreadsheets/	""""		

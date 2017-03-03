@@ -1,2 +1,0 @@
-./	./externals/
-./test.txt	./input/externals_legal.txt

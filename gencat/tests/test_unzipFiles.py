@@ -10,14 +10,14 @@ sys.path.append('../')
 
 from gencat import gencat
 
-class TestCat(gencat):
+class MockCat(gencat):
     def makeZipDict(self):
         pass
     def makeConcatDict(self):
         pass
 
 
-testcat = TestCat('./test_data', './test_temp', './out_temp')
+testcat = MockCat('./test_data', './test_temp', './out_temp')
 
 
 class test_unzipFiles(unittest.TestCase):
