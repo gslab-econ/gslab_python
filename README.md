@@ -1,4 +1,4 @@
-GSLab Python Library Collection 3.0.4
+GSLab Python Library Collection 3.0.5
 =====================================
 
 Overview
