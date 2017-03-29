@@ -278,52 +278,65 @@ def getsize_side_effect(*args, **kwargs):
 
     return size
 
+def check_ignored_side_effect(status):
 
-def check_ignored_side_effect(*args, **kwargs):
-    '''Mock subprcess.check_output() for testing list_ignored_files()'''
+    def effect(*args, **kwargs):
+        '''Mock subprcess.check_output() for testing list_ignored_files()'''
+    
+        # Define mock message from "git status --ignored"
+        standard = \
+            ['On branch testing\n',
+             'Your branch is up-to-date with \'origin/testing\'.\n',
+             'Changes not staged for commit:\n',
+             '  (use "git add/rm <file>..." to update what will be committed)\n',
+             '  (use "git checkout -- <file>..." to discard changes in working directory)\n',
+             '\n',
+             '\tmodified:   make.log\n',
+             '\n',
+             'Untracked files:\n',
+             '  (use "git add <file>..." to include in what will be committed)\n',
+             '\n',
+             '\tuntracked.txt',
+             '\n',
+             'Ignored files:\n',
+             '  (use "git add -f <file>..." to include in what will be committed)\n',
+             '\n',
+             '\tbuild/\n',
+             '\traw/large_file.txt\n',
+             '\trelease/.DS_Store\n',
+             '\trelease/subdir/'
+             '\n',
+             '\n',
+             'It took 2.44 seconds to enumerate untracked files. \'status -uno\'\n',
+             'may speed it up, but you have to be careful not to forget to add\n',
+             'new files yourself (see \'git help status\').\n',
+             'no changes added to commit (use "git add" and/or "git commit -a")\n']
+        
+        none_ignored = \
+            ['On branch issue59-size_warnings\n',
+             'Your branch is up-to-date with \'origin/issue59-size_warnings\'.\n',
+             'nothing to commit, working tree clean\n']
 
-    # Define mock message from "git status --ignored"
-    message = \
-        ['On branch testing\n',
-         'Your branch is up-to-date with \'origin/testing\'.\n',
-         'Changes not staged for commit:\n',
-         '  (use "git add/rm <file>..." to update what will be committed)\n',
-         '  (use "git checkout -- <file>..." to discard changes in working directory)\n',
-         '\n',
-         '\tmodified:   make.log\n',
-         '\n',
-         'Untracked files:\n',
-         '  (use "git add <file>..." to include in what will be committed)\n',
-         '\n',
-         '\tuntracked.txt',
-         '\n',
-         'Ignored files:\n',
-         '  (use "git add -f <file>..." to include in what will be committed)\n',
-         '\n',
-         '\tbuild/\n',
-         '\traw/large_file.txt\n',
-         '\trelease/.DS_Store\n',
-         '\n',
-         '\n',
-         'It took 2.44 seconds to enumerate untracked files. \'status -uno\'\n',
-         'may speed it up, but you have to be careful not to forget to add\n',
-         'new files yourself (see \'git help status\').\n',
-         'no changes added to commit (use "git add" and/or "git commit -a")\n']
-    message = ''.join(message)
+        if status == 'none_ignored':
+            message = ''.join(none_ignored)
+        else:
+            message = ''.join(standard)
 
-    command = args[0]
-    if 'shell' in kwargs.keys():
-        if kwargs['shell'] and (command == 'git status --ignored'):
-            return message
+        command = args[0]
+        if 'shell' in kwargs.keys():
+            if kwargs['shell'] and (command == 'git status --ignored'):
+                return message
+    
+        return None
 
-    return None
- 
+    return effect
 
 # Define the mock file structure for testing list_ignored_files()
 struct = {'.': ['untracked.txt', 'make.log', 'make.py'],
          'build': ['output.txt', 'temp.txt'], 
          'raw': ['large_file.txt', 'small_file.txt'], 
-         'release': ['output.txt', '.DS_Store']}
+         'release': ['output.txt', '.DS_Store'],
+         'release/subdir': ['ignored.txt']}
 
 
 def walk_ignored_side_effect(*args, **kwargs):
@@ -334,12 +347,20 @@ def walk_ignored_side_effect(*args, **kwargs):
     if path not in struct.keys():
         raise StopIteration
 
-    yield (path, [], struct[path])
+    if path == 'release':
+        subdirs = ['subdir']
+    else:
+        subdirs = []
+
+    yield (path, subdirs, struct[path])
  
 
 def isdir_ignored_side_effect(*args, **kwargs):
     path = args[0]
-    isdir = (os.path.relpath in ['build', 'raw', 'release', '.'])
+    if path == '':
+        return False
+        
+    isdir = (os.path.relpath(path) in struct.keys())
     return isdir
 
 
@@ -347,7 +368,7 @@ def isfile_ignore_side_effect(*args, **kwargs):
     path = args[0]
     if path == '':
         return False
-    print path
+
     file_list = []
 
     for k in struct.keys():

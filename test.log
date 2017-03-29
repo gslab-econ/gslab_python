@@ -36,12 +36,12 @@ gslab_scons/tests/test_misc.py .................
 gslab_scons/tests/test_release_function.py ....
 gslab_scons/tests/test_release_tools.py ......
 
-========================== 106 passed in 1.00 seconds ==========================
+========================== 106 passed in 1.14 seconds ==========================
 Name                                         Stmts   Miss Branch BrPart  Cover   Missing
 ----------------------------------------------------------------------------------------
 gslab_scons/__init__.py                          9      0      0      0   100%
 gslab_scons/_exception_classes.py               12      0      0      0   100%
-gslab_scons/_release_tools.py                  162      6     66      2    96%   252-253, 266, 271-273, 265->266, 270->271
+gslab_scons/_release_tools.py                  162      0     66      0   100%
 gslab_scons/builders/__init__.py                 0      0      0      0   100%
 gslab_scons/builders/build_lyx.py               20      0      0      0   100%
 gslab_scons/builders/build_matlab.py            30      0      4      0   100%
@@ -53,7 +53,7 @@ gslab_scons/log.py                              20      0      4      0   100%
 gslab_scons/misc.py                            103      0     24      0   100%
 gslab_scons/release.py                          61     61     30      0     0%   1-105
 gslab_scons/tests/__init__.py                    0      0      0      0   100%
-gslab_scons/tests/_side_effects.py             157     10     46     10    89%   25-26, 254, 277, 319, 331-337, 22->25, 28->exit, 37->exit, 52->57, 119->131, 221->227, 253->254, 274->277, 315->319, 316->319
+gslab_scons/tests/_side_effects.py             166      7     52     12    91%   25-26, 254, 277, 330, 348, 351, 22->25, 28->exit, 37->exit, 52->57, 119->131, 221->227, 253->254, 274->277, 326->330, 327->330, 347->348, 350->351
 gslab_scons/tests/_test_helpers.py              95      4     34      3    93%   27-28, 102, 117, 76->88, 99->102, 112->117
 gslab_scons/tests/test_build_lyx.py             53      1      8      3    93%   109, 26->exit, 104->exit, 108->109
 gslab_scons/tests/test_build_matlab.py          49      1      6      1    96%   97, 96->97
@@ -64,6 +64,6 @@ gslab_scons/tests/test_build_tables.py          65      1      8      1    97%  
 gslab_scons/tests/test_log.py                  104      3     12      3    95%   26, 185, 189, 25->26, 184->185, 188->189
 gslab_scons/tests/test_misc.py                 174      9     14      4    93%   36-37, 43-44, 50-51, 70, 236, 340, 65->72, 67->70, 235->236, 339->340
 gslab_scons/tests/test_release_function.py     122      3     22      2    97%   288-289, 322, 182->exit, 321->322
-gslab_scons/tests/test_release_tools.py         94      1      2      1    98%   207, 206->207
+gslab_scons/tests/test_release_tools.py         98      1      2      1    98%   216, 215->216
 ----------------------------------------------------------------------------------------
-TOTAL                                         1618    106    334     40    91%
+TOTAL                                         1631     97    340     40    91%
