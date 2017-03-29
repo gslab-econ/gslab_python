@@ -5,10 +5,12 @@ Processing pytest-3.0.6-py2.7.egg
 
 Using /Users/mrsull/Desktop/gslab_python/.eggs/pytest-3.0.6-py2.7.egg
 running egg_info
+creating GSLab_Tools.egg-info
 writing requirements to GSLab_Tools.egg-info/requires.txt
 writing GSLab_Tools.egg-info/PKG-INFO
 writing top-level names to GSLab_Tools.egg-info/top_level.txt
 writing dependency_links to GSLab_Tools.egg-info/dependency_links.txt
+writing manifest file 'GSLab_Tools.egg-info/SOURCES.txt'
 reading manifest file 'GSLab_Tools.egg-info/SOURCES.txt'
 writing manifest file 'GSLab_Tools.egg-info/SOURCES.txt'
 running build_ext
@@ -36,7 +38,7 @@ gslab_scons/tests/test_misc.py .................
 gslab_scons/tests/test_release_function.py ....
 gslab_scons/tests/test_release_tools.py .....
 
-========================== 105 passed in 2.01 seconds ==========================
+========================== 105 passed in 3.76 seconds ==========================
 Name                                           Stmts   Miss Branch BrPart  Cover   Missing
 ------------------------------------------------------------------------------------------
 gencat/gencat.py                                  79      6     28      4    91%   72-73, 81, 89, 97, 101, 57->exit, 71->72, 96->97, 100->101
@@ -70,7 +72,7 @@ gslab_make/private/runprogramdirective.py        207    185    104      0     7%
 gslab_make/run_program.py                        238    217     80      0     7%   129-162, 178-202, 208-225, 231-248, 254-275, 281-298, 304-321, 332-392, 398-423, 429-447, 453-488, 494-499
 gslab_make/tests/nostderrout.py                   12      0      2      0   100%
 gslab_scons/_exception_classes.py                 12      0      0      0   100%
-gslab_scons/_release_tools.py                    138      0     54      0   100%
+gslab_scons/_release_tools.py                    159     20     66      0    86%   242-264
 gslab_scons/builders/build_lyx.py                 20      0      0      0   100%
 gslab_scons/builders/build_matlab.py              30      0      4      0   100%
 gslab_scons/builders/build_python.py              17      0      0      0   100%
@@ -79,7 +81,7 @@ gslab_scons/builders/build_stata.py               50      0     20      0   100%
 gslab_scons/builders/build_tables.py               8      0      0      0   100%
 gslab_scons/log.py                                20      0      4      0   100%
 gslab_scons/misc.py                              103      0     24      0   100%
-gslab_scons/release.py                            59     59     32      0     0%   1-100
+gslab_scons/release.py                            61     61     30      0     0%   1-108
 gslab_scons/tests/_side_effects.py               128      4     36      8    93%   25-26, 256, 279, 22->25, 28->exit, 37->exit, 52->57, 119->131, 221->227, 255->256, 276->279
 gslab_scons/tests/_test_helpers.py                95      4     34      3    93%   27-28, 102, 117, 76->88, 99->102, 112->117
 gslab_scons/tests/test_build_lyx.py               53      1      8      3    93%   109, 26->exit, 104->exit, 108->109
@@ -93,4 +95,4 @@ gslab_scons/tests/test_misc.py                   174      9     14      4    93%
 gslab_scons/tests/test_release_function.py       122      3     22      2    97%   288-289, 322, 182->exit, 321->322
 gslab_scons/tests/test_release_tools.py           82      1      2      1    98%   190, 189->190
 ------------------------------------------------------------------------------------------
-TOTAL                                           3897   1293   1102     66    61%
+TOTAL                                           3920   1315   1112     66    61%

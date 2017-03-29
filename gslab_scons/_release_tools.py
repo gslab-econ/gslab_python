@@ -281,7 +281,7 @@ def create_size_dictionary(path):
         for file_name in files:
             file_path = os.path.join(root, file_name)
             size      = os.path.getsize(file_path)
-            size_dictionary[file_path] = size
+            size_dictionary[os.path.normpath(file_path)] = size
 
     return size_dictionary
 

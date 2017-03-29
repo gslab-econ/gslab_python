@@ -62,7 +62,7 @@ def inspect_repo():
     if not rtools.up_to_date(mode = 'scons'):
         raise ReleaseError('SCons targets not up to date.')
     elif not rtools.up_to_date(mode = 'git'):
-        print "WARNING: `scons` has run since your latest git commit.\n"
+        print "Warning: `scons` has run since your latest git commit.\n"
         response = raw_input("Would you like to continue anyway? (y|n)\n")
         if response in ['N', 'n']: 
             sys.exit()
@@ -84,7 +84,7 @@ def issue_size_warnings(file_MB_limit, total_MB_limit, bytes_in_MB):
         limit = file_MB_limit * bytes_in_MB
 
         if size > limit and file_name:
-            print "\nWARNING: the versioned file %s is larger than %d MB.\n" \
+            print "Warning: the versioned file %s is larger than %d MB.\n" \
                   % (file_name, file_MB_limit)
             print "Versioning files of this size is discouraged.\n" 
 
@@ -96,7 +96,7 @@ def issue_size_warnings(file_MB_limit, total_MB_limit, bytes_in_MB):
     total_limit = total_MB_limit * bytes_in_MB
 
     if total_size > total_limit:
-        print "\nWARNING: the versioned files in /release/ are together " + \
+        print "Warning: the versioned files in /release/ are together " + \
             "larger than " + str(total_MB_limit) + " MB.\n" + \
             "Versioning this much content is discouraged.\n"
         response = raw_input("Would you like to continue anyway? (y|n)\n")
