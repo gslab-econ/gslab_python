@@ -120,33 +120,6 @@ class TestReleaseTools(unittest.TestCase):
         with self.assertRaises(ReleaseError), nostderrout():
             gslab_scons._release_tools.up_to_date(mode = 'scons')  
 
-    @mock.patch('gslab_scons._release_tools.open')
-    def test_extract_dot_git(self, mock_open):
-        '''
-        Test that extract_dot_git() correctly extracts repository
-        information from a .git folder's config file.
-        '''
-
-        mock_open.side_effect = fx.dot_git_open_side_effect()
-
-        repo_info = tools.extract_dot_git('.git')
-        self.assertEqual(repo_info[0], 'repo')
-        self.assertEqual(repo_info[1], 'org')
-        self.assertEqual(repo_info[2], 'branch')
-
-        # Ensure that extract_dot_git() raises an error when the directory
-        # argument is not a .git folder.
-        # i) The directory argument identifies an empty folder
-        with self.assertRaises(ReleaseError):
-            repo_info = tools.extract_dot_git('not/git')
-
-        # ii) Mock the .git/config file so that url information is missing
-        #      from its "[remote "origin"]" section. (We parse organisaton,
-        #      repo, and branch information from this url.)
-        mock_open.side_effect = fx.dot_git_open_side_effect(url = False)
-        with self.assertRaises(ReleaseError):
-            repo_info = tools.extract_dot_git('.git')
-
     @mock.patch('gslab_scons._release_tools.os.path.getsize')
     @mock.patch('gslab_scons._release_tools.os.walk')
     @mock.patch('gslab_scons._release_tools.os.path.isdir')
@@ -184,6 +157,50 @@ class TestReleaseTools(unittest.TestCase):
         # The path argument must be a string
         with self.assertRaises(TypeError), nostderrout():
             sizes = tools.create_size_dictionary(10)
+
+    @mock.patch('gslab_scons._release_tools.os.path.isfile')
+    @mock.patch('gslab_scons._release_tools.os.path.isdir')
+    @mock.patch('gslab_scons._release_tools.os.walk')
+    @mock.patch('gslab_scons._release_tools.subprocess.check_output')
+    def test_list_ignored_files(self, mock_check, mock_walk,
+                                mock_isdir, mock_isfile):
+        mock_check.side_effect  = fx.check_ignored_side_effect
+        mock_walk.side_effect   = fx.walk_ignored_side_effect
+        mock_isdir.side_effect  = fx.isdir_ignored_side_effect
+        mock_isfile.side_effect = fx.isfile_ignore_side_effect
+
+        ignored = tools.list_ignored_files(path = './release')
+        expect_ignored = ['release/.DS_Store']
+
+        self.assertEqual(len(ignored), len(expect_ignored))
+        self.assertEqual(ignored[0], expect_ignored[0])
+
+    @mock.patch('gslab_scons._release_tools.open')
+    def test_extract_dot_git(self, mock_open):
+        '''
+        Test that extract_dot_git() correctly extracts repository
+        information from a .git folder's config file.
+        '''
+
+        mock_open.side_effect = fx.dot_git_open_side_effect()
+
+        repo_info = tools.extract_dot_git('.git')
+        self.assertEqual(repo_info[0], 'repo')
+        self.assertEqual(repo_info[1], 'org')
+        self.assertEqual(repo_info[2], 'branch')
+
+        # Ensure that extract_dot_git() raises an error when the directory
+        # argument is not a .git folder.
+        # i) The directory argument identifies an empty folder
+        with self.assertRaises(ReleaseError):
+            repo_info = tools.extract_dot_git('not/git')
+
+        # ii) Mock the .git/config file so that url information is missing
+        #      from its "[remote "origin"]" section. (We parse organisaton,
+        #      repo, and branch information from this url.)
+        mock_open.side_effect = fx.dot_git_open_side_effect(url = False)
+        with self.assertRaises(ReleaseError):
+            repo_info = tools.extract_dot_git('.git')
 
 
 if __name__ == '__main__':

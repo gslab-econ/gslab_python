@@ -247,9 +247,7 @@ def isdir_side_effect(*args, **kwargs):
 
 
 def walk_side_effect(*args, **kwargs):
-    '''
-    Mock os.walk() for a mock directory called ./test_files/.
-    '''
+    '''Mock os.walk() for a mock directory called ./test_files/.'''
     path = args[0]
 
     if path != 'test_files':
@@ -281,4 +279,80 @@ def getsize_side_effect(*args, **kwargs):
     return size
 
 
+def check_ignored_side_effect(*args, **kwargs):
+    '''Mock subprcess.check_output() for testing list_ignored_files()'''
+
+    # Define mock message from "git status --ignored"
+    message = \
+        ['On branch testing\n',
+         'Your branch is up-to-date with \'origin/testing\'.\n',
+         'Changes not staged for commit:\n',
+         '  (use "git add/rm <file>..." to update what will be committed)\n',
+         '  (use "git checkout -- <file>..." to discard changes in working directory)\n',
+         '\n',
+         '\tmodified:   make.log\n',
+         '\n',
+         'Untracked files:\n',
+         '  (use "git add <file>..." to include in what will be committed)\n',
+         '\n',
+         '\tuntracked.txt',
+         '\n',
+         'Ignored files:\n',
+         '  (use "git add -f <file>..." to include in what will be committed)\n',
+         '\n',
+         '\tbuild/\n',
+         '\traw/large_file.txt\n',
+         '\trelease/.DS_Store\n',
+         '\n',
+         '\n',
+         'It took 2.44 seconds to enumerate untracked files. \'status -uno\'\n',
+         'may speed it up, but you have to be careful not to forget to add\n',
+         'new files yourself (see \'git help status\').\n',
+         'no changes added to commit (use "git add" and/or "git commit -a")\n']
+    message = ''.join(message)
+
+    command = args[0]
+    if 'shell' in kwargs.keys():
+        if kwargs['shell'] and (command == 'git status --ignored'):
+            return message
+
+    return None
+ 
+
+# Define the mock file structure for testing list_ignored_files()
+struct = {'.': ['untracked.txt', 'make.log', 'make.py'],
+         'build': ['output.txt', 'temp.txt'], 
+         'raw': ['large_file.txt', 'small_file.txt'], 
+         'release': ['output.txt', '.DS_Store']}
+
+
+def walk_ignored_side_effect(*args, **kwargs):
+    '''Mock os.walk() for testing list_ignored_files()'''
+    path = args[0]
+    path = os.path.relpath(path)
+
+    if path not in struct.keys():
+        raise StopIteration
+
+    yield (path, [], struct[path])
+ 
+
+def isdir_ignored_side_effect(*args, **kwargs):
+    path = args[0]
+    isdir = (os.path.relpath in ['build', 'raw', 'release', '.'])
+    return isdir
+
+
+def isfile_ignore_side_effect(*args, **kwargs):
+    path = args[0]
+    if path == '':
+        return False
+    print path
+    file_list = []
+
+    for k in struct.keys():
+        file_list += [os.path.join(k, f) for f in struct[k]]
+
+    isfile = (os.path.relpath(path) in map(os.path.relpath, file_list))
+    return isfile
 

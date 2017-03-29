@@ -246,6 +246,7 @@ def list_ignored_files(path = './release'):
     message = subprocess.check_output('git status --ignored', shell = True)
     message = message.split('\n')
     message = map(lambda s: s.strip(), message)
+
     try:
         ignored_line = message.index('Ignored files:')
     except ValueError:
@@ -253,14 +254,12 @@ def list_ignored_files(path = './release'):
 
     # Use realpath() so paths can be compared as strings
     path = os.path.realpath(path)
-
     ignore_dirs  = []
     ignore_files = []
     for line in message[ignored_line:len(message)]:
         # Determine if line could be in path's directory
         as_path = os.path.realpath(line)
-        in_path = bool(re.search('^%s' % as_path, line))
-
+        in_path = bool(re.search('^%s' % path, as_path))
         # If line could be in path's directory, classify it as
         # an ignored file or directory.
         if os.path.isdir(line) and in_path:
