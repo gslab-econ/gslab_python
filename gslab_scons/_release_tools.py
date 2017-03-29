@@ -238,7 +238,11 @@ def up_to_date(mode = 'scons', directory = '.'):
     return bool(result)
 
 
-def list_ignored_files():
+def list_ignored_files(path = './release'):
+    '''
+    List files ignored by git living in the directory specified by
+    the path argument.
+    '''
     message = subprocess.check_output('git status --ignored', shell = True)
     message = message.split('\n')
     message = map(lambda s: s.strip(), message)
@@ -247,12 +251,21 @@ def list_ignored_files():
     except ValueError:
         return []
 
+    # Use realpath() so paths can be compared as strings
+    path = os.path.realpath(path)
+
     ignore_dirs  = []
     ignore_files = []
     for line in message[ignored_line:len(message)]:
-        if os.path.isdir(line):
+        # Determine if line could be in path's directory
+        as_path = os.path.realpath(line)
+        in_path = bool(re.search('^%s' % as_path, line))
+
+        # If line could be in path's directory, classify it as
+        # an ignored file or directory.
+        if os.path.isdir(line) and in_path:
             ignore_dirs.append(line)
-        elif os.path.isfile(line):
+        elif os.path.isfile(line) and in_path:
             ignore_files.append(line)
 
     for directory in ignore_dirs:

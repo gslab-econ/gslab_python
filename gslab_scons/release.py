@@ -6,11 +6,8 @@ from _exception_classes import ReleaseError
 
 
 def main():
-    # Ensure that the directory's targets are up to date
+    # Preliminary checks/warnings
     inspect_repo()
-
-    #== Issue warnings if the files versioned in release are too large ========
-    # Set soft size limits in MB
     issue_size_warnings(file_MB_limit  = 2,
                         total_MB_limit = 500,
                         bytes_in_MB = 1000000)
@@ -92,7 +89,7 @@ def issue_size_warnings(file_MB_limit, total_MB_limit, bytes_in_MB):
             if response in ['N', 'n']: 
                 sys.exit()
 
-    total_size  = sum(versioned_sizes.values())
+    total_size  = sum(versioned.values())
     total_limit = total_MB_limit * bytes_in_MB
 
     if total_size > total_limit:
