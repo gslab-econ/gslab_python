@@ -26,17 +26,20 @@ def build_lyx(target, source, env):
     # Prelims
     source      = misc.make_list_if_string(source)
     target      = misc.make_list_if_string(target)
-    start_time  = misc.current_time()
-    
-    # Set up source file
+
     source_file = str(source[0])
     misc.check_code_extension(source_file, '.lyx')
 
     # Set up target file and log file
     newpdf      = source_file[:-4] + '.pdf'
     target_file = str(target[0])
-    target_dir  = os.path.dirname(target_file)
-    log_file    = target_dir + '/sconscript.log'
+    target_dir  = misc.get_directory(target_file)
+    
+    start_time  = misc.current_time()
+
+    misc.check_code_extension(source_file, 'lyx')
+    newpdf   = source_file.replace('.lyx','.pdf')
+    log_file = target_dir + '/sconscript.log'
     
     # System call
     try:

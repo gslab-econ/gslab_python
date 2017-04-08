@@ -4,6 +4,7 @@ import glob
 from datetime import datetime
 import gslab_scons.misc as misc
 
+
 def start_log(mode, vers, log = 'sconstruct.log'):
     '''Begins logging a build process'''
     misc.check_lfs()
@@ -21,6 +22,7 @@ def start_log(mode, vers, log = 'sconstruct.log'):
         sys.stdout = os.popen('tee -a %s' % log, 'wb')
     elif sys.platform == 'win32':
         sys.stdout = open(log, 'ab')
+
     sys.stderr = sys.stdout 
 
     return None

@@ -1,9 +1,11 @@
 import os
 import subprocess
 import shutil
+import sys
 import gslab_scons.misc as misc
 from gslab_scons import log_timestamp
 from gslab_scons._exception_classes import BadExecutableError
+
 
 def build_stata(target, source, env):
     '''Build targets with a Stata command
@@ -24,7 +26,7 @@ def build_stata(target, source, env):
     (By default, SCons will try to find each flavour). 
     '''
 
-    #Prelims
+    # Prelims
     source       = misc.make_list_if_string(source)
     target       = misc.make_list_if_string(target)
     start_time =  misc.current_time()
@@ -35,11 +37,12 @@ def build_stata(target, source, env):
     loc_log  = os.path.basename(source_file).replace('.do','.log')
 
     # Set up log file destination
-    log_dir     = os.path.dirname(str(target[0]))
+    target_file = str(target[0])
+    log_dir     = misc.get_directory(target_file)
     log_file    = log_dir + '/sconscript.log'
     
     # Set up command line arguments
-    cl_arg      = misc.command_line_arg(env)
+    cl_arg = misc.command_line_args(env)
 
     executable       = misc.get_stata_executable(env)
     command_skeleton = misc.get_stata_command(executable)

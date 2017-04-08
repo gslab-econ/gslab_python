@@ -1,5 +1,4 @@
 GSLab Python Library Collection 3.1.0
-=====================================
 
 Overview
 --------
@@ -37,6 +36,25 @@ which are the SSH and HTTPS protocol versions.
 
 Note that this installation procedure may require obtaining machine privileges through,
 say, a `sudo` command. 
+
+
+Testing
+-------
+
+We recommend that users use [coverage](https://pypi.python.org/pypi/coverage/) 
+to run this repository's unit tests. Upon installing coverage (this can be done with
+pip using the command `pip install coverage`), one may test `gslab_python`'s contents
+and then produce a code coverage report the commands:
+
+```bash
+python setup.py test [--include=<paths>]
+```
+
+Here, the optional `--include=` argument specifies the files whose test results
+should be included in the coverage report produced by the command. 
+It works as `coverage`'s argument of the same name does. The command should be
+run without this option before committing to `gslab_python`.
+
 
 License
 -------

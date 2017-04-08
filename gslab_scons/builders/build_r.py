@@ -23,18 +23,17 @@ def build_r(target, source, env):
     # Prelims
     source      = misc.make_list_if_string(source)
     target      = misc.make_list_if_string(target)
+    source_file = str(source[0])
+    target_file = str(target[0])
+    target_dir  = misc.get_directory(target_file)
+
     start_time  = misc.current_time()
 
-    # Set up source file
-    source_file = str(source[0])
-    misc.check_code_extension(source_file, '.r')
- 
-    # Set up log file
-    log_dir     = os.path.dirname(str(target[0]))
-    log_file    = log_dir + '/sconscript.log'
+    misc.check_code_extension(source_file, 'r')
+    log_file = target_dir + '/sconscript.log'
+    
+    cl_arg = misc.command_line_args(env)
 
-    # Allow command line arguments 
-    cl_arg      = misc.command_line_arg(env)
     if cl_arg != '':
         cl_arg = "'--args %s'" % cl_arg
 
@@ -48,8 +47,7 @@ def build_r(target, source, env):
         message = misc.command_error_msg("R", command)
         raise BadExecutableError(message)
 
-    # Close log
-    end_time   =  misc.current_time()    
+    end_time = misc.current_time()    
     log_timestamp(start_time, end_time, log_file)
     
     return None

@@ -32,8 +32,9 @@ def release(vers, org, repo,
     # Check the argument types
 
 
-    token         = getpass.getpass("Enter a GitHub token and then press enter: ") 
-    tag_name      = vers
+    token    = getpass.getpass("Enter a GitHub token and then press enter: ") 
+    tag_name = vers
+    
     releases_path = 'https://%s:@api.github.com/repos/%s/%s/releases' \
                     % (token, org, repo)
     session       = requests.session()
@@ -83,7 +84,8 @@ def release(vers, org, repo,
                 break
 
         if dir_name is None:
-            raise ReleaseError("No /release/ superdirectory found in path given by local_release")
+            raise ReleaseError("No /release/ superdirectory found "
+                               "in path given by local_release")
 
         if not os.path.isdir(local_release):
             os.makedirs(local_release)
@@ -116,11 +118,12 @@ def release(vers, org, repo,
         if zip_release:
             shutil.make_archive(archive_files, 'zip', archive_files)
             shutil.rmtree(archive_files)
-            shutil.move(archive_files + '.zip', os.path.join(local_release, 'release.zip'))
+            shutil.move(archive_files + '.zip', 
+                        os.path.join(local_release, 'release.zip'))
 
         if not zip_release:
-            DriveReleaseFiles = map(lambda s: 'release/%s/%s/%s' % (dir_name, vers, s), 
-                                    DriveReleaseFiles)
+            make_paths = lambda s: 'release/%s/%s/%s' % (dir_name, vers, s)
+            DriveReleaseFiles = map(make_paths, DriveReleaseFiles)
 
         with open('gdrive_assets.txt', 'wb') as f:
             f.write('\n'.join([drive_header] + DriveReleaseFiles))
@@ -157,8 +160,9 @@ def upload_asset(token, org, repo, release_id, file_name,
     files  = {'file' : open(file_name, 'rU')}
     header = {'Authorization': 'token %s' % token, 
               'Content-Type':  content_type}
-    upload_path = 'https://uploads.github.com/repos/%s/%s/releases/%s/assets?name=%s' % \
-                  (org, repo, release_id, file_name)
+    path_base   = 'https://uploads.github.com/repos'
+    upload_path = '%s/%s/%s/releases/%s/assets?name=%s' % \
+                  (path_base, org, repo, release_id, file_name)
  
     r = session.post(upload_path, files = files, headers = header)
     return r.content
@@ -171,6 +175,10 @@ def up_to_date(mode = 'scons', directory = '.'):
     If mode = git, it checks whether the directory's sconsign.dblite has
     changed since the latest commit.
     '''
+    if mode not in ['scons', 'git']:
+        raise ReleaseError("up_to_date()'s mode argument must be "
+                           "'scons' or 'git")
+
     original_directory = os.getcwd()
     os.chdir(directory)
 
@@ -178,7 +186,7 @@ def up_to_date(mode = 'scons', directory = '.'):
         # If mode = scons, conduct a dry run to check whether 
         # all targets are up-to-date
         command = 'scons ' + directory + ' --dry-run'
-    elif mode == 'git':
+    else:
         # If mode = git, check whether .sconsign.dblite has changed
         # since the last commit.
         original_directory = os.getcwd()
@@ -188,7 +196,9 @@ def up_to_date(mode = 'scons', directory = '.'):
     logpath = '.temp_log_up_to_date'
     
     with open(logpath, 'wb') as temp_log:
-        subprocess.call(command, stdout = temp_log, stderr = temp_log, shell = True)
+        subprocess.call(command, stdout = temp_log, 
+                        stderr = temp_log, shell = True)
+    
     with open(logpath, 'rU') as temp_log:
         output = temp_log.readlines()
     os.remove(logpath)
@@ -207,7 +217,7 @@ def up_to_date(mode = 'scons', directory = '.'):
         # If mode = scons, look for a line stating that the directory is up to date.
         result = [True for out in output if re.search('is up to date\.$', out)]
 
-    elif mode == 'git':  
+    else:  
         # Determine whether the directory specified as a function
         # argument is actually a git repository.
         # We use the fact that running `git status` outside of a git directory
@@ -240,10 +250,10 @@ def extract_dot_git(path = '.git'):
     '''
     # Read the config file in the repository's .git directory
     try:
-        with open('%s/config' % path, 'rU') as config:
-            details = config.readlines()
-    except:
-        raise ReleaseError("Could not read " + path + "/config. It may not exist")
+        details = open('%s/config' % path, 'rU').readlines()
+    except Exception as err:
+        raise ReleaseError("Could not read %s/config. Reason: %s" % \
+                           (path, str(err)))
 
     # Clean each line of this file's contents
     details = map(lambda s: s.strip(), details)
@@ -254,12 +264,16 @@ def extract_dot_git(path = '.git'):
     origin_line = origin_line.index(True)
     
     # The next line should contain the url for origin
-    incr = 1
-    url_line  = details[origin_line + incr]
     # If not, keep looking for the url line
-    while not re.search('^url =', url_line) and origin_line + incr + 1 <= len(details):
-        incr += 1
-        url_line  = details[origin_line + increment]
+    found_url = False
+    for i in range(origin_line + 1, len(details)):
+        url_line = details[i]
+        if re.search('^url =', url_line):
+            found_url = True
+            break
+
+    if not found_url:
+        raise ReleaseError('url for git origin not found.')
     
     # Extract information from the url line
     # We expect one of:
@@ -270,8 +284,7 @@ def extract_dot_git(path = '.git'):
     repo         = repo_info[0][1]
 
     # Next, find the branch's name
-    with open('%s/HEAD' % path, 'rU') as head:
-        branch_info = head.readlines()
+    branch_info = open('%s/HEAD' % path, 'rU').readlines()
     branch = re.findall('ref: refs/heads/([\w-]+)', branch_info[0])[0]
 
     return repo, organisation, branch
@@ -287,12 +300,13 @@ def create_size_dictionary(path):
     size_dictionary = dict()
 
     if not os.path.isdir(path):
-        raise ReleaseError("The path argument does not specify an existing directory.")
+        raise ReleaseError("The path argument does not specify an "
+                           "existing directory.")
 
     for root, directories, files in os.walk(path):
         for file_name in files:
             file_path = os.path.join(root, file_name)
-            size      =  os.path.getsize(file_path)
+            size      = os.path.getsize(file_path)
             size_dictionary[file_path] = size
 
     return size_dictionary

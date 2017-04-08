@@ -10,7 +10,7 @@ sys.path.append('..')
 from gencat import gencat
 
 
-class TestCat(gencat):
+class MockCat(gencat):
     def makeZipDict(self):
         pass
 
@@ -18,7 +18,7 @@ class TestCat(gencat):
         pass
 
 
-testcat = TestCat('./test_data', './test_temp', './out_temp')
+testcat = MockCat('./test_data', './test_temp', './out_temp')
 
 
 class test_cleanDir(unittest.TestCase):
