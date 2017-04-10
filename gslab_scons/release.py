@@ -1,7 +1,7 @@
 import re
 import os
 import sys
-import _release_tools as rtools
+import _release_tools
 from _exception_classes import ReleaseError
 
 
@@ -13,7 +13,7 @@ def main():
                         bytes_in_MB = 1000000)
 
     # Extract information about the clone from its .git directory
-    repo, organisation, branch = rtools.extract_dot_git()
+    repo, organisation, branch = _release_tools.extract_dot_git()
 
     # Determine the version number
     try:
@@ -45,20 +45,20 @@ def main():
     local_release = '/Users/%s/Google Drive/release/%s/' % (USER, name)
     local_release = local_release + version + '/'
     
-    rtools.release(vers              = version, 
-                   DriveReleaseFiles = release_files,
-                   local_release     = local_release, 
-                   org               = organisation, 
-                   repo              = repo,
-                   target_commitish  = branch,
-                   zip_release       = zip_release)
+    _release_tools.release(vers              = version, 
+                           DriveReleaseFiles = release_files,
+                           local_release     = local_release, 
+                           org               = organisation, 
+                           repo              = repo,
+                           target_commitish  = branch,
+                           zip_release       = zip_release)
 
 
 def inspect_repo():
     '''Ensure the repo is ready for release.'''
-    if not rtools.up_to_date(mode = 'scons'):
+    if not _release_tools.up_to_date(mode = 'scons'):
         raise ReleaseError('SCons targets not up to date.')
-    elif not rtools.up_to_date(mode = 'git'):
+    elif not _release_tools.up_to_date(mode = 'git'):
         print "Warning: `scons` has run since your latest git commit.\n"
         response = raw_input("Would you like to continue anyway? (y|n)\n")
         if response in ['N', 'n']: 
@@ -66,18 +66,15 @@ def inspect_repo():
 
 
 def issue_size_warnings(file_MB_limit, total_MB_limit, bytes_in_MB):
-    '''Issue warnings if the files versioned in release are too large'''
+    '''Issue warnings if versioned files are large'''
 
-    # Compile a list of files in /release/ that are not versioned.
-    ignored = rtools.list_ignored_files()
-    release = rtools.create_size_dictionary('./release')
-    release = {k: release[k] for k in release.keys() if k not in ignored}
-    versioned = dict()
+    # Compile a list of files that are not versioned.
+    ignored = _release_tools.list_ignored_files()
+    versioned = _release_tools.create_size_dictionary('.')
+    versioned = {k: versioned[k] for k in versioned.keys() if k not in ignored}
 
-    for file_name in release.keys():
-        versioned[file_name] = release[file_name]
-
-        size  = release[file_name]
+    for file_name in versioned.keys():
+        size  = versioned[file_name]
         limit = file_MB_limit * bytes_in_MB
 
         if size > limit and file_name:

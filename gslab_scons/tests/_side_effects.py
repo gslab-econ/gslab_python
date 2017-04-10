@@ -278,12 +278,21 @@ def getsize_side_effect(*args, **kwargs):
 
     return size
 
+
+# Define the mock file structure for testing list_ignored_files()
+struct = {'.': ['untracked.txt', 'make.log', 'make.py'],
+         'raw': ['large_file.txt', 'small_file.txt'], 
+         'release': ['output.txt', '.DS_Store'],
+         'release/subdir': ['ignored.txt']}
+
+
 def check_ignored_side_effect(status):
 
     def effect(*args, **kwargs):
         '''Mock subprcess.check_output() for testing list_ignored_files()'''
     
-        # Define mock message from "git status --ignored"
+        # Define mock messages from "git status --ignored"
+        # i) Some files are ignored
         standard = \
             ['On branch testing\n',
              'Your branch is up-to-date with \'origin/testing\'.\n',
@@ -301,7 +310,6 @@ def check_ignored_side_effect(status):
              'Ignored files:\n',
              '  (use "git add -f <file>..." to include in what will be committed)\n',
              '\n',
-             '\tbuild/\n',
              '\traw/large_file.txt\n',
              '\trelease/.DS_Store\n',
              '\trelease/subdir/'
@@ -312,6 +320,7 @@ def check_ignored_side_effect(status):
              'new files yourself (see \'git help status\').\n',
              'no changes added to commit (use "git add" and/or "git commit -a")\n']
         
+        # ii) No files are ignored
         none_ignored = \
             ['On branch issue59-size_warnings\n',
              'Your branch is up-to-date with \'origin/issue59-size_warnings\'.\n',
@@ -330,13 +339,6 @@ def check_ignored_side_effect(status):
         return None
 
     return effect
-
-# Define the mock file structure for testing list_ignored_files()
-struct = {'.': ['untracked.txt', 'make.log', 'make.py'],
-         'build': ['output.txt', 'temp.txt'], 
-         'raw': ['large_file.txt', 'small_file.txt'], 
-         'release': ['output.txt', '.DS_Store'],
-         'release/subdir': ['ignored.txt']}
 
 
 def walk_ignored_side_effect(*args, **kwargs):

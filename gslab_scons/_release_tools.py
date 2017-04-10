@@ -238,12 +238,13 @@ def up_to_date(mode = 'scons', directory = '.'):
     return bool(result)
 
 
-def list_ignored_files(dir_path = './release'):
+def list_ignored_files():
     '''List files ignored by git 
 
     This function returns a list of the files in the directory
     given by the dir_path argument that are ignored by git. 
     '''
+    # Produce a listing of files and directories ignored by git
     message = subprocess.check_output('git status --ignored', shell = True)
     message = message.split('\n')
     message = map(lambda s: s.strip(), message)
@@ -254,29 +255,23 @@ def list_ignored_files(dir_path = './release'):
         # If the git status message lists no ignored files, return empty list
         return []
 
-    # Use normpath() so paths can be compared as strings
-    dir_path = os.path.normpath(dir_path)
+    # Loop through the listing of ignored paths, classifying them
+    # as files or directories
     ignore_dirs  = []
     ignore_files = []
     for line in message[ignored_line:len(message)]:
-        # Determine if line could be in path's directory
         as_path = os.path.normpath(line)
-        in_path = bool(re.search('^%s' % dir_path, as_path))
-        # If line could be in path's directory, classify it as
-        # an ignored file or directory.
-        if os.path.isdir(line) and in_path:
+        if os.path.isdir(line):
             ignore_dirs.append(line)
-        elif os.path.isfile(line) and in_path:
+        elif os.path.isfile(line):
             ignore_files.append(line)
 
-    # Walk through each subdirectory of path
+    # Find the paths of files in the ignored directories
     for directory in ignore_dirs:
         for dname, _, fnames in os.walk(directory):
-            files = ['%s/%s' % (dname, s) for s in fnames]
+            files = [os.path.normpath('%s/%s') % (dname, s) for s in fnames]
             ignore_files += files
 
-    # Normalize the paths
-    ignore_files = [os.path.normpath(s) for s in ignore_files]
     return ignore_files
 
 
@@ -293,7 +288,7 @@ def create_size_dictionary(path):
         raise ReleaseError("The path argument does not specify an "
                            "existing directory.")
 
-    for root, directories, files in os.walk(path):
+    for root, _, files in os.walk(path):
         for file_name in files:
             file_path = os.path.join(root, file_name)
             size      = os.path.getsize(file_path)

@@ -169,17 +169,19 @@ class TestReleaseTools(unittest.TestCase):
         mock_isdir.side_effect  = fx.isdir_ignored_side_effect
         mock_isfile.side_effect = fx.isfile_ignore_side_effect
 
-        ignored = tools.list_ignored_files(path = './release')
-        expect_ignored = ['release/.DS_Store', 
+        ignored = tools.list_ignored_files()
+        print ignored
+        expect_ignored = ['raw/large_file.txt',
+                          'release/.DS_Store', 
                           'release/subdir/ignored.txt']
 
         self.assertEqual(len(ignored), len(expect_ignored))
         self.assertEqual(ignored[0], expect_ignored[0])
 
         # Test that list_ignored_files returns an empty list when 
-        # 
+        # git is not ignoring any files.
         mock_check.side_effect  = fx.check_ignored_side_effect('none_ignored')
-        ignored = tools.list_ignored_files(path = './release')
+        ignored = tools.list_ignored_files()
 
         self.assertIsInstance(ignored, list)
         self.assertEqual(len(ignored), 0)
