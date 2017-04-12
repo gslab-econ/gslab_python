@@ -238,65 +238,6 @@ def up_to_date(mode = 'scons', directory = '.'):
     return bool(result)
 
 
-def list_ignored_files():
-    '''List files ignored by git 
-
-    This function returns a list of the files in the directory
-    given by the dir_path argument that are ignored by git. 
-    '''
-    # Produce a listing of files and directories ignored by git
-    message = subprocess.check_output('git status --ignored', shell = True)
-    message = message.split('\n')
-    message = map(lambda s: s.strip(), message)
-
-    try:
-        ignored_line = message.index('Ignored files:')
-    except ValueError:
-        # If the git status message lists no ignored files, return empty list
-        return []
-
-    # Loop through the listing of ignored paths, classifying them
-    # as files or directories
-    ignore_dirs  = []
-    ignore_files = []
-    for line in message[ignored_line:len(message)]:
-        as_path = os.path.normpath(line)
-        if os.path.isdir(line):
-            ignore_dirs.append(line)
-        elif os.path.isfile(line):
-            ignore_files.append(line)
-
-    # Find the paths of files in the ignored directories
-    for directory in ignore_dirs:
-        for dname, _, fnames in os.walk(directory):
-            files = [os.path.normpath('%s/%s') % (dname, s) for s in fnames]
-            ignore_files += files
-
-    return ignore_files
-
-
-def create_size_dictionary(path):
-    '''
-    This function creates a dictionary reporting the sizes of
-    files in the directory specified by `path`, a string. 
-    The filenames are the dictionary's keys; their sizes in 
-    bytes are its values. 
-    '''
-    size_dictionary = dict()
-
-    if not os.path.isdir(path):
-        raise ReleaseError("The path argument does not specify an "
-                           "existing directory.")
-
-    for root, _, files in os.walk(path):
-        for file_name in files:
-            file_path = os.path.join(root, file_name)
-            size      = os.path.getsize(file_path)
-            size_dictionary[os.path.normpath(file_path)] = size
-
-    return size_dictionary
-
-
 def extract_dot_git(path = '.git'):
     '''
     Extract information from a GitHub repository from a

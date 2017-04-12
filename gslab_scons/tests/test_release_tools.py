@@ -120,72 +120,7 @@ class TestReleaseTools(unittest.TestCase):
         with self.assertRaises(ReleaseError), nostderrout():
             gslab_scons._release_tools.up_to_date(mode = 'scons')  
 
-    @mock.patch('gslab_scons._release_tools.os.path.getsize')
-    @mock.patch('gslab_scons._release_tools.os.walk')
-    @mock.patch('gslab_scons._release_tools.os.path.isdir')
-    def test_create_size_dictionary(self, mock_isdir, mock_walk, mock_getsize):
-        '''
-        Test that create_size_dictionary() correctly reports
-        files' sizes in bytes.
-        '''
-        # Assign side effects
-        mock_isdir.side_effect   = fx.isdir_side_effect        
-        mock_walk.side_effect    = fx.walk_side_effect
-        mock_getsize.side_effect = fx.getsize_side_effect 
-
-        sizes = tools.create_size_dictionary('test_files')
-
-        self.assertEqual(len(sizes), 3)
-
-        # Check that test.txt and test.jpg are in the dictionary
-        root_path = [path for path in sizes.keys() \
-                    if re.search('root_file.txt$', path)]
-        pdf_path  = [path for path in sizes.keys() \
-                     if re.search('test.pdf$', path)]
-
-        self.assertTrue(bool(root_path))
-        self.assertTrue(bool(pdf_path))
-
-        # Check that the size dictionary reports these files' correct sizes in bytes
-        self.assertEqual(sizes[root_path[0]], 100)
-        self.assertEqual(sizes[pdf_path[0]], 1000)
-
-        # Check that the function raises an error when its path argument
-        # is not a directory.
-        with self.assertRaises(ReleaseError), nostderrout():
-            sizes = tools.create_size_dictionary('nonexistent_directory')
-        # The path argument must be a string
-        with self.assertRaises(TypeError), nostderrout():
-            sizes = tools.create_size_dictionary(10)
-
-    @mock.patch('gslab_scons._release_tools.os.path.isfile')
-    @mock.patch('gslab_scons._release_tools.os.path.isdir')
-    @mock.patch('gslab_scons._release_tools.os.walk')
-    @mock.patch('gslab_scons._release_tools.subprocess.check_output')
-    def test_list_ignored_files(self, mock_check, mock_walk,
-                                mock_isdir, mock_isfile):
-        mock_check.side_effect  = fx.check_ignored_side_effect('standard')
-        mock_walk.side_effect   = fx.walk_ignored_side_effect
-        mock_isdir.side_effect  = fx.isdir_ignored_side_effect
-        mock_isfile.side_effect = fx.isfile_ignore_side_effect
-
-        ignored = tools.list_ignored_files()
-        print ignored
-        expect_ignored = ['raw/large_file.txt',
-                          'release/.DS_Store', 
-                          'release/subdir/ignored.txt']
-
-        self.assertEqual(len(ignored), len(expect_ignored))
-        self.assertEqual(ignored[0], expect_ignored[0])
-
-        # Test that list_ignored_files returns an empty list when 
-        # git is not ignoring any files.
-        mock_check.side_effect  = fx.check_ignored_side_effect('none_ignored')
-        ignored = tools.list_ignored_files()
-
-        self.assertIsInstance(ignored, list)
-        self.assertEqual(len(ignored), 0)
-
+ 
     @mock.patch('gslab_scons._release_tools.open')
     def test_extract_dot_git(self, mock_open):
         '''

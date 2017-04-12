@@ -6,11 +6,7 @@ from _exception_classes import ReleaseError
 
 
 def main():
-    # Preliminary checks/warnings
     inspect_repo()
-    issue_size_warnings(file_MB_limit  = 2,
-                        total_MB_limit = 500,
-                        bytes_in_MB = 1000000)
 
     # Extract information about the clone from its .git directory
     repo, organisation, branch = _release_tools.extract_dot_git()
@@ -57,42 +53,9 @@ def main():
 def inspect_repo():
     '''Ensure the repo is ready for release.'''
     if not _release_tools.up_to_date(mode = 'scons'):
-        raise ReleaseError('SCons targets not up to date.')
+        raise ReleaseError('SCons targets not up to date.')  
     elif not _release_tools.up_to_date(mode = 'git'):
         print "Warning: `scons` has run since your latest git commit.\n"
-        response = raw_input("Would you like to continue anyway? (y|n)\n")
-        if response in ['N', 'n']: 
-            sys.exit()
-
-
-def issue_size_warnings(file_MB_limit, total_MB_limit, bytes_in_MB):
-    '''Issue warnings if versioned files are large'''
-
-    # Compile a list of files that are not versioned.
-    ignored = _release_tools.list_ignored_files()
-    versioned = _release_tools.create_size_dictionary('.')
-    versioned = {k: versioned[k] for k in versioned.keys() if k not in ignored}
-
-    for file_name in versioned.keys():
-        size  = versioned[file_name]
-        limit = file_MB_limit * bytes_in_MB
-
-        if size > limit and file_name:
-            print "Warning: the versioned file %s is larger than %d MB.\n" \
-                  % (file_name, file_MB_limit)
-            print "Versioning files of this size is discouraged.\n" 
-
-            response = raw_input("Would you like to continue anyway? (y|n)\n")
-            if response in ['N', 'n']: 
-                sys.exit()
-
-    total_size  = sum(versioned.values())
-    total_limit = total_MB_limit * bytes_in_MB
-
-    if total_size > total_limit:
-        print "Warning: the versioned files in /release/ are together " + \
-            "larger than " + str(total_MB_limit) + " MB.\n" + \
-            "Versioning this much content is discouraged.\n"
         response = raw_input("Would you like to continue anyway? (y|n)\n")
         if response in ['N', 'n']: 
             sys.exit()
