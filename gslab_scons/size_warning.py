@@ -20,24 +20,18 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
         limit = file_MB_limit * bytes_in_MB
 
         if size > limit and file_name:
-            print "Warning: the versioned file %s is larger than %d MB.\n" \
+            print "Warning: the versioned file %s is larger than %d MB." \
                   % (file_name, file_MB_limit)
             print "Versioning files of this size is discouraged.\n" 
-
-            response = raw_input("Would you like to continue anyway? (y|n)\n")
-            if response in ['N', 'n']: 
-                sys.exit()
 
     total_size  = sum(versioned.values())
     total_limit = total_MB_limit * bytes_in_MB
 
     if total_size > total_limit:
-        print "Warning: the versioned files in /release/ are together " + \
-            "larger than " + str(total_MB_limit) + " MB.\n" + \
-            "Versioning this much content is discouraged.\n"
-        response = raw_input("Would you like to continue anyway? (y|n)\n")
-        if response in ['N', 'n']: 
-            sys.exit()
+        print "Warning: the versioned files "               + \
+              "in the directories %s are "  % str(look_in)  + \
+              "together larger than %d MB." % total_MB_limit
+        print "Versioning this much content is discouraged.\n"
 
 
 def list_ignored_files(look_in):

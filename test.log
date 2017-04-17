@@ -37,7 +37,7 @@ gslab_scons/tests/test_release_function.py ....
 gslab_scons/tests/test_release_tools.py ....
 gslab_scons/tests/test_size_warning.py ....
 
-========================== 108 passed in 0.94 seconds ==========================
+========================== 108 passed in 0.95 seconds ==========================
 Name                                           Stmts   Miss Branch BrPart  Cover   Missing
 ------------------------------------------------------------------------------------------
 gencat/gencat.py                                  79      6     28      4    91%   72-73, 81, 89, 97, 101, 57->exit, 71->72, 96->97, 100->101
@@ -81,7 +81,7 @@ gslab_scons/builders/build_tables.py               8      0      0      0   100%
 gslab_scons/log.py                                20      0      4      0   100%
 gslab_scons/misc.py                              103      0     24      0   100%
 gslab_scons/release.py                            38     38     18      0     0%   1-65
-gslab_scons/size_warning.py                       66      0     34      0   100%
+gslab_scons/size_warning.py                       61      0     30      0   100%
 gslab_scons/tests/_side_effects.py               104      2     24      6    94%   25-26, 22->25, 28->exit, 37->exit, 52->57, 119->131, 221->227
 gslab_scons/tests/_test_helpers.py                95      4     34      3    93%   27-28, 102, 117, 76->88, 99->102, 112->117
 gslab_scons/tests/test_build_lyx.py               53      1      8      3    93%   109, 26->exit, 104->exit, 108->109
@@ -94,6 +94,6 @@ gslab_scons/tests/test_log.py                    104      3     12      3    95%
 gslab_scons/tests/test_misc.py                   174      9     14      4    93%   36-37, 43-44, 50-51, 70, 236, 340, 65->72, 67->70, 235->236, 339->340
 gslab_scons/tests/test_release_function.py       122      3     22      2    97%   288-289, 322, 182->exit, 321->322
 gslab_scons/tests/test_release_tools.py           64      1      2      1    97%   153, 152->153
-gslab_scons/tests/test_size_warning.py           190      6     46      7    94%   275, 286, 289, 291, 381, 387, 271->275, 272->275, 285->286, 288->289, 290->291, 378->381, 386->387
+gslab_scons/tests/test_size_warning.py           183      6     46      7    94%   268, 279, 282, 284, 374, 380, 264->268, 265->268, 278->279, 281->282, 283->284, 371->374, 379->380
 ------------------------------------------------------------------------------------------
-TOTAL                                           4080   1276   1150     71    63%
+TOTAL                                           4068   1276   1146     71    63%
