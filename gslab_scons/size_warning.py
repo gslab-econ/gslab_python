@@ -20,7 +20,7 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
         limit = file_MB_limit * bytes_in_MB
 
         if size > limit and file_name:
-            print "Warning: the versioned file %s is larger than %d MB." \
+            print "Warning: the versioned file %s is larger than %f MB." \
                   % (file_name, file_MB_limit)
             print "Versioning files of this size is discouraged.\n" 
 
@@ -30,7 +30,7 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
     if total_size > total_limit:
         print "Warning: the versioned files "               + \
               "in the directories %s are "  % str(look_in)  + \
-              "together larger than %d MB." % total_MB_limit
+              "together larger than %f MB." % total_MB_limit
         print "Versioning this much content is discouraged.\n"
 
 
