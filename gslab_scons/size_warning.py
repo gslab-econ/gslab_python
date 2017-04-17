@@ -51,12 +51,6 @@ def list_ignored_files(look_in):
     message = message.split('\n')
     message = map(lambda s: s.strip(), message)
 
-    # Allow for the root to be in look_in
-    look_in = [os.path.normpath(d) for d in look_in]
-    if '.' in look_in:
-        # So regex searches will find the root at the beginning of all paths
-        look_in[look_in.index('.')] = ''
-
     try:
         ignored_line = message.index('Ignored files:')
     except ValueError:
@@ -71,7 +65,8 @@ def list_ignored_files(look_in):
         as_path = os.path.normpath(line)
 
         # Only check for ignored files in the specified "look_in" directories
-        if not [True for d in look_in if re.search('^%s' % d, as_path)]:
+        superpaths = [d for d in look_in if _is_subpath(as_path, d)]
+        if len(superpaths) == 0:
             continue
 
         if os.path.isdir(line):
@@ -87,6 +82,16 @@ def list_ignored_files(look_in):
             ignore_files += files
 
     return ignore_files
+
+
+def _is_subpath(inner, outer):
+    '''
+    Check that `inner` is a subdirectory or file in the directory
+    specified by `outer`.
+    '''
+    outer = os.path.abspath(outer)
+    inner = os.path.abspath(inner)
+    return bool(re.search('^%s' % outer, inner))
 
 
 def create_size_dictionary(dirs):
@@ -109,3 +114,4 @@ def create_size_dictionary(dirs):
                 size_dictionary[os.path.normpath(file_path)] = size
 
     return size_dictionary
+

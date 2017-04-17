@@ -16,11 +16,12 @@ from gslab_make.tests import nostderrout
 
 class TestSizeWarning(unittest.TestCase):
 
+    @mock.patch('gslab_scons.size_warning.sys.exit')
     @mock.patch('gslab_scons.size_warning.raw_input')
     @mock.patch('gslab_scons.size_warning.create_size_dictionary')
     @mock.patch('gslab_scons.size_warning.list_ignored_files')
     def test_issue_size_warnings(self, mock_list_ignored, mock_create_dict,
-                                 mock_input):
+                                 mock_input, mock_exit):
         bytes_in_MB = 1000000
         big_size = 3
         small_size = 1
@@ -77,6 +78,45 @@ class TestSizeWarning(unittest.TestCase):
         self.assertEqual(mock_input.call_count, 2)
         mock_input.reset_mock()    
 
+        # Exits when "n" is provided as input and a file is too big
+        mock_input.return_value = 'n'
+        with nostderrout():
+            sw.issue_size_warnings(look_in,
+                                   file_MB_limit  = big_size - 0.1, 
+                                   total_MB_limit = total_size + 0.1)
+        mock_input.assert_called_once()
+        mock_input.reset_mock()
+
+        # Exits when "n" is provided as input and the total size of 
+        # versioned files is too large.
+        mock_input.return_value = 'n'
+        with nostderrout():
+            sw.issue_size_warnings(look_in,
+                                   file_MB_limit  = big_size + 0.1, 
+                                   total_MB_limit = total_size - 0.1)
+        mock_input.assert_called_once()
+        mock_input.reset_mock()
+
+
+    def test_is_subpath(self):
+        expect_true = [{'inner': 'release',        'outer': '.'},
+                       {'inner': 'release',        'outer': ''}, 
+                       {'inner': './release',      'outer': '.'},
+                       {'inner': 'release',        'outer': '/'},
+                       {'inner': 'release/subdir', 'outer': '.'},
+                       {'inner': 'release/subdir', 'outer': 'release'},
+                       {'inner': 'release/subdir', 'outer': './release'},
+            {'inner': 'release/../release/subdir', 'outer': 'release'}]
+
+        expect_false = [{'inner': '.',        'outer': 'release'},
+                        {'inner': '/release', 'outer': '.'}]
+
+        for keywords in expect_true:
+            self.assertTrue(sw._is_subpath(**keywords))
+        for keywords in expect_false:
+            print keywords
+            self.assertFalse(sw._is_subpath(**keywords))   
+
     @mock.patch('gslab_scons.size_warning.os.path.isfile')
     @mock.patch('gslab_scons.size_warning.os.path.isdir')
     @mock.patch('gslab_scons.size_warning.os.walk')
@@ -88,23 +128,35 @@ class TestSizeWarning(unittest.TestCase):
         mock_isdir.side_effect  = isdir_ignored_side_effect
         mock_isfile.side_effect = isfile_ignored_side_effect
 
+        # Multiple directories
         look_in = ['raw', 'release']
         ignored = sw.list_ignored_files(look_in)
         expect_ignored = ['raw/large_file.txt',
                           'release/.DS_Store', 
                           'release/subdir/ignored.txt']
-        print ignored
+
         self.assertEqual(len(ignored), len(expect_ignored))
         for i in range(len(ignored)):
             self.assertIn(ignored[i], expect_ignored)
 
-
+        # One directory
         look_in = ['raw']
         ignored = sw.list_ignored_files(look_in)
         expect_ignored = ['raw/large_file.txt']
 
         self.assertEqual(len(ignored), len(expect_ignored))
         self.assertEqual(ignored[0], expect_ignored[0])       
+
+        # The root
+        look_in = ['.']
+        ignored = sw.list_ignored_files(look_in)
+        expect_ignored = ['root_ignored.txt',
+                          'raw/large_file.txt',
+                          'release/.DS_Store',
+                          'release/subdir/ignored.txt']
+
+        self.assertEqual(len(ignored), len(expect_ignored))
+        self.assertEqual(ignored[0], expect_ignored[0])          
 
         # Test that list_ignored_files returns an empty list when 
         # git is not ignoring any files.
@@ -132,11 +184,11 @@ class TestSizeWarning(unittest.TestCase):
 
         self.assertEqual(len(sizes), 3)
 
-        # Check that test.txt and test.jpg are in the dictionary
+        # Check that root_file.txt and test.pdf are in the dictionary
         root_path = [k for k in sizes.keys() if re.search('root_file.txt$', k)]
         pdf_path  = [k for k in sizes.keys() if re.search('test.pdf$', k)]
-        self.assertTrue(bool(root_path))
-        self.assertTrue(bool(pdf_path))
+        self.assertTrue(len(root_path) > 0)
+        self.assertTrue(len(pdf_path) > 0)
 
         # Check that the size dictionary reports these files' correct sizes in bytes
         self.assertEqual(sizes[root_path[0]], 100)
@@ -146,8 +198,12 @@ class TestSizeWarning(unittest.TestCase):
         sizes = sw.create_size_dictionary(['test_files', 'release'])
         self.assertEqual(len(sizes), 4)
         path = [k for k in sizes.keys() if re.search('output.txt$', k)]
-        self.assertTrue(bool(path))
+        self.assertTrue(len(path) > 0)
         self.assertEqual(sizes[path[0]], 16)
+
+        # Check when '.' is provided
+        sizes = sw.create_size_dictionary(['.'])
+        self.assertEqual(len(sizes), 4)
 
         # Check that the function raises an error when its path argument
         # is not a directory.
@@ -160,7 +216,7 @@ class TestSizeWarning(unittest.TestCase):
 
 #== Side effects for testing list_ignored_files() ===
 # Define the mock file structure for testing list_ignored_files()
-struct = {'.': ['untracked.txt', 'make.log', 'make.py'],
+struct = {'.': ['untracked.txt', 'make.log', 'root_ignored.txt'],
          'raw': ['large_file.txt', 'small_file.txt'], 
          'release': ['output.txt', '.DS_Store'],
          'release/subdir': ['ignored.txt']}
@@ -189,6 +245,7 @@ def check_ignored_side_effect(ignored = 'standard'):
              'Ignored files:\n',
              '  (use "git add -f <file>..." to include in what will be committed)\n',
              '\n',
+             '\troot_ignored.txt\n'
              '\traw/large_file.txt\n',
              '\trelease/.DS_Store\n',
              '\trelease/subdir/'
@@ -228,12 +285,28 @@ def walk_ignored_side_effect(*args, **kwargs):
     if path not in struct.keys():
         raise StopIteration
 
-    if path == 'release':
+    if path == '.':
+        subdirs = ['raw', 'release']
+    elif path == 'release':
         subdirs = ['subdir']
     else:
         subdirs = []
 
-    yield (path, subdirs, struct[path])
+    # os.walk() generates a 3-tuple for each directory under the path passed
+    # as its argument. The tuple is:
+    #   (directory, [subdirectories], [files in root of directory])
+    # Below, roots are the directories, `directories` is
+    roots       = struct.keys()
+    directories = map(lambda r: [d for d in roots if \
+                                 sw._is_subpath(d, r) and d != r], roots)
+    files       = [struct[r] for r in roots]
+
+
+    for i in range(len(roots)):
+        # Ensure info only provided about directory specified 
+        # by os.walk()'s argument
+        if sw._is_subpath(roots[i], path):
+            yield (roots[i], directories[i], files[i])
  
 
 def isdir_ignored_side_effect(*args, **kwargs):
@@ -260,38 +333,40 @@ def isfile_ignored_side_effect(*args, **kwargs):
 
 
 #== Side effects for testing create_size_dictionary() ===
-# These functions mock a directory containing files of various sizes
-# and a system that recognises no directory other than that one.
+# These functions mock two directories containing files of various sizes
+# and a system that does not recognises any other directories.
 def isdir_dict_side_effect(*args, **kwargs):
     '''
-    Mock os.path.isdir() so that it only recognises ./test_files/
-    as an existing directory.
+    Mock os.path.isdir() so that it only recognises a few mocked directories
+    as existing directories.
     '''
     path = args[0]
     if not isinstance(path, str):
         raise TypeError('coercing to Unicode: need string or buffer, '
                         '%s found' % type(path))
-    return path in ['test_files', 'release']
+    acceptable = ['test_files', 'test_files/size_test', 'release', '.']
+    return os.path.normpath(path) in acceptable
 
 
 def walk_dict_side_effect(*args, **kwargs):
-    '''Mock os.walk() for a mock directory called ./test_files/.'''
-    path = args[0]
+    '''Mock os.walk() for a mocked directory system'''
+    path = os.path.normpath(args[0])
 
-    # Mock two directories at the root, one of which has a subdirectory
+    # Mock directories at the root
     roots       = ['test_files',      'test_files/size_test',   'release']
     directories = [['size_test'],     [],                       []]
     files       = [['root_file.txt'], ['test.txt', 'test.pdf'], ['output.txt']]
 
     for i in range(len(roots)):
-        if re.search('^%s' % path, roots[i]):
+        # Ensure info only provided about directory specified 
+        # by os.walk()'s argument
+        if sw._is_subpath(roots[i], path):
             yield (roots[i], directories[i], files[i])
 
 
 def getsize_dict_side_effect(*args, **kwargs):
     '''
-    Mock os.path.getsize() to return mock sizes of files in our
-    mock ./test_files/ directory.
+    Mock os.path.getsize() to return sizes of files in mocked  directories.
     '''
     path = args[0]
     if path == 'test_files/root_file.txt':
