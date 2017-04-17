@@ -34,7 +34,6 @@ class TestBuildStata(unittest.TestCase):
         # Mock is_in_path() to finds just one flavor of Stata 
         mock_path.side_effect  = fx.make_stata_path_effect('stata-mp')
         env = {'user_flavor' : None}
-
         helpers.standard_test(self, gs.build_stata, 'do', 
                               env = env, system_mock = mock_check)
 
@@ -144,12 +143,12 @@ class TestBuildStata(unittest.TestCase):
         mock_path.side_effect  = fx.make_stata_path_effect('')
 
         env = {'user_flavor': None}
-        with helpers.platform_patch('darwin', path), self.assertRaises(NameError):
+        with helpers.platform_patch('darwin', path), self.assertRaises(TypeError):
             gs.build_stata(target = './test_output.txt', 
                            source = './test_script.do', 
                            env    = env)
 
-        with helpers.platform_patch('win32', path), self.assertRaises(NameError):
+        with helpers.platform_patch('win32', path), self.assertRaises(TypeError):
             gs.build_stata(target = './test_output.txt', 
                            source = './test_script.do', 
                            env    = env)

@@ -1,4 +1,5 @@
 *.pyc
+*.ipynb*
 *.egg*
 .cache
 .coverage

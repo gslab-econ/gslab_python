@@ -17,7 +17,7 @@ import gslab_scons as gs
 from gslab_scons._exception_classes import BadExtensionError
 from gslab_make.tests import nostderrout
 
-system_patch = mock.patch('gslab_scons.builders.build_r.os.system')
+system_patch = mock.patch('gslab_scons.builders.build_r.subprocess.check_output')
 
 
 class TestBuildR(unittest.TestCase):
@@ -27,32 +27,32 @@ class TestBuildR(unittest.TestCase):
             os.mkdir('./build/')
 
     @system_patch
-    def test_standard(self, mock_system):
+    def test_standard(self, mock_check_output):
         '''Test build_r()'s behaviour when given standard inputs.'''
-        mock_system.side_effect = fx.r_side_effect
+        mock_check_output.side_effect = fx.r_side_effect
         helpers.standard_test(self, gs.build_r, 'R', 
-                              system_mock = mock_system)
+                              system_mock = mock_check_output)
         # With a list of targets
         # We expect that build_r() can run without creating its targets
         targets = ['./build/r.rds', 'additional_target', '']
         helpers.standard_test(self, gs.build_r, 'R', 
-                              system_mock = mock_system,
+                              system_mock = mock_check_output,
                               target      = targets)    
 
     @system_patch
-    def test_cl_arg(self, mock_system):
-        mock_system.side_effect = fx.r_side_effect
-        helpers.test_cl_args(self, gs.build_r, mock_system, 'R')
+    def test_cl_arg(self, mock_check_output):
+        mock_check_output.side_effect = fx.r_side_effect
+        helpers.test_cl_args(self, gs.build_r, mock_check_output, 'R')
 
     def test_bad_extension(self): 
         '''Test that build_r() recognises an inappropriate file extension'''
         helpers.bad_extension(self, gs.build_r, good = 'test.r')
    
     @system_patch
-    def test_unintended_inputs(self, mock_system):
+    def test_unintended_inputs(self, mock_check_output):
         # We expect build_r() to raise an error if its env
         # argument does not support indexing by strings. 
-        mock_system.side_effect = fx.r_side_effect
+        mock_check_output.side_effect = fx.r_side_effect
 
         check = lambda **kwargs: helpers.input_check(self, gs.build_r, 
                                                      'r', **kwargs)
@@ -69,8 +69,6 @@ class TestBuildR(unittest.TestCase):
     def tearDown(self):
         if os.path.exists('./build/'):
             shutil.rmtree('./build/')
-        if os.path.exists('output.txt'):
-            os.remove('output.txt')
 
 
 if __name__ == '__main__':

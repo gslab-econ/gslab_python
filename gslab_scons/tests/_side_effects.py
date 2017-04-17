@@ -9,8 +9,8 @@ import _test_helpers as helpers
 
 def r_side_effect(*args, **kwargs):
     '''
-    This side effect mocks the behaviour of a system call
-    on a machine with R set up for command-line use.
+    This side effect mocks the behaviour of a subprocess.check_output()
+    call on a machine with R set up for command-line use.
     '''
     # Get and parse the command passed to os.system()
     command = args[0]
@@ -31,6 +31,7 @@ def r_side_effect(*args, **kwargs):
 
 
 def python_side_effect(*args, **kwargs):
+    '''    Mock subprocess.check_output for testing build_python()'''
     command = args[0]
     match   = helpers.command_match(command, 'python')
 
@@ -41,7 +42,7 @@ def python_side_effect(*args, **kwargs):
 
 
 def matlab_side_effect(*args, **kwargs):
-    '''Mock os.system for Matlab commands'''
+    '''Mock subprocess.check_output for Matlab commands'''
     try:
         command = kwargs['command']
     except KeyError:
@@ -96,7 +97,7 @@ def make_stata_path_effect(executable):
 
 def lyx_side_effect(*args, **kwargs):
     '''
-    This side effect mocks the behaviour of a system call.
+    This side effect mocks the behaviour of a subprocess.check_output call.
     The mocked machine has lyx set up as a command-line executable
     and can export .lyx files to .pdf files only using 
     the "-e pdf2" option.

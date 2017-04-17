@@ -110,31 +110,27 @@ class TestBuildTables(unittest.TestCase):
             self.check_call(std_source, std_target, mock_tablefill)    
 
         #== target ==========
-        # We expect build_tables() to raise an error if its
-        # target argument is not a string or container of strings
+        # Target argument is not a string or container of strings
         with self.assertRaises(TypeError):
             gs.build_tables(1, std_source, None)
         with self.assertRaises(TypeError):
             gs.build_tables(None, std_source, None)    
-        # If the target is a container of non-strings, we expect 
-        # a BadExtensionError.
-        with self.assertRaises(BadExtensionError):
+        #  Target is a container of non-strings
+        with self.assertRaises(TypeError):
             gs.build_tables((True, False, False), std_source, None)
 
         #== source ==========
-        # We don't errors when the source isn't a .lyx path
+        # The source isn't a .lyx path
         source = ['nonexistent_file']
-        gs.build_tables(std_target, source, None)
-        self.check_call(source, std_target, mock_tablefill) 
+        with self.assertRaises(BadExtensionError):
+            gs.build_tables(std_target, source, None)
 
-        # We don't expect errors when source is a container of nonstrings.
-        # We expect build_table() to convert containers' members to strings.
+        # The source is a container of nonstrings.
         source = (True, False, False)
-        gs.build_tables(std_target, source, None)
-        self.check_call(source, std_target, mock_tablefill)   
+        with self.assertRaises(TypeError):
+            gs.build_tables(std_target, source, None)
 
-        # When given non-strings, non-iterables with no len() values
-        # we expect that build_table() will raise an exception.
+        # source is a non-strings non-iterable with no len() value
         source = 1
         with self.assertRaises(TypeError):
             gs.build_tables(std_target, source, None)

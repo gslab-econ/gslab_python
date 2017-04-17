@@ -92,13 +92,7 @@ class TestMisc(unittest.TestCase):
         command when run on Mac computers.
         '''
         output = misc.stata_command_unix('stata')
-        self.assertEqual(output.strip(), 'stata -e %s')
-
-        output = misc.stata_command_unix('stata', cl_arg = 'cl_arg')
-        self.assertEqual(output.strip(), 'stata -e %s cl_arg')
-
-        output = misc.stata_command_unix('stata', cl_arg = 1)
-        self.assertEqual(output.strip(), 'stata -e %s 1')
+        self.assertEqual(output.strip(), 'stata -e %s %s')
 
     @mock.patch('gslab_scons.misc.sys.platform', 'linux')
     def test_stata_command_unix_linux(self):
@@ -107,10 +101,7 @@ class TestMisc(unittest.TestCase):
         command when run on Linux computers.
         '''        
         output = misc.stata_command_unix('stata-se')
-        self.assertEqual(output.strip(), 'stata-se -b %s')
-
-        output = misc.stata_command_unix('stata', cl_arg = 'cl_arg')
-        self.assertEqual(output.strip(), 'stata -b %s cl_arg')
+        self.assertEqual(output.strip(), 'stata-se -b %s %s')
 
     @mock.patch('gslab_scons.misc.sys.platform', 'win32')
     def test_stata_command_unix_windows(self):
@@ -121,9 +112,6 @@ class TestMisc(unittest.TestCase):
         with self.assertRaises(KeyError):
             output = misc.stata_command_unix('stata-mp')
 
-        with self.assertRaises(KeyError):
-            output = misc.stata_command_unix('stata-mp', cl_arg = 'cl_arg')           
-        
     @mock.patch('gslab_scons.misc.sys.platform', 'cygwin')
     def test_stata_command_unix_other(self):
         '''
@@ -136,13 +124,7 @@ class TestMisc(unittest.TestCase):
     @mock.patch('gslab_scons.misc.sys.platform', 'win32')        
     def test_stata_command_win_windows(self):
         output = misc.stata_command_win('stata-mp')
-        self.assertEqual(output.strip(), 'stata-mp /e do %s')
-
-        output = misc.stata_command_win('stata-mp', cl_arg = 'cl_arg')
-        self.assertEqual(output.strip(), 'stata-mp /e do %s cl_arg') 
-
-        output = misc.stata_command_win('stata-mp', cl_arg = 1)
-        self.assertEqual(output.strip(), 'stata-mp /e do %s 1')              
+        self.assertEqual(output.strip(), 'stata-mp /e do %s %s')           
 
     @mock.patch('gslab_scons.misc.sys.platform', 'darwin')        
     def test_stata_command_win_unix(self):
@@ -151,13 +133,8 @@ class TestMisc(unittest.TestCase):
         command even on a non-Windows machine. 
         '''
         output = misc.stata_command_win('stata-mp')
-        self.assertEqual(output.strip(), 'stata-mp /e do %s')
+        self.assertEqual(output.strip(), 'stata-mp /e do %s %s')
 
-        output = misc.stata_command_win('stata-mp', cl_arg = 'cl_arg')
-        self.assertEqual(output.strip(), 'stata-mp /e do %s cl_arg')   
-
-        output = misc.stata_command_win('stata-mp', cl_arg = 1)
-        self.assertEqual(output.strip(), 'stata-mp /e do %s 1')               
     #================================================================
     
     def test_is_unix(self):
@@ -207,8 +184,7 @@ class TestMisc(unittest.TestCase):
                          '/bin/stata')
         self.assertEqual(misc.is_in_path('executable_file'), 
                          'executable_file')
-        self.assertEqual(misc.is_in_path('stata-mp'),
-                         None)
+        self.assertFalse(misc.is_in_path('stata-mp'))
                             
     @staticmethod
     def access_side_effect(*args, **kwargs):
@@ -262,12 +238,12 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(misc.make_list_if_string('test'), ['test'])
         self.assertEqual(misc.make_list_if_string(['test']), ['test'])
         
-        # We expect objects that are neither strings nor lists to be 
-        # returned without being manipulated.
-        self.assertEqual(misc.make_list_if_string(1), 1)
-        self.assertEqual(misc.make_list_if_string(TypeError), TypeError)
-        self.assertEqual(misc.make_list_if_string(False), False)
-        self.assertEqual(misc.make_list_if_string(None), None)
+        # We expect the function to raise Type Errors when it receives
+        # inputs that are not strings or lists
+        with self.assertRaises(TypeError):
+            self.assertEqual(misc.make_list_if_string(1), 1)
+        with self.assertRaises(TypeError):
+            self.assertEqual(misc.make_list_if_string(None), None)
 
     def test_check_code_extension(self):
         '''Unit tests for check_code_extension()
@@ -276,19 +252,15 @@ class TestMisc(unittest.TestCase):
         file extensions as intended. The function should return None in cases 
         where the extension is correctly specified and raise an error otherwise.
         '''
-        self.assertEqual(misc.check_code_extension('test.do',  'stata'),  None)
-        self.assertEqual(misc.check_code_extension('test.r',   'r'),      None)
-        self.assertEqual(misc.check_code_extension('test.R',   'r'),      None)
-        self.assertEqual(misc.check_code_extension('test.lyx', 'lyx'),    None)
-        self.assertEqual(misc.check_code_extension('test.py',  'python'), None)
-        self.assertEqual(misc.check_code_extension('test.M',   'matlab'), None)
-        
+    	self.assertEqual(misc.check_code_extension('test.do',  '.do'),  None)
+    	self.assertEqual(misc.check_code_extension('test.r',   '.r'),   None)
+    	self.assertEqual(misc.check_code_extension('test.lyx', '.lyx'), None)
+        self.assertEqual(misc.check_code_extension('test.py',  '.py'),  None)
+        self.assertEqual(misc.check_code_extension('test.m',   '.m'),   None)
+        self.assertEqual(misc.check_code_extension('test.M',   '.M'),   None)
+    	
         with self.assertRaises(ex_classes.BadExtensionError), nostderrout():
-            misc.check_code_extension('test.badextension', 'python')
-        with self.assertRaises(KeyError):
-            misc.check_code_extension('test.m', 'Matlab')
-        with self.assertRaises(KeyError):
-            misc.check_code_extension('test.r', 'R')
+            misc.check_code_extension('test.badextension', '.py')
 
     @mock.patch('gslab_scons.misc.datetime.datetime', MockDateTime)
     def test_current_time(self):

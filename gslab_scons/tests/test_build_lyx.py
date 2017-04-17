@@ -14,7 +14,7 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append('../..')
 
 import gslab_scons.builders.build_lyx as gs
-from gslab_scons._exception_classes import BadExtensionError
+from gslab_scons._exception_classes import BadExtensionError, BadExecutableError
 
 # Define path to the builder for use in patching
 path = 'gslab_scons.builders.build_lyx'
@@ -26,7 +26,7 @@ class TestBuildLyX(unittest.TestCase):
         if not os.path.exists('./build/'):
             os.mkdir('./build/')
 
-    @mock.patch('%s.os.system' % path)
+    @mock.patch('%s.subprocess.check_output' % path)
     def test_default(self, mock_system):
         '''
         Test that build_lyx() behaves correctly when provided with
@@ -39,7 +39,7 @@ class TestBuildLyX(unittest.TestCase):
                               target = target)
         self.assertTrue(os.path.isfile(target))
 
-    @mock.patch('%s.os.system' % path)
+    @mock.patch('%s.subprocess.check_output' % path)
     def test_list_arguments(self, mock_system):
         '''
         Check that build_lyx() works when its source and target 
@@ -69,9 +69,8 @@ class TestBuildLyX(unittest.TestCase):
         log    = './build/sconscript.log'
 
         for env in [True, [1, 2, 3], ('a', 'b'), None, TypeError]:
-            gs.build_lyx(target, source, env = env)
-            helpers.check_log(self, log)
-            self.assertTrue(os.path.isfile(target))
+            with self.assertRaises(BadExecutableError):
+                gs.build_lyx(target, source, env = env)
 
     @mock.patch('%s.os.system' % path)
     def test_nonexistent_source(self, mock_system):
@@ -81,11 +80,11 @@ class TestBuildLyX(unittest.TestCase):
         '''
         mock_system.side_effect = fx.lyx_side_effect
         # i) Directory doesn't exist
-        with self.assertRaises(IOError):
+        with self.assertRaises(BadExecutableError):
             gs.build_lyx('./build/lyx.pdf', 
                          ['./bad_dir/lyx_test_file.lyx'], env = {})
         # ii) Directory exists, but file doesn't
-        with self.assertRaises(IOError):
+        with self.assertRaises(BadExecutableError):
             gs.build_lyx('./build/lyx.pdf', 
                          ['./input/nonexistent_file.lyx'], env = {})   
 
@@ -96,7 +95,7 @@ class TestBuildLyX(unittest.TestCase):
         directory does not exist.
         '''
         mock_system.side_effect = fx.lyx_side_effect
-        with self.assertRaises(IOError):
+        with self.assertRaises(BadExecutableError):
             gs.build_lyx('./nonexistent_directory/lyx.pdf', 
                          ['./input/lyx_test_file.lyx'], env = True)
 
