@@ -1,3 +1,5 @@
+from __future__ import division
+
 import os
 import re
 import sys
@@ -20,18 +22,35 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
         limit = file_MB_limit * bytes_in_MB
 
         if size > limit and file_name:
-            print "Warning: the versioned file %s is larger than %f MB." \
-                  % (file_name, file_MB_limit)
+            size_in_MB = size / bytes_in_MB
+            print red_and_bold("Warning:") + \
+                  "the versioned file %s " % file_name  + \
+                  "(size: %f MB)\n\t"      % size_in_MB + \
+                  "is larger than %f MB."  % file_MB_limit
             print "Versioning files of this size is discouraged.\n" 
 
     total_size  = sum(versioned.values())
     total_limit = total_MB_limit * bytes_in_MB
 
     if total_size > total_limit:
-        print "Warning: the versioned files "               + \
-              "in the directories %s are "  % str(look_in)  + \
-              "together larger than %f MB." % total_MB_limit
+        total_size_in_MB = total_size / bytes_in_MB
+        print red_and_bold("Warning:") + \
+              "the total size of versioned files " + \
+              "in the directories %s\n\tis "   % str(look_in) + \
+              "%f MB, which exceeds "       % total_size_in_MB + \
+              "our recommended limit of %f MB" % total_MB_limit
         print "Versioning this much content is discouraged.\n"
+
+
+def red_and_bold(warning):
+    '''
+    Make a string bold and red when printed to the terminal
+    http://stackoverflow.com/questions/287871/print-in-terminal-with-colors-using-python
+    '''
+    red = '\033[91m' 
+    bold = '\033[1m'
+    end_formatting = '\033[0m' 
+    return (red + bold) + warning + (end_formatting)
 
 
 def list_ignored_files(look_in):

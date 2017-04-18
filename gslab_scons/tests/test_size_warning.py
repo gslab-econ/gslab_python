@@ -149,7 +149,8 @@ class TestSizeWarning(unittest.TestCase):
                           'release/subdir/ignored.txt']
 
         self.assertEqual(len(ignored), len(expect_ignored))
-        self.assertEqual(ignored[0], expect_ignored[0])          
+        for i in range(len(ignored)):
+            self.assertEqual(ignored[i], expect_ignored[i])          
 
         # Test that list_ignored_files returns an empty list when 
         # git is not ignoring any files.
