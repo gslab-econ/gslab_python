@@ -54,9 +54,11 @@ class TestSizeWarning(unittest.TestCase):
         sw.issue_size_warnings(look_in,
                                file_MB_limit  = big_size - 0.1, 
                                total_MB_limit = total_size + 0.1)
-        message_start = "Warning: the versioned file large.txt"
-        self.assertTrue(re.search('^%s' % message_start, 
-                                  mock_stdout.getvalue()))
+
+        look_for = ["Warning:", 
+                   "large.txt \(size: %d\.00 MB\)" % big_size]
+        for item in look_for:
+            self.assertTrue(re.search(item, mock_stdout.getvalue()))
         # Refresh mocked standard output
         mock_stdout.buflist = []
         mock_stdout.buf = ''
@@ -90,6 +92,14 @@ class TestSizeWarning(unittest.TestCase):
         total_warning = 'Versioning this much content is discouraged.\n'
         self.assertIn(file_warning,  mock_stdout.buflist)
         self.assertIn(total_warning, mock_stdout.buflist)
+
+    def test_red_and_bold(self):
+        '''
+        Test that _red_and_bold() adds characters to its argument
+        as expected'''
+        text = 'test'
+        self.assertEqual('\033[91m\033[1m%s\033[0m' % text, 
+                         sw._red_and_bold(text))
 
     def test_is_subpath(self):
         expect_true = [{'inner': 'release',        'outer': '.'},
