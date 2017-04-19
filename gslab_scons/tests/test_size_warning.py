@@ -102,7 +102,8 @@ class TestSizeWarning(unittest.TestCase):
                          sw._red_and_bold(text))
 
     def test_is_subpath(self):
-        expect_true = [{'inner': 'release',        'outer': '.'},
+        expect_true = [{'inner': '.',              'outer': '..'},
+                       {'inner': 'release',        'outer': '.'},
                        {'inner': 'release',        'outer': ''}, 
                        {'inner': './release',      'outer': '.'},
                        {'inner': 'release',        'outer': '/'},
@@ -127,15 +128,14 @@ class TestSizeWarning(unittest.TestCase):
     def test_list_ignored_files(self, mock_check, mock_walk,
                                 mock_isdir, mock_isfile):
         mock_check.side_effect  = check_ignored_side_effect('standard')
-        mock_walk.side_effect   = walk_ignored_side_effect
+        mock_walk.side_effect   = make_walk_side_effect('list_ignored_files')
         mock_isdir.side_effect  = isdir_ignored_side_effect
         mock_isfile.side_effect = isfile_ignored_side_effect
 
         # Multiple directories
         look_in = ['raw', 'release']
         ignored = sw.list_ignored_files(look_in)
-        expect_ignored = ['raw/large_file.txt',
-                          'release/.DS_Store', 
+        expect_ignored = ['raw/large_file.txt', 'release/.DS_Store', 
                           'release/subdir/ignored.txt']
 
         self.assertEqual(len(ignored), len(expect_ignored))
@@ -153,11 +153,8 @@ class TestSizeWarning(unittest.TestCase):
         # The root
         look_in = ['.']
         ignored = sw.list_ignored_files(look_in)
-        expect_ignored = ['root_ignored.txt',
-                          'raw/large_file.txt',
-                          'release/.DS_Store',
-                          'release/subdir/ignored.txt']
-
+        expect_ignored = ['root_ignored.txt',  'raw/large_file.txt',
+                          'release/.DS_Store', 'release/subdir/ignored.txt']
         self.assertEqual(len(ignored), len(expect_ignored))
         for i in range(len(ignored)):
             self.assertEqual(ignored[i], expect_ignored[i])          
@@ -180,7 +177,7 @@ class TestSizeWarning(unittest.TestCase):
         '''
         # Assign side effects
         mock_isdir.side_effect   = isdir_dict_side_effect        
-        mock_walk.side_effect    = walk_dict_side_effect
+        mock_walk.side_effect    = make_walk_side_effect('create_size_dictionary')
         mock_getsize.side_effect = getsize_dict_side_effect 
 
         # Test when one directory is provided
@@ -281,37 +278,44 @@ def check_ignored_side_effect(ignored = 'standard'):
     return effect
 
 
-def walk_ignored_side_effect(*args, **kwargs):
-    '''Mock os.walk() for testing list_ignored_files()'''
-    path = args[0]
-    path = os.path.relpath(path)
+def make_walk_side_effect(test_type):
+    '''
+    Make os.walk() for one of the mock directory structures
+      - Used in test_list_ignored_files() or
+      - Used in test_create_size_dictionary()
+    '''
+    def side_effect(*args, **kwargs):
+        path = args[0]
+        path = os.path.relpath(path)
+    
+        if test_type == 'list_ignored_files':
+            if path not in struct.keys():
+                raise StopIteration
+      
+            # os.walk() generates a 3-tuple for each directory under the path passed
+            # as its argument. The tuple is:
+            #   (directory, [subdirectories], [files in root of directory])
+            # Below, roots are the directories, `directories` is
+            roots       = struct.keys()
+            directories = map(lambda r: [d for d in roots if \
+                                         sw._is_subpath(d, r) and d != r], roots)
+            files       = [struct[r] for r in roots]
 
-    if path not in struct.keys():
-        raise StopIteration
+        elif test_type == 'create_size_dictionary':
+            roots       = ['test_files',      'test_files/size_test',   'release']
+            directories = [['size_test'],     [],                       []]
+            files       = [['root_file.txt'], ['test.txt', 'test.pdf'], ['output.txt']]
+        else:
+            raise Exception('Invalid test_type specified.')
 
-    if path == '.':
-        subdirs = ['raw', 'release']
-    elif path == 'release':
-        subdirs = ['subdir']
-    else:
-        subdirs = []
+        for i in range(len(roots)):
+            # Ensure info only provided about directory specified 
+            # by os.walk()'s argument
+            if sw._is_subpath(roots[i], path):
+                yield (roots[i], directories[i], files[i])
 
-    # os.walk() generates a 3-tuple for each directory under the path passed
-    # as its argument. The tuple is:
-    #   (directory, [subdirectories], [files in root of directory])
-    # Below, roots are the directories, `directories` is
-    roots       = struct.keys()
-    directories = map(lambda r: [d for d in roots if \
-                                 sw._is_subpath(d, r) and d != r], roots)
-    files       = [struct[r] for r in roots]
+    return side_effect 
 
-
-    for i in range(len(roots)):
-        # Ensure info only provided about directory specified 
-        # by os.walk()'s argument
-        if sw._is_subpath(roots[i], path):
-            yield (roots[i], directories[i], files[i])
- 
 
 def isdir_ignored_side_effect(*args, **kwargs):
     path = args[0]
@@ -350,22 +354,6 @@ def isdir_dict_side_effect(*args, **kwargs):
                         '%s found' % type(path))
     acceptable = ['test_files', 'test_files/size_test', 'release', '.']
     return os.path.normpath(path) in acceptable
-
-
-def walk_dict_side_effect(*args, **kwargs):
-    '''Mock os.walk() for a mocked directory system'''
-    path = os.path.normpath(args[0])
-
-    # Mock directories at the root
-    roots       = ['test_files',      'test_files/size_test',   'release']
-    directories = [['size_test'],     [],                       []]
-    files       = [['root_file.txt'], ['test.txt', 'test.pdf'], ['output.txt']]
-
-    for i in range(len(roots)):
-        # Ensure info only provided about directory specified 
-        # by os.walk()'s argument
-        if sw._is_subpath(roots[i], path):
-            yield (roots[i], directories[i], files[i])
 
 
 def getsize_dict_side_effect(*args, **kwargs):
