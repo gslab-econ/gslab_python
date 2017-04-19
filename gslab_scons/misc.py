@@ -4,13 +4,28 @@ import sys
 import time
 import shutil
 import subprocess
-import _exception_classes
 import datetime
+# Import gslab_scons modules
+import _exception_classes
+from size_warning import issue_size_warnings
 
 
-def state_of_repo(target, source, env):
+def scons_debrief(target, source, env):
+    '''Execute functions after SCons has built all targets'''
+    # Log the state of the repo
     env['CL_ARG'] = env['MAXIT']
     maxit = int(command_line_args(env))
+    state_of_repo(maxit)
+
+    # Issue size warnings
+    look_in = env['look_in']
+    look_in = look_in.split(';')
+    file_MB_limit = float(env['file_MB_limit'])
+    total_MB_limit = float(env['total_MB_limit'])
+    issue_size_warnings(look_in, file_MB_limit, total_MB_limit)
+
+
+def state_of_repo(maxit):
     outfile = 'state_of_repo.log'
     with open(outfile, 'wb') as f:
         f.write("WARNING: Information about .sconsign.dblite may be misleading \n" +

@@ -288,25 +288,3 @@ def extract_dot_git(path = '.git'):
     branch = re.findall('ref: refs/heads/([\w-]+)', branch_info[0])[0]
 
     return repo, organisation, branch
-
-
-def create_size_dictionary(path):
-    '''
-    This function creates a dictionary reporting the sizes of
-    files in the directory specified by `path`, a string. 
-    The filenames are the dictionary's keys; their sizes in 
-    bytes are its values. 
-    '''
-    size_dictionary = dict()
-
-    if not os.path.isdir(path):
-        raise ReleaseError("The path argument does not specify an "
-                           "existing directory.")
-
-    for root, directories, files in os.walk(path):
-        for file_name in files:
-            file_path = os.path.join(root, file_name)
-            size      = os.path.getsize(file_path)
-            size_dictionary[file_path] = size
-
-    return size_dictionary

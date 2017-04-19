@@ -24,6 +24,29 @@ class MockDateTime(datetime.datetime):
 
 
 class TestMisc(unittest.TestCase):
+    @mock.patch('gslab_scons.misc.state_of_repo')
+    @mock.patch('gslab_scons.misc.issue_size_warnings')
+    def test_scons_debrief(self, mock_size_warn, mock_repo_state):
+        target = 'state_of_repo.log'
+        source = ''
+        env    = {'MAXIT': '10', 
+                  'look_in': 'release',
+                  'file_MB_limit': '1',
+                  'total_MB_limit': '2'}
+        misc.scons_debrief(target, source, env)
+        mock_size_warn.assert_called_with(['release'], 1, 2)
+        mock_repo_state.assert_called_with(10)
+
+        with self.assertRaises(KeyError):
+            misc.scons_debrief(target, source, {})
+
+        env = {'MAXIT': 'maxit', 
+               'look_in': 'release',
+               'file_MB_limit': '1',
+               'total_MB_limit': '2'}            
+        with self.assertRaises(ValueError):
+            misc.scons_debrief(target, source, env)
+
     @mock.patch('gslab_scons.misc.subprocess.check_output')
     def test_check_lfs_success(self, mock_check):
         '''
@@ -273,11 +296,9 @@ class TestMisc(unittest.TestCase):
         self.assertEqual('2017-01-20 15:02:18', the_time)
 
     def test_state_of_repo(self):
-        env = {'MAXIT': '10'}
-        target = source = ''
-
+        maxit = 10
         # Test general functionality
-        misc.state_of_repo(target, source, env)
+        misc.state_of_repo(maxit)
         logfile = open('state_of_repo.log', 'rU').read()
         self.assertIn('GIT STATUS', logfile)
         self.assertIn('FILE STATUS', logfile)
@@ -287,7 +308,7 @@ class TestMisc(unittest.TestCase):
         for i in range(1, 20):
             with open('state_of_repo/test_%s.txt' % i, 'wb') as f:
                 f.write('Test')
-        misc.state_of_repo(target, source, env)
+        misc.state_of_repo(maxit)
         logfile = open('state_of_repo.log', 'rU').read()
         self.assertIn('MAX ITERATIONS', logfile)
 

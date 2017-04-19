@@ -120,6 +120,7 @@ class TestReleaseTools(unittest.TestCase):
         with self.assertRaises(ReleaseError), nostderrout():
             gslab_scons._release_tools.up_to_date(mode = 'scons')  
 
+ 
     @mock.patch('gslab_scons._release_tools.open')
     def test_extract_dot_git(self, mock_open):
         '''
@@ -146,44 +147,6 @@ class TestReleaseTools(unittest.TestCase):
         mock_open.side_effect = fx.dot_git_open_side_effect(url = False)
         with self.assertRaises(ReleaseError):
             repo_info = tools.extract_dot_git('.git')
-
-    @mock.patch('gslab_scons._release_tools.os.path.getsize')
-    @mock.patch('gslab_scons._release_tools.os.walk')
-    @mock.patch('gslab_scons._release_tools.os.path.isdir')
-    def test_create_size_dictionary(self, mock_isdir, mock_walk, mock_getsize):
-        '''
-        Test that create_size_dictionary() correctly reports
-        files' sizes in bytes.
-        '''
-        # Assign side effects
-        mock_isdir.side_effect   = fx.isdir_side_effect        
-        mock_walk.side_effect    = fx.walk_side_effect
-        mock_getsize.side_effect = fx.getsize_side_effect 
-
-        sizes = tools.create_size_dictionary('test_files')
-
-        self.assertEqual(len(sizes), 3)
-
-        # Check that test.txt and test.jpg are in the dictionary
-        root_path = [path for path in sizes.keys() \
-                    if re.search('root_file.txt$', path)]
-        pdf_path  = [path for path in sizes.keys() \
-                     if re.search('test.pdf$', path)]
-
-        self.assertTrue(bool(root_path))
-        self.assertTrue(bool(pdf_path))
-
-        # Check that the size dictionary reports these files' correct sizes in bytes
-        self.assertEqual(sizes[root_path[0]], 100)
-        self.assertEqual(sizes[pdf_path[0]], 1000)
-
-        # Check that the function raises an error when its path argument
-        # is not a directory.
-        with self.assertRaises(ReleaseError), nostderrout():
-            sizes = tools.create_size_dictionary('nonexistent_directory')
-        # The path argument must be a string
-        with self.assertRaises(TypeError), nostderrout():
-            sizes = tools.create_size_dictionary(10)
 
 
 if __name__ == '__main__':
