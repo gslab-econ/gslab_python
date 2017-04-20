@@ -15,7 +15,7 @@ Note: In order to run the unit tests, `mock` (version 2.0.0 or higher) needs to 
 Installation
 ------------
 To install this repository's Python libraries, run the `setup.py` script at its root
-with the command:
+with the command (note that you may have to prefix these commands with `sudo`):
 
 ```
 python setup.py install clean
