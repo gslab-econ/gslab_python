@@ -2,7 +2,7 @@ import os
 import subprocess
 import gslab_scons.misc as misc
 from gslab_scons import log_timestamp
-from gslab_scons._exception_classes import BadExecutableError
+from gslab_scons._exception_classes import ExecCallError
 
 def build_python(target, source, env):
     '''Build SCons targets using a Python script
@@ -42,7 +42,7 @@ def build_python(target, source, env):
                                 shell  = True)
     except subprocess.CalledProcessError:
         message = misc.command_error_msg("Python", command)
-        raise BadExecutableError(message)
+        raise ExecCallError(message)
 
     # Close log
     end_time   =  misc.current_time()    

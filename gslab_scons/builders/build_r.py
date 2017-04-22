@@ -2,7 +2,7 @@ import subprocess
 import os
 import gslab_scons.misc as misc
 from gslab_scons import log_timestamp
-from gslab_scons._exception_classes import BadExecutableError
+from gslab_scons._exception_classes import ExecCallError
 
 
 def build_r(target, source, env):
@@ -34,8 +34,11 @@ def build_r(target, source, env):
     
     cl_arg = misc.command_line_args(env)
 
-    if cl_arg != '':
-        cl_arg = "'--args %s'" % cl_arg
+    if cl_arg != '': 
+        if misc.is_unix(): # R has platform-specific cl_arg syntax
+            cl_arg = "'--args %s'" % cl_arg
+        else:
+            cl_arg = "\"--args %s\"" % cl_arg
 
     # System call
     try:
@@ -45,7 +48,7 @@ def build_r(target, source, env):
                                 shell  = True)
     except subprocess.CalledProcessError:
         message = misc.command_error_msg("R", command)
-        raise BadExecutableError(message)
+        raise ExecCallError(message)
 
     end_time = misc.current_time()    
     log_timestamp(start_time, end_time, log_file)

@@ -3,7 +3,7 @@ import subprocess
 import shutil
 import gslab_scons.misc as misc
 from gslab_scons import log_timestamp
-from gslab_scons._exception_classes import BadExecutableError
+from gslab_scons._exception_classes import ExecCallError
 
 
 def build_lyx(target, source, env):
@@ -51,7 +51,7 @@ def build_lyx(target, source, env):
         shutil.move(newpdf, target_file)
     except subprocess.CalledProcessError:
         message = misc.command_error_msg("lyx", command)
-        raise BadExecutableError(message)
+        raise ExecCallError(message)
 
     # Close log
     end_time    = misc.current_time()

@@ -4,7 +4,7 @@ import shutil
 import sys 
 import gslab_scons.misc as misc
 from gslab_scons import log_timestamp
-from gslab_scons._exception_classes import BadExecutableError
+from gslab_scons._exception_classes import ExecCallError
 
 
 def build_matlab(target, source, env):
@@ -67,7 +67,7 @@ def build_matlab(target, source, env):
                                 shell  = True)
     except subprocess.CalledProcessError:
         message = misc.command_error_msg("Matlab", command)
-        raise BadExecutableError(message)    
+        raise ExecCallError(message)    
     os.remove('source.m')
 
     end_time = misc.current_time()

@@ -1,4 +1,4 @@
-class BadExecutableError(Exception):
+class ExecCallError(Exception):
 	def __init__(self, message = ''):
 		print 'Error: ' + message
 

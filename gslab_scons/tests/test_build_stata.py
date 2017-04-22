@@ -15,7 +15,7 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append('../..')
 
 import gslab_scons as gs
-from gslab_scons._exception_classes import BadExecutableError, BadExtensionError
+from gslab_scons._exception_classes import ExecCallError, BadExtensionError
 from gslab_make  import get_externals
 from gslab_make.tests import nostderrout
 
@@ -126,7 +126,7 @@ class TestBuildStata(unittest.TestCase):
 
     def test_bad_user_executable(self):
         env = {'user_flavor': 'bad_user_executable'}
-        with self.assertRaises(BadExecutableError):
+        with self.assertRaises(ExecCallError):
             gs.build_stata(target = './test_output.txt', 
                            source = './test_script.do', 
                            env    = env)
@@ -162,7 +162,7 @@ class TestBuildStata(unittest.TestCase):
         mock_check.side_effect = fx.make_stata_side_effect('stata-mp')
 
         env = {'user_flavor' : 'stata-se'}
-        with self.assertRaises(BadExecutableError):
+        with self.assertRaises(ExecCallError):
             gs.build_stata(target = './build/stata.dta', 
                            source = './input/stata_test_script.do', 
                            env    = env)

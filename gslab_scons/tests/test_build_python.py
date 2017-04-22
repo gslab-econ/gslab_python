@@ -11,7 +11,7 @@ import _side_effects as fx
 
 sys.path.append('../..')
 import gslab_scons.builders.build_python as gs
-from gslab_scons._exception_classes import BadExtensionError, BadExecutableError
+from gslab_scons._exception_classes import BadExtensionError, ExecCallError
 from gslab_make.tests import nostderrout
 
 # Define path to the builder for use in patching
@@ -74,7 +74,7 @@ class TestBuildPython(unittest.TestCase):
         if os.path.exists('test.py'):
             os.remove('test.py')
 
-        with self.assertRaises(BadExecutableError):
+        with self.assertRaises(ExecCallError):
             helpers.standard_test(self, gs.build_python, source = 'test.py')
 
     def test_target_creation_unnecessary(self):

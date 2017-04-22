@@ -30,7 +30,7 @@ def start_log(mode, vers, log = 'sconstruct.log'):
 def end_log(log = 'sconstruct.log'):
     '''Complete the log of a build process.'''
 
-    end_message = "*** Build completed: {%s} ***\n" % misc.current_time()
+    end_message = "*** Build completed: {%s} ***\n \n \n" % misc.current_time()
     with open(log, "a") as f:
         f.write(end_message)
 
@@ -44,13 +44,17 @@ def end_log(log = 'sconstruct.log'):
     parent_dir = os.getcwd()
     builder_logs = collect_builder_logs(parent_dir)
     
-    # keep only builder logs from this run
-    this_run_dict = {key:value for key, value in builder_logs.items() if value > start_time}
+    # keep only builder logs from this run OR is broken (value == beginning_of_time)
+    beginning_of_time    = datetime.min # to catch broken logs (see collect_builder_logs)
+    this_run_dict = {key:value for key, value in builder_logs.items() if (value > start_time) or value == beginning_of_time}
     this_run_list = sorted(this_run_dict, key=this_run_dict.get, reverse=True)
 
     with open('sconstruct.log', "a") as sconstruct:
         for f in this_run_list:
             with open(f, 'rU') as sconscript:
+                if this_run_dict[f] == beginning_of_time:
+                    sconstruct.write("*** Warning!!! Doesn't look the sconscript below finished.\n")
+                sconstruct.write(f + "\n")
                 sconstruct.write(sconscript.read())
 
     return None
@@ -78,7 +82,11 @@ def collect_builder_logs(parent_dir):
                 with open(f_full, 'rU') as g:
                     s = g.readlines()[1] # skip a line
                     s = s[s.find('{')+1: s.find('}')] # find {} time identifier 
-                    builder_log_end_time = datetime.strptime(s, "%Y-%m-%d %H:%M:%S")
-                builder_log_collect[f_full] = builder_log_end_time
+                    try:
+                        builder_log_end_time = datetime.strptime(s, "%Y-%m-%d %H:%M:%S")
+                    except ValueError: # if the code breaks, there's no time identifier
+                        beginning_of_time    = datetime.min
+                        builder_log_end_time = beginning_of_time
+                builder_log_collect[f_full]  = builder_log_end_time
 
     return builder_log_collect

@@ -14,7 +14,7 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append('../..')
 
 import gslab_scons.builders.build_lyx as gs
-from gslab_scons._exception_classes import BadExtensionError, BadExecutableError
+from gslab_scons._exception_classes import BadExtensionError, ExecCallError
 
 # Define path to the builder for use in patching
 path = 'gslab_scons.builders.build_lyx'
@@ -69,7 +69,7 @@ class TestBuildLyX(unittest.TestCase):
         log    = './build/sconscript.log'
 
         for env in [True, [1, 2, 3], ('a', 'b'), None, TypeError]:
-            with self.assertRaises(BadExecutableError):
+            with self.assertRaises(ExecCallError):
                 gs.build_lyx(target, source, env = env)
 
     @mock.patch('%s.os.system' % path)
@@ -80,11 +80,11 @@ class TestBuildLyX(unittest.TestCase):
         '''
         mock_system.side_effect = fx.lyx_side_effect
         # i) Directory doesn't exist
-        with self.assertRaises(BadExecutableError):
+        with self.assertRaises(ExecCallError):
             gs.build_lyx('./build/lyx.pdf', 
                          ['./bad_dir/lyx_test_file.lyx'], env = {})
         # ii) Directory exists, but file doesn't
-        with self.assertRaises(BadExecutableError):
+        with self.assertRaises(ExecCallError):
             gs.build_lyx('./build/lyx.pdf', 
                          ['./input/nonexistent_file.lyx'], env = {})   
 
@@ -95,7 +95,7 @@ class TestBuildLyX(unittest.TestCase):
         directory does not exist.
         '''
         mock_system.side_effect = fx.lyx_side_effect
-        with self.assertRaises(BadExecutableError):
+        with self.assertRaises(ExecCallError):
             gs.build_lyx('./nonexistent_directory/lyx.pdf', 
                          ['./input/lyx_test_file.lyx'], env = True)
 
