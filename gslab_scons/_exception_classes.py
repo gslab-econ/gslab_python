@@ -13,3 +13,6 @@ class LFSError(Exception):
 class ReleaseError(Exception):
     def __init__(self, message = ''):
         print 'Error: ' + message
+
+class PrerequisiteError(Exception):
+    pass

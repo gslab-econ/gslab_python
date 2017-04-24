@@ -61,23 +61,6 @@ def state_of_repo(maxit):
     return None
 
 
-def check_lfs():
-    '''Check that Git LFS is installed'''
-    try:
-        output = subprocess.check_output("git-lfs install", shell = True)
-    except:
-        try:
-            # init is a deprecated version of install
-            output = subprocess.check_output("git-lfs init", shell = True) 
-        except:
-            raise _exception_classes.LFSError('''
-                              Either Git LFS is not installed 
-                              or your Git LFS settings need to be updated. 
-                              Please install Git LFS or run 
-                              'git lfs install --force' if prompted above.''')
-    return None
-
-
 def command_line_args(env):
     '''
     Return the content of env['CL_ARG'] as a string
