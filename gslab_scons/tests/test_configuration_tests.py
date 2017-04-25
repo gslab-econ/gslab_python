@@ -80,6 +80,17 @@ class TestConfigurationTests(unittest.TestCase):
         #with self.assertRaises(ex_classes.PrerequisiteError):
         #    configuration_tests.check_python_packages('3.0.2', ['yaml', 'os'])
 
+    def test_convert_packages_argument(self):
+        self.assertEqual(configuration_tests.convert_packages_argument(['test']), ['test'])
+        self.assertEqual(configuration_tests.convert_packages_argument(['test', 'test1']), 
+                                                                       ['test', 'test1'])
+        self.assertEqual(configuration_tests.convert_packages_argument('test'), ['test'])
+        with self.assertRaises(ex_classes.PrerequisiteError):
+            configuration_tests.convert_packages_argument(123)
+            configuration_tests.convert_packages_argument({'test'})
+            configuration_tests.convert_packages_argument(['test', 2])
+            configuration_tests.convert_packages_argument(lambda x: 'test')
+
 
     @mock.patch('gslab_scons.configuration_tests.subprocess.check_output')
     def test_check_lfs(self, mock_check):

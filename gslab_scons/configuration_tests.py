@@ -34,6 +34,10 @@ def convert_packages_argument(packages):
         else:
             raise PrerequisiteError('Please supply a python list of required' + \
                                     'packages, not %s.' % packages)
+    for pkg in packages:
+        if not isinstance(pkg, str):
+            raise PrerequisiteError('All packages should be strings,' + \
+                                    ' not %s.' % pkg)          
     return packages
 
 def check_r(packages = ["yaml"]):
@@ -55,7 +59,7 @@ def check_r_packages(packages):
 def check_lyx():
     from gslab_scons.misc import is_in_path
     if is_in_path('lyx.exe') is None and is_in_path('lyx') is None:
-        raise PrerequisiteError('Lyx is not installed or excecutable is not added to path')
+        raise PrerequisiteError('Lyx is not installed or executable is not added to path')
 
 def check_lfs():
     '''Check that Git LFS is installed'''
