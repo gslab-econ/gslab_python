@@ -28,7 +28,6 @@ class TestConfigurationTests(unittest.TestCase):
 
         with mock.patch('gslab_scons.configuration_tests.sys.version_info', [2]):
             # Test default arguments and correct python
-            mock_sys_version = [2]
             configuration_tests.check_python('3.0.2')
             mock_check_python_packages.assert_called_with('3.0.2', ["yaml", "gslab_scons", 
                                                            "gslab_make", "gslab_fill"])
@@ -43,7 +42,33 @@ class TestConfigurationTests(unittest.TestCase):
             configuration_tests.check_python('3.0.2', packages)
             mock_check_python_packages.assert_called_with('3.0.2', "yaml") 
 
+        @mock.patch("gslab_scons.configuration_tests.pkg_resources.get_distribution('gslab_python').version")
+        @mock.patch('gslab_scons.configuration_tests.importlib.import_module')
+        @mock.patch('gslab_scons.configuration_tests.convert_packages_argument')
+        def test_check_python_packages(self, mock_convert_packages, mock_import, mock_version):
+            mock_convert_packages.side_effect = ['yaml', 'os']
+            mock_import.side_effect           = None
+            mock_version.side_effect          = '3.0.2'
 
+            # Default correct test
+            configuration_tests.check_python_packages('3.0.2', ['yaml', 'os'])
+            mock_convert_packages.assert_called_with(['yaml', 'os'])
+            mock_import.assert_called_with('yaml')
+            mock_import.assert_called_with('os')
+            mock_version.assert_called_with('3.0.2')
+
+            # Incorrect gslab_python version
+            with self.assertRaises(ex_classes.PrerequisiteError):
+                configuration_tests.check_python_packages('3.0.3', ['yaml', 'os'])
+
+            # Module doesn't exist
+            def import_side_effect(x):
+                if x == 'yaml':
+                    raise ImportError()
+
+            mock_import.side_effect = import_side_effect
+            with self.assertRaises(ex_classes.PrerequisiteError):
+                configuration_tests.check_python_packages('3.0.3', ['yaml', 'os'])
 
 
     # Tests for check_lfs #

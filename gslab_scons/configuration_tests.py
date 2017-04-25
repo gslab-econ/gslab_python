@@ -11,20 +11,24 @@ def check_python(gslab_python_version,
 
 def check_python_packages(gslab_python_version, packages):
     gslab_python_version = str(gslab_python_version)
+    packages             = convert_packages_argument(packages)
+    for pkg in packages:
+        try:
+            importlib.import_module(pkg)
+        except ImportError:
+            raise PrerequisiteError('Missing %s module' % pkg)
+
+    if pkg_resources.get_distribution('gslab_python').version < gslab_python_version:
+        raise PrerequisiteError('Wrong version of gslab_python modules')
+
+def convert_packages_argument(packages):
     if not isinstance(packages, list):
         if isinstance(packages, str):
             packages = [packages]
         else:
             raise PrerequisiteError('Please supply a python list of required' + \
                                     'packages, not %s.' % packages)
-    for pkg in packages:
-        try:
-            importlib.import_module(pkg)
-        except:
-            raise PrerequisiteError('Missing %s module' % pkg)
-
-    if pkg_resources.get_distribution('gslab_tools').version < gslab_python_version:
-        raise PrerequisiteError('Wrong version of gslab_python modules')
+    return packages
 
 def check_r(packages = ["yaml"]):
     from gslab_scons.misc import is_in_path
@@ -33,10 +37,14 @@ def check_r(packages = ["yaml"]):
     check_r_packages(packages)
 
 def check_r_packages(packages):
+    packages = convert_packages_argument(packages)
     for pkg in packages:
         # http://stackoverflow.com/questions/6701230/call-r-function-in-linux-command-line
         # and http://stackoverflow.com/questions/18962785/oserror-errno-2-no-such-file-or-directory-while-using-python-subprocess-in-dj
-        subprocess.check_output('R -q -e "library(%s)"' % pkg, shell = True)
+        try:
+            subprocess.check_output('R -q -e "library(%s)"' % pkg, shell = True)
+        except subprocess.CalledProcessError:
+            raise PrerequisiteError("R package, %s, not found." % pkg)
 
 def check_lyx():
     from gslab_scons.misc import is_in_path
@@ -134,22 +142,27 @@ def check_stata_packages(command, packages):
     elif sys.platform == "win32":
         command = command.split("do")[0]
 
+    packages = convert_packages_argument(packages)
     try:
         for pkg in packages:
             call = (command + "which %s") % pkg
             # http://www.stata.com/statalist/archive/2009-12/msg00493.html 
             # and http://stackoverflow.com/questions/18962785/oserror-errno-2-no-such-file-or-directory-while-using-python-subprocess-in-dj
             subprocess.check_output(call, stderr = subprocess.STDOUT, shell = True) 
+            
             with open('stata.log', 'rU') as f:
                 log = f.read()
+            os.remove('stata.log')
+
+            if re.search('command %s not found' % pkg, log):
+                raise PrerequisiteError('Stata package %s is not installed' % pkg)
+
     except subprocess.CalledProcessError:
         raise PrerequisiteError("Stata command, '%s', failed.\n" % command.split(' ')[0] + \
                                 "\t\t   Please supply a correct stata_executable" + \
                                 " value in user_config.yaml.\n" )
 
-    os.remove('stata.log')
-    if re.search('command %s not found' % pkg, log):
-        raise PrerequisiteError('Stata package %s is not installed' % pkg)
+
 
 
 
