@@ -1,6 +1,7 @@
 import sys
 import importlib
 import subprocess
+import pkg_resources
 from _exception_classes import PrerequisiteError
 
 def check_python(gslab_python_version, 
@@ -12,11 +13,16 @@ def check_python(gslab_python_version,
 def check_python_packages(gslab_python_version, packages):
     gslab_python_version = str(gslab_python_version)
     packages             = convert_packages_argument(packages)
+
+    missing_packages = []
     for pkg in packages:
         try:
             importlib.import_module(pkg)
         except ImportError:
-            raise PrerequisiteError('Missing %s module' % pkg)
+            missing_packages =+ pkg
+
+    if len(missing_packages) > 0:
+        raise PrerequisiteError('Missing %s module(s)' % missing_packages)
 
     if pkg_resources.get_distribution('gslab_python').version < gslab_python_version:
         raise PrerequisiteError('Wrong version of gslab_python modules')
