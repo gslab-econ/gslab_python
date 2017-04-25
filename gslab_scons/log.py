@@ -7,7 +7,6 @@ import gslab_scons.misc as misc
 
 def start_log(mode, vers, log = 'sconstruct.log'):
     '''Begins logging a build process'''
-    misc.check_lfs()
     
     if not (mode in ['develop', 'cache', 'release']):
         raise Exception("Error: %s is not a defined mode" % mode)

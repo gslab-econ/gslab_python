@@ -1,19 +1,29 @@
+import sys
 import importlib
+import subprocess
 from _exception_classes import PrerequisiteError
 
-def check_python(packages = ["yaml", "gslab_scons", "gslab_make", "gslab_fill"]):
+def check_python(gslab_python_version, 
+                 packages = ["yaml", "gslab_scons", "gslab_make", "gslab_fill"]):
     if sys.version_info[0] != 2:
         raise PrerequisiteError('Please use python 2')
-    check_python_packages(packages)
+    check_python_packages(gslab_python_version, packages)
 
-def check_python_packages(packages):
+def check_python_packages(gslab_python_version, packages):
+    gslab_python_version = str(gslab_python_version)
+    if not isinstance(packages, list):
+        if isinstance(packages, str):
+            packages = [packages]
+        else:
+            raise PrerequisiteError('Please supply a python list of required' + \
+                                    'packages, not %s.' % packages)
     for pkg in packages:
         try:
             importlib.import_module(pkg)
         except:
             raise PrerequisiteError('Missing %s module' % pkg)
 
-    if pkg_resources.get_distribution('gslab_tools').version < '3.0.3':
+    if pkg_resources.get_distribution('gslab_tools').version < gslab_python_version:
         raise PrerequisiteError('Wrong version of gslab_python modules')
 
 def check_r(packages = ["yaml"]):
