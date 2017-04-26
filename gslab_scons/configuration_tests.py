@@ -21,7 +21,7 @@ def check_python_packages(gslab_python_version, packages):
         try:
             importlib.import_module(pkg)
         except ImportError:
-            missing_packages =+ pkg
+            missing_packages.append(pkg)
 
     if len(missing_packages) > 0:
         raise PrerequisiteError('Missing %s module(s)' % missing_packages)
@@ -49,13 +49,17 @@ def check_r(packages = ["yaml"]):
 
 def check_r_packages(packages):
     packages = convert_packages_argument(packages)
+    missing_packages = []
     for pkg in packages:
         # http://stackoverflow.com/questions/6701230/call-r-function-in-linux-command-line
         # and http://stackoverflow.com/questions/18962785/oserror-errno-2-no-such-file-or-directory-while-using-python-subprocess-in-dj
         try:
             subprocess.check_output('R -q -e "library(%s)"' % pkg, shell = True)
         except subprocess.CalledProcessError:
-            raise PrerequisiteError("R package, %s, not found." % pkg)
+            missing_packages.append(pkg)
+
+    if len(missing_packages) > 0:
+        raise PrerequisiteError("R packages, %s, not found." % missing_packages)
 
 def check_lyx():
     if is_in_path('lyx.exe') is None and is_in_path('lyx') is None:

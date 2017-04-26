@@ -5,6 +5,7 @@ import re
 import shutil
 import mock
 import datetime
+import subprocess
 
 # Ensure that Python can find and load the GSLab libraries
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -113,7 +114,36 @@ class TestConfigurationTests(unittest.TestCase):
         # Test alternative arguments format
         packages = "yaml"
         configuration_tests.check_r(packages)
-        mock_check_r_packages.assert_called_with("yaml")    
+        mock_check_r_packages.assert_called_with("yaml")
+
+    @mock.patch('gslab_scons.configuration_tests.subprocess.check_output')
+    @mock.patch('gslab_scons.configuration_tests.convert_packages_argument')
+    def test_check_python_packages(self, mock_convert_packages, mock_check_output):
+        # Setup
+        def output_side_effect(*args, **kwargs):
+            cmd_line_call = args[0]
+            print cmd_line_call
+            if cmd_line_call in ['R -q -e "library(%s)"' % a for a in ['yaml', 'ggplot']]:
+                return 0
+            else:
+                subprocess.check_call("exit 1", shell = True)
+
+        mock_convert_packages.side_effect = lambda x: ['yaml', 'ggplot']
+        mock_check_output.side_effect     = output_side_effect
+
+        # Default correct test
+        configuration_tests.check_r_packages(['yaml', 'ggplot'])
+        mock_convert_packages.assert_called_with(['yaml', 'ggplot'])
+        mock_check_output.assert_called()
+
+        # Module doesn't exist
+        mock_convert_packages.side_effect = lambda x: ['yaml', 'os']
+        with self.assertRaises(ex_classes.PrerequisiteError):
+            configuration_tests.check_r_packages(['yaml', 'os'])
+
+        mock_convert_packages.side_effect = lambda x: ['sys', 'os']
+        with self.assertRaises(ex_classes.PrerequisiteError):
+            configuration_tests.check_r_packages(['sys', 'os'])
 
 
     @mock.patch('gslab_scons.configuration_tests.subprocess.check_output')
