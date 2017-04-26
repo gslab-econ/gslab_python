@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import importlib
 import subprocess
@@ -123,6 +124,8 @@ def load_yaml_value(path, key):
     if os.path.isfile(path):
         try:
             yaml_contents = yaml.load(open(path, 'rU'))
+            if not isinstance(yaml_contents, dict):
+                raise yaml.scanner.ScannerError()
         except yaml.scanner.ScannerError:
             message  = "%s is a corrupted yaml file. Delete file and recreate? (y/n) "
             response = str(raw_input(message % path))
