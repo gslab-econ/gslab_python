@@ -4,7 +4,7 @@ import sys
 import importlib
 import subprocess
 import pkg_resources
-from misc import is_in_path, get_stata_executable, get_stata_command
+from misc import is_in_path, get_stata_executable, get_stata_command, is_unix
 from _exception_classes import PrerequisiteError
 
 
@@ -151,11 +151,12 @@ def load_yaml_value(path, key):
         return val
 
 def check_stata_packages(command, packages):
-    import gslab_scons.misc as misc
-    if misc.is_unix():
+    if is_unix():
         command = command.split("%s")[0]
     elif sys.platform == "win32":
         command = command.split("do")[0]
+    else:
+        raise PrerequisiteError("Unrecognized OS: %s" % sys.platform)
 
     packages = convert_packages_argument(packages)
     try:

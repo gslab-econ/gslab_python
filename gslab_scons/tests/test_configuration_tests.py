@@ -81,6 +81,7 @@ class TestConfigurationTests(unittest.TestCase):
         #with self.assertRaises(ex_classes.PrerequisiteError):
         #    configuration_tests.check_python_packages('3.0.2', ['yaml', 'os'])
 
+
     def test_convert_packages_argument(self):
         self.assertEqual(configuration_tests.convert_packages_argument(['test']), ['test'])
         self.assertEqual(configuration_tests.convert_packages_argument(['test', 'test1']), 
@@ -91,6 +92,7 @@ class TestConfigurationTests(unittest.TestCase):
             configuration_tests.convert_packages_argument({'test'})
             configuration_tests.convert_packages_argument(['test', 2])
             configuration_tests.convert_packages_argument(lambda x: 'test')
+
 
     @mock.patch('gslab_scons.configuration_tests.is_in_path')
     @mock.patch('gslab_scons.configuration_tests.check_r_packages')
@@ -116,9 +118,10 @@ class TestConfigurationTests(unittest.TestCase):
         configuration_tests.check_r(packages)
         mock_check_r_packages.assert_called_with("yaml")
 
+
     @mock.patch('gslab_scons.configuration_tests.subprocess.check_output')
     @mock.patch('gslab_scons.configuration_tests.convert_packages_argument')
-    def test_check_python_packages(self, mock_convert_packages, mock_check_output):
+    def test_check_r_packages(self, mock_convert_packages, mock_check_output):
         # Setup
         def output_side_effect(*args, **kwargs):
             cmd_line_call = args[0]
@@ -195,7 +198,6 @@ class TestConfigurationTests(unittest.TestCase):
         return side_effect
 
 
-
     @mock.patch('gslab_scons.configuration_tests.os.path.expanduser')
     @mock.patch('gslab_scons.configuration_tests.os.path.isdir')
     def test_check_and_expand_cache_path(self, mock_is_dir, mock_expanduser):
@@ -208,6 +210,7 @@ class TestConfigurationTests(unittest.TestCase):
             configuration_tests.check_and_expand_cache_path('~/~/cache')
             configuration_tests.check_and_expand_cache_path('lb/cache')
             configuration_tests.check_and_expand_cache_path(3)
+
 
     @mock.patch('gslab_scons.configuration_tests.check_stata_packages')
     @mock.patch('gslab_scons.configuration_tests.load_yaml_value')
@@ -273,6 +276,7 @@ class TestConfigurationTests(unittest.TestCase):
             configuration_tests.check_stata(ARGUMENTS)
             configuration_tests.check_stata(ARGUMENTS, packages = ['bad_package'])
 
+
     @mock.patch('gslab_scons.configuration_tests.raw_input')
     def test_load_yaml_value(self, mock_raw_input):
         # Setup
@@ -335,44 +339,63 @@ class TestConfigurationTests(unittest.TestCase):
             make_yaml('key value')
             configuration_tests.load_yaml_value('yaml.yaml', 'key')
 
+        if os.path.isfile('yaml.yaml'):
+            os.remove('yaml.yaml')  
 
 
+    @mock.patch('gslab_scons.configuration_tests.is_unix')
+    @mock.patch('gslab_scons.configuration_tests.convert_packages_argument')
+    @mock.patch('gslab_scons.configuration_tests.subprocess.check_output')
+    def test_check_stata_packages(self, mock_check_output, mock_package_argument, 
+                                  mock_is_unix):
 
+        def check_output_side_effect(*args, **kwargs):
+            command = args[0].split("which ")[0]
+            if not re.search("statamp", command):
+                raise subprocess.CalledProcessError(1, args[0])  
 
+            with open('stata.log', 'wb') as f:
+                if not re.search('yaml', args[0]):
+                    package = args[0].split("which ")[1]
+                    f.write("command %s not found" % package)
 
+        def is_unix_side_effect_true():
+            return True
+ 
+        def is_unix_side_effect_false():
+            return False
 
+        mock_check_output.side_effect     = check_output_side_effect
+        mock_package_argument.side_effect = lambda x: ['yaml']
+        mock_is_unix.side_effect          = is_unix_side_effect_true
 
+        # Good tests
+        with mock.patch('gslab_scons.configuration_tests.sys.platform', 'win32'):
+            # Unix
+            configuration_tests.check_stata_packages("statamp", "yaml")
 
+            # Windows
+            mock_is_unix.side_effect = is_unix_side_effect_false
+            configuration_tests.check_stata_packages("statamp", "yaml")
 
+            # No packages
+            mock_package_argument.side_effect = lambda x: []
+            configuration_tests.check_stata_packages("statamp", [])
+            mock_package_argument.side_effect = lambda x: ['yaml']
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        # Bad Tests
+        with self.assertRaises(ex_classes.PrerequisiteError) and \
+            mock.patch('gslab_scons.configuration_tests.sys.platform', 'Unknown'):
+            # Unknown platform
+            configuration_tests.check_stata_packages("statamp", "yaml")
+        
+        with self.assertRaises(ex_classes.PrerequisiteError) and \
+            mock.patch('gslab_scons.configuration_tests.sys.platform', 'win32'):
+            # Bad package
+            configuration_tests.check_stata_packages("statamp", "bad_package")
+        
+            # Bad executable
+            configuration_tests.check_stata_packages("bad_executable", "yaml")
 
 
 if __name__ == '__main__':
