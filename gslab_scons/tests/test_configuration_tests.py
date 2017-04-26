@@ -71,15 +71,13 @@ class TestConfigurationTests(unittest.TestCase):
 
         # Module doesn't exist
         def import_side_effect(*args, **kwargs):
-            if args[0] == 'yaml':
-                raise ImportError()
-            else:
-                return None
+            if args[0] == 'os':
+                raise ImportError(args[0])
 
         # NOT WORKING FOR SOME REASON
-        #mock_import.side_effect = import_side_effect
-        #with self.assertRaises(ex_classes.PrerequisiteError):
-        #    configuration_tests.check_python_packages('3.0.2', ['yaml', 'os'])
+        with self.assertRaises(ex_classes.PrerequisiteError):
+            mock_import.side_effect = import_side_effect
+            configuration_tests.check_python_packages('3.0.2', ['yaml', 'os'])
 
 
     def test_convert_packages_argument(self):
@@ -91,6 +89,7 @@ class TestConfigurationTests(unittest.TestCase):
             configuration_tests.convert_packages_argument(123)
             configuration_tests.convert_packages_argument({'test'})
             configuration_tests.convert_packages_argument(['test', 2])
+            configuration_tests.convert_packages_argument([2, 2])
             configuration_tests.convert_packages_argument(lambda x: 'test')
 
 
@@ -384,13 +383,13 @@ class TestConfigurationTests(unittest.TestCase):
             mock_package_argument.side_effect = lambda x: ['yaml']
 
         # Bad Tests
-        with self.assertRaises(ex_classes.PrerequisiteError) and \
-            mock.patch('gslab_scons.configuration_tests.sys.platform', 'Unknown'):
+        with self.assertRaises(ex_classes.PrerequisiteError): 
+            mock.patch('gslab_scons.configuration_tests.sys.platform', 'Unknown')
             # Unknown platform
             configuration_tests.check_stata_packages("statamp", "yaml")
         
-        with self.assertRaises(ex_classes.PrerequisiteError) and \
-            mock.patch('gslab_scons.configuration_tests.sys.platform', 'win32'):
+        with self.assertRaises(ex_classes.PrerequisiteError):
+            mock.patch('gslab_scons.configuration_tests.sys.platform', 'win32')
             # Bad package
             configuration_tests.check_stata_packages("statamp", "bad_package")
         

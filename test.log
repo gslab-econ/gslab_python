@@ -26,7 +26,7 @@ gslab_scons/tests/test_build_python.py ......
 gslab_scons/tests/test_build_r.py ....
 gslab_scons/tests/test_build_stata.py ..........
 gslab_scons/tests/test_build_tables.py ....
-gslab_scons/tests/test_configuration_tests.py ........F..
+gslab_scons/tests/test_configuration_tests.py ....F......
 gslab_scons/tests/test_log.py .......
 gslab_scons/tests/test_misc.py ................
 gslab_scons/tests/test_release_function.py ....
@@ -34,76 +34,69 @@ gslab_scons/tests/test_release_tools.py ....
 gslab_scons/tests/test_size_warning.py .....
 
 =================================== FAILURES ===================================
-_______________ TestConfigurationTests.test_check_stata_packages _______________
+______________ TestConfigurationTests.test_check_python_packages _______________
 
-self = <gslab_scons.tests.test_configuration_tests.TestConfigurationTests testMethod=test_check_stata_packages>
-mock_check_output = <MagicMock name='check_output' id='4415342480'>
-mock_package_argument = <MagicMock name='convert_packages_argument' id='4415276176'>
-mock_is_unix = <MagicMock name='is_unix' id='4415357520'>
+self = <gslab_scons.tests.test_configuration_tests.TestConfigurationTests testMethod=test_check_python_packages>
+mock_convert_packages = <MagicMock name='convert_packages_argument' id='4604926736'>
+mock_import = <MagicMock name='import_module' id='4604956304'>
+mock_version = <MagicMock name='get_distribution' id='4604591952'>
 
-    @mock.patch('gslab_scons.configuration_tests.is_unix')
+    @mock.patch("gslab_scons.configuration_tests.pkg_resources.get_distribution")
+    @mock.patch('gslab_scons.configuration_tests.importlib.import_module')
     @mock.patch('gslab_scons.configuration_tests.convert_packages_argument')
-    @mock.patch('gslab_scons.configuration_tests.subprocess.check_output')
-    def test_check_stata_packages(self, mock_check_output, mock_package_argument,
-                                  mock_is_unix):
+    def test_check_python_packages(self, mock_convert_packages, mock_import, mock_version):
+        # Setup
+        class MockVersionSideEffect(object):
+            def __init__(self):
+                self.version = '3.0.2'
     
-        def check_output_side_effect(*args, **kwargs):
-            command = args[0].split("which ")[0]
-            if not re.search("statamp", command):
-                raise subprocess.CalledProcessError(1, args[0])
+        def version_side_effect(*args, **kwargs):
+            return MockVersionSideEffect()
     
-            with open('stata.log', 'wb') as f:
-                if not re.search('yaml', args[0]):
-                    package = args[0].split("which ")[1]
-                    f.write("command %s not found" % package)
+        mock_version.side_effect          = version_side_effect
+        mock_convert_packages.side_effect = ['yaml', 'os']
+        mock_import.side_effect           = None
     
-        def is_unix_side_effect_true():
-            return True
+        # Default correct test
+        configuration_tests.check_python_packages('3.0.2', ['yaml', 'os'])
+        mock_convert_packages.assert_called_with(['yaml', 'os'])
+        mock_import.assert_called()
+        mock_version.assert_called_with('gslab_python')
     
-        def is_unix_side_effect_false():
-            return False
+        # Incorrect gslab_python version
+        with self.assertRaises(ex_classes.PrerequisiteError):
+            configuration_tests.check_python_packages('3.0.3', ['yaml', 'os'])
     
-        mock_check_output.side_effect     = check_output_side_effect
-        mock_package_argument.side_effect = lambda x: ['yaml']
-        mock_is_unix.side_effect          = is_unix_side_effect_true
+        # Module doesn't exist
+        def import_side_effect(*args, **kwargs):
+            if args[0] == 'os':
+                raise ImportError(args[0])
     
-        # Good tests
-        with mock.patch('gslab_scons.configuration_tests.sys.platform', 'win32'):
-    
-            # Unix
-            configuration_tests.check_stata_packages("statamp", "yaml")
-    
-            # Windows
-            mock_is_unix.side_effect = is_unix_side_effect_false
-            configuration_tests.check_stata_packages("statamp", "yaml")
-    
-            # No packages
-            mock_package_argument.side_effect = lambda x: []
-            configuration_tests.check_stata_packages("statamp", [])
-            mock_package_argument.side_effect = lambda x: ['yaml']
-    
-        # Bad Tests
-        with self.assertRaises(ex_classes.PrerequisiteError) and \
-            mock.patch('gslab_scons.configuration_tests.sys.platform', 'Unknown'):
-            # Unknown platform
->           configuration_tests.check_stata_packages("statamp", "yaml")
+        # NOT WORKING FOR SOME REASON
+        with self.assertRaises(ex_classes.PrerequisiteError):
+            mock_import.side_effect = import_side_effect
+>           configuration_tests.check_python_packages('3.0.2', ['yaml', 'os'])
 
-test_configuration_tests.py:391: 
+test_configuration_tests.py:80: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../configuration_tests.py:19: in check_python_packages
+    packages             = convert_packages_argument(packages)
+../../../../anaconda/lib/python2.7/site-packages/mock/mock.py:1062: in __call__
+    return _mock_self._mock_call(*args, **kwargs)
+../../../../anaconda/lib/python2.7/site-packages/mock/mock.py:1121: in _mock_call
+    result = next(effect)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-command = 'statamp', packages = 'yaml'
+obj = <listiterator object at 0x11276df90>, _next = <built-in function next>
 
-    def check_stata_packages(command, packages):
-        if is_unix():
-            command = command.split("%s")[0]
-        elif sys.platform == "win32":
-            command = command.split("do")[0]
-        else:
->           raise PrerequisiteError("Unrecognized OS: %s" % sys.platform)
-E           PrerequisiteError: Unrecognized OS: Unknown
+    def next(obj, _next=_next):
+        if getattr(obj, '__next__', None):
+            return obj.__next__()
+>       return _next(obj)
+E       StopIteration
 
-../configuration_tests.py:159: PrerequisiteError
-===================== 1 failed, 117 passed in 3.00 seconds =====================
+../../../../anaconda/lib/python2.7/site-packages/mock/mock.py:109: StopIteration
+==================== 1 failed, 117 passed in 25.90 seconds =====================
 Name                                            Stmts   Miss Branch BrPart  Cover   Missing
 -------------------------------------------------------------------------------------------
 gencat/gencat.py                                   79      6     28      4    91%   72-73, 81, 89, 97, 101, 57->exit, 71->72, 96->97, 100->101
@@ -157,11 +150,11 @@ gslab_scons/tests/test_build_python.py             60      2     14      4    92
 gslab_scons/tests/test_build_r.py                  42      1     12      3    93%   75, 26->exit, 70->exit, 74->75
 gslab_scons/tests/test_build_stata.py              90      1      2      1    98%   179, 178->179
 gslab_scons/tests/test_build_tables.py             65      1      8      1    97%   140, 139->140
-gslab_scons/tests/test_configuration_tests.py     240     19     68     12    89%   74-77, 92-94, 195, 211-212, 245, 248, 277, 355, 359-360, 393-399, 403, 190->197, 192->195, 244->245, 247->248, 287->exit, 294->exit, 316->exit, 342->exit, 354->355, 358->359, 385->exit, 402->403
+gslab_scons/tests/test_configuration_tests.py     245     17     68     12    89%   74-75, 90-93, 194, 210-211, 244, 247, 276, 354, 358-359, 397, 401, 189->196, 191->194, 243->244, 246->247, 286->exit, 293->exit, 315->exit, 341->exit, 353->354, 357->358, 383->exit, 400->401
 gslab_scons/tests/test_log.py                      97     10     12      3    84%   27, 140-146, 171, 175, 26->27, 170->171, 174->175
 gslab_scons/tests/test_misc.py                    136      2     10      2    97%   177, 275, 176->177, 274->275
 gslab_scons/tests/test_release_function.py        122      3     22      2    97%   288-289, 322, 182->exit, 321->322
 gslab_scons/tests/test_release_tools.py            64      1      2      1    97%   153, 152->153
 gslab_scons/tests/test_size_warning.py            183      5     46      6    95%   276, 293, 309, 373, 379, 272->276, 273->276, 292->293, 304->309, 370->373, 378->379
 -------------------------------------------------------------------------------------------
-TOTAL                                            4475   1336   1274     85    65%
+TOTAL                                            4480   1334   1274     85    65%
