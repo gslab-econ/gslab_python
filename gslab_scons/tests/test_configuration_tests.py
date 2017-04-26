@@ -91,6 +91,30 @@ class TestConfigurationTests(unittest.TestCase):
             configuration_tests.convert_packages_argument(['test', 2])
             configuration_tests.convert_packages_argument(lambda x: 'test')
 
+    @mock.patch('gslab_scons.configuration_tests.is_in_path')
+    @mock.patch('gslab_scons.configuration_tests.check_r_packages')
+    def test_check_r(self, mock_check_r_packages, mock_is_in_path):
+        # No R executable
+        mock_is_in_path.side_effect = lambda x: None
+        with self.assertRaises(ex_classes.PrerequisiteError):
+            configuration_tests.check_r()
+        mock_check_r_packages.assert_not_called()
+
+        # Test default arguments 
+        mock_is_in_path.side_effect = lambda x: True
+        configuration_tests.check_r()
+        mock_check_r_packages.assert_called_with(["yaml"])
+
+        # Test alternative arguments
+        packages = ["yaml", "ggplot"]
+        configuration_tests.check_r(packages)
+        mock_check_r_packages.assert_called_with(["yaml", "ggplot"])        
+
+        # Test alternative arguments format
+        packages = "yaml"
+        configuration_tests.check_r(packages)
+        mock_check_r_packages.assert_called_with("yaml")    
+
 
     @mock.patch('gslab_scons.configuration_tests.subprocess.check_output')
     def test_check_lfs(self, mock_check):

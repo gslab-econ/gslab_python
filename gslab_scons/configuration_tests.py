@@ -2,7 +2,9 @@ import sys
 import importlib
 import subprocess
 import pkg_resources
+from misc import is_in_path
 from _exception_classes import PrerequisiteError
+
 
 def check_python(gslab_python_version, 
                  packages = ["yaml", "gslab_scons", "gslab_make", "gslab_fill"]):
@@ -41,7 +43,6 @@ def convert_packages_argument(packages):
     return packages
 
 def check_r(packages = ["yaml"]):
-    from gslab_scons.misc import is_in_path
     if is_in_path('R.exe') is None and is_in_path('R') is None:
         raise PrerequisiteError('R is not installed or excecutable is not added to path')
     check_r_packages(packages)
@@ -57,7 +58,6 @@ def check_r_packages(packages):
             raise PrerequisiteError("R package, %s, not found." % pkg)
 
 def check_lyx():
-    from gslab_scons.misc import is_in_path
     if is_in_path('lyx.exe') is None and is_in_path('lyx') is None:
         raise PrerequisiteError('Lyx is not installed or executable is not added to path')
 
