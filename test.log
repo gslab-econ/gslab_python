@@ -33,7 +33,7 @@ gslab_scons/tests/test_release_function.py ....
 gslab_scons/tests/test_release_tools.py ....
 gslab_scons/tests/test_size_warning.py .....
 
-========================= 115 passed in 32.47 seconds ==========================
+========================= 115 passed in 34.43 seconds ==========================
 Name                                            Stmts   Miss Branch BrPart  Cover   Missing
 -------------------------------------------------------------------------------------------
 gencat/gencat.py                                   79      6     28      4    91%   72-73, 81, 89, 97, 101, 57->exit, 71->72, 96->97, 100->101
@@ -87,11 +87,11 @@ gslab_scons/tests/test_build_python.py             60      2     14      4    92
 gslab_scons/tests/test_build_r.py                  42      1     12      3    93%   75, 26->exit, 70->exit, 74->75
 gslab_scons/tests/test_build_stata.py              90      1      2      1    98%   179, 178->179
 gslab_scons/tests/test_build_tables.py             65      1      8      1    97%   140, 139->140
-gslab_scons/tests/test_configuration_tests.py     171     28     44      5    83%   51-77, 91-93, 192, 209-210, 242, 245, 274, 327, 187->194, 189->192, 241->242, 244->245, 326->327
+gslab_scons/tests/test_configuration_tests.py     206     62     54      5    69%   51-77, 91-93, 192, 209-210, 242, 245, 274, 279-335, 378, 187->194, 189->192, 241->242, 244->245, 377->378
 gslab_scons/tests/test_log.py                      97     10     12      3    84%   27, 140-146, 171, 175, 26->27, 170->171, 174->175
 gslab_scons/tests/test_misc.py                    136      2     10      2    97%   177, 275, 176->177, 274->275
 gslab_scons/tests/test_release_function.py        122      3     22      2    97%   288-289, 322, 182->exit, 321->322
 gslab_scons/tests/test_release_tools.py            64      1      2      1    97%   153, 152->153
 gslab_scons/tests/test_size_warning.py            183      5     46      6    95%   276, 293, 309, 373, 379, 272->276, 273->276, 292->293, 304->309, 370->373, 378->379
 -------------------------------------------------------------------------------------------
-TOTAL                                            4403   1394   1248     76    63%
+TOTAL                                            4438   1428   1258     76    63%

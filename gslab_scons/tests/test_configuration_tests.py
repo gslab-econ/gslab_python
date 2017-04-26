@@ -273,15 +273,66 @@ class TestConfigurationTests(unittest.TestCase):
             configuration_tests.check_stata(ARGUMENTS)
             configuration_tests.check_stata(ARGUMENTS, packages = ['bad_package'])
 
-    #@mock.patch('gslab_scons.configuration_tests.os.path.isfile')
-    #@mock.patch('gslab_scons.configuration_tests.yaml.load')
-    #@mock.patch('gslab_scons.configuration_tests.open')
-    #@mock.patch('gslab_scons.configuration_tests.raw_input')
-    #@mock.patch('gslab_scons.configuration_tests.os.remove')
-    #def check_load_yaml_value(self, )
+    @mock.patch('gslab_scons.configuration_tests.raw_input')
+    def check_load_yaml_value(self, mock_raw_input):
+        # Setup
+        def raw_input_side_effect(*args, **kwargs):
+            message = arg[0]
+            if re.search("corrupted", message):
+                return 'y'
+            if re.search("Enter", message):
+                return 'value'
+
+        def raw_input_side_effect2(*args, **kwargs):
+            message = arg[0]
+            if re.search("corrupted", message):
+                return 'n'
+            if re.search("Enter", message):
+                return none
+
+        mock_raw_input.side_effect = raw_input_side_effect
+
+        def make_yaml(string):
+            with open('yaml.yaml', 'wb') as f:
+                f.write('%s\n' % string)
+
+        # Test Good
+
+        # Yaml file exists, is not corrupt, and has key.
+        make_yaml('key: value')
+        self.assertEqual(configuration_tests.load_yaml_value('yaml.yaml', 'key'), 'value')
+
+        # Yaml file exists, is not corrupt, and doesn't have key. User enters value for key.
+        make_yaml('bad_key: bad_value')
+        self.assertEqual(configuration_tests.load_yaml_value('yaml.yaml', 'key'), 'value')
+        
+        # But now yaml has a correct key and doesn't require user input.
+        mock_raw_input.side_effect = lambda x: "bad_value"
+        self.assertEqual(configuration_tests.load_yaml_value('yaml.yaml', 'key'), 'value')
+        mock_raw_input.raw_input_side_effect
+
+        # Yaml file exists and is corrupt. User deletes and re-creates. 
+        make_yaml('key value')
+        self.assertEqual(configuration_tests.load_yaml_value('yaml.yaml', 'key'), 'value')
+
+        # Yaml file does not exist. User enters value to create. 
+        os.remove('yaml.yaml')
+        self.assertEqual(configuration_tests.load_yaml_value('yaml.yaml', 'key'), 'value')
+
+        # Yaml file does not exist. User enters none value to create. 
+        os.remove('yaml.yaml')
+        mock_raw_input.side_effect = raw_input_side_effect2
+        self.assertEqual(configuration_tests.load_yaml_value('yaml.yaml', 'key'), None)
+
+        # Yaml file now exists with none value.
+        self.assertEqual(configuration_tests.load_yaml_value('yaml.yaml', 'key'), None)
 
 
-
+        # Test bad
+        with self.assertRaises(ex_classes.PrerequisiteError):
+            # Corrupt file and user doesn't choose to delete and re-create   
+            make_yaml('corrupt yaml file')
+            self.assertEqual(configuration_tests.load_yaml_value('yaml.yaml', 'key'), 'value')
 
 
 
