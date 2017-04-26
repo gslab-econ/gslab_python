@@ -3,7 +3,7 @@ import sys
 import importlib
 import subprocess
 import pkg_resources
-from misc import is_in_path
+from misc import is_in_path, get_stata_executable, get_stata_command
 from _exception_classes import PrerequisiteError
 
 
@@ -95,20 +95,17 @@ def check_and_expand_cache_path(cache):
 
 
 def check_stata(ARGUMENTS, packages = ["yaml"], user_yaml = "user-config.yaml"):
-    import yaml
-    import gslab_scons.misc as misc
-
     sf_configs = load_yaml_value(user_yaml, "stata_executable")
     sf         = ARGUMENTS.get('sf', sf_configs) 
 
     # Fake scons-like env dict for misc.get_stata_executable(env)
     fake_env = {'user_flavor': sf} 
-    stata_exec = misc.get_stata_executable(fake_env)
+    stata_exec = get_stata_executable(fake_env)
     
     if stata_exec is None:
         raise PrerequisiteError('Stata is not installed or executable is not added to path')
     
-    command = misc.get_stata_command(stata_exec)
+    command = get_stata_command(stata_exec)
     check_stata_packages(command, packages)
     return sf
 

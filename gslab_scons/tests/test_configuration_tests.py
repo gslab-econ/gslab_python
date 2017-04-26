@@ -157,19 +157,6 @@ class TestConfigurationTests(unittest.TestCase):
         mock_is_in_path.side_effect = lambda x: True
         configuration_tests.check_lyx()
 
-    @mock.patch('gslab_scons.configuration_tests.os.path.expanduser')
-    @mock.patch('gslab_scons.configuration_tests.os.path.isdir')
-    def test_check_and_expand_cache_path(self, mock_is_dir, mock_expanduser):
-        mock_expanduser.side_effect = lambda x: re.sub('~', 'Users/lb', x)
-        mock_is_dir.side_effect     = lambda x: x == 'Users/lb/cache'
-
-        configuration_tests.check_and_expand_cache_path('~/cache')
-        configuration_tests.check_and_expand_cache_path('Users/lb/cache')
-        with self.assertRaises(ex_classes.PrerequisiteError):
-            configuration_tests.check_and_expand_cache_path('~/~/cache')
-            configuration_tests.check_and_expand_cache_path('lb/cache')
-            configuration_tests.check_and_expand_cache_path(3)
-
 
     @mock.patch('gslab_scons.configuration_tests.subprocess.check_output')
     def test_check_lfs(self, mock_check):
@@ -206,6 +193,132 @@ class TestConfigurationTests(unittest.TestCase):
             else:
                 pass
         return side_effect
+
+
+
+    @mock.patch('gslab_scons.configuration_tests.os.path.expanduser')
+    @mock.patch('gslab_scons.configuration_tests.os.path.isdir')
+    def test_check_and_expand_cache_path(self, mock_is_dir, mock_expanduser):
+        mock_expanduser.side_effect = lambda x: re.sub('~', 'Users/lb', x)
+        mock_is_dir.side_effect     = lambda x: x == 'Users/lb/cache'
+
+        configuration_tests.check_and_expand_cache_path('~/cache')
+        configuration_tests.check_and_expand_cache_path('Users/lb/cache')
+        with self.assertRaises(ex_classes.PrerequisiteError):
+            configuration_tests.check_and_expand_cache_path('~/~/cache')
+            configuration_tests.check_and_expand_cache_path('lb/cache')
+            configuration_tests.check_and_expand_cache_path(3)
+
+    @mock.patch('gslab_scons.configuration_tests.check_stata_packages')
+    @mock.patch('gslab_scons.configuration_tests.load_yaml_value')
+    @mock.patch('gslab_scons.configuration_tests.get_stata_executable')
+    @mock.patch('gslab_scons.configuration_tests.get_stata_command')
+    def test_check_stata(self, mock_stata_command, mock_stata_exec, 
+                         mock_load_yaml, mock_stata_packages):
+        # Setup
+        class argument(object):
+            def __init__(self, sf = None):
+                if sf is not None:
+                    self.dict = {'sf' : sf}
+                else:
+                    self.dict = {}
+
+            def get(self, sf, default):
+                try:
+                    return self.dict[sf]
+                except KeyError:
+                    return default
+
+        def yaml_side_effect(*args, **kwargs):
+            return 'statamp'
+
+        def yaml_side_effect2(*args, **kwargs):
+            return None
+
+        def stata_package_side_effect(*args, **kwargs):
+            command  = args[0]
+            packages = args[1]
+            if command != 'statamp':
+                raise PrerequisiteError()
+            for package in packages:
+                if package != 'yaml':
+                    raise PrerequisiteError()
+
+        mock_load_yaml.side_effect      = yaml_side_effect
+        f = lambda x: x['user_flavor'] if x['user_flavor'] is not None else 'statamp'
+        mock_stata_exec.side_effect     = f
+        mock_stata_command.side_effect  = lambda x: x
+        mock_stata_packages.side_effect = stata_package_side_effect
+
+        # Correct tests
+
+        # sf command-line argument used
+        ARGUMENTS = argument(sf = 'statamp')
+        self.assertEqual(configuration_tests.check_stata(ARGUMENTS), 'statamp')
+
+        # No command line argument, but yaml value
+        ARGUMENTS = argument()
+        self.assertEqual(configuration_tests.check_stata(ARGUMENTS), 'statamp')
+
+        # No command line argument, and no yaml value
+        # Function only returns user-specified executable or none, not the defaults
+        mock_load_yaml.side_effect = yaml_side_effect2
+        self.assertEqual(configuration_tests.check_stata(ARGUMENTS), None)
+
+        # Failures
+
+        # No command line argument, no yaml value, and no default value in path
+        mock_stata_exec.side_effect = lambda x: None
+        with self.assertRaises(ex_classes.PrerequisiteError):
+            configuration_tests.check_stata(ARGUMENTS)
+            configuration_tests.check_stata(ARGUMENTS, packages = ['bad_package'])
+
+    #@mock.patch('gslab_scons.configuration_tests.os.path.isfile')
+    #@mock.patch('gslab_scons.configuration_tests.yaml.load')
+    #@mock.patch('gslab_scons.configuration_tests.open')
+    #@mock.patch('gslab_scons.configuration_tests.raw_input')
+    #@mock.patch('gslab_scons.configuration_tests.os.remove')
+    #def check_load_yaml_value(self, )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
