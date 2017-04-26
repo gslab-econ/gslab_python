@@ -146,6 +146,31 @@ class TestConfigurationTests(unittest.TestCase):
             configuration_tests.check_r_packages(['sys', 'os'])
 
 
+    @mock.patch('gslab_scons.configuration_tests.is_in_path')
+    def test_check_lyx(self, mock_is_in_path):
+        # No lyx executable
+        mock_is_in_path.side_effect = lambda x: None
+        with self.assertRaises(ex_classes.PrerequisiteError):
+            configuration_tests.check_lyx()
+
+        # Test default 
+        mock_is_in_path.side_effect = lambda x: True
+        configuration_tests.check_lyx()
+
+    @mock.patch('gslab_scons.configuration_tests.os.path.expanduser')
+    @mock.patch('gslab_scons.configuration_tests.os.path.isdir')
+    def test_check_and_expand_cache_path(self, mock_is_dir, mock_expanduser):
+        mock_expanduser.side_effect = lambda x: re.sub('~', 'Users/lb', x)
+        mock_is_dir.side_effect     = lambda x: x == 'Users/lb/cache'
+
+        configuration_tests.check_and_expand_cache_path('~/cache')
+        configuration_tests.check_and_expand_cache_path('Users/lb/cache')
+        with self.assertRaises(ex_classes.PrerequisiteError):
+            configuration_tests.check_and_expand_cache_path('~/~/cache')
+            configuration_tests.check_and_expand_cache_path('lb/cache')
+            configuration_tests.check_and_expand_cache_path(3)
+
+
     @mock.patch('gslab_scons.configuration_tests.subprocess.check_output')
     def test_check_lfs(self, mock_check):
         mock_check.side_effect = self.make_side_effect(['install', 'init'])
