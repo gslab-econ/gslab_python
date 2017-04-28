@@ -28,7 +28,7 @@ def check_python_packages(gslab_python_version, packages):
     if len(missing_packages) > 0:
         raise PrerequisiteError('Missing %s module(s)' % missing_packages)
 
-    if pkg_resources.get_distribution('gslab_python').version < gslab_python_version:
+    if pkg_resources.get_distribution('gslab_tools').version < gslab_python_version:
         raise PrerequisiteError('Wrong version of gslab_python modules')
 
 def convert_packages_argument(packages):
