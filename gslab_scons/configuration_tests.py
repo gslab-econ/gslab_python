@@ -28,8 +28,16 @@ def check_python_packages(gslab_python_version, packages):
     if len(missing_packages) > 0:
         raise PrerequisiteError('Missing %s module(s)' % missing_packages)
 
-    if pkg_resources.get_distribution('gslab_tools').version < gslab_python_version:
-        raise PrerequisiteError('Wrong version of gslab_python modules')
+    installed_version = pkg_resources.get_distribution('gslab_tools').version.split('.')
+    installed_version = int(installed_version[0]) * 10000 + \
+                        int(installed_version[1]) * 100 + \
+                        int(installed_version[2])
+    required_version = gslab_python_version.split('.')
+    required_version = int(required_version[0]) * 10000 + \
+                       int(required_version[1]) * 100 + \
+                       int(required_version[2])
+    if installed_version < required_version:
+        raise PrerequisiteError('Wrong version of gslab_tools python modules')
 
 def convert_packages_argument(packages):
     if not isinstance(packages, list):
@@ -56,7 +64,7 @@ def check_r_packages(packages):
         # http://stackoverflow.com/questions/6701230/call-r-function-in-linux-command-line
         # and http://stackoverflow.com/questions/18962785/oserror-errno-2-no-such-file-or-directory-while-using-python-subprocess-in-dj
         try:
-            subprocess.check_output('R -q -e "library(%s)"' % pkg, shell = True)
+            subprocess.check_output('R -q -e "suppressMessages(library(%s))"' % pkg, shell = True)
         except subprocess.CalledProcessError:
             missing_packages.append(pkg)
 

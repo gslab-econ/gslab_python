@@ -63,11 +63,17 @@ class TestConfigurationTests(unittest.TestCase):
         configuration_tests.check_python_packages('3.0.2', ['yaml', 'os'])
         mock_convert_packages.assert_called_with(['yaml', 'os'])
         mock_import.assert_called()
-        mock_version.assert_called_with('gslab_python')
+        mock_version.assert_called_with('gslab_tools')
 
         # Incorrect gslab_python version
         with self.assertRaises(ex_classes.PrerequisiteError):
             configuration_tests.check_python_packages('3.0.3', ['yaml', 'os'])
+        with self.assertRaises(ex_classes.PrerequisiteError):
+            configuration_tests.check_python_packages('3.0.13', ['yaml', 'os'])
+        with self.assertRaises(ex_classes.PrerequisiteError):
+            configuration_tests.check_python_packages('10.00.01', ['yaml', 'os'])
+        with self.assertRaises(ex_classes.PrerequisiteError):
+            configuration_tests.check_python_packages('3.2.2', ['yaml', 'os'])
 
         # Module doesn't exist
         def import_side_effect(*args, **kwargs):
@@ -106,7 +112,7 @@ class TestConfigurationTests(unittest.TestCase):
         mock_check_r_packages.assert_not_called()
 
         # Test default arguments 
-        mock_is_in_path.side_effect = lambda x: True
+        mock_is_in_path.side_effect = lambda x: x == 'R'
         configuration_tests.check_r()
         mock_check_r_packages.assert_called_with(["yaml"])
 
@@ -127,8 +133,8 @@ class TestConfigurationTests(unittest.TestCase):
         # Setup
         def output_side_effect(*args, **kwargs):
             cmd_line_call = args[0]
-            print cmd_line_call
-            if cmd_line_call in ['R -q -e "library(%s)"' % a for a in ['yaml', 'ggplot']]:
+            if cmd_line_call in ['R -q -e "suppressMessages(library(%s))"' % a \
+                                        for a in ['yaml', 'ggplot']]:
                 return 0
             else:
                 subprocess.check_call("exit 1", shell = True)
@@ -159,7 +165,7 @@ class TestConfigurationTests(unittest.TestCase):
             configuration_tests.check_lyx()
 
         # Test default 
-        mock_is_in_path.side_effect = lambda x: True
+        mock_is_in_path.side_effect = lambda x: x == 'lyx'
         configuration_tests.check_lyx()
 
 
