@@ -26,77 +26,14 @@ gslab_scons/tests/test_build_python.py ......
 gslab_scons/tests/test_build_r.py ....
 gslab_scons/tests/test_build_stata.py ..........
 gslab_scons/tests/test_build_tables.py ....
-gslab_scons/tests/test_configuration_tests.py ....F......
+gslab_scons/tests/test_configuration_tests.py ...........
 gslab_scons/tests/test_log.py .......
 gslab_scons/tests/test_misc.py ................
 gslab_scons/tests/test_release_function.py ....
 gslab_scons/tests/test_release_tools.py ....
 gslab_scons/tests/test_size_warning.py .....
 
-=================================== FAILURES ===================================
-______________ TestConfigurationTests.test_check_python_packages _______________
-
-self = <gslab_scons.tests.test_configuration_tests.TestConfigurationTests testMethod=test_check_python_packages>
-mock_convert_packages = <MagicMock name='convert_packages_argument' id='4604926736'>
-mock_import = <MagicMock name='import_module' id='4604956304'>
-mock_version = <MagicMock name='get_distribution' id='4604591952'>
-
-    @mock.patch("gslab_scons.configuration_tests.pkg_resources.get_distribution")
-    @mock.patch('gslab_scons.configuration_tests.importlib.import_module')
-    @mock.patch('gslab_scons.configuration_tests.convert_packages_argument')
-    def test_check_python_packages(self, mock_convert_packages, mock_import, mock_version):
-        # Setup
-        class MockVersionSideEffect(object):
-            def __init__(self):
-                self.version = '3.0.2'
-    
-        def version_side_effect(*args, **kwargs):
-            return MockVersionSideEffect()
-    
-        mock_version.side_effect          = version_side_effect
-        mock_convert_packages.side_effect = ['yaml', 'os']
-        mock_import.side_effect           = None
-    
-        # Default correct test
-        configuration_tests.check_python_packages('3.0.2', ['yaml', 'os'])
-        mock_convert_packages.assert_called_with(['yaml', 'os'])
-        mock_import.assert_called()
-        mock_version.assert_called_with('gslab_python')
-    
-        # Incorrect gslab_python version
-        with self.assertRaises(ex_classes.PrerequisiteError):
-            configuration_tests.check_python_packages('3.0.3', ['yaml', 'os'])
-    
-        # Module doesn't exist
-        def import_side_effect(*args, **kwargs):
-            if args[0] == 'os':
-                raise ImportError(args[0])
-    
-        # NOT WORKING FOR SOME REASON
-        with self.assertRaises(ex_classes.PrerequisiteError):
-            mock_import.side_effect = import_side_effect
->           configuration_tests.check_python_packages('3.0.2', ['yaml', 'os'])
-
-test_configuration_tests.py:80: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-../configuration_tests.py:19: in check_python_packages
-    packages             = convert_packages_argument(packages)
-../../../../anaconda/lib/python2.7/site-packages/mock/mock.py:1062: in __call__
-    return _mock_self._mock_call(*args, **kwargs)
-../../../../anaconda/lib/python2.7/site-packages/mock/mock.py:1121: in _mock_call
-    result = next(effect)
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-obj = <listiterator object at 0x11276df90>, _next = <built-in function next>
-
-    def next(obj, _next=_next):
-        if getattr(obj, '__next__', None):
-            return obj.__next__()
->       return _next(obj)
-E       StopIteration
-
-../../../../anaconda/lib/python2.7/site-packages/mock/mock.py:109: StopIteration
-==================== 1 failed, 117 passed in 25.90 seconds =====================
+========================== 118 passed in 2.67 seconds ==========================
 Name                                            Stmts   Miss Branch BrPart  Cover   Missing
 -------------------------------------------------------------------------------------------
 gencat/gencat.py                                   79      6     28      4    91%   72-73, 81, 89, 97, 101, 57->exit, 71->72, 96->97, 100->101
@@ -137,7 +74,7 @@ gslab_scons/builders/build_python.py               24      0      0      0   100
 gslab_scons/builders/build_r.py                    26      3      2      0    89%   46-48
 gslab_scons/builders/build_stata.py                30      0      0      0   100%
 gslab_scons/builders/build_tables.py               11      0      0      0   100%
-gslab_scons/configuration_tests.py                125      7     48      3    94%   25-26, 29, 43, 174-177, 28->29, 42->43, 173->174
+gslab_scons/configuration_tests.py                125      0     48      0   100%
 gslab_scons/log.py                                 55     29     18      2    44%   12, 14, 32-55, 71-83, 11->12, 13->14
 gslab_scons/misc.py                               134      0     46      0   100%
 gslab_scons/release.py                             38     38     18      0     0%   1-65
@@ -150,11 +87,11 @@ gslab_scons/tests/test_build_python.py             60      2     14      4    92
 gslab_scons/tests/test_build_r.py                  42      1     12      3    93%   75, 26->exit, 70->exit, 74->75
 gslab_scons/tests/test_build_stata.py              90      1      2      1    98%   179, 178->179
 gslab_scons/tests/test_build_tables.py             65      1      8      1    97%   140, 139->140
-gslab_scons/tests/test_configuration_tests.py     245     17     68     12    89%   74-75, 90-93, 194, 210-211, 244, 247, 276, 354, 358-359, 397, 401, 189->196, 191->194, 243->244, 246->247, 286->exit, 293->exit, 315->exit, 341->exit, 353->354, 357->358, 383->exit, 400->401
+gslab_scons/tests/test_configuration_tests.py     251      6     74     10    95%   197, 213-214, 247, 250, 410, 96->exit, 192->199, 194->197, 246->247, 249->250, 290->exit, 297->exit, 319->exit, 345->exit, 409->410
 gslab_scons/tests/test_log.py                      97     10     12      3    84%   27, 140-146, 171, 175, 26->27, 170->171, 174->175
 gslab_scons/tests/test_misc.py                    136      2     10      2    97%   177, 275, 176->177, 274->275
 gslab_scons/tests/test_release_function.py        122      3     22      2    97%   288-289, 322, 182->exit, 321->322
 gslab_scons/tests/test_release_tools.py            64      1      2      1    97%   153, 152->153
 gslab_scons/tests/test_size_warning.py            183      5     46      6    95%   276, 293, 309, 373, 379, 272->276, 273->276, 292->293, 304->309, 370->373, 378->379
 -------------------------------------------------------------------------------------------
-TOTAL                                            4480   1334   1274     85    65%
+TOTAL                                            4486   1316   1280     80    66%

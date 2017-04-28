@@ -179,6 +179,3 @@ def check_stata_packages(command, packages):
                                 " value in user_config.yaml.\n" )
 
 
-
-
-

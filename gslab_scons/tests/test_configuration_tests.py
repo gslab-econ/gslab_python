@@ -56,8 +56,8 @@ class TestConfigurationTests(unittest.TestCase):
             return MockVersionSideEffect()
 
         mock_version.side_effect          = version_side_effect
-        mock_convert_packages.side_effect = ['yaml', 'os']
-        mock_import.side_effect           = None
+        mock_convert_packages.side_effect = lambda x: ['yaml', 'os']
+        mock_import.side_effect           = lambda x: None
 
         # Default correct test
         configuration_tests.check_python_packages('3.0.2', ['yaml', 'os'])
@@ -74,7 +74,6 @@ class TestConfigurationTests(unittest.TestCase):
             if args[0] == 'os':
                 raise ImportError(args[0])
 
-        # NOT WORKING FOR SOME REASON
         with self.assertRaises(ex_classes.PrerequisiteError):
             mock_import.side_effect = import_side_effect
             configuration_tests.check_python_packages('3.0.2', ['yaml', 'os'])
@@ -87,9 +86,13 @@ class TestConfigurationTests(unittest.TestCase):
         self.assertEqual(configuration_tests.convert_packages_argument('test'), ['test'])
         with self.assertRaises(ex_classes.PrerequisiteError):
             configuration_tests.convert_packages_argument(123)
+        with self.assertRaises(ex_classes.PrerequisiteError):
             configuration_tests.convert_packages_argument({'test'})
+        with self.assertRaises(ex_classes.PrerequisiteError):
             configuration_tests.convert_packages_argument(['test', 2])
+        with self.assertRaises(ex_classes.PrerequisiteError):
             configuration_tests.convert_packages_argument([2, 2])
+        with self.assertRaises(ex_classes.PrerequisiteError):
             configuration_tests.convert_packages_argument(lambda x: 'test')
 
 
@@ -273,6 +276,7 @@ class TestConfigurationTests(unittest.TestCase):
         mock_stata_exec.side_effect = lambda x: None
         with self.assertRaises(ex_classes.PrerequisiteError):
             configuration_tests.check_stata(ARGUMENTS)
+        with self.assertRaises(ex_classes.PrerequisiteError):
             configuration_tests.check_stata(ARGUMENTS, packages = ['bad_package'])
 
 
@@ -368,8 +372,9 @@ class TestConfigurationTests(unittest.TestCase):
         mock_package_argument.side_effect = lambda x: ['yaml']
         mock_is_unix.side_effect          = is_unix_side_effect_true
 
-        # Good tests
         with mock.patch('gslab_scons.configuration_tests.sys.platform', 'win32'):
+            # Good tests
+
             # Unix
             configuration_tests.check_stata_packages("statamp", "yaml")
 
@@ -380,21 +385,25 @@ class TestConfigurationTests(unittest.TestCase):
             # No packages
             mock_package_argument.side_effect = lambda x: []
             configuration_tests.check_stata_packages("statamp", [])
-            mock_package_argument.side_effect = lambda x: ['yaml']
 
-        # Bad Tests
+            # Bad Tests
+            with self.assertRaises(ex_classes.PrerequisiteError):
+                # Bad package
+                mock_package_argument.side_effect = lambda x: ['bad_package']
+                configuration_tests.check_stata_packages("statamp", "bad_package")
+            
+            with self.assertRaises(ex_classes.PrerequisiteError):
+                # Bad executable
+                mock_package_argument.side_effect = lambda x: ['yaml']
+                configuration_tests.check_stata_packages("bad_executable", "yaml")
+
+        # More bad tests
         with self.assertRaises(ex_classes.PrerequisiteError): 
             mock.patch('gslab_scons.configuration_tests.sys.platform', 'Unknown')
             # Unknown platform
             configuration_tests.check_stata_packages("statamp", "yaml")
         
-        with self.assertRaises(ex_classes.PrerequisiteError):
-            mock.patch('gslab_scons.configuration_tests.sys.platform', 'win32')
-            # Bad package
-            configuration_tests.check_stata_packages("statamp", "bad_package")
-        
-            # Bad executable
-            configuration_tests.check_stata_packages("bad_executable", "yaml")
+
 
 
 if __name__ == '__main__':
