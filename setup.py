@@ -56,7 +56,7 @@ class CleanRepo(build_py):
 # Requirements
 requirements = ['requests']
 
-setup(name         = 'gslab_python',
+setup(name         = 'GSLab_Tools',
       version      = '3.0.5',
       description  = 'Python tools for GSLab',
       url          = 'https://github.com/gslab-econ/gslab_python',
