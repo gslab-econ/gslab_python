@@ -216,7 +216,9 @@ class TestConfigurationTests(unittest.TestCase):
         configuration_tests.check_and_expand_cache_path('Users/lb/cache')
         with self.assertRaises(ex_classes.PrerequisiteError):
             configuration_tests.check_and_expand_cache_path('~/~/cache')
+        with self.assertRaises(ex_classes.PrerequisiteError):
             configuration_tests.check_and_expand_cache_path('lb/cache')
+        with self.assertRaises(ex_classes.PrerequisiteError):
             configuration_tests.check_and_expand_cache_path(3)
 
 
@@ -227,22 +229,16 @@ class TestConfigurationTests(unittest.TestCase):
     def test_check_stata(self, mock_stata_command, mock_stata_exec, 
                          mock_load_yaml, mock_stata_packages):
         # Setup
-        def yaml_side_effect(*args, **kwargs):
-            return 'statamp'
-
-        def yaml_side_effect2(*args, **kwargs):
-            return None
-
         def stata_package_side_effect(*args, **kwargs):
             command  = args[0]
             packages = args[1]
             if command != 'statamp':
-                raise PrerequisiteError()
+                raise ex_classes.PrerequisiteError()
             for package in packages:
                 if package != 'yaml':
-                    raise PrerequisiteError()
+                    raise ex_classes.PrerequisiteError()
 
-        mock_load_yaml.side_effect      = yaml_side_effect
+        mock_load_yaml.return_value      = 'statamp'
         f = lambda x: x['user_flavor'] if x['user_flavor'] is not None else 'statamp'
         mock_stata_exec.side_effect     = f
         mock_stata_command.side_effect  = lambda x: x
@@ -255,7 +251,7 @@ class TestConfigurationTests(unittest.TestCase):
 
         # No yaml value
         # Function only returns user-specified executable or none, not the defaults
-        mock_load_yaml.side_effect = yaml_side_effect2
+        mock_load_yaml.return_value = None
         self.assertEqual(configuration_tests.check_stata(), None)
 
         # Failures
@@ -266,6 +262,7 @@ class TestConfigurationTests(unittest.TestCase):
             configuration_tests.check_stata()
 
         # Bad package
+        mock_stata_exec.side_effect = f
         with self.assertRaises(ex_classes.PrerequisiteError):
             configuration_tests.check_stata(packages = ['bad_package'])
 
@@ -324,6 +321,7 @@ class TestConfigurationTests(unittest.TestCase):
         self.assertEqual(configuration_tests.load_yaml_value('yaml.yaml', 'stata_executable'), None)
 
         # Yaml file now exists with none value.
+        self.assertTrue(os.path.isfile('yaml.yaml'))
         self.assertEqual(configuration_tests.load_yaml_value('yaml.yaml', 'stata_executable'), None)
 
         # Test bad
@@ -352,29 +350,25 @@ class TestConfigurationTests(unittest.TestCase):
                     package = args[0].split("which ")[1]
                     f.write("command %s not found" % package)
 
-        def is_unix_side_effect_true():
-            return True
- 
-        def is_unix_side_effect_false():
-            return False
-
         mock_check_output.side_effect     = check_output_side_effect
         mock_package_argument.side_effect = lambda x: ['yaml']
-        mock_is_unix.side_effect          = is_unix_side_effect_true
+        mock_is_unix.return_value = True  
 
         with mock.patch('gslab_scons.configuration_tests.sys.platform', 'win32'):
             # Good tests
 
-            # Unix
+            # Unix (is.unix is checked before sys.platform)
             configuration_tests.check_stata_packages("statamp", "yaml")
 
             # Windows
-            mock_is_unix.side_effect = is_unix_side_effect_false
+            mock_is_unix.return_value = False
             configuration_tests.check_stata_packages("statamp", "yaml")
 
             # No packages
+            mock_check_output.reset_mock()
             mock_package_argument.side_effect = lambda x: []
             configuration_tests.check_stata_packages("statamp", [])
+            mock_check_output.assert_not_called()
 
             # Bad Tests
             with self.assertRaises(ex_classes.PrerequisiteError):
@@ -389,9 +383,9 @@ class TestConfigurationTests(unittest.TestCase):
 
         # More bad tests
         with self.assertRaises(ex_classes.PrerequisiteError): 
-            mock.patch('gslab_scons.configuration_tests.sys.platform', 'Unknown')
-            # Unknown platform
-            configuration_tests.check_stata_packages("statamp", "yaml")
+            with mock.patch('gslab_scons.configuration_tests.sys.platform', 'Unknown'):
+                # Unknown platform
+                configuration_tests.check_stata_packages("statamp", "yaml")
         
 
 
