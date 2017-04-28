@@ -95,9 +95,8 @@ def check_and_expand_cache_path(cache):
         raise PrerequisiteError(error_message)
 
 
-def check_stata(ARGUMENTS, packages = ["yaml"], user_yaml = "user-config.yaml"):
-    sf_configs = load_yaml_value(user_yaml, "stata_executable")
-    sf         = ARGUMENTS.get('sf', sf_configs) 
+def check_stata(packages = ["yaml"], user_yaml = "user-config.yaml"):
+    sf = load_yaml_value(user_yaml, "stata_executable")
 
     # Fake scons-like env dict for misc.get_stata_executable(env)
     fake_env = {'user_flavor': sf} 

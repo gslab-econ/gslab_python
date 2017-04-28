@@ -221,19 +221,6 @@ class TestConfigurationTests(unittest.TestCase):
     def test_check_stata(self, mock_stata_command, mock_stata_exec, 
                          mock_load_yaml, mock_stata_packages):
         # Setup
-        class argument(object):
-            def __init__(self, sf = None):
-                if sf is not None:
-                    self.dict = {'sf' : sf}
-                else:
-                    self.dict = {}
-
-            def get(self, sf, default):
-                try:
-                    return self.dict[sf]
-                except KeyError:
-                    return default
-
         def yaml_side_effect(*args, **kwargs):
             return 'statamp'
 
@@ -257,27 +244,24 @@ class TestConfigurationTests(unittest.TestCase):
 
         # Correct tests
 
-        # sf command-line argument used
-        ARGUMENTS = argument(sf = 'statamp')
-        self.assertEqual(configuration_tests.check_stata(ARGUMENTS), 'statamp')
+        # Has yaml value
+        self.assertEqual(configuration_tests.check_stata(), 'statamp')
 
-        # No command line argument, but yaml value
-        ARGUMENTS = argument()
-        self.assertEqual(configuration_tests.check_stata(ARGUMENTS), 'statamp')
-
-        # No command line argument, and no yaml value
+        # No yaml value
         # Function only returns user-specified executable or none, not the defaults
         mock_load_yaml.side_effect = yaml_side_effect2
-        self.assertEqual(configuration_tests.check_stata(ARGUMENTS), None)
+        self.assertEqual(configuration_tests.check_stata(), None)
 
         # Failures
 
-        # No command line argument, no yaml value, and no default value in path
+        # No yaml value and no default value in path
         mock_stata_exec.side_effect = lambda x: None
         with self.assertRaises(ex_classes.PrerequisiteError):
-            configuration_tests.check_stata(ARGUMENTS)
+            configuration_tests.check_stata()
+
+        # Bad package
         with self.assertRaises(ex_classes.PrerequisiteError):
-            configuration_tests.check_stata(ARGUMENTS, packages = ['bad_package'])
+            configuration_tests.check_stata(packages = ['bad_package'])
 
 
     @mock.patch('gslab_scons.configuration_tests.raw_input')
