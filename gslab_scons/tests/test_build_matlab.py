@@ -10,7 +10,9 @@ import _side_effects as fx
 
 sys.path.append('../..')
 import gslab_scons as gs
-from gslab_scons._exception_classes import BadExtensionError
+from gslab_scons._exception_classes import (BadExtensionError,
+                                            BadExecutableError,
+                                            PrerequisiteError)
 
 # Define main test patch
 path  = 'gslab_scons.builders.build_matlab'
@@ -30,7 +32,7 @@ class TestBuildMatlab(unittest.TestCase):
         '''
         # Mock copy so that it just creates the destination file
         mock_copy.side_effect = fx.matlab_copy_effect
-        mock_check_output.side_effect = fx.matlab_side_effect
+        mock_check_output.side_effect = fx.make_matlab_side_effect(True)
 
         helpers.standard_test(self, gs.build_matlab, 'm')
         self.check_call(mock_check_output, ['-nosplash', '-nodesktop'])
@@ -54,8 +56,8 @@ class TestBuildMatlab(unittest.TestCase):
         Test that build_matlab() creates a log and properly submits
         a matlab system command on a Windows machine.
         '''
-        mock_copy.side_effect   = fx.matlab_copy_effect
-        mock_check_output.side_effect = fx.matlab_side_effect
+        mock_copy.side_effect = fx.matlab_copy_effect
+        mock_check_output.side_effect = fx.make_matlab_side_effect(True)
 
         helpers.standard_test(self, gs.build_matlab, 'm')
         self.check_call(mock_check_output, ['-nosplash', '-minimize', '-wait'])
@@ -67,9 +69,9 @@ class TestBuildMatlab(unittest.TestCase):
         Test that build_matlab() raises an exception when run on a
         non-Unix, non-Windows operating system.
         '''
-        mock_copy.side_effect   = fx.matlab_copy_effect
-        mock_check_output.side_effect = fx.matlab_side_effect
-        with self.assertRaises(Exception):
+        mock_copy.side_effect = fx.matlab_copy_effect
+        mock_check_output.side_effect = fx.make_matlab_side_effect(True)
+        with self.assertRaises(PrerequisiteError):
             gs.build_matlab(target = './build/test.mat', 
                             source = './input/matlab_test_script.m', 
                             env    = {})
@@ -81,7 +83,7 @@ class TestBuildMatlab(unittest.TestCase):
         in its env argument as system environment variables.
         '''
         mock_copy.side_effect = fx.matlab_copy_effect
-        mock_check_output.side_effect = fx.matlab_side_effect
+        mock_check_output.side_effect = fx.make_matlab_side_effect(True)
 
         env = {'CL_ARG': 'COMMANDLINE'}
         helpers.standard_test(self, gs.build_matlab, 'm', 
@@ -92,6 +94,17 @@ class TestBuildMatlab(unittest.TestCase):
         '''Test that build_matlab() recognises an improper file extension'''
         helpers.bad_extension(self, gs.build_matlab, good = 'test.m')
    
+    @main_patch
+    def test_no_executable(self, mock_copy, mock_check_output):
+        mock_copy.side_effect = fx.matlab_copy_effect
+        mock_check_output.side_effect = \
+            fx.make_matlab_side_effect(recognized = False)
+
+        with self.assertRaises(BadExecutableError):
+            gs.build_matlab(target = './build/test.mat', 
+                            source = './input/matlab_test_script.m', 
+                            env    = {})
+
 
 if __name__ == '__main__':
     unittest.main()

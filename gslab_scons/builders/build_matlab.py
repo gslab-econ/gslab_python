@@ -4,7 +4,8 @@ import shutil
 import sys 
 import gslab_scons.misc as misc
 from gslab_scons import log_timestamp
-from gslab_scons._exception_classes import BadExecutableError
+from gslab_scons._exception_classes import (BadExecutableError,
+                                            PrerequisiteError)
 
 
 def build_matlab(target, source, env):
@@ -33,7 +34,7 @@ def build_matlab(target, source, env):
     elif sys.platform == 'win32':
         options = '-nosplash -minimize -wait'
     else:
-        raise Exception("Unknown OS")
+        raise PrerequisiteError("Unsupported OS")
     
     source      = misc.make_list_if_string(source)
     target      = misc.make_list_if_string(target)
@@ -53,10 +54,8 @@ def build_matlab(target, source, env):
     # Matlab options
     if misc.is_unix():
         options = '-nosplash -nodesktop'
-    elif sys.platform == 'win32':
-        options = '-nosplash -minimize -wait'
     else:
-        raise Exception("Unknown OS")
+        options = '-nosplash -minimize -wait'
 
     # Run matlab on source file
     shutil.copy(source_file, 'source.m')

@@ -14,7 +14,8 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append('../..')
 
 import gslab_scons as gs
-from gslab_scons._exception_classes import BadExtensionError
+from gslab_scons._exception_classes import (BadExtensionError,
+                                            BadExecutableError)
 from gslab_make.tests import nostderrout
 
 system_patch = mock.patch('gslab_scons.builders.build_r.subprocess.check_output')
@@ -29,7 +30,7 @@ class TestBuildR(unittest.TestCase):
     @system_patch
     def test_standard(self, mock_check_output):
         '''Test build_r()'s behaviour when given standard inputs.'''
-        mock_check_output.side_effect = fx.r_side_effect
+        mock_check_output.side_effect = fx.make_r_side_effect(True)
         helpers.standard_test(self, gs.build_r, 'R', 
                               system_mock = mock_check_output)
         # With a list of targets
@@ -41,18 +42,30 @@ class TestBuildR(unittest.TestCase):
 
     @system_patch
     def test_cl_arg(self, mock_check_output):
-        mock_check_output.side_effect = fx.r_side_effect
+        mock_check_output.side_effect = fx.make_r_side_effect(True)
         helpers.test_cl_args(self, gs.build_r, mock_check_output, 'R')
 
     def test_bad_extension(self): 
         '''Test that build_r() recognises an inappropriate file extension'''
         helpers.bad_extension(self, gs.build_r, good = 'test.r')
+
+    @system_patch
+    def test_no_executable(self, mock_check_output):
+        '''
+        Check build_r()'s behaviour when R is not recognised as
+        an executable.
+        '''
+        mock_check_output.side_effect = \
+            fx.make_r_side_effect(recognized = False)
+        with self.assertRaises(BadExecutableError):
+            helpers.standard_test(self, gs.build_r, 'R', 
+                                  system_mock = mock_check_output)
    
     @system_patch
     def test_unintended_inputs(self, mock_check_output):
         # We expect build_r() to raise an error if its env
         # argument does not support indexing by strings. 
-        mock_check_output.side_effect = fx.r_side_effect
+        mock_check_output.side_effect = fx.make_r_side_effect(True)
 
         check = lambda **kwargs: helpers.input_check(self, gs.build_r, 
                                                      'r', **kwargs)

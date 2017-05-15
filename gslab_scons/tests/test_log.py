@@ -119,7 +119,19 @@ class TestLog(unittest.TestCase):
         sys.stdout = test_file
         gs.start_log(mode = 'develop', vers = '')
         self.assertEqual(sys.stderr, test_file)
-        
+
+    @helpers.platform_patch('darwin', path)
+    def test_invalid_mode(self):
+        '''Check behaviour when mode argument is invalid'''    
+        with self.assertRaises(Exception):
+            gs.start_log(mode = 'release', vers = '')
+
+        with self.assertRaises(Exception):
+            gs.start_log(mode = [1, 2, 3], vers = '')
+
+        with self.assertRaises(Exception):
+            gs.start_log(mode = None, vers = '')
+
     @helpers.platform_patch('darwin', path)
     def test_start_log_nonstring_input(self):
         '''
@@ -163,7 +175,18 @@ class TestLog(unittest.TestCase):
                        ' TEST CONTENT'
         self.assertEqual(content, test_message)
         os.remove('test.txt')
-       
+    
+    @mock.patch('gslab_scons.log.misc.current_time')
+    def test_end_log(self, mock_time):
+        # Mock the current time
+        now = '2000-01-01 0:0:0'
+        mock_time.return_value = now
+        gs.end_log()
+        with open('sconstruct.log', 'rU') as f:
+            line = f.readline()
+            self.assertTrue(re.search('Build completed', line))
+            self.assertTrue(re.search('\{%s\}' % now, line))
+
     def tearDown(self):
         if os.path.isfile('sconstruct.log'):
            os.remove('sconstruct.log')

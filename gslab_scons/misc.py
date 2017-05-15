@@ -212,7 +212,7 @@ def check_code_extension(source_file, extension):
 
 
 def command_error_msg(executable, call):
-    ''' This function prints an informative message given a CalledProcessError.'''
+    '''Print an informative message given a CalledProcessError.'''
     return '''Could not call %s.
               Please check that the executable, source, and target files
               are correctly specified. 
@@ -220,9 +220,7 @@ def command_error_msg(executable, call):
 
 
 def current_time():
-    '''
-    This function returns the current time in a Y-M-D H:M:S format.
-    '''
+    '''Return the current time in a Y-M-D H:M:S format.'''
     now = datetime.datetime.now()
     return datetime.datetime.strftime(now, '%Y-%m-%d %H:%M:%S')   
 
