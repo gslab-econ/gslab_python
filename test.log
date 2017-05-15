@@ -1,4 +1,9 @@
 running pytest
+Searching for pytest
+Best match: pytest 3.0.6
+Processing pytest-3.0.6-py2.7.egg
+
+Using /Users/mrsull/Desktop/gslab_python/.eggs/pytest-3.0.6-py2.7.egg
 running egg_info
 writing requirements to GSLab_Tools.egg-info/requires.txt
 writing GSLab_Tools.egg-info/PKG-INFO
@@ -8,8 +13,8 @@ reading manifest file 'GSLab_Tools.egg-info/SOURCES.txt'
 writing manifest file 'GSLab_Tools.egg-info/SOURCES.txt'
 running build_ext
 ============================= test session starts ==============================
-platform darwin -- Python 2.7.13, pytest-3.0.5, py-1.4.32, pluggy-0.4.0
-rootdir: /Users/leviboxell/Desktop/gslab_python, inifile: 
+platform darwin -- Python 2.7.12, pytest-3.0.6, py-1.4.31, pluggy-0.4.0
+rootdir: /Users/mrsull/Desktop/gslab_python, inifile: 
 collected 118 items
 
 gencat/tests/test_checkDicts.py ...
@@ -33,7 +38,7 @@ gslab_scons/tests/test_release_function.py ....
 gslab_scons/tests/test_release_tools.py ....
 gslab_scons/tests/test_size_warning.py .....
 
-========================== 118 passed in 2.35 seconds ==========================
+========================== 118 passed in 1.85 seconds ==========================
 Name                                            Stmts   Miss Branch BrPart  Cover   Missing
 -------------------------------------------------------------------------------------------
 gencat/gencat.py                                   79      6     28      4    91%   72-73, 81, 89, 97, 101, 57->exit, 71->72, 96->97, 100->101
@@ -66,7 +71,7 @@ gslab_make/private/preliminaries.py               107     88     40      0    13
 gslab_make/private/runprogramdirective.py         207    185    104      0     7%   16-93, 97-107, 111-116, 121-134, 138-145, 149-163, 167-220, 224-240, 244-264, 271-282, 285-289, 296-302
 gslab_make/run_program.py                         238    217     80      0     7%   129-162, 178-202, 208-225, 231-248, 254-275, 281-298, 304-321, 332-392, 398-423, 429-447, 453-488, 494-499
 gslab_make/tests/nostderrout.py                    12      0      2      0   100%
-gslab_scons/_exception_classes.py                  14      1      0      0    93%   11
+gslab_scons/_exception_classes.py                  10      0      0      0   100%
 gslab_scons/_release_tools.py                     128      0     48      0   100%
 gslab_scons/builders/build_lyx.py                  28      0      0      0   100%
 gslab_scons/builders/build_matlab.py               39      4      8      1    89%   59, 68-70, 56->59
@@ -94,4 +99,4 @@ gslab_scons/tests/test_release_function.py        122      3     22      2    97
 gslab_scons/tests/test_release_tools.py            64      1      2      1    97%   153, 152->153
 gslab_scons/tests/test_size_warning.py            183      5     46      6    95%   276, 293, 309, 373, 379, 272->276, 273->276, 292->293, 304->309, 370->373, 378->379
 -------------------------------------------------------------------------------------------
-TOTAL                                            4479   1313   1278     79    66%
+TOTAL                                            4475   1312   1278     79    66%
