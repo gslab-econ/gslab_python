@@ -10,8 +10,12 @@ from _exception_classes import PrerequisiteError
 
 def check_python(gslab_python_version, 
                  packages = ["yaml", "gslab_scons", "gslab_make", "gslab_fill"]):
+    '''
+    Check that an acceptable version of Python and the specified
+    Python packages are installed.
+    '''
     if sys.version_info[0] != 2:
-        raise PrerequisiteError('Please use python 2')
+        raise PrerequisiteError('Please use Python 2')
     check_python_packages(gslab_python_version, packages)
 
 
@@ -19,34 +23,36 @@ def check_python_packages(gslab_python_version, packages):
     gslab_python_version = str(gslab_python_version)
     packages             = convert_packages_argument(packages)
 
-    missing_packages = []
+    missing = []
     for pkg in packages:
         try:
             importlib.import_module(pkg)
         except ImportError:
-            missing_packages.append(pkg)
+            missing.append(pkg)
 
-    if len(missing_packages) > 0:
-        raise PrerequisiteError('Missing %s module(s)' % missing_packages)
+    if len(missing) > 0:
+        raise PrerequisiteError('Missing %s module(s)' % str(missing))
 
-    installed_version = pkg_resources.get_distribution('gslab_tools').version.split('.')
-    installed_version = int(installed_version[0]) * 10000 + \
-                        int(installed_version[1]) * 100 + \
-                        int(installed_version[2])
-    required_version = gslab_python_version.split('.')
-    required_version = int(required_version[0]) * 10000 + \
-                       int(required_version[1]) * 100 + \
-                       int(required_version[2])
-    if installed_version < required_version:
+    installed = pkg_resources.get_distribution('gslab_tools').version.split('.')
+    installed = int(installed[0]) * 10000 + \
+                int(installed[1]) * 100 + \
+                int(installed[2])
+    required = gslab_python_version.split('.')
+    required = int(required[0]) * 10000 + \
+               int(required[1]) * 100 + \
+               int(required[2])
+
+    if installed < required:
         raise PrerequisiteError('Wrong version of gslab_tools Python modules')
 
 
 def convert_packages_argument(packages):
+    '''Try to convert the packages argument into a list of strings'''
     if not isinstance(packages, list):
         if isinstance(packages, str):
             packages = [packages]
         else:
-            raise PrerequisiteError('Please supply a python list of required' + \
+            raise PrerequisiteError('Please supply a Python list of required' + \
                                     'packages, not %s.' % packages)
     for pkg in packages:
         if not isinstance(pkg, str):
@@ -73,9 +79,10 @@ def check_r_packages(packages):
     missing_packages = []
     for pkg in packages:
         # http://stackoverflow.com/questions/6701230/call-r-function-in-linux-command-line
-        # and http://stackoverflow.com/questions/18962785/oserror-errno-2-no-such-file-or-directory-while-using-python-subprocess-in-dj
+        # http://stackoverflow.com/questions/18962785/oserror-errno-2-no-such-file-or-directory-while-using-python-subprocess-in-dj
         try:
-            subprocess.check_output('R -q -e "suppressMessages(library(%s))"' % pkg, shell = True)
+            command = 'R -q -e "suppressMessages(library(%s))"' % pkg
+            subprocess.check_output(command, shell = True)
         except subprocess.CalledProcessError:
             missing_packages.append(pkg)
 
@@ -124,10 +131,10 @@ def check_stata(packages = ["yaml"], user_yaml = "user-config.yaml"):
     Check that a valid Stata executable is in the path and that the specified
     Stata packages are installed.
     '''
-    sf = load_yaml_value(user_yaml, "stata_executable")
+    flavor = load_yaml_value(user_yaml, "stata_executable")
 
     # Fake scons-like env dict for misc.get_stata_executable(env)
-    fake_env = {'user_flavor': sf} 
+    fake_env = {'user_flavor': flavor} 
     stata_exec = get_stata_executable(fake_env)
     
     if stata_exec is None:
@@ -136,7 +143,7 @@ def check_stata(packages = ["yaml"], user_yaml = "user-config.yaml"):
     
     command = get_stata_command(stata_exec)
     check_stata_packages(command, packages)
-    return sf
+    return flavor
 
 
 def load_yaml_value(path, key):
@@ -151,14 +158,14 @@ def load_yaml_value(path, key):
     else:
         prompt = "Enter %s value: "
 
-    # Check if file exists and is not corrupted. 
-    # If so, load yaml contents.
+    # Check if file exists and is not corrupted. If so, load yaml contents.
     yaml_contents = None
     if os.path.isfile(path):
         try:
             yaml_contents = yaml.load(open(path, 'rU'))
             if not isinstance(yaml_contents, dict):
                 raise yaml.scanner.ScannerError()
+
         except yaml.scanner.ScannerError:
             message  = "%s is a corrupted yaml file. Delete file and recreate? (y/n) "
             response = str(raw_input(message % path))
@@ -166,7 +173,8 @@ def load_yaml_value(path, key):
                 os.remove(path)
                 yaml_contents = None
             else:
-                raise PrerequisiteError("%s is a corrupted yaml file. Please fix." % path)
+                message = "%s is a corrupted yaml file. Please fix." % path
+                raise PrerequisiteError(message)
 
     # If key exists, return value. Otherwise, add key-value to file.
     try:
@@ -197,7 +205,7 @@ def check_stata_packages(command, packages):
         for pkg in packages:
             call = (command + "which %s") % pkg
             # http://www.stata.com/statalist/archive/2009-12/msg00493.html 
-            # and http://stackoverflow.com/questions/18962785/oserror-errno-2-no-such-file-or-directory-while-using-python-subprocess-in-dj
+            # http://stackoverflow.com/questions/18962785/oserror-errno-2-no-such-file-or-directory-while-using-python-subprocess-in-dj
             subprocess.check_output(call, stderr = subprocess.STDOUT, shell = True) 
             
             with open('stata.log', 'rU') as f:
