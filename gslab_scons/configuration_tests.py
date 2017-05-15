@@ -14,6 +14,7 @@ def check_python(gslab_python_version,
         raise PrerequisiteError('Please use python 2')
     check_python_packages(gslab_python_version, packages)
 
+
 def check_python_packages(gslab_python_version, packages):
     gslab_python_version = str(gslab_python_version)
     packages             = convert_packages_argument(packages)
@@ -37,7 +38,8 @@ def check_python_packages(gslab_python_version, packages):
                        int(required_version[1]) * 100 + \
                        int(required_version[2])
     if installed_version < required_version:
-        raise PrerequisiteError('Wrong version of gslab_tools python modules')
+        raise PrerequisiteError('Wrong version of gslab_tools Python modules')
+
 
 def convert_packages_argument(packages):
     if not isinstance(packages, list):
@@ -52,12 +54,21 @@ def convert_packages_argument(packages):
                                     ' not %s.' % pkg)          
     return packages
 
+
 def check_r(packages = ["yaml"]):
+    '''
+    Check that a recognized R executable is in the path and that 
+    the specified R packages are installed.
+    '''
     if is_in_path('R.exe') is None and is_in_path('R') is None:
-        raise PrerequisiteError('R is not installed or excecutable is not added to path')
+        message = 'R is not installed or excecutable is not added to path'
+        raise PrerequisiteError(message)
+
     check_r_packages(packages)
 
+
 def check_r_packages(packages):
+    '''Check that R packages are installed'''
     packages = convert_packages_argument(packages)
     missing_packages = []
     for pkg in packages:
@@ -71,9 +82,13 @@ def check_r_packages(packages):
     if len(missing_packages) > 0:
         raise PrerequisiteError("R packages, %s, not found." % missing_packages)
 
+
 def check_lyx():
+    '''Check that there is a recognized LyX executable in the path'''
     if is_in_path('lyx.exe') is None and is_in_path('lyx') is None:
-        raise PrerequisiteError('Lyx is not installed or executable is not added to path')
+        message = 'LyX is not installed or executable is not added to path'
+        raise PrerequisiteError(message)
+
 
 def check_lfs():
     '''Check that Git LFS is installed'''
@@ -90,6 +105,7 @@ def check_lfs():
                               Please install Git LFS or run 
                               'git lfs install --force' if prompted above.''')
 
+
 def check_and_expand_cache_path(cache):
     error_message = " Cache directory, '%s', is not created. " % cache + \
                     "Please manually create before running.\n\t\t" + \
@@ -104,6 +120,10 @@ def check_and_expand_cache_path(cache):
 
 
 def check_stata(packages = ["yaml"], user_yaml = "user-config.yaml"):
+    '''
+    Check that a valid Stata executable is in the path and that the specified
+    Stata packages are installed.
+    '''
     sf = load_yaml_value(user_yaml, "stata_executable")
 
     # Fake scons-like env dict for misc.get_stata_executable(env)
@@ -111,13 +131,19 @@ def check_stata(packages = ["yaml"], user_yaml = "user-config.yaml"):
     stata_exec = get_stata_executable(fake_env)
     
     if stata_exec is None:
-        raise PrerequisiteError('Stata is not installed or executable is not added to path')
+        message = 'Stata is not installed or executable is not added to path'
+        raise PrerequisiteError(message)
     
     command = get_stata_command(stata_exec)
     check_stata_packages(command, packages)
     return sf
 
+
 def load_yaml_value(path, key):
+    '''
+    Load the yaml value indexed by the key argument in the file
+    specified by the path argument.
+    '''
     import yaml
 
     if key == "stata_executable":
@@ -142,8 +168,7 @@ def load_yaml_value(path, key):
             else:
                 raise PrerequisiteError("%s is a corrupted yaml file. Please fix." % path)
 
-    # If key exists, return value.
-    # Otherwise, add key-value to file.
+    # If key exists, return value. Otherwise, add key-value to file.
     try:
         if yaml_contents[key] == "None":
             return None
@@ -157,7 +182,9 @@ def load_yaml_value(path, key):
             f.write('\n%s: %s\n' % (key, val))
         return val
 
+
 def check_stata_packages(command, packages):
+    '''Check that the specified Stata packages are installed'''
     if is_unix():
         command = command.split("%s")[0]
     elif sys.platform == "win32":
@@ -184,5 +211,3 @@ def check_stata_packages(command, packages):
         raise PrerequisiteError("Stata command, '%s', failed.\n" % command.split(' ')[0] + \
                                 "\t\t   Please supply a correct stata_executable" + \
                                 " value in user_config.yaml.\n" )
-
-
