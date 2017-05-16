@@ -43,7 +43,8 @@ def check_python_packages(gslab_python_version, packages):
                int(required[2])
 
     if installed < required:
-        raise PrerequisiteError('Wrong version of gslab_tools Python modules')
+        message = 'Your gslab_tools Python modules installation is outdated'
+        raise PrerequisiteError(message)
 
 
 def convert_packages_argument(packages):
