@@ -9,11 +9,11 @@ from gslab_scons._exception_classes import (BadExecutableError,
 
 
 def build_matlab(target, source, env):
-    '''Build targets with a Matlab command
+    '''Build targets with a MATLAB command
  
-    This function executes a Matlab function to build objects 
+    This function executes a MATLAB function to build objects 
     specified by target using the objects specified by source.
-    It requires Matlab to be callable from the command line 
+    It requires MATLAB to be callable from the command line 
     via `matlab`.
 
     Accessing command line arguments from within matlab is 
@@ -25,7 +25,7 @@ def build_matlab(target, source, env):
         The target(s) of the SCons command.
     source: string or list
         The source(s) of the SCons command. The first source specified
-        should be the Matlab .M script that the builder is intended to execute. 
+        should be the MATLAB .M script that the builder is intended to execute. 
     env: SCons construction environment, see SCons user guide 7.2
     '''
 
@@ -48,16 +48,10 @@ def build_matlab(target, source, env):
     log_file = target_dir + '/sconscript.log'
 
     # Set up command line arguments
-    cl_arg       = misc.command_line_args(env)
+    cl_arg = misc.command_line_args(env)
     os.environ['CL_ARG'] = cl_arg
 
-    # Matlab options
-    if misc.is_unix():
-        options = '-nosplash -nodesktop'
-    else:
-        options = '-nosplash -minimize -wait'
-
-    # Run matlab on source file
+    # Run MATLAB on source file
     shutil.copy(source_file, 'source.m')
     try:
         command  = 'matlab %s -r source > %s' % (options, log_file)

@@ -40,7 +40,7 @@ gslab_scons/tests/test_release_function.py ....
 gslab_scons/tests/test_release_tools.py ....
 gslab_scons/tests/test_size_warning.py .....
 
-========================== 122 passed in 4.55 seconds ==========================
+========================== 122 passed in 2.36 seconds ==========================
 Name                                            Stmts   Miss Branch BrPart  Cover   Missing
 -------------------------------------------------------------------------------------------
 gencat/gencat.py                                   79      6     28      4    91%   72-73, 81, 89, 97, 101, 57->exit, 71->72, 96->97, 100->101
@@ -76,7 +76,7 @@ gslab_make/tests/nostderrout.py                    12      0      2      0   100
 gslab_scons/_exception_classes.py                  10      0      0      0   100%
 gslab_scons/_release_tools.py                     128      0     48      0   100%
 gslab_scons/builders/build_lyx.py                  28      0      0      0   100%
-gslab_scons/builders/build_matlab.py               37      0      6      0   100%
+gslab_scons/builders/build_matlab.py               34      0      4      0   100%
 gslab_scons/builders/build_python.py               24      0      0      0   100%
 gslab_scons/builders/build_r.py                    26      0      2      0   100%
 gslab_scons/builders/build_stata.py                30      0      0      0   100%
@@ -101,4 +101,4 @@ gslab_scons/tests/test_release_function.py        122      3     22      2    97
 gslab_scons/tests/test_release_tools.py            64      1      2      1    97%   153, 152->153
 gslab_scons/tests/test_size_warning.py            183      5     46      6    95%   276, 293, 309, 373, 379, 272->276, 273->276, 292->293, 304->309, 370->373, 378->379
 -------------------------------------------------------------------------------------------
-TOTAL                                            4521   1284   1278     78    67%
+TOTAL                                            4518   1284   1276     78    66%
