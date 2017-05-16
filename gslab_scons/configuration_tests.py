@@ -188,7 +188,7 @@ def load_yaml_value(path, key):
             val = str(raw_input(prompt % key))
             if re.sub('"', '', re.sub('\'', '', val.lower())) == "none":
                 val = None
-            f.write('\n%s: %s\n' % (key, val))
+            f.write('%s: %s\n' % (key, val))
         return val
 
 
