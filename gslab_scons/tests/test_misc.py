@@ -47,64 +47,6 @@ class TestMisc(unittest.TestCase):
         with self.assertRaises(ValueError):
             misc.scons_debrief(target, source, env)
 
-    @mock.patch('gslab_scons.misc.subprocess.check_output')
-    def test_check_lfs_success(self, mock_check):
-        '''
-        Test that check_lfs() works when either of the commands
-        `git-lfs install` or `git-lfs init` runs without error.
-         '''
-        try:
-            mock_check.side_effect = self.make_side_effect(['install', 'init'])
-            misc.check_lfs()
-        except:
-            self.fail('check_lfs() raised an error when '
-                     '`git-lfs install` and `git-lfs init` were '
-                      'both valid commands.')
-        try:
-            mock_check.side_effect = self.make_side_effect(['init'])
-            misc.check_lfs()
-        except:
-            self.fail('check_lfs() raised an error when '
-                      '`git-lfs init` was a valid command.')
-
-        try:
-            mock_check.side_effect = self.make_side_effect(['install'])
-            misc.check_lfs()
-        except:
-            self.fail('check_lfs() raised an error when '
-                      '`git-lfs install` was a valid command.')
-
-    @staticmethod
-    def make_side_effect(available_options):
-        '''
-        This function returns a side effect that does nothing if 
-        the command specified by its first positional argument
-        is i) not a git-lfs command or ii) a git-lfs command 
-        followed by one of the commands specified in the 
-        available_options argument. 
-        '''
-        def side_effect(*args, **kwargs):
-            command = args[0]
-            if re.search('^git-lfs', command.strip(), flags = re.I):
-                option = re.sub('git-lfs', '', command).strip()
-                if option not in available_options:
-                    raise subprocess.CalledProcessError(1, command)  
-                else:
-                    pass  
-            else:
-                pass
-        return side_effect
-
-    @mock.patch('gslab_scons.misc.subprocess.check_output')
-    def test_check_lfs_failure(self, mock_check):
-        '''
-        Test that check_lfs() fails when neither `git-lfs install` nor
-        `git-lfs init` are acceptable commands. 
-        '''
-        with self.assertRaises(ex_classes.LFSError):
-            mock_check.side_effect = self.make_side_effect(['checkout'])
-            misc.check_lfs()
-
     #== Tests for stata_command_unix() and stata_command_win() ======
     # The tests below patch sys.platform to mock various 
     # operating systems. 

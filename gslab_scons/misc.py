@@ -61,23 +61,6 @@ def state_of_repo(maxit):
     return None
 
 
-def check_lfs():
-    '''Check that Git LFS is installed'''
-    try:
-        output = subprocess.check_output("git-lfs install", shell = True)
-    except:
-        try:
-            # init is a deprecated version of install
-            output = subprocess.check_output("git-lfs init", shell = True) 
-        except:
-            raise _exception_classes.LFSError('''
-                              Either Git LFS is not installed 
-                              or your Git LFS settings need to be updated. 
-                              Please install Git LFS or run 
-                              'git lfs install --force' if prompted above.''')
-    return None
-
-
 def command_line_args(env):
     '''
     Return the content of env['CL_ARG'] as a string
@@ -229,7 +212,7 @@ def check_code_extension(source_file, extension):
 
 
 def command_error_msg(executable, call):
-    ''' This function prints an informative message given a CalledProcessError.'''
+    '''Print an informative message given a CalledProcessError.'''
     return '''Could not call %s.
               Please check that the executable, source, and target files
               are correctly specified. 
@@ -237,9 +220,7 @@ def command_error_msg(executable, call):
 
 
 def current_time():
-    '''
-    This function returns the current time in a Y-M-D H:M:S format.
-    '''
+    '''Return the current time in a Y-M-D H:M:S format.'''
     now = datetime.datetime.now()
     return datetime.datetime.strftime(now, '%Y-%m-%d %H:%M:%S')   
 

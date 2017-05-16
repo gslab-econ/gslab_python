@@ -28,8 +28,7 @@ class TestLog(unittest.TestCase):
 
     # Mock a Unix platform (sys.platform = 'darwin' on  Mac machines).
     @helpers.platform_patch('darwin', path)
-    @mock.patch('gslab_scons.log.misc.check_lfs')
-    def test_start_log_stdout_on_unix(self, mock_lfs):
+    def test_start_log_stdout_on_unix(self):
         '''
         Test that start_log() leads stdout to be captured in 
         a log file on Unix machines. 
@@ -56,8 +55,7 @@ class TestLog(unittest.TestCase):
     @helpers.platform_patch('darwin', path)
     @mock.patch('gslab_scons.log.os.popen')
     @mock.patch('gslab_scons.log.open')
-    @mock.patch('gslab_scons.log.misc.check_lfs')
-    def test_start_log_popen_on_unix(self, mock_lfs, mock_open, mock_popen):
+    def test_start_log_popen_on_unix(self, mock_open, mock_popen):
         '''
         Test that start_log() uses popen() to initialise its log
         on Unix machines.
@@ -69,8 +67,7 @@ class TestLog(unittest.TestCase):
 
     # Set the platform to Windows
     @helpers.platform_patch('win32', path)
-    @mock.patch('gslab_scons.log.misc.check_lfs')
-    def test_start_log_stdout_on_windows(self, mock_lfs):
+    def test_start_log_stdout_on_windows(self):
         '''
         Test that start_log() leads stdout to be captured in 
         a log file on Windows machines. 
@@ -92,8 +89,7 @@ class TestLog(unittest.TestCase):
     @helpers.platform_patch('win32', path)
     @mock.patch('gslab_scons.log.os.popen')
     @mock.patch('gslab_scons.log.open')
-    @mock.patch('gslab_scons.log.misc.check_lfs')
-    def test_start_log_open_on_windows(self, mock_lfs, mock_open, mock_popen):
+    def test_start_log_open_on_windows(self, mock_open, mock_popen):
         '''
         Test that start_log() uses open() to initialise its log
         on Windows machines.
@@ -105,17 +101,8 @@ class TestLog(unittest.TestCase):
 
         mock_popen.assert_not_called()
 
-    @mock.patch('gslab_scons.log.misc.check_lfs')
-    def test_start_log_no_lfs(self, mock_check_lfs):
-        # Check that start_log() fails if check_lfs() finds that
-        # git-lfs is not installed
-        mock_check_lfs.side_effect = self.check_lfs_effect
-        with self.assertRaises(ex_classes.LFSError), nostderrout():
-            gs.start_log(mode = 'develop', vers = '')
-
     @helpers.platform_patch('cygwin', path)
-    @mock.patch('gslab_scons.log.misc.check_lfs')
-    def test_start_log_other_os(self, mock_lfs):
+    def test_start_log_other_os(self):
         '''
         Test start_log()'s behaviour when run on a platform other
         than Windows, Darwin, or Linux.
@@ -132,10 +119,21 @@ class TestLog(unittest.TestCase):
         sys.stdout = test_file
         gs.start_log(mode = 'develop', vers = '')
         self.assertEqual(sys.stderr, test_file)
-        
+
     @helpers.platform_patch('darwin', path)
-    @mock.patch('gslab_scons.log.misc.check_lfs')
-    def test_start_log_nonstring_input(self, mock_lfs):
+    def test_invalid_mode(self):
+        '''Check behaviour when mode argument is invalid'''    
+        with self.assertRaises(Exception):
+            gs.start_log(mode = 'release', vers = '')
+
+        with self.assertRaises(Exception):
+            gs.start_log(mode = [1, 2, 3], vers = '')
+
+        with self.assertRaises(Exception):
+            gs.start_log(mode = None, vers = '')
+
+    @helpers.platform_patch('darwin', path)
+    def test_start_log_nonstring_input(self):
         '''
         Test start_log()'s behaviour when its log argument is
         not a string.
@@ -159,10 +157,6 @@ class TestLog(unittest.TestCase):
             os.remove(log)
         sys.stdout = initial_stdout
 
-    @staticmethod
-    def check_lfs_effect(*args, **kwargs):
-        raise ex_classes.LFSError('Git LFS is not installed.')
-
     def test_log_timestamp(self):
         '''Test that log_timestamp() correctly adds start/end times to a log'''
         # Write the test log file and use log_timestamp() to add 
@@ -181,7 +175,18 @@ class TestLog(unittest.TestCase):
                        ' TEST CONTENT'
         self.assertEqual(content, test_message)
         os.remove('test.txt')
-       
+    
+    @mock.patch('gslab_scons.log.misc.current_time')
+    def test_end_log(self, mock_time):
+        # Mock the current time
+        now = '2000-01-01 0:0:0'
+        mock_time.return_value = now
+        gs.end_log()
+        with open('sconstruct.log', 'rU') as f:
+            line = f.readline()
+            self.assertTrue(re.search('Build completed', line))
+            self.assertTrue(re.search('\{%s\}' % now, line))
+
     def tearDown(self):
         if os.path.isfile('sconstruct.log'):
            os.remove('sconstruct.log')
