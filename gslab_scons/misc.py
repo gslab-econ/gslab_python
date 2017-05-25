@@ -89,7 +89,7 @@ def get_stata_executable(env):
     Windows cmd to carry a Stata batch job. 
 
     The function will check for user input in Scons env with
-    the flag e.g. `sf=StataMP-64.exe`. With no user input,
+    the flag e.g. `stata_executable=StataMP-64.exe`. With no user input,
     the function loops through common Unix and Windows executables
     and searches them in the system environment.
     '''
