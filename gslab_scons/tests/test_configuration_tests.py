@@ -247,8 +247,8 @@ class TestConfigurationTests(unittest.TestCase):
                     raise ex_classes.PrerequisiteError()
 
         mock_load_yaml.return_value      = 'statamp'
-        f = lambda x: x['user_flavor'] if x['user_flavor'] is not None \
-                                       else 'statamp'
+        f = lambda x: x['stata_executable'] if x['stata_executable'] is not None \
+                                            else 'statamp'
         mock_stata_exec.side_effect     = f
         mock_stata_command.side_effect  = lambda x: x
         mock_stata_packages.side_effect = stata_package_side_effect

@@ -93,17 +93,18 @@ def get_stata_executable(env):
     the function loops through common Unix and Windows executables
     and searches them in the system environment.
     '''
-    # Get environment's user input flavor. Empty default = None.
-    user_flavor  = env['user_flavor']  
+    # Get environment's user input executable. Empty default = None.
+    stata_executable  = env['stata_executable']  
 
-    if user_flavor is not None:
-        return user_flavor
+    if stata_executable is not None:
+        return stata_executable
     else:
-        flavors = ['stata-mp', 'stata-se', 'stata']
+        executables = ['stata-mp', 'stata-se', 'stata']
         if is_unix():
-            for flavor in flavors:
-                if is_in_path(flavor): # check in $PATH
-                    return flavor
+            for executable in executables:
+                if is_in_path(executable): # check in $PATH
+                    return executable
+
         elif sys.platform == 'win32':
             try:
                 # Check in system environment variables
@@ -111,12 +112,12 @@ def get_stata_executable(env):
                 return "%%STATAEXE%%"
             except KeyError:
                 # Try StataMP.exe and StataMP-64.exe, etc.
-                flavors = [(f.replace('-', '') + '.exe') for f in flavors]
+                executables = [(e.replace('-', '') + '.exe') for e in executables]
                 if is_64_windows():
-                    flavors = [f.replace('.exe', '-64.exe') for f in flavors]
-                for flavor in flavors:
-                    if is_in_path(flavor):
-                        return flavor
+                    executables = [e.replace('.exe', '-64.exe') for e in executables]
+                for executable in executables:
+                    if is_in_path(executable):
+                        return executable
     return None
 
 
@@ -128,7 +129,7 @@ def get_stata_command(executable):
     return command
 
 
-def stata_command_unix(flavor):
+def stata_command_unix(executable):
     '''
     This function returns the appropriate Stata command for a user's 
     Unix platform.
@@ -137,17 +138,19 @@ def stata_command_unix(flavor):
                'linux' : '-b',
                'linux2': '-b'}
     option  = options[sys.platform]
-    command = flavor + ' ' + option + ' %s %s'  # %s will take filename and cl_arg later
+
+    # %s will take filename and cl_arg later
+    command = executable + ' ' + option + ' %s %s' 
 
     return command
 
 
-def stata_command_win(flavor):
+def stata_command_win(executable):
     '''
     This function returns the appropriate Stata command for a user's 
     Windows platform.
     '''
-    command  = flavor + ' /e do' + ' %s %s'  # %s will take filename later
+    command  = executable + ' /e do' + ' %s %s'  # %s will take filename later
     return command
 
 

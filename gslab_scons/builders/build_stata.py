@@ -22,8 +22,8 @@ def build_stata(target, source, env):
         should be the Stata .do script that the builder is intended to execute. 
     env: SCons construction environment, see SCons user guide 7.2
 
-    Note: the user can specify a flavour by typing `scons sf=StataMP` 
-    (By default, SCons will try to find each flavour). 
+    Note: the user can specify a executable by typing `scons sf=StataMP` 
+    (By default, SCons will try to find each executable). 
     '''
 
     # Prelims

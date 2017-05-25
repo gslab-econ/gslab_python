@@ -132,10 +132,10 @@ def check_stata(packages = ["yaml"], user_yaml = "user-config.yaml"):
     Check that a valid Stata executable is in the path and that the specified
     Stata packages are installed.
     '''
-    flavor = load_yaml_value(user_yaml, "stata_executable")
+    executable = load_yaml_value(user_yaml, "stata_executable")
 
     # Fake scons-like env dict for misc.get_stata_executable(env)
-    fake_env = {'user_flavor': flavor} 
+    fake_env = {'stata_executable': executable} 
     stata_exec = get_stata_executable(fake_env)
     
     if stata_exec is None:
@@ -144,7 +144,7 @@ def check_stata(packages = ["yaml"], user_yaml = "user-config.yaml"):
     
     command = get_stata_command(stata_exec)
     check_stata_packages(command, packages)
-    return flavor
+    return executable
 
 
 def load_yaml_value(path, key):
