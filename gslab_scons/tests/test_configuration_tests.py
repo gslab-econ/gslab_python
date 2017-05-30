@@ -246,7 +246,7 @@ class TestConfigurationTests(unittest.TestCase):
                 if package != 'yaml':
                     raise ex_classes.PrerequisiteError()
 
-        mock_load_yaml.return_value      = 'statamp'
+        mock_load_yaml.return_value = 'statamp'
         f = lambda x: x['stata_executable'] if x['stata_executable'] is not None \
                                             else 'statamp'
         mock_stata_exec.side_effect     = f
@@ -258,9 +258,8 @@ class TestConfigurationTests(unittest.TestCase):
         self.assertEqual(config_tests.check_stata(), 'statamp')
 
         # No yaml value
-        # Function only returns user-specified executable or none, not the defaults
         mock_load_yaml.return_value = None
-        self.assertEqual(config_tests.check_stata(), None)
+        self.assertEqual(config_tests.check_stata(), 'statamp')
 
         # Failures
         # No yaml value and no default value in path

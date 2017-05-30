@@ -135,7 +135,7 @@ class TestBuildStata(unittest.TestCase):
     @mock.patch('%s.subprocess.check_output' % path)
     def test_no_executable_in_path(self, mock_check, mock_path):
         '''
-        Test build_stata()'s behaviour when there no valid Stata
+        Test build_stata()'s behaviour when there are no valid Stata
         executables in the user's path variable
         '''
         # We mock the system to not find any executable in the path.
