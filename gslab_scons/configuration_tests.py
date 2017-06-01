@@ -132,19 +132,18 @@ def check_stata(packages = ["yaml"], user_yaml = "user-config.yaml"):
     Check that a valid Stata executable is in the path and that the specified
     Stata packages are installed.
     '''
-    flavor = load_yaml_value(user_yaml, "stata_executable")
-
     # Fake scons-like env dict for misc.get_stata_executable(env)
-    fake_env = {'user_flavor': flavor} 
-    stata_exec = get_stata_executable(fake_env)
+    fake_env = {'stata_executable': load_yaml_value(user_yaml, 
+                                                    'stata_executable')} 
+    stata_executable = get_stata_executable(fake_env)
     
-    if stata_exec is None:
+    if stata_executable is None:
         message = 'Stata is not installed or executable is not added to path'
         raise PrerequisiteError(message)
     
-    command = get_stata_command(stata_exec)
+    command = get_stata_command(stata_executable)
     check_stata_packages(command, packages)
-    return flavor
+    return stata_executable
 
 
 def load_yaml_value(path, key):
