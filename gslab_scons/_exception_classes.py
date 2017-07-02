@@ -3,13 +3,13 @@ class ExecCallError(Exception):
 		print 'Error: ' + message
 
 class BadExtensionError(Exception):
-	def __init__(self, message = ''):
-		print 'Error: ' + message
+    pass
 
 class LFSError(Exception):
-	def __init__(self, message = ''):
-		print 'Error: ' + message
+    pass
 
 class ReleaseError(Exception):
-    def __init__(self, message = ''):
-        print 'Error: ' + message
+    pass
+
+class PrerequisiteError(Exception):
+    pass

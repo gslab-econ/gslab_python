@@ -7,12 +7,9 @@ import gslab_scons.misc as misc
 
 def start_log(mode, vers, log = 'sconstruct.log'):
     '''Begins logging a build process'''
-    misc.check_lfs()
     
-    if not (mode in ['develop', 'cache', 'release']):
+    if not (mode in ['develop', 'cache']):
         raise Exception("Error: %s is not a defined mode" % mode)
-    if mode == 'release' and vers == '':
-        raise Exception("Error: Version must be defined in release mode")
 
     start_message = "*** New build: {%s} ***\n" % misc.current_time()
     with open(log, "w") as f:
@@ -27,6 +24,7 @@ def start_log(mode, vers, log = 'sconstruct.log'):
 
     return None
 
+
 def end_log(log = 'sconstruct.log'):
     '''Complete the log of a build process.'''
 
@@ -34,10 +32,10 @@ def end_log(log = 'sconstruct.log'):
     with open(log, "a") as f:
         f.write(end_message)
 
-    # scan sconstruct.log for start time (if looks unpythonic, see xkcd 1171)
+    # scan sconstruct.log for start time
     with open('sconstruct.log', "rU") as f:
         s = f.readline()
-        s = s[s.find('{')+1: s.find('}')]
+        s = s[s.find('{') + 1: s.find('}')]
         start_time = datetime.strptime(s, "%Y-%m-%d %H:%M:%S")
 
     # gather all sconscript logs 
@@ -59,6 +57,7 @@ def end_log(log = 'sconstruct.log'):
 
     return None
 
+
 def log_timestamp(start_time, end_time, filename = 'sconstruct.log'):
     '''Adds beginning and ending times to a log file.'''
     with open(filename, mode = 'r+U') as f:
@@ -67,6 +66,7 @@ def log_timestamp(start_time, end_time, filename = 'sconstruct.log'):
         builder_log_msg = '*** Builder log created: {%s} \n' + '*** Builder log completed: {%s} \n %s'
         f.write(builder_log_msg % (start_time, end_time, content))
     return None
+
 
 def collect_builder_logs(parent_dir):
     ''' Recursively return dictionary of files ending with sconscript.log 

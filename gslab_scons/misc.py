@@ -61,23 +61,6 @@ def state_of_repo(maxit):
     return None
 
 
-def check_lfs():
-    '''Check that Git LFS is installed'''
-    try:
-        output = subprocess.check_output("git-lfs install", shell = True)
-    except:
-        try:
-            # init is a deprecated version of install
-            output = subprocess.check_output("git-lfs init", shell = True) 
-        except:
-            raise _exception_classes.LFSError('''
-                              Either Git LFS is not installed 
-                              or your Git LFS settings need to be updated. 
-                              Please install Git LFS or run 
-                              'git lfs install --force' if prompted above.''')
-    return None
-
-
 def command_line_args(env):
     '''
     Return the content of env['CL_ARG'] as a string
@@ -102,38 +85,36 @@ def command_line_args(env):
 def get_stata_executable(env):
     '''Return OS command to call Stata.
     
-    This helper function returns a command (str) for Unix Bash or
+    This helper function returns a command (str) for Unix bash or
     Windows cmd to carry a Stata batch job. 
 
-    The function will check for user input in Scons env with
-    the flag e.g. `sf=StataMP-64.exe`. With no user input,
-    the function loops through common Unix and Windows executables
-    and searches them in the system environment.
+    The function checks for a Stata executable in env, an SCons 
+    Environment object. If env does not specify an executable, then 
+    the function searches for common executables in the system environment.
     '''
-    # Get environment's user input flavor. Empty default = None.
-    user_flavor  = env['user_flavor']  
+    # Get environment's user input executable. Empty default = None.
+    stata_executable  = env['stata_executable']  
 
-    if user_flavor is not None:
-        return user_flavor
+    if stata_executable is not None:
+        return stata_executable
     else:
-        flavors = ['stata-mp', 'stata-se', 'stata']
+        executables = ['stata-mp', 'stata-se', 'stata']
         if is_unix():
-            for flavor in flavors:
-                if is_in_path(flavor): # check in $PATH
-                    return flavor
+            for executable in executables:
+                if is_in_path(executable): # check in $PATH
+                    return executable
+
         elif sys.platform == 'win32':
-            try:
-                # Check in system environment variables
-                key_exist = os.environ['STATAEXE'] is not None
+            if 'STATAEXE' in os.environ.keys():
                 return "%%STATAEXE%%"
-            except KeyError:
+            else:
                 # Try StataMP.exe and StataMP-64.exe, etc.
-                flavors = [(f.replace('-', '') + '.exe') for f in flavors]
+                executables = [(e.replace('-', '') + '.exe') for e in executables]
                 if is_64_windows():
-                    flavors = [f.replace('.exe', '-64.exe') for f in flavors]
-                for flavor in flavors:
-                    if is_in_path(flavor):
-                        return flavor
+                    executables = [e.replace('.exe', '-64.exe') for e in executables]
+                for executable in executables:
+                    if is_in_path(executable):
+                        return executable
     return None
 
 
@@ -145,7 +126,7 @@ def get_stata_command(executable):
     return command
 
 
-def stata_command_unix(flavor):
+def stata_command_unix(executable):
     '''
     This function returns the appropriate Stata command for a user's 
     Unix platform.
@@ -154,17 +135,19 @@ def stata_command_unix(flavor):
                'linux' : '-b',
                'linux2': '-b'}
     option  = options[sys.platform]
-    command = flavor + ' ' + option + ' %s %s'  # %s will take filename and cl_arg later
+
+    # %s will take filename and cl_arg later
+    command = executable + ' ' + option + ' %s %s' 
 
     return command
 
 
-def stata_command_win(flavor):
+def stata_command_win(executable):
     '''
     This function returns the appropriate Stata command for a user's 
     Windows platform.
     '''
-    command  = flavor + ' /e do' + ' %s %s'  # %s will take filename later
+    command  = executable + ' /e do' + ' %s %s'  # %s will take filename later
     return command
 
 
@@ -231,15 +214,13 @@ def check_code_extension(source_file, extension):
 def command_error_msg(executable, call):
     ''' This function prints an informative message given a CalledProcessError.'''
     return '''%s did not run successfully.
-    Please check execcutable/source/target are correctly specified. 
     Check SConstruct.log for errors.
     Command tried: %s''' % (executable, call) 
+              Please check that the executable, source, and target files
 
 
 def current_time():
-    '''
-    This function returns the current time in a Y-M-D H:M:S format.
-    '''
+    '''Return the current time in a Y-M-D H:M:S format.'''
     now = datetime.datetime.now()
     return datetime.datetime.strftime(now, '%Y-%m-%d %H:%M:%S')   
 
