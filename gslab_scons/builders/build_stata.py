@@ -4,7 +4,7 @@ import shutil
 import sys
 import gslab_scons.misc as misc
 from gslab_scons import log_timestamp
-from gslab_scons._exception_classes import BadExecutableError
+from gslab_scons._exception_classes import ExecCallError
 
 
 def build_stata(target, source, env):
@@ -26,7 +26,7 @@ def build_stata(target, source, env):
     # Prelims
     source     = misc.make_list_if_string(source)
     target     = misc.make_list_if_string(target)
-    start_time = misc.current_time()
+    start_time =  misc.current_time()
 
     # Set up source file and the original location of the log
     source_file = str(source[0])
@@ -51,7 +51,7 @@ def build_stata(target, source, env):
                                 shell  = True)
     except subprocess.CalledProcessError:
         message = misc.command_error_msg("Stata", command)
-        raise BadExecutableError(message)
+        raise ExecCallError(message)
 
     shutil.move(loc_log, log_file)
     end_time = misc.current_time()

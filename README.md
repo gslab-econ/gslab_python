@@ -10,7 +10,11 @@ This repository contains the following GSLab Python libraries:
 
 Information about each of these packages is available in its internal documentation. 
 
-Note: In order to run the unit tests, `mock` (version 2.0.0 or higher) needs to be installed.
+Requirements
+------------
+- Python 2.7 
+- `setuptools` ([installation instructions](https://packaging.python.org/installing/))
+- `mock` (> 2.0.0) in order to run the unit tests 
 
 Installation
 ------------
@@ -26,11 +30,11 @@ after installation is complete.
 
 One can use `pip` to assist with this installation procedure by using the commands:
 ```
-pip install git+ssh://git@github.com/gslab-econ/gslab_python.git
+pip install git+ssh://git@github.com/gslab-econ/gslab_python.git@master
 ```
 or
 ```
-pip install git+https://git@github.com/gslab-econ/gslab_python.git
+pip install git+https://git@github.com/gslab-econ/gslab_python.git@master
 ```
 which are the SSH and HTTPS protocol versions.
 
@@ -59,3 +63,10 @@ run without this option before committing to `gslab_python`.
 License
 -------
 See [here](https://github.com/gslab-econ/gslab_python/blob/master/LICENSE.txt).
+
+FAQs
+-------
+
+Q: What if I want to install a different branch called `dev` of `gslab_python` rather than `master`?
+A: Either `git checkout dev` that branch of the repo before installing, or change `@master` to `@dev` in the `pip install` instruction.
+
