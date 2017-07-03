@@ -4,8 +4,8 @@ import shutil
 import sys 
 import gslab_scons.misc as misc
 from gslab_scons import log_timestamp
-from gslab_scons._exception_classes import ExecCallError
-                                            PrerequisiteError)
+from gslab_scons._exception_classes import (ExecCallError,
+                                           PrerequisiteError)
 
 
 def build_matlab(target, source, env):
