@@ -49,7 +49,7 @@ def build_tables(target, source, env):
                         output   = target_file)
 
     if "error" in str.lower(output): # if tablefill.py returns an error            
-        message = misc.command_error_msg("tablefill.py", output + command)
+        message = misc.command_error_msg("tablefill.py", command)
         with open(log_file, 'wb') as f:
             f.write(output)
         raise ExecCallError(message)
