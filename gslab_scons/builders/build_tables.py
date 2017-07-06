@@ -37,26 +37,25 @@ def build_tables(target, source, env):
     # Set up target file (filled table)
     target_file = str(target[0])
     target_dir  = misc.get_directory(target_file)    
-    log_file = target_dir + '/sconscript.log'
     misc.check_code_extension(target_file, '.lyx')
+    log_file = target_dir + '/sconscript.log'
     
     # Command call
-    command = """tablefill(input = %s, 
-                 template = %s, 
-                 output   = %s)""" % (input_string, source_file, target_file)
+    command = """tablefill(input    = %s, 
+                         template = %s, 
+                         output   = %s)""" % (input_string, source_file, target_file)
     output  = tablefill(input    = input_string, 
                         template = source_file, 
                         output   = target_file)
-
-    if "error" in str.lower(output): # if tablefill.py returns an error            
-        message = misc.command_error_msg("tablefill.py", command)
-        with open(log_file, 'wb') as f:
-            f.write(output)
-        raise ExecCallError(message)
-
+    
     # Close log
     with open(log_file, 'wb') as f:
         f.write(output)
+
+    if "traceback" in str.lower(output): # if tablefill.py returns an error            
+        message = misc.command_error_msg("tablefill.py", command)
+        raise ExecCallError(message)
+    
     end_time = misc.current_time()    
     log_timestamp(start_time, end_time, log_file)
 
