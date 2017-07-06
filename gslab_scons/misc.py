@@ -214,9 +214,9 @@ def check_code_extension(source_file, extension):
 def command_error_msg(executable, call):
     ''' This function prints an informative message given a CalledProcessError.'''
     return '''%s did not run successfully.
-              Please check that the executable, source, and target files
-              Check SConstruct.log for errors.
-              Command tried: %s''' % (executable, call) 
+       Please check that the executable, source, and target files
+       Check SConstruct.log for errors.
+Command tried: %s''' % (executable, call) 
 
 
 def current_time():

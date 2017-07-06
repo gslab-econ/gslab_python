@@ -1,6 +1,7 @@
 import gslab_scons.misc as misc
 from gslab_fill import tablefill
-
+from gslab_scons import log_timestamp
+from gslab_scons._exception_classes import ExecCallError
 
 def build_tables(target, source, env):
     '''Build a SCons target by filling a table
@@ -23,16 +24,39 @@ def build_tables(target, source, env):
     # Prelims
     source = misc.make_list_if_string(source)
     target = misc.make_list_if_string(target)
+
+    start_time  = misc.current_time()
     
     # Set up source file (table format)
     source_file = str(source[0])
     misc.check_code_extension(source_file, '.lyx')
 
+    # Set up input string (list of data tables)
+    input_string = ' '.join([str(i) for i in source[1:]])
+
     # Set up target file (filled table)
     target_file = str(target[0])
+    target_dir  = misc.get_directory(target_file)    
     misc.check_code_extension(target_file, '.lyx')
+    log_file = target_dir + '/sconscript.log'
     
-    tablefill(input    = ' '.join([str(i) for i in source[1:]]), 
-              template = source_file, 
-              output   = target_file)
+    # Command call
+    command = """tablefill(input    = %s, 
+                         template = %s, 
+                         output   = %s)""" % (input_string, source_file, target_file)
+    output  = tablefill(input    = input_string, 
+                        template = source_file, 
+                        output   = target_file)
+    
+    # Close log
+    with open(log_file, 'wb') as f:
+        f.write(output)
+
+    if "traceback" in str.lower(output): # if tablefill.py returns an error            
+        message = misc.command_error_msg("tablefill.py", command)
+        raise ExecCallError(message)
+    
+    end_time = misc.current_time()    
+    log_timestamp(start_time, end_time, log_file)
+
     return None
