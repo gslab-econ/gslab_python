@@ -4,7 +4,7 @@ import sys
 import importlib
 import subprocess
 import pkg_resources
-from misc import is_in_path, get_stata_executable, get_stata_command, is_unix
+from misc import is_in_path, get_stata_executable, get_stata_command, is_unix, load_yaml_value
 from _exception_classes import PrerequisiteError
 
 
@@ -145,50 +145,6 @@ def check_stata(packages = ["yaml"], user_yaml = "user-config.yaml"):
     check_stata_packages(command, packages)
     return stata_executable
 
-
-def load_yaml_value(path, key):
-    '''
-    Load the yaml value indexed by the key argument in the file
-    specified by the path argument.
-    '''
-    import yaml
-
-    if key == "stata_executable":
-        prompt = "Enter %s value or None to search for defaults: "
-    else:
-        prompt = "Enter %s value: "
-
-    # Check if file exists and is not corrupted. If so, load yaml contents.
-    yaml_contents = None
-    if os.path.isfile(path):
-        try:
-            yaml_contents = yaml.load(open(path, 'rU'))
-            if not isinstance(yaml_contents, dict):
-                raise yaml.scanner.ScannerError()
-
-        except yaml.scanner.ScannerError:
-            message  = "%s is a corrupted yaml file. Delete file and recreate? (y/n) "
-            response = str(raw_input(message % path))
-            if response.lower() == 'y':
-                os.remove(path)
-                yaml_contents = None
-            else:
-                message = "%s is a corrupted yaml file. Please fix." % path
-                raise PrerequisiteError(message)
-
-    # If key exists, return value. Otherwise, add key-value to file.
-    try:
-        if yaml_contents[key] == "None":
-            return None
-        else:
-            return yaml_contents[key]
-    except:
-        with open(path, 'ab') as f:        
-            val = str(raw_input(prompt % key))
-            if re.sub('"', '', re.sub('\'', '', val.lower())) == "none":
-                val = None
-            f.write('%s: %s\n' % (key, val))
-        return val
 
 
 def check_stata_packages(command, packages):

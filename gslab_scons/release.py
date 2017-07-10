@@ -10,7 +10,7 @@ def main():
 
     # Extract information about the clone from its .git directory
     repo, organisation, branch = _release_tools.extract_dot_git()
-
+    user_config_cache = misc.()
     # Determine the version number
     try:
         version = next(arg for arg in sys.argv if re.search("^version=", arg))
@@ -32,13 +32,12 @@ def main():
                 release_files.append(os.path.join(root, file_name))
 
     # Specify the local release directory
-    USER = os.environ['USER']
     if branch == 'master':
         name   = repo
         branch = ''
     else:
         name = "%s-%s" % (repo, branch)
-    local_release = '/Users/%s/Google Drive/release/%s/' % (USER, name)
+    local_release = '/%s/%s/' % (user_config_cache, name)
     local_release = local_release + version + '/'
     
     _release_tools.release(vers              = version, 

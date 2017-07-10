@@ -11,7 +11,7 @@ import _side_effects as fx
 sys.path.append('../..')
 import gslab_scons as gs
 from gslab_scons._exception_classes import (BadExtensionError,
-                                            BadExecutableError,
+                                            ExecCallError,
                                             PrerequisiteError)
 
 # Define main test patch
@@ -100,7 +100,7 @@ class TestBuildMatlab(unittest.TestCase):
         mock_check_output.side_effect = \
             fx.make_matlab_side_effect(recognized = False)
 
-        with self.assertRaises(BadExecutableError):
+        with self.assertRaises(ExecCallError):
             gs.build_matlab(target = './build/test.mat', 
                             source = './input/matlab_test_script.m', 
                             env    = {})
