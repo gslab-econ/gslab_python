@@ -174,4 +174,4 @@ def check_stata_packages(command, packages):
     except subprocess.CalledProcessError:
         raise PrerequisiteError("Stata command, '%s', failed.\n" % command.split(' ')[0] + \
                                 "\t\t   Please supply a correct stata_executable" + \
-                                " value in user_config.yaml.\n" )
+                                " value in user-config.yaml.\n" )

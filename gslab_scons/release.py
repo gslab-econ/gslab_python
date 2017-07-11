@@ -5,7 +5,7 @@ import _release_tools
 from _exception_classes import ReleaseError
 from misc import load_yaml_value
 
-def main(user_yaml = 'user_config.yaml'):
+def main(user_yaml = 'user-config.yaml'):
     inspect_repo()
 
     # Extract information about the clone from its .git directory
@@ -32,7 +32,7 @@ def main(user_yaml = 'user_config.yaml'):
                 release_files.append(os.path.join(root, file_name))
 
     # Specify the local release directory
-    release_dir = misc.load_yaml_value(user_yaml, 'release')
+    release_dir = load_yaml_value(user_yaml, 'release')
 
     if branch == 'master':
         name   = repo
