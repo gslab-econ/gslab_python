@@ -171,7 +171,7 @@ def check_stata_packages(command, packages):
             if re.search('command %s not found' % pkg, log):
                 raise PrerequisiteError('Stata package %s is not installed' % pkg)
 
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError:        
         raise PrerequisiteError("Stata command, '%s', failed.\n" % command.split(' ')[0] + \
                                 "\t\t   Please supply a correct stata_executable" + \
                                 " value in user-config.yaml.\n" )

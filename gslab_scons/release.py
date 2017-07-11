@@ -39,8 +39,10 @@ def main(user_yaml = 'user-config.yaml'):
         branch = ''
     else:
         name = "%s-%s" % (repo, branch)
-    local_release = '/%s/%s/' % (release_dir, name)
+    local_release = '%s/%s/' % (release_dir, name)
     local_release = local_release + version + '/'
+    # Get GitHub token:
+    token = load_yaml_value(user_yaml, 'github_token_optional')
     
     _release_tools.release(vers              = version, 
                            DriveReleaseFiles = release_files,
@@ -48,7 +50,8 @@ def main(user_yaml = 'user-config.yaml'):
                            org               = organisation, 
                            repo              = repo,
                            target_commitish  = branch,
-                           zip_release       = zip_release)
+                           zip_release       = zip_release,
+                           token             = token)
 
 
 def inspect_repo():

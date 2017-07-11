@@ -10,12 +10,12 @@ import subprocess
 
 from _exception_classes import ReleaseError
 
-
 def release(vers, org, repo,
             DriveReleaseFiles = [],  
             local_release     = '',  
             target_commitish  = '', 
-            zip_release       = True):
+            zip_release       = True,
+            token             = None):
     '''Publish a release
 
     Parameters
@@ -31,8 +31,9 @@ def release(vers, org, repo,
     '''
     # Check the argument types
 
-
-    token    = getpass.getpass("Enter a GitHub token and then press enter: ") 
+    if token is None:
+        token = getpass.getpass("Enter a GitHub token and then press enter: ") 
+    
     tag_name = vers
     
     releases_path = 'https://%s:@api.github.com/repos/%s/%s/releases' \
@@ -51,7 +52,16 @@ def release(vers, org, repo,
     json_dump = re.sub('"FALSE"', 'false', json_dump)
     posting = session.post(releases_path, data = json_dump)
     # Check that the GitHub release was successful
-    posting.raise_for_status()
+    try:
+        posting.raise_for_status()
+    except requests.exceptions.HTTPError:
+        message  = "We could not post the following json to the releases path \n" 
+        message  = message + ("https://YOURTOKEN:@api.github.com/repos/%s/%s/releases \n" % (org, repo))
+        message  = message + "The json looks like this:"
+        print(message)
+        for (k,v) in payload.items():
+            print(" '%s' : '%s' " % (k,v))
+        raise requests.exceptions.HTTPError
 
     # Release to drive
     if bool(DriveReleaseFiles):
@@ -285,6 +295,6 @@ def extract_dot_git(path = '.git'):
 
     # Next, find the branch's name
     branch_info = open('%s/HEAD' % path, 'rU').readlines()
-    branch = re.findall('ref: refs/heads/([\w-]+)', branch_info[0])[0]
+    branch = re.findall('ref: refs/heads/(.+)\\n', branch_info[0])[0]
 
     return repo, organisation, branch
