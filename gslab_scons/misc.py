@@ -9,7 +9,7 @@ import datetime
 import _exception_classes
 from size_warning import issue_size_warnings
 
-def scons_debrief(target, source, env):
+def scons_debrief(target, env):
     '''Execute functions after SCons has built all targets'''
     # Log the state of the repo
     env['CL_ARG'] = env['MAXIT']
@@ -22,7 +22,7 @@ def scons_debrief(target, source, env):
     file_MB_limit = float(env['file_MB_limit'])
     total_MB_limit = float(env['total_MB_limit'])
     issue_size_warnings(look_in, file_MB_limit, total_MB_limit)
-
+    return None
 
 def state_of_repo(maxit):
     outfile = 'state_of_repo.log'

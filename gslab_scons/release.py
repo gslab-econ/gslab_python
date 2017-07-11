@@ -3,14 +3,14 @@ import os
 import sys
 import _release_tools
 from _exception_classes import ReleaseError
+from misc import load_yaml_value
 
-
-def main():
+def main(user_yaml = 'user_config.yaml'):
     inspect_repo()
 
     # Extract information about the clone from its .git directory
     repo, organisation, branch = _release_tools.extract_dot_git()
-    user_config_cache = misc.()
+
     # Determine the version number
     try:
         version = next(arg for arg in sys.argv if re.search("^version=", arg))
@@ -32,12 +32,14 @@ def main():
                 release_files.append(os.path.join(root, file_name))
 
     # Specify the local release directory
+    release_dir = misc.load_yaml_value(user_yaml, 'release')
+
     if branch == 'master':
         name   = repo
         branch = ''
     else:
         name = "%s-%s" % (repo, branch)
-    local_release = '/%s/%s/' % (user_config_cache, name)
+    local_release = '/%s/%s/' % (release_dir, name)
     local_release = local_release + version + '/'
     
     _release_tools.release(vers              = version, 

@@ -11,7 +11,7 @@ import subprocess
 from _exception_classes import ReleaseError
 
 
-def release(vers, org, repo, 
+def release(vers, org, repo,
             DriveReleaseFiles = [],  
             local_release     = '',  
             target_commitish  = '', 
@@ -23,7 +23,7 @@ def release(vers, org, repo,
     env: an SCons environment object
     vers: the version of the release
     DriveReleaseFiles a optional list of files to be included in a
-        release to Google Drive.
+        release to drive (e.g. DropBox or Google Drive).
     local_release: The path of the release directory on the user's computer.
     org: The GtHub organisaton hosting the repository specified by `repo`.
     repo: The name of the GitHub repository from which the user is making
@@ -53,7 +53,7 @@ def release(vers, org, repo,
     # Check that the GitHub release was successful
     posting.raise_for_status()
 
-    # Release to Google Drive
+    # Release to drive
     if bool(DriveReleaseFiles):
         # Delay
         time.sleep(1)
@@ -73,24 +73,24 @@ def release(vers, org, repo,
         tag_name_index = json_split.index('"tag_name":"%s"' % tag_name)
         release_id     = json_split[tag_name_index - 1].split(':')[1]
     
-        # Get root directory name on Drive
+        # Get root directory name on drive
         path     = local_release.split('/')
-        layers   = len(path)
         dir_name = None
+        drive_name = path[-2]
 
-        for i in range(layers):
-            if path[i] == 'release' and i + 1 < layers:
+        for i in range(len(path)):
+            if path[i] == 'release' and i + 1 < len(path):
                 dir_name = path[i + 1]
                 break
 
         if dir_name is None:
-            raise ReleaseError("No /release/ superdirectory found "
+            raise ReleaseError("No /release/ superdirectory found " + 
                                "in path given by local_release")
 
         if not os.path.isdir(local_release):
             os.makedirs(local_release)
        
-        # If the files released to Google Drive are to be zipped,
+        # If the files released to drive are to be zipped,
         # specify their copy destination as an intermediate directory
         if zip_release:
             archive_files = 'release_content'
@@ -99,13 +99,13 @@ def release(vers, org, repo,
             os.makedirs(archive_files)
 
             destination_base = archive_files
-            drive_header = 'Google Drive: release/%s/%s/release_content.zip' % \
-                            (dir_name, vers)
+            drive_header = '%s: release/%s/%s/release_content.zip' % \
+                            (drive_name, dir_name, vers)
         # Otherwise, send the release files directly to the local release
-        # Google Drive directory
+        # drive directory
         else:
             destination_base = local_release
-            drive_header = 'Google Drive:'
+            drive_header = '%s:' % drive_name
 
         for path in DriveReleaseFiles:
             file_name   = os.path.basename(path)
@@ -125,16 +125,16 @@ def release(vers, org, repo,
             make_paths = lambda s: 'release/%s/%s/%s' % (dir_name, vers, s)
             DriveReleaseFiles = map(make_paths, DriveReleaseFiles)
 
-        with open('gdrive_assets.txt', 'wb') as f:
+        with open('drive_assets.txt', 'wb') as f:
             f.write('\n'.join([drive_header] + DriveReleaseFiles))
 
         upload_asset(token      = token, 
                      org        = org, 
                      repo       = repo, 
                      release_id = release_id, 
-                     file_name  = 'gdrive_assets.txt')
+                     file_name  = 'drive_assets.txt')
 
-        os.remove('gdrive_assets.txt')
+        os.remove('drive_assets.txt')
 
 
 def upload_asset(token, org, repo, release_id, file_name, 
