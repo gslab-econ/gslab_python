@@ -5,7 +5,7 @@ import _release_tools
 from _exception_classes import ReleaseError
 from misc import load_yaml_value
 
-def main(user_yaml = 'user-config.yaml'):
+def main(user_yaml = 'user-config.yaml', release_files = []):
     inspect_repo()
 
     # Extract information about the clone from its .git directory
@@ -23,13 +23,13 @@ def main(user_yaml = 'user-config.yaml'):
     dont_zip    = 'no_zip' in sys.argv
     zip_release = not dont_zip
 
-     # Read a list of files to release to Google Drive
-    release_files = list()
-    for root, _, files in os.walk('./release'):
-        for file_name in files:
-            # Do not release .DS_Store
-            if not re.search("\.DS_Store", file_name):
-                release_files.append(os.path.join(root, file_name))
+    # Read a list of files to release to Google Drive
+    if release_files == []:
+        for root, _, files in os.walk('./release'):
+            for file_name in files:
+                # Do not release .DS_Store
+                if not re.search("\.DS_Store", file_name):
+                    release_files.append(os.path.join(root, file_name))
 
     # Specify the local release directory
     release_dir = load_yaml_value(user_yaml, 'release')
@@ -42,7 +42,7 @@ def main(user_yaml = 'user-config.yaml'):
     local_release = '%s/%s/' % (release_dir, name)
     local_release = local_release + version + '/'
     # Get GitHub token:
-    token = load_yaml_value(user_yaml, 'github_token_optional')
+    github_token = load_yaml_value(user_yaml, 'github_token_optional')
     
     _release_tools.release(vers              = version, 
                            DriveReleaseFiles = release_files,
@@ -51,7 +51,7 @@ def main(user_yaml = 'user-config.yaml'):
                            repo              = repo,
                            target_commitish  = branch,
                            zip_release       = zip_release,
-                           token             = token)
+                           github_token      = github_token)
 
 
 def inspect_repo():

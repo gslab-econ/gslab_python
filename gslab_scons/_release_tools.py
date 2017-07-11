@@ -15,7 +15,7 @@ def release(vers, org, repo,
             local_release     = '',  
             target_commitish  = '', 
             zip_release       = True,
-            token             = None):
+            github_token      = None):
     '''Publish a release
 
     Parameters
@@ -31,13 +31,13 @@ def release(vers, org, repo,
     '''
     # Check the argument types
 
-    if token is None:
-        token = getpass.getpass("Enter a GitHub token and then press enter: ") 
+    if github_token is None:
+        github_token = getpass.getpass("Enter a GitHub token and then press enter: ") 
     
     tag_name = vers
     
     releases_path = 'https://%s:@api.github.com/repos/%s/%s/releases' \
-                    % (token, org, repo)
+                    % (github_token, org, repo)
     session       = requests.session()
 
     # Create release
@@ -138,22 +138,22 @@ def release(vers, org, repo,
         with open('drive_assets.txt', 'wb') as f:
             f.write('\n'.join([drive_header] + DriveReleaseFiles))
 
-        upload_asset(token      = token, 
-                     org        = org, 
-                     repo       = repo, 
-                     release_id = release_id, 
-                     file_name  = 'drive_assets.txt')
+        upload_asset(github_token = github_token, 
+                     org          = org, 
+                     repo         = repo, 
+                     release_id   = release_id, 
+                     file_name    = 'drive_assets.txt')
 
         os.remove('drive_assets.txt')
 
 
-def upload_asset(token, org, repo, release_id, file_name, 
+def upload_asset(github_token, org, repo, release_id, file_name, 
                  content_type = 'text/markdown'):
     '''
     This function uploads a release asset to GitHub.
 
     --Parameters--
-    token: a GitHub token
+    github_token: a GitHub token
     org: the GitHub organisation to which the repository associated
         with the release belongs
     repo: the GitHub repository associated with the release
@@ -168,7 +168,7 @@ def upload_asset(token, org, repo, release_id, file_name,
         raise ReleaseError('upload_asset() cannot find file_name')
 
     files  = {'file' : open(file_name, 'rU')}
-    header = {'Authorization': 'token %s' % token, 
+    header = {'Authorization': 'token %s' % github_token, 
               'Content-Type':  content_type}
     path_base   = 'https://uploads.github.com/repos'
     upload_path = '%s/%s/%s/releases/%s/assets?name=%s' % \

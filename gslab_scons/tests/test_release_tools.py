@@ -38,7 +38,7 @@ class TestReleaseTools(unittest.TestCase):
         # iii) the mocked post() method of the mocked session object
         mock_session.return_value = mock.MagicMock(post = mock.MagicMock())
 
-        tools.upload_asset(token        = 'test_token', 
+        tools.upload_asset(github_token = 'test_token', 
                            org          = 'gslab-econ', 
                            repo         = 'gslab_python', 
                            release_id   = 'test_release', 
@@ -71,7 +71,7 @@ class TestReleaseTools(unittest.TestCase):
         mock_session.return_value = mock.MagicMock(post = mock.MagicMock())
 
         with self.assertRaises(ReleaseError), nostderrout():
-            tools.upload_asset(token        = 'test_token', 
+            tools.upload_asset(github_token = 'test_token', 
                                org          = 'gslab-econ', 
                                repo         = 'gslab_python', 
                                release_id   = 'test_release', 
