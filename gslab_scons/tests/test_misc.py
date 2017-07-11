@@ -31,24 +31,23 @@ class TestMisc(unittest.TestCase):
     @mock.patch('gslab_scons.misc.issue_size_warnings')
     def test_scons_debrief(self, mock_size_warn, mock_repo_state):
         target = 'state_of_repo.log'
-        source = ''
         env    = {'MAXIT': '10', 
                   'look_in': 'release',
                   'file_MB_limit': '1',
                   'total_MB_limit': '2'}
-        misc.scons_debrief(target, source, env)
+        misc.scons_debrief(target, env)
         mock_size_warn.assert_called_with(['release'], 1, 2)
         mock_repo_state.assert_called_with(10)
 
         with self.assertRaises(KeyError):
-            misc.scons_debrief(target, source, {})
+            misc.scons_debrief(target, {})
 
         env = {'MAXIT': 'maxit', 
                'look_in': 'release',
                'file_MB_limit': '1',
                'total_MB_limit': '2'}            
         with self.assertRaises(ValueError):
-            misc.scons_debrief(target, source, env)
+            misc.scons_debrief(target, env)
 
     #== Tests for stata_command_unix() and stata_command_win() ======
     # The tests below patch sys.platform to mock various 
