@@ -213,21 +213,6 @@ class TestConfigurationTests(unittest.TestCase):
                 pass
         return side_effect
 
-    @mock.patch('%s.os.path.expanduser' % path)
-    @mock.patch('%s.os.path.isdir' % path)
-    def test_check_and_expand_cache_path(self, mock_is_dir, mock_expanduser):
-        mock_expanduser.side_effect = lambda x: re.sub('~', 'Users/lb', x)
-        mock_is_dir.side_effect     = lambda x: x == 'Users/lb/cache'
-
-        config_tests.check_and_expand_cache_path('~/cache')
-        config_tests.check_and_expand_cache_path('Users/lb/cache')
-        with self.assertRaises(ex_classes.PrerequisiteError):
-            config_tests.check_and_expand_cache_path('~/~/cache')
-        with self.assertRaises(ex_classes.PrerequisiteError):
-            config_tests.check_and_expand_cache_path('lb/cache')
-        with self.assertRaises(ex_classes.PrerequisiteError):
-            config_tests.check_and_expand_cache_path(3)
-
 
     @mock.patch('%s.check_stata_packages' % path)
     @mock.patch('%s.get_stata_executable' % path)

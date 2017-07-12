@@ -341,5 +341,23 @@ class TestMisc(unittest.TestCase):
 
         if os.path.isfile(yaml):
             os.remove(yaml)  
+
+
+    @mock.patch('%s.os.path.expanduser' % path)
+    @mock.patch('%s.os.path.isdir' % path)
+    def test_check_and_expand_path(self, mock_is_dir, mock_expanduser):
+        mock_expanduser.side_effect = lambda x: re.sub('~', 'Users/lb', x)
+        mock_is_dir.side_effect     = lambda x: x == 'Users/lb/cache'
+
+        misc.check_and_expand_path('~/cache')
+        misc.check_and_expand_path('Users/lb/cache')
+        with self.assertRaises(ex_classes.PrerequisiteError):
+            misc.check_and_expand_path('~/~/cache')
+        with self.assertRaises(ex_classes.PrerequisiteError):
+            misc.check_and_expand_path('lb/cache')
+        with self.assertRaises(ex_classes.PrerequisiteError):
+            misc.check_and_expand_path(3)
+
+            
 if __name__ == '__main__':
     unittest.main()

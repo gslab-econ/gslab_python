@@ -4,7 +4,7 @@ import sys
 import importlib
 import subprocess
 import pkg_resources
-from misc import is_in_path, get_stata_executable, get_stata_command, is_unix, load_yaml_value
+from misc import is_in_path, get_stata_executable, get_stata_command, is_unix, load_yaml_value, check_and_expand_path
 from _exception_classes import PrerequisiteError
 
 
@@ -114,19 +114,6 @@ def check_lfs():
                               'git lfs install --force' if prompted above.''')
 
 
-def check_and_expand_cache_path(cache):
-    error_message = " Cache directory, '%s', is not created. " % cache + \
-                    "Please manually create before running.\n\t\t" + \
-                    "    Or fix the path in user-config.yaml.\n"
-    try:
-        cache = os.path.expanduser(cache)
-        if not os.path.isdir(cache):
-            raise PrerequisiteError(error_message)
-        return cache
-    except:
-        raise PrerequisiteError(error_message)
-
-
 def check_stata(packages = ["yaml"], user_yaml = "user-config.yaml"):
     '''
     Check that a valid Stata executable is in the path and that the specified
@@ -175,3 +162,4 @@ def check_stata_packages(command, packages):
         raise PrerequisiteError("Stata command, '%s', failed.\n" % command.split(' ')[0] + \
                                 "\t\t   Please supply a correct stata_executable" + \
                                 " value in user-config.yaml.\n" )
+        

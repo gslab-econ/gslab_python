@@ -32,7 +32,7 @@ def main(user_yaml = 'user-config.yaml', release_files = []):
                     release_files.append(os.path.join(root, file_name))
 
     # Specify the local release directory
-    release_dir = load_yaml_value(user_yaml, 'release')
+    release_dir = load_yaml_value(user_yaml, 'release_directory')
 
     if branch == 'master':
         name   = repo
@@ -42,7 +42,7 @@ def main(user_yaml = 'user-config.yaml', release_files = []):
     local_release = '%s/%s/' % (release_dir, name)
     local_release = local_release + version + '/'
     # Get GitHub token:
-    github_token = load_yaml_value(user_yaml, 'github_token_optional')
+    github_token = load_yaml_value(user_yaml, 'github_token')
     
     _release_tools.release(vers              = version, 
                            DriveReleaseFiles = release_files,
