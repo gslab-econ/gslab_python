@@ -244,9 +244,12 @@ def load_yaml_value(path, key):
     import yaml
 
     if key == "stata_executable":
-        prompt = "Enter %s value or None to search for defaults: "
+        prompt = "Enter %s or None to search for defaults: "
+    elif key == "github_token":
+        prompt = "(Optional) Enter %s to be stored in user_config.yaml.\n" 
+        prompt = prompt + "Github token can also be entered without echoing later:" 
     else:
-        prompt = "Enter %s value: "
+        prompt = "Enter %s: "
 
     # Check if file exists and is not corrupted. If so, load yaml contents.
     yaml_contents = None
@@ -273,14 +276,11 @@ def load_yaml_value(path, key):
         else:
             return yaml_contents[key]
     except:
-        if key == "github_token_optional":
-            val = None
-        else:
-            with open(path, 'ab') as f:        
-                val = str(raw_input(prompt % key))
-                if re.sub('"', '', re.sub('\'', '', val.lower())) == "none":
-                    val = None
-                f.write('%s: %s\n' % (key, val))
+        with open(path, 'ab') as f:        
+            val = str(raw_input(prompt % key))
+            if re.sub('"', '', re.sub('\'', '', val.lower())) == "none":
+                val = None
+            f.write('%s: %s\n' % (key, val))
         return val
 
 
