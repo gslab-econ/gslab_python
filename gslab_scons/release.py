@@ -3,7 +3,7 @@ import os
 import sys
 import _release_tools
 from _exception_classes import ReleaseError
-from misc import load_yaml_value
+from misc import load_yaml_value, check_and_expand_path
 
 def main(user_yaml = 'user-config.yaml', release_files = []):
     inspect_repo()
@@ -33,6 +33,7 @@ def main(user_yaml = 'user-config.yaml', release_files = []):
 
     # Specify the local release directory
     release_dir = load_yaml_value(user_yaml, 'release_directory')
+    release_dir = check_and_expand_path(release_dir)
 
     if branch == 'master':
         name   = repo
@@ -41,6 +42,8 @@ def main(user_yaml = 'user-config.yaml', release_files = []):
         name = "%s-%s" % (repo, branch)
     local_release = '%s/%s/' % (release_dir, name)
     local_release = local_release + version + '/'
+
+
     # Get GitHub token:
     github_token = load_yaml_value(user_yaml, 'github_token')
     

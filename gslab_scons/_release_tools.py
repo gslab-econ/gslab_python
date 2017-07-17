@@ -50,7 +50,7 @@ def release(vers, org, repo,
 
     json_dump = json.dumps(payload)
     json_dump = re.sub('"FALSE"', 'false', json_dump)
-    posting = session.post(releases_path, data = json_dump)
+    posting   = session.post(releases_path, data = json_dump)
     # Check that the GitHub release was successful
     try:
         posting.raise_for_status()
@@ -84,18 +84,9 @@ def release(vers, org, repo,
         release_id     = json_split[tag_name_index - 1].split(':')[1]
     
         # Get root directory name on drive
-        path     = local_release.split('/')
-        dir_name = None
+        path       = local_release.split('/')
         drive_name = path[-2]
-
-        for i in range(len(path)):
-            if path[i] == 'release' and i + 1 < len(path):
-                dir_name = path[i + 1]
-                break
-
-        if dir_name is None:
-            raise ReleaseError("No /release/ superdirectory found " + 
-                               "in path given by local_release")
+        dir_name   = path[-1]
 
         if not os.path.isdir(local_release):
             os.makedirs(local_release)
