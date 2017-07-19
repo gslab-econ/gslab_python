@@ -42,7 +42,7 @@ def build_python(target, source, env):
                                 shell  = True)
     except subprocess.CalledProcessError as ex:
         message = misc.command_error_msg("Python", command)
-        raise ExecCallError('%s\n\n%s' % (message, ex.output))
+        raise ExecCallError('%s\n%s' % (message, ex.output))
 
     # Close log
     end_time   =  misc.current_time()    
