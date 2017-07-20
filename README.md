@@ -39,7 +39,7 @@ Alternatively, one may use:
 python setup.py install clean
 ```
 
-However, this installation method may not remove previous versions of gslab_tool.
+However, this installation method may not remove previous versions of `gslab_tools`.
 
 Testing
 -------
