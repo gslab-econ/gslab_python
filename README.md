@@ -18,17 +18,8 @@ Requirements
 
 Installation
 ------------
-To install this repository's Python libraries, run the `setup.py` script at its root
-with the command (note that you may have to prefix these commands with `sudo`):
 
-```
-python setup.py install clean
-```
-
-where the optional clean command deletes files used in installating the libraries
-after installation is complete.
-
-One can use `pip` to assist with this installation procedure by using the commands:
+The preferred installation method is to use [pip](https://pypi.python.org/pypi/pip):
 ```
 pip install git+ssh://git@github.com/gslab-econ/gslab_python.git@master
 ```
@@ -41,6 +32,14 @@ which are the SSH and HTTPS protocol versions.
 Note that this installation procedure may require obtaining machine privileges through,
 say, a `sudo` command. 
 
+
+Alternatively, one may use:
+
+```
+python setup.py install clean
+```
+
+However, this installation method may not remove previous versions of gslab_tool.
 
 Testing
 -------
