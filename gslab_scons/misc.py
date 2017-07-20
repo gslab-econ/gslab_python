@@ -5,6 +5,8 @@ import time
 import shutil
 import subprocess
 import datetime
+import yaml
+import getpass
 # Import gslab_scons modules
 import _exception_classes
 from size_warning import issue_size_warnings
@@ -241,13 +243,11 @@ def load_yaml_value(path, key):
     Load the yaml value indexed by the key argument in the file
     specified by the path argument.
     '''
-    import yaml
-
     if key == "stata_executable":
         prompt = "Enter %s or None to search for defaults: "
     elif key == "github_token":
         prompt = "(Optional) Enter %s to be stored in user_config.yaml.\n" 
-        prompt = prompt + "Github token can also be entered without echoing later:" 
+        prompt = prompt + "Github token can also be entered without storing to file later:" 
     else:
         prompt = "Enter %s: "
 
@@ -276,8 +276,11 @@ def load_yaml_value(path, key):
         else:
             return yaml_contents[key]
     except:
-        with open(path, 'ab') as f:        
-            val = str(raw_input(prompt % key))
+        with open(path, 'ab') as f:  
+            if key == "github_token":
+                val = getpass.getpass(prompt = (prompt % key))
+            else:
+                val = str(raw_input(prompt % key))
             if re.sub('"', '', re.sub('\'', '', val.lower())) == "none":
                 val = None
             f.write('%s: %s\n' % (key, val))

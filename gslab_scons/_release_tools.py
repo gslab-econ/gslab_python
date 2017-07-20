@@ -31,7 +31,7 @@ def release(vers, org, repo,
     '''
     # Check the argument types
 
-    if github_token is None:
+    if bool(github_token) is False:
         github_token = getpass.getpass("Enter a GitHub token and then press enter: ") 
     
     tag_name = vers
