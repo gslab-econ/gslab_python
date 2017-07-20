@@ -5,12 +5,13 @@ import time
 import shutil
 import subprocess
 import datetime
+import yaml
+import getpass
 # Import gslab_scons modules
 import _exception_classes
 from size_warning import issue_size_warnings
 
-
-def scons_debrief(target, source, env):
+def scons_debrief(target, env):
     '''Execute functions after SCons has built all targets'''
     # Log the state of the repo
     env['CL_ARG'] = env['MAXIT']
@@ -23,7 +24,7 @@ def scons_debrief(target, source, env):
     file_MB_limit = float(env['file_MB_limit'])
     total_MB_limit = float(env['total_MB_limit'])
     issue_size_warnings(look_in, file_MB_limit, total_MB_limit)
-
+    return None
 
 def state_of_repo(maxit):
     outfile = 'state_of_repo.log'
@@ -235,6 +236,68 @@ def lyx_scan(node, env, path):
                  for source in src_find.findall(contents)]
 
     return SOURCE
+
+
+def load_yaml_value(path, key):
+    '''
+    Load the yaml value indexed by the key argument in the file
+    specified by the path argument.
+    '''
+    if key == "stata_executable":
+        prompt = "Enter %s or None to search for defaults: "
+    elif key == "github_token":
+        prompt = "(Optional) Enter %s to be stored in user_config.yaml.\n" 
+        prompt = prompt + "Github token can also be entered without storing to file later:" 
+    else:
+        prompt = "Enter %s: "
+
+    # Check if file exists and is not corrupted. If so, load yaml contents.
+    yaml_contents = None
+    if os.path.isfile(path):
+        try:
+            yaml_contents = yaml.load(open(path, 'rU'))
+            if not isinstance(yaml_contents, dict):
+                raise yaml.scanner.ScannerError()
+
+        except yaml.scanner.ScannerError:
+            message  = "%s is a corrupted yaml file. Delete file and recreate? (y/n) "
+            response = str(raw_input(message % path))
+            if response.lower() == 'y':
+                os.remove(path)
+                yaml_contents = None
+            else:
+                message = "%s is a corrupted yaml file. Please fix." % path
+                raise _exception_classes.PrerequisiteError(message)
+
+    # If key exists, return value. Otherwise, add key-value to file.
+    try:
+        if yaml_contents[key] == "None":
+            return None
+        else:
+            return yaml_contents[key]
+    except:
+        with open(path, 'ab') as f:  
+            if key == "github_token":
+                val = getpass.getpass(prompt = (prompt % key))
+            else:
+                val = str(raw_input(prompt % key))
+            if re.sub('"', '', re.sub('\'', '', val.lower())) == "none":
+                val = None
+            f.write('%s: %s\n' % (key, val))
+        return val
+
+
+def check_and_expand_path(path):
+    error_message = " The directory provided, '%s', cannot be found. " % path + \
+                    "Please manually create before running\n" + \
+                    "or fix the path in user-config.yaml.\n"
+    try:
+        path = os.path.expanduser(path)
+        if not os.path.isdir(path):
+            raise _exception_classes.PrerequisiteError(error_message)
+        return path
+    except:
+        raise _exception_classes.PrerequisiteError(error_message)
 
 
 def get_directory(path):

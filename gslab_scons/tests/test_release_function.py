@@ -38,8 +38,9 @@ patch_collection = \
               mock.patch('%s.shutil.copy' % path)(
               mock.patch('%s.shutil.make_archive' % path)(
               mock.patch('%s.shutil.move' % path)(\
+              mock.patch('gslab_scons.misc.check_and_expand_path')(\
                 f \
-              ))))))))))
+              )))))))))))
 
 # Standard release() arguments
 standard_args = {'vers':              'test_version',
@@ -59,6 +60,7 @@ class TestReleaseFunction(unittest.TestCase):
 
     @patch_collection
     def test_release_standard(self, 
+                              mock_cepath,
                               mock_move, 
                               mock_make_archive, 
                               mock_copy, 
@@ -194,6 +196,7 @@ class TestReleaseFunction(unittest.TestCase):
 
     @patch_collection
     def test_release_nozip(self,
+                           mock_cepath,
                            mock_move, 
                            mock_make_archive, 
                            mock_copy, 
@@ -223,6 +226,7 @@ class TestReleaseFunction(unittest.TestCase):
 
     @patch_collection
     def test_release_no_drive(self,
+                              mock_cepath,
                               mock_move, 
                               mock_make_archive, 
                               mock_copy, 
@@ -256,6 +260,7 @@ class TestReleaseFunction(unittest.TestCase):
 
     @patch_collection
     def test_release_unintended_inputs(self,
+                                       mock_cepath,
                                        mock_move, 
                                        mock_make_archive, 
                                        mock_copy, 
@@ -292,9 +297,6 @@ class TestReleaseFunction(unittest.TestCase):
 
         # local_release is of an inappropriate type 
         self.check_failure({'local_release': 1}, AttributeError)
-        # local_release doesn't contain a /release/ subdirectory. Caps matter!
-        self.check_failure({'local_release': 'root/Release/folder'}, 
-                           ReleaseError)
 
         # org/repo referss to a nonexistent GitHub repository
         self.check_failure({'org': 'orgg'}, requests.exceptions.HTTPError)

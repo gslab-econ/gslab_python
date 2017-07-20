@@ -17,7 +17,6 @@ from gslab_make.tests import nostderrout
 
 path = 'gslab_scons.configuration_tests'
 
-
 class TestConfigurationTests(unittest.TestCase):
 
     @mock.patch('%s.check_python_packages' % path)
@@ -214,28 +213,11 @@ class TestConfigurationTests(unittest.TestCase):
                 pass
         return side_effect
 
-    @mock.patch('%s.os.path.expanduser' % path)
-    @mock.patch('%s.os.path.isdir' % path)
-    def test_check_and_expand_cache_path(self, mock_is_dir, mock_expanduser):
-        mock_expanduser.side_effect = lambda x: re.sub('~', 'Users/lb', x)
-        mock_is_dir.side_effect     = lambda x: x == 'Users/lb/cache'
-
-        config_tests.check_and_expand_cache_path('~/cache')
-        config_tests.check_and_expand_cache_path('Users/lb/cache')
-        with self.assertRaises(ex_classes.PrerequisiteError):
-            config_tests.check_and_expand_cache_path('~/~/cache')
-        with self.assertRaises(ex_classes.PrerequisiteError):
-            config_tests.check_and_expand_cache_path('lb/cache')
-        with self.assertRaises(ex_classes.PrerequisiteError):
-            config_tests.check_and_expand_cache_path(3)
-
 
     @mock.patch('%s.check_stata_packages' % path)
-    @mock.patch('%s.load_yaml_value'      % path)
     @mock.patch('%s.get_stata_executable' % path)
     @mock.patch('%s.get_stata_command'    % path)
-    def test_check_stata(self, mock_stata_command, mock_stata_exec, 
-                         mock_load_yaml, mock_stata_packages):
+    def test_check_stata(self, mock_stata_command, mock_stata_exec, mock_stata_packages):
         # Setup
         def stata_package_side_effect(*args, **kwargs):
             command  = args[0]
@@ -246,7 +228,6 @@ class TestConfigurationTests(unittest.TestCase):
                 if package != 'yaml':
                     raise ex_classes.PrerequisiteError()
 
-        mock_load_yaml.return_value = 'statamp'
         f = lambda x: x['stata_executable'] if x['stata_executable'] is not None \
                                             else 'statamp'
         mock_stata_exec.side_effect     = f
@@ -258,7 +239,6 @@ class TestConfigurationTests(unittest.TestCase):
         self.assertEqual(config_tests.check_stata(), 'statamp')
 
         # No yaml value
-        mock_load_yaml.return_value = None
         self.assertEqual(config_tests.check_stata(), 'statamp')
 
         # Failures
@@ -273,75 +253,7 @@ class TestConfigurationTests(unittest.TestCase):
             config_tests.check_stata(packages = ['bad_package'])
 
 
-    @mock.patch('%s.raw_input' % path)
-    def test_load_yaml_value(self, mock_raw_input):
-        # Setup
-        def raw_input_side_effect(*args, **kwargs):
-            message = args[0]
-            if re.search("corrupted", message):
-                return 'y'
-            if re.search("Enter", message):
-                return 'value'
-
-        def raw_input_side_effect2(*args, **kwargs):
-            message = args[0]
-            if re.search("corrupted", message):
-                return 'n'
-            if re.search("Enter", message):
-                return 'none'
-
-        mock_raw_input.side_effect = raw_input_side_effect
-
-        yaml = 'yaml.yaml'
-        def make_yaml(string):
-            if os.path.isfile(yaml):
-                os.remove(yaml)  
-            with open(yaml, 'wb') as f:
-                f.write('%s\n' % string)
-
-        # Test Good
-        key = 'key'
-        value = 'value'
-        # Yaml file exists, is not corrupt, and has key.
-        make_yaml('%s: %s' % (key, value))
-        self.assertEqual(config_tests.load_yaml_value(yaml, key), value)
-
-        # Yaml file exists, is not corrupt, and doesn't have key. 
-        # User enters value for key.
-        make_yaml('bad_key: bad_value')
-        self.assertEqual(config_tests.load_yaml_value(yaml, key), value)
-        
-        # But now yaml has a correct key and doesn't require user input.
-        mock_raw_input.side_effect = lambda x: "bad_value"
-        self.assertEqual(config_tests.load_yaml_value(yaml, key), value)
-        mock_raw_input.side_effect = raw_input_side_effect
-
-        # Yaml file exists and is corrupt. User deletes and re-creates. 
-        make_yaml('%s %s' % (key, value))
-        self.assertEqual(config_tests.load_yaml_value(yaml, key), value)
-
-        # Yaml file does not exist. User enters value to create. 
-        os.remove(yaml)
-        self.assertEqual(config_tests.load_yaml_value(yaml, key), value)
-
-        # Yaml file does not exist. User enters none value to create. 
-        os.remove(yaml)
-        key = 'stata_executable'
-        mock_raw_input.side_effect = raw_input_side_effect2
-        self.assertEqual(config_tests.load_yaml_value(yaml, key), None)
-
-        # Yaml file now exists with none value.
-        self.assertTrue(os.path.isfile(yaml))
-        self.assertEqual(config_tests.load_yaml_value(yaml, key), None)
-
-        # Test bad
-        with self.assertRaises(ex_classes.PrerequisiteError):
-            # Corrupt file and user doesn't choose to delete and re-create 
-            make_yaml('key value')
-            config_tests.load_yaml_value(yaml, 'key')
-
-        if os.path.isfile(yaml):
-            os.remove(yaml)  
+    
 
     @mock.patch('%s.is_unix' % path)
     @mock.patch('%s.convert_packages_argument' % path)

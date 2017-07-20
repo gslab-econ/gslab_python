@@ -15,7 +15,7 @@ sys.path.append('../..')
 
 import gslab_scons as gs
 from gslab_scons._exception_classes import (BadExtensionError,
-                                            BadExecutableError)
+                                            ExecCallError)
 from gslab_make.tests import nostderrout
 
 system_patch = mock.patch('gslab_scons.builders.build_r.subprocess.check_output')
@@ -57,7 +57,7 @@ class TestBuildR(unittest.TestCase):
         '''
         mock_check_output.side_effect = \
             fx.make_r_side_effect(recognized = False)
-        with self.assertRaises(BadExecutableError):
+        with self.assertRaises(ExecCallError):
             helpers.standard_test(self, gs.build_r, 'R', 
                                   system_mock = mock_check_output)
    

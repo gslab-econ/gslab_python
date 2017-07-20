@@ -19,3 +19,10 @@ from being zipped before their release to Google Drive.
 This release procedure will warn the user when a versioned file
 is larger than 2MB and when the directory's versioned content
 is larger than 500MB in total.  
+
+Instead of entering the GitHub token as a password when using `release`,
+the user can store it `user-config.yaml` in the relevant template as
+
+```
+github_token: <YOUR_TOKEN_HERE>
+```
