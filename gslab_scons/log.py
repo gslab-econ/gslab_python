@@ -80,7 +80,10 @@ def collect_builder_logs(parent_dir):
             if f.endswith("sconscript.log"):
                 f_full = os.path.join(root, f)
                 with open(f_full, 'rU') as g:
-                    s = g.readlines()[1] # skip a line
+                    try:
+                        s = g.readlines()[1] # line 0 = log start time, line 1 = log end time
+                    except IndexError:
+                        s = ''
                     s = s[s.find('{')+1: s.find('}')] # find {} time identifier 
                     try:
                         builder_log_end_time = datetime.strptime(s, "%Y-%m-%d %H:%M:%S")
