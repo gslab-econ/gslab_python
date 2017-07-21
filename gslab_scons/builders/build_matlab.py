@@ -28,24 +28,29 @@ def build_matlab(target, source, env):
         should be the MATLAB .M script that the builder is intended to execute. 
     env: SCons construction environment, see SCons user guide 7.2
     '''
+    
+    # Prelims
+    source      = misc.make_list_if_string(source)
+    target      = misc.make_list_if_string(target)
+    source_file = str(source[0])
+    target_file = str(target[0])
+    target_dir  = misc.get_directory(target_file)
+    start_time = misc.current_time()
 
+    # MATLAB options
     if misc.is_unix():
         options = '-nosplash -nodesktop'
     elif sys.platform == 'win32':
         options = '-nosplash -minimize -wait'
     else:
         raise PrerequisiteError("Unsupported OS")
-    
-    source      = misc.make_list_if_string(source)
-    target      = misc.make_list_if_string(target)
-    source_file = str(source[0])
-    target_file = str(target[0])
-    target_dir  = misc.get_directory(target_file)
-
-    start_time = misc.current_time()
 
     misc.check_code_extension(source_file, '.m')
-    log_file = target_dir + '/sconscript.log'
+    try:
+        log_ext = '_%s' % env['log_ext']
+    except:
+        log_ext = ''
+    log_file    = target_dir + ('/sconscript%s.log' % log_ext)
 
     # Set up command line arguments
     cl_arg = misc.command_line_args(env)

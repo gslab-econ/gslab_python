@@ -39,7 +39,11 @@ def build_lyx(target, source, env):
 
     misc.check_code_extension(source_file, 'lyx')
     newpdf   = source_file.replace('.lyx','.pdf')
-    log_file = target_dir + '/sconscript.log'
+    try:
+        log_ext = '_%s' % env['log_ext']
+    except:
+        log_ext = ''
+    log_file    = target_dir + ('/sconscript%s.log' % log_ext)
     
     # System call
     try:

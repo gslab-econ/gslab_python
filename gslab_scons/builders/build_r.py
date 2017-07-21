@@ -30,7 +30,11 @@ def build_r(target, source, env):
     start_time  = misc.current_time()
 
     misc.check_code_extension(source_file, 'r')
-    log_file = target_dir + '/sconscript.log'
+    try:
+        log_ext = '_%s' % env['log_ext']
+    except:
+        log_ext = ''
+    log_file    = target_dir + ('/sconscript%s.log' % log_ext)
     
     cl_arg = misc.command_line_args(env)
 

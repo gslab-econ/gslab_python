@@ -38,7 +38,11 @@ def build_tables(target, source, env):
     target_file = str(target[0])
     target_dir  = misc.get_directory(target_file)    
     misc.check_code_extension(target_file, '.lyx')
-    log_file = target_dir + '/sconscript.log'
+    try:
+        log_ext = '_%s' % env['log_ext']
+    except:
+        log_ext = ''
+    log_file    = target_dir + ('/sconscript%s.log' % log_ext)
     
     # Command call
     command = """tablefill(input    = %s, 
