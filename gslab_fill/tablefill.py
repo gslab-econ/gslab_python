@@ -14,7 +14,6 @@ def tablefill(**kwargs):
         args = parse_arguments(kwargs)
         tables = parse_tables(args)
         lyx_text = insert_tables(args, tables)
-        lyx_text = insert_warning(args, lyx_text)
         write_to_lyx(args, lyx_text)
         exitmessage = args['template'] + ' filled successfully by tablefill'
         print exitmessage
@@ -106,7 +105,7 @@ def insert_tables(args,tables):
                         lyx_text[i] = lyx_text[i].replace('#' + entry_tag + '#', rounded_entry)
                         entry_count+=1
                         
-                    elif lyx_text[i]=='</lyxtabular>\n':
+                    elif lyx_text[i] == '</lyxtabular>\n' or lyx_text[i] == "end{tabular}":
                         search_table = False
     
     return lyx_text
@@ -139,28 +138,6 @@ def insert_commas(entry):
     
     return entry_commas
   
-
-def insert_warning(args, lyx_text):
-    input = ' '.join(args['input'])
-    template = ''.join(args['template'])
-    message = '\n\\begin_layout Standard\n\\begin_inset Note Note\nstatus open' \
-               '\n\n\\begin_layout Plain Layout\nThis file was produced by ' \
-               'tablefill.py from template file %s and input file(s) %s.  To make '\
-               'changes in this file, edit the input and template files. Do not '\
-               'edit this file directly.\n\\end_layout\n\n\\end_inset\n\n\\end_layout\n'
-    filled_message = message % (template, input)
-    message_lines = filled_message.split('\n')
-    message_lines = [s + '\n' for s in message_lines]
-    printed = False
-    n = -1
-    while not printed:
-        n += 1
-        if lyx_text[n].startswith('\\begin_body'):
-            lyx_text[n+1:n+1] = message_lines
-            printed = True
-        
-    return lyx_text
-    
 
 def write_to_lyx(args, lyx_text):    
     outfile = open(args['output'], 'wb')

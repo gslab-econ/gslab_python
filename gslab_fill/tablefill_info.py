@@ -4,13 +4,14 @@
 #################################################################
 
 Description:
-tablefill.py is a Python module designed to fill LyX tables with output 
+tablefill.py is a Python module designed to fill LyX/Tex tables with output 
 from text files (usually output from Stata or Matlab).
 
 Usage:
-Tablefill takes as input a LyX file containing empty tables (the template 
+Tablefill takes as input a LyX (or Tex) file containing empty tables (the template 
 file) and text files containing data to be copied to  these tables (the 
-input  files), and produces a LyX file with filled tables (the output file). 
+input  files), and produces a LyX (or Tex) file with filled tables (the output file). 
+For brevity, LyX will be used to denote LyX or Tex files throughout.
 
 Tablefill must first be imported to make.py.  This is typically achieved 
 by including the following lines:

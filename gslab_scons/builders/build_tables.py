@@ -7,7 +7,7 @@ def build_tables(target, source, env):
     '''Build a SCons target by filling a table
 
     This function uses the tablefill function from gslab_fill to produced a 
-    filled table from (i) an empty table in a LyX file and (ii) text files 
+    filled table from (i) an empty table in a LyX/Tex file and (ii) text files 
     containing data to be used in filling the table. 
 
     Parameters
@@ -16,7 +16,7 @@ def build_tables(target, source, env):
         The target(s) of the SCons command.
     source: string or list
         The source(s) of the SCons command. The first source specified
-        should be the LyX file specifying the table format. The subsequent 
+        should be the LyX/Tex file specifying the table format. The subsequent 
         sources should be the text files containing the data with which the
         tables are to be filled. 
     env: SCons construction environment, see SCons user guide 7.2
@@ -29,7 +29,7 @@ def build_tables(target, source, env):
     
     # Set up source file (table format)
     source_file = str(source[0])
-    misc.check_code_extension(source_file, '.lyx')
+    misc.check_code_extension(source_file, ['.lyx', '.tex'])
 
     # Set up input string (list of data tables)
     input_string = ' '.join([str(i) for i in source[1:]])
@@ -37,22 +37,23 @@ def build_tables(target, source, env):
     # Set up target file (filled table)
     target_file = str(target[0])
     target_dir  = misc.get_directory(target_file)    
-    misc.check_code_extension(target_file, '.lyx')
+    misc.check_code_extension(target_file, ['.lyx', '.tex'])
     log_file = target_dir + '/sconscript.log'
     
     # Command call
-    command = """tablefill(input    = %s, 
-                         template = %s, 
-                         output   = %s)""" % (input_string, source_file, target_file)
     output  = tablefill(input    = input_string, 
                         template = source_file, 
                         output   = target_file)
     
-    # Close log
     with open(log_file, 'wb') as f:
         f.write(output)
-
-    if "traceback" in str.lower(output): # if tablefill.py returns an error            
+        f.write("\n")
+        
+    # Close log
+    if "traceback" in str.lower(output): # if tablefill.py returns an error   
+        command = """tablefill(input    = %s, 
+                         template = %s, 
+                         output   = %s)""" % (input_string, source_file, target_file)         
         message = misc.command_error_msg("tablefill.py", command)
         raise ExecCallError(message)
     

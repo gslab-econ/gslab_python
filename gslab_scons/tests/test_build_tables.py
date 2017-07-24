@@ -11,11 +11,21 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append('../..')
 
 import gslab_scons.builders.build_tables as gs
-from gslab_scons._exception_classes import BadExtensionError
+from gslab_scons._exception_classes import BadExtensionError, ExecCallError
 from gslab_make.tests import nostderrout
 
 
 class TestBuildTables(unittest.TestCase):
+
+    def setUp(self):
+        if not os.path.exists('./build/'):
+            os.mkdir('./build/')
+
+    def table_fill_side_effect(self, input, template, output):
+        return ""
+
+    def table_fill_side_effect_error(self, input, template, output):
+        return "traceback"
 
     @mock.patch('gslab_scons.builders.build_tables.tablefill')
     def test_standard(self, mock_tablefill):
@@ -23,6 +33,8 @@ class TestBuildTables(unittest.TestCase):
         Test that build_tables() correctly prepares and passes
         inputs to the gslab_fill.tablefill() function
         '''
+
+        mock_tablefill.side_effect = self.table_fill_side_effect
         # Specify the sources and the target arguments of build_tables()
         source = ['./input/tablefill_template.lyx', 
                   './input/tables_appendix.txt',
@@ -35,6 +47,11 @@ class TestBuildTables(unittest.TestCase):
 
         # The target can also be a tuple
         target = ('./build/tablefill_template_filled.lyx')
+        gs.build_tables(target, source, '')
+        self.check_call(source, target, mock_tablefill)
+
+        # The target can also be a tex file
+        target = ('./build/tablefill_template_filled.tex')
         gs.build_tables(target, source, '')
         self.check_call(source, target, mock_tablefill)
 
@@ -71,6 +88,7 @@ class TestBuildTables(unittest.TestCase):
         Test that build_tables() constructs LyX tables correctly when
         its target argument is a string.
         '''
+        mock_tablefill.side_effect = self.table_fill_side_effect
         source = ['./input/tablefill_template.lyx', 
                   './input/tables_appendix.txt', 
                   './input/tables_appendix_two.txt']
@@ -78,6 +96,20 @@ class TestBuildTables(unittest.TestCase):
         gs.build_tables(target, source, '')
 
         self.check_call(source, target, mock_tablefill)      
+
+    @mock.patch('gslab_scons.builders.build_tables.tablefill')
+    def test_error_traceback(self, mock_tablefill):
+        '''
+        Test that build_tables() properly outputs traceback.
+        '''
+        mock_tablefill.side_effect = self.table_fill_side_effect_error
+        source = ['./input/tablefill_template.lyx', 
+                  './input/tables_appendix.txt', 
+                  './input/tables_appendix_two.txt']
+        target = './build/tablefill_template_filled.lyx'
+        with self.assertRaises(ExecCallError), nostderrout():
+            gs.build_tables(target, source, '')
+
 
     def test_target_extension(self):
         '''Test that build_tables() recognises an inappropriate file extension'''
@@ -102,6 +134,8 @@ class TestBuildTables(unittest.TestCase):
         std_source = ['./input/tablefill_template.lyx', 
                       './input/tables_appendix.txt']
         std_target = './build/tablefill_template_filled.lyx'
+
+        mock_tablefill.side_effect = self.table_fill_side_effect
 
         #== env =============
         # We expect that build_tables() will accept any env argument
@@ -133,7 +167,11 @@ class TestBuildTables(unittest.TestCase):
         # source is a non-strings non-iterable with no len() value
         source = 1
         with self.assertRaises(TypeError):
-            gs.build_tables(std_target, source, None)
+            gs.build_tables(std_target, source, None)\
+
+    def tearDown(self):
+        if os.path.exists('./build/'):
+            shutil.rmtree('./build/')
 
 
 if __name__ == '__main__':
