@@ -42,17 +42,17 @@ class TestBuildTables(unittest.TestCase):
         target = ['./build/tablefill_template_filled.lyx']
         
         # Call build_tables() and check that it behaved as expected.
-        gs.build_tables(target, source, '')
+        gs.build_tables(target, source, {})
         self.check_call(source, target, mock_tablefill)
 
         # The target can also be a tuple
         target = ('./build/tablefill_template_filled.lyx')
-        gs.build_tables(target, source, '')
+        gs.build_tables(target, source, {})
         self.check_call(source, target, mock_tablefill)
 
         # The target can also be a tex file
         target = ('./build/tablefill_template_filled.tex')
-        gs.build_tables(target, source, '')
+        gs.build_tables(target, source, {})
         self.check_call(source, target, mock_tablefill)
 
     def check_call(self, source, target, mock_tablefill):
@@ -93,7 +93,7 @@ class TestBuildTables(unittest.TestCase):
                   './input/tables_appendix.txt', 
                   './input/tables_appendix_two.txt']
         target = './build/tablefill_template_filled.lyx'
-        gs.build_tables(target, source, '')
+        gs.build_tables(target, source, {})
 
         self.check_call(source, target, mock_tablefill)      
 
@@ -108,7 +108,7 @@ class TestBuildTables(unittest.TestCase):
                   './input/tables_appendix_two.txt']
         target = './build/tablefill_template_filled.lyx'
         with self.assertRaises(ExecCallError), nostderrout():
-            gs.build_tables(target, source, '')
+            gs.build_tables(target, source, {})
 
 
     def test_target_extension(self):
@@ -138,10 +138,10 @@ class TestBuildTables(unittest.TestCase):
         mock_tablefill.side_effect = self.table_fill_side_effect
 
         #== env =============
-        # We expect that build_tables() will accept any env argument
         for env in ['', None, Exception, "the environment", (1, 2, 3)]:
-            gs.build_tables(std_target, std_source, env = env)
-            self.check_call(std_source, std_target, mock_tablefill)    
+            with self.assertRaises(TypeError):
+                gs.build_tables(std_target, std_source, env = env)
+                self.check_call(std_source, std_target, mock_tablefill)    
 
         #== target ==========
         # Target argument is not a string or container of strings
@@ -157,17 +157,17 @@ class TestBuildTables(unittest.TestCase):
         # The source isn't a .lyx path
         source = ['nonexistent_file']
         with self.assertRaises(BadExtensionError):
-            gs.build_tables(std_target, source, None)
+            gs.build_tables(std_target, source, {})
 
         # The source is a container of nonstrings.
         source = (True, False, False)
         with self.assertRaises(TypeError):
-            gs.build_tables(std_target, source, None)
+            gs.build_tables(std_target, source, {})
 
         # source is a non-strings non-iterable with no len() value
         source = 1
         with self.assertRaises(TypeError):
-            gs.build_tables(std_target, source, None)\
+            gs.build_tables(std_target, source, {})
 
     def tearDown(self):
         if os.path.exists('./build/'):

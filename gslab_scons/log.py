@@ -77,7 +77,7 @@ def collect_builder_logs(parent_dir):
 
     for root, dirs, files in os.walk(parent_dir): # take a walk in parent and child dirs
         for f in files:
-            if f.endswith("sconscript.log"):
+            if f.startswith('sconscript') and f.endswith('.log'):
                 f_full = os.path.join(root, f)
                 with open(f_full, 'rU') as g:
                     try:

@@ -1,3 +1,4 @@
+import os
 import gslab_scons.misc as misc
 from gslab_fill import tablefill
 from gslab_scons import log_timestamp
@@ -38,7 +39,11 @@ def build_tables(target, source, env):
     target_file = str(target[0])
     target_dir  = misc.get_directory(target_file)    
     misc.check_code_extension(target_file, ['.lyx', '.tex'])
-    log_file = target_dir + '/sconscript.log'
+    try:
+        log_ext = '_%s' % env['log_ext']
+    except KeyError:
+        log_ext = ''
+    log_file = os.path.join(target_dir, ('sconscript%s.log' % log_ext))
     
     # Command call
     output  = tablefill(input    = input_string, 
@@ -47,7 +52,7 @@ def build_tables(target, source, env):
     
     with open(log_file, 'wb') as f:
         f.write(output)
-        f.write("\n")
+        f.write("\n\n")
         
     # Close log
     if "traceback" in str.lower(output): # if tablefill.py returns an error   
