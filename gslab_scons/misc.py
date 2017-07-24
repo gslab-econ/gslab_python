@@ -197,14 +197,22 @@ def make_list_if_string(source):
     return source
 
 
-def check_code_extension(source_file, extension):
+def check_code_extension(source_file, extensions):
     '''
     This function raises an exception if the extension in `source_file`
     does not match the software package specified by `software`.
     '''
+    if not isinstance(extensions, list):
+        extensions = [extensions]
     source_file = str.lower(str(source_file))
-    extension   = str.lower(str(extension))
-    if not source_file.endswith(extension):
+    error       = True
+    for extension in extensions:
+        extension = str.lower(str(extension))
+
+        if source_file.endswith(extension):
+            error = False
+
+    if error:
         error_message = 'First argument, %s, must be a %s file.' % \
                 (source_file, extension)
         raise _exception_classes.BadExtensionError(error_message)
