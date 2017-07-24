@@ -14,7 +14,7 @@ Requirements
 ------------
 - Python 2.7 
 - `setuptools` ([installation instructions](https://packaging.python.org/installing/))
-- `mock` (> 2.0.0) in order to run the unit tests 
+- `mock` (> 2.0.0) and `coverage` in order to run the unit tests 
 
 Installation
 ------------
