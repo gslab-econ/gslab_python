@@ -67,9 +67,9 @@ class TestBuildLyX(unittest.TestCase):
         target = './build/lyx.pdf'
         source = ['./input/lyx_test_file.lyx']
         log    = './build/sconscript.log'
-
+        
         for env in [True, [1, 2, 3], ('a', 'b'), None, TypeError]:
-            with self.assertRaises(ExecCallError):
+            with self.assertRaises(TypeError):
                 gs.build_lyx(target, source, env = env)
 
     @mock.patch('%s.os.system' % path)
@@ -95,7 +95,7 @@ class TestBuildLyX(unittest.TestCase):
         directory does not exist.
         '''
         mock_system.side_effect = fx.lyx_side_effect
-        with self.assertRaises(ExecCallError):
+        with self.assertRaises(TypeError):
             gs.build_lyx('./nonexistent_directory/lyx.pdf', 
                          ['./input/lyx_test_file.lyx'], env = True)
 
