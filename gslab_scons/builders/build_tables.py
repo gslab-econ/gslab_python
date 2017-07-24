@@ -51,7 +51,7 @@ def build_tables(target, source, env):
     
     with open(log_file, 'wb') as f:
         f.write(output)
-        f.write("\n")
+        f.write("\n\n")
         
     # Close log
     if "traceback" in str.lower(output): # if tablefill.py returns an error   
