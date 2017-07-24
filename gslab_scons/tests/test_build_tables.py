@@ -167,7 +167,7 @@ class TestBuildTables(unittest.TestCase):
         # source is a non-strings non-iterable with no len() value
         source = 1
         with self.assertRaises(TypeError):
-            gs.build_tables(std_target, source, None)\
+            gs.build_tables(std_target, source, None)
 
     def tearDown(self):
         if os.path.exists('./build/'):
