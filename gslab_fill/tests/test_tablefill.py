@@ -31,9 +31,9 @@ class testTablefill(unittest.TestCase):
         self.assertIn('filled successfully', message)                        
         tag_data = open('../../gslab_fill/tests/input/tablefill_template.lyx', 'rU').readlines()
         filled_data = open('./build/tablefill_template_filled.lyx', 'rU').readlines()
-        self.assertEqual(len(tag_data) + 13, len(filled_data))
+        self.assertEqual(len(tag_data), len(filled_data))
         for n in range(len(tag_data)):
-            self.tag_compare(tag_data[n], filled_data[n + 13]) 
+            self.tag_compare(tag_data[n], filled_data[n]) 
     
     def tag_compare(self, tag_line, filled_line):
         if re.match('^.*#\d+#', tag_line) or re.match('^.*#\d+,#', tag_line):
@@ -65,7 +65,7 @@ class testTablefill(unittest.TestCase):
         with nostderrout():
 
             error = tablefill(input   = '../../gslab_fill/tests/input/tables_appendix.txt ' + \
-                                       ' ../../gslab_fill/tests/input/tables_appendix_two.txt', 
+                                        '../../gslab_fill/tests/input/tables_appendix_two.txt', 
                               template = '../../gslab_fill/tests/input/textfill_template.lyx')
         self.assertIn('KeyError', error)
                 
