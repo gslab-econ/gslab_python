@@ -41,8 +41,8 @@ def build_tables(target, source, env):
     try:
         log_ext = '_%s' % env['log_ext']
     except:
-    log_file    = target_dir + ('/sconscript%s.log' % log_ext)
         log_ext = ''
+    log_file    = target_dir + ('/sconscript%s.log' % log_ext)
     
     # Command call
     output  = tablefill(input    = input_string, 
