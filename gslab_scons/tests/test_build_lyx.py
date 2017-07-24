@@ -69,7 +69,7 @@ class TestBuildLyX(unittest.TestCase):
         log    = './build/sconscript.log'
 
         for env in [True, [1, 2, 3], ('a', 'b'), None, TypeError]:
-            with self.assertRaises(ExecCallError, TypeError):
+            with self.assertRaises(ExecCallError):
                 gs.build_lyx(target, source, env = env)
 
     @mock.patch('%s.os.system' % path)
