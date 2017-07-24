@@ -45,7 +45,11 @@ def build_matlab(target, source, env):
     start_time = misc.current_time()
 
     misc.check_code_extension(source_file, '.m')
-    log_file = target_dir + '/sconscript.log'
+    try:
+        log_ext = '_%s' % env['log_ext']
+    except KeyError:
+        log_ext = ''
+    log_file = os.path.join(target_dir, ('sconscript%s.log' % log_ext))
 
     # Set up command line arguments
     cl_arg = misc.command_line_args(env)

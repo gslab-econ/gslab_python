@@ -32,9 +32,9 @@ def build_r(target, source, env):
     misc.check_code_extension(source_file, 'r')
     try:
         log_ext = '_%s' % env['log_ext']
-    except:
+    except KeyError:
         log_ext = ''
-    log_file    = target_dir + ('/sconscript%s.log' % log_ext)
+    log_file = os.path.join(target_dir, ('sconscript%s.log' % log_ext))
     
     cl_arg = misc.command_line_args(env)
 

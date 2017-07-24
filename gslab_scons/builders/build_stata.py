@@ -38,9 +38,9 @@ def build_stata(target, source, env):
     target_dir  = misc.get_directory(target_file)
     try:
         log_ext = '_%s' % env['log_ext']
-    except:
+    except KeyError:
         log_ext = ''
-    log_file    = target_dir + ('/sconscript%s.log' % log_ext)
+    log_file = os.path.join(target_dir, ('sconscript%s.log' % log_ext))
     
     # Set up command line arguments
     cl_arg = misc.command_line_args(env)

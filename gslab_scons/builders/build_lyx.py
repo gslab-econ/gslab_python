@@ -41,9 +41,9 @@ def build_lyx(target, source, env):
     newpdf   = source_file.replace('.lyx','.pdf')
     try:
         log_ext = '_%s' % env['log_ext']
-    except:
+    except KeyError:
         log_ext = ''
-    log_file    = target_dir + ('/sconscript%s.log' % log_ext)
+    log_file = os.path.join(target_dir, ('sconscript%s.log' % log_ext))
     
     # System call
     try:
