@@ -53,7 +53,7 @@ def end_log(log = 'sconstruct.log'):
             with open(f, 'rU') as sconscript:
                 if this_run_dict[f] == beginning_of_time:
                     sconstruct.write("*** Warning!!! Doesn't look the sconscript below finished.\n")
-                sconstruct.write(f)
+                sconstruct.write(f + '\n')
                 sconstruct.write(sconscript.read())
 
     return None
@@ -76,19 +76,20 @@ def collect_builder_logs(parent_dir):
         (snippet from SO 3964681)'''
     builder_log_collect = {}
 
-    # Use platform-specific command line tool to search for paths tp logs 
-    # and store them in a list
+    # Store paths to logs in a list, found from platform-specific command line tool 
+    rel_parent_dir = os.path.relpath(parent_dir)
     log_name = 'sconscript*.log'
-    sprintf_bundle = (parent_dir, log_name)
+    sprintf_bundle = (rel_parent_dir, log_name)
     if misc.is_unix():
         cmd = 'find %s -name "%s"' % sprintf_bundle
     else:
         cmd = 'dir %s %s /b/s' % sprintf_bundle
     log_paths = subprocess.check_output(cmd, shell = True)
+    log_paths = log_paths.split('\n')[:-1] # Last entry always ''
 
-    # Read the file at each path to a log and store output text in a dict at filename
+    # Read the file at each path to a log and store output complete-time in a dict at filename
     for log_path in log_paths:
-        with open(log_path.strip(), 'rU') as f:
+        with open(log_path, 'rU') as f:
             try:
                 s = f.readlines()[1] # line 0 = log start time, line 1 = log end time
             except IndexError:
@@ -99,6 +100,6 @@ def collect_builder_logs(parent_dir):
             except ValueError: # if the code breaks, there's no time identifier
                 beginning_of_time    = datetime.min
                 builder_log_end_time = beginning_of_time
-        builder_log_collect[f_full]  = builder_log_end_time
+        builder_log_collect[log_path]  = builder_log_end_time
 
     return builder_log_collect
