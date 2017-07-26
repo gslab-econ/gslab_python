@@ -79,14 +79,16 @@ def collect_builder_logs(parent_dir):
     # Store paths to logs in a list, found from platform-specific command line tool 
     rel_parent_dir = os.path.relpath(parent_dir)
     log_name = 'sconscript*.log'
-    sprintf_bundle = (rel_parent_dir, log_name)
     if misc.is_unix():
-        cmd = 'find %s -name "%s"' % sprintf_bundle
+        cmd = 'find %s -name "%s"' % (rel_parent_dir, log_name)
     else:
-        cmd = 'dir %s %s /b/s' % sprintf_bundle
-    log_paths = subprocess.check_output(cmd, shell = True)
-    log_paths = log_paths.split('\n')[:-1] # Last entry always ''
-
+        cmd = 'dir "%s" /b/s' % os.path.join(rel_parent_dir, log_name)
+    try:
+        log_paths = subprocess.check_output(cmd, shell = True).replace('\r\n', '\n')
+        log_paths = log_paths.split('\n')[:-1] # Last entry always ''
+    except subprocess.CalledProcessError:
+        log_paths = []
+    
     # Read the file at each path to a log and store output complete-time in a dict at filename
     for log_path in log_paths:
         with open(log_path, 'rU') as f:
