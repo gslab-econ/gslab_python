@@ -52,7 +52,7 @@ def end_log(log = 'sconstruct.log'):
         for f in this_run_list:
             with open(f, 'rU') as sconscript:
                 if this_run_dict[f] == beginning_of_time:
-                    warning_string = " Warning!!! The log below does not have timestamps," + \
+                    warning_string = "*** Warning!!! The log below does not have timestamps," + \
                                      " the Sconscript may not have finished.\n"
                     sconstruct.write(warning_string)
                 sconstruct.write(f + '\n')
