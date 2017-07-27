@@ -26,7 +26,7 @@ release_directory: <YOUR_RELEASE_DIR_HERE>
 For example, the user can automatically release it to their DropBox by setting `release_directory: /Users/you/Dropbox/release`. 
 
 Including the option `no_zip` will prevent the release files
-from being zipped before their release to a .
+from being zipped before their release to `release_directory`. 
 
 This release procedure will warn the user when a versioned file
 is larger than 2MB and when the directory's versioned content
