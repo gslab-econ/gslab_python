@@ -7,8 +7,8 @@ from the command line within the directory of interest:
 python -m gslab_scons.release version=<version name here>
 ```
     
-where `<version name here>` is the name of the version that
-that will be released. As an example, to release version
+where `<version name here>` is the name of the version that 
+will be released. As an example, to release version
 v1.2.1 of a directory, navigate to the root of the directory and run:
 
 ```sh
