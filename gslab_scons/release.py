@@ -23,7 +23,7 @@ def main(user_yaml = 'user-config.yaml', release_files = []):
     dont_zip    = 'no_zip' in sys.argv
     zip_release = not dont_zip
 
-    # Read a list of files to release to Google Drive
+    # Read a list of files to release to release_dir
     if release_files == []:
         for root, _, files in os.walk('./release'):
             for file_name in files:
