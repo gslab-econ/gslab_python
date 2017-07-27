@@ -52,7 +52,9 @@ def end_log(log = 'sconstruct.log'):
         for f in this_run_list:
             with open(f, 'rU') as sconscript:
                 if this_run_dict[f] == beginning_of_time:
-                    sconstruct.write("*** Warning!!! Doesn't look the sconscript below finished.\n")
+                    warning_string = " Warning!!! The log below does not have timestamps," + \
+                                     " the Sconscript may not have finished.\n"
+                    sconstruct.write(warning_string)
                 sconstruct.write(f + '\n')
                 sconstruct.write(sconscript.read())
 
@@ -80,12 +82,13 @@ def collect_builder_logs(parent_dir):
     rel_parent_dir = os.path.relpath(parent_dir)
     log_name = 'sconscript*.log'
     if misc.is_unix():
-        cmd = 'find %s -name "%s"' % (rel_parent_dir, log_name)
+        command = 'find %s -name "%s"' % (rel_parent_dir, log_name)
     else:
-        cmd = 'dir "%s" /b/s' % os.path.join(rel_parent_dir, log_name)
+        command = 'dir "%s" /b/s' % os.path.join(rel_parent_dir, log_name)
     try:
-        log_paths = subprocess.check_output(cmd, shell = True).replace('\r\n', '\n')
-        log_paths = log_paths.split('\n')[:-1] # Last entry always ''
+        log_paths = subprocess.check_output(command, shell = True).replace('\r\n', '\n')
+        log_paths = log_paths.split('\n')
+        log_paths = filter(bool, map(str.strip, log_paths)) # Strip paths and keep non-empty
     except subprocess.CalledProcessError:
         log_paths = []
     
@@ -96,7 +99,7 @@ def collect_builder_logs(parent_dir):
                 s = f.readlines()[1] # line 0 = log start time, line 1 = log end time
             except IndexError:
                 s = ''
-            s = s[s.find('{')+1: s.find('}')] # find {} time identifier 
+            s = s[s.find('{') + 1: s.find('}')] # find {} time identifier 
             try:
                 builder_log_end_time = datetime.strptime(s, "%Y-%m-%d %H:%M:%S")
             except ValueError: # if the code breaks, there's no time identifier
