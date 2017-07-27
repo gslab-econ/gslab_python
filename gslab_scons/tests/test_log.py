@@ -44,7 +44,7 @@ class TestLog(unittest.TestCase):
         # Restore the initial standard output
         sys.stdout = initial_stdout
 
-        # Ensure that start_log() actually redicted standard output
+        # Ensure that start_log() actually redirected standard output
         # to a log at the expected path.
         with open('sconstruct.log', 'rU') as f:
             log_contents = f.read()

@@ -2,6 +2,7 @@ import os
 import sys
 import glob
 from datetime import datetime
+import subprocess
 import gslab_scons.misc as misc
 
 
@@ -51,8 +52,10 @@ def end_log(log = 'sconstruct.log'):
         for f in this_run_list:
             with open(f, 'rU') as sconscript:
                 if this_run_dict[f] == beginning_of_time:
-                    sconstruct.write("*** Warning!!! Doesn't look the sconscript below finished.\n")
-                sconstruct.write(f + "\n")
+                    warning_string = "*** Warning!!! The log below does not have timestamps," + \
+                                     " the Sconscript may not have finished.\n"
+                    sconstruct.write(warning_string)
+                sconstruct.write(f + '\n')
                 sconstruct.write(sconscript.read())
 
     return None
@@ -69,27 +72,39 @@ def log_timestamp(start_time, end_time, filename = 'sconstruct.log'):
 
 
 def collect_builder_logs(parent_dir):
-    ''' Recursively return dictionary of files ending with sconscript.log 
+    ''' Recursively return dictionary of files named sconscript*.log 
         in parent_dir and nested directories.
         Also return timestamp from those sconscript.log 
         (snippet from SO 3964681)'''
     builder_log_collect = {}
 
-    for root, dirs, files in os.walk(parent_dir): # take a walk in parent and child dirs
-        for f in files:
-            if f.startswith('sconscript') and f.endswith('.log'):
-                f_full = os.path.join(root, f)
-                with open(f_full, 'rU') as g:
-                    try:
-                        s = g.readlines()[1] # line 0 = log start time, line 1 = log end time
-                    except IndexError:
-                        s = ''
-                    s = s[s.find('{')+1: s.find('}')] # find {} time identifier 
-                    try:
-                        builder_log_end_time = datetime.strptime(s, "%Y-%m-%d %H:%M:%S")
-                    except ValueError: # if the code breaks, there's no time identifier
-                        beginning_of_time    = datetime.min
-                        builder_log_end_time = beginning_of_time
-                builder_log_collect[f_full]  = builder_log_end_time
+    # Store paths to logs in a list, found from platform-specific command line tool 
+    rel_parent_dir = os.path.relpath(parent_dir)
+    log_name = 'sconscript*.log'
+    if misc.is_unix():
+        command = 'find %s -name "%s"' % (rel_parent_dir, log_name)
+    else:
+        command = 'dir "%s" /b/s' % os.path.join(rel_parent_dir, log_name)
+    try:
+        log_paths = subprocess.check_output(command, shell = True).replace('\r\n', '\n')
+        log_paths = log_paths.split('\n')
+        log_paths = filter(bool, map(str.strip, log_paths)) # Strip paths and keep non-empty
+    except subprocess.CalledProcessError:
+        log_paths = []
+    
+    # Read the file at each path to a log and store output complete-time in a dict at filename
+    for log_path in log_paths:
+        with open(log_path, 'rU') as f:
+            try:
+                s = f.readlines()[1] # line 0 = log start time, line 1 = log end time
+            except IndexError:
+                s = ''
+            s = s[s.find('{') + 1: s.find('}')] # find {} time identifier 
+            try:
+                builder_log_end_time = datetime.strptime(s, "%Y-%m-%d %H:%M:%S")
+            except ValueError: # if the code breaks, there's no time identifier
+                beginning_of_time    = datetime.min
+                builder_log_end_time = beginning_of_time
+        builder_log_collect[log_path]  = builder_log_end_time
 
     return builder_log_collect
