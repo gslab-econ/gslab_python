@@ -4,13 +4,29 @@ import sys
 import time
 import shutil
 import subprocess
-import _exception_classes
 import datetime
+import yaml
+import getpass
+# Import gslab_scons modules
+import _exception_classes
+from size_warning import issue_size_warnings
 
-
-def state_of_repo(target, source, env):
+def scons_debrief(target, env):
+    '''Execute functions after SCons has built all targets'''
+    # Log the state of the repo
     env['CL_ARG'] = env['MAXIT']
     maxit = int(command_line_args(env))
+    state_of_repo(maxit)
+
+    # Issue size warnings
+    look_in = env['look_in']
+    look_in = look_in.split(';')
+    file_MB_limit = float(env['file_MB_limit'])
+    total_MB_limit = float(env['total_MB_limit'])
+    issue_size_warnings(look_in, file_MB_limit, total_MB_limit)
+    return None
+
+def state_of_repo(maxit):
     outfile = 'state_of_repo.log'
     with open(outfile, 'wb') as f:
         f.write("WARNING: Information about .sconsign.dblite may be misleading \n" +
@@ -46,22 +62,6 @@ def state_of_repo(target, source, env):
     return None
 
 
-def check_lfs():
-    '''Check that Git LFS is installed'''
-    try:
-        output = subprocess.check_output("git-lfs install", shell = True)
-    except:
-        try:
-            # init is a deprecated version of install
-            output = subprocess.check_output("git-lfs init", shell = True) 
-        except:
-            raise _exception_classes.LFSError('''
-                              Either Git LFS is not installed 
-                              or your Git LFS settings need to be updated. 
-                              Please install Git LFS or run 
-                              'git lfs install --force' if prompted above.''')
-
-
 def command_line_args(env):
     '''
     Return the content of env['CL_ARG'] as a string
@@ -83,7 +83,51 @@ def command_line_args(env):
     return cl_arg
 
 
-def stata_command_unix(flavor, cl_arg = ''):
+def get_stata_executable(env):
+    '''Return OS command to call Stata.
+    
+    This helper function returns a command (str) for Unix bash or
+    Windows cmd to carry a Stata batch job. 
+
+    The function checks for a Stata executable in env, an SCons 
+    Environment object. If env does not specify an executable, then 
+    the function searches for common executables in the system environment.
+    '''
+    # Get environment's user input executable. Empty default = None.
+    stata_executable  = env['stata_executable']  
+
+    if stata_executable is not None:
+        return stata_executable
+    else:
+        executables = ['stata-mp', 'stata-se', 'stata']
+        if is_unix():
+            for executable in executables:
+                if is_in_path(executable): # check in $PATH
+                    return executable
+
+        elif sys.platform == 'win32':
+            if 'STATAEXE' in os.environ.keys():
+                return "%%STATAEXE%%"
+            else:
+                # Try StataMP.exe and StataMP-64.exe, etc.
+                executables = [(e.replace('-', '') + '.exe') for e in executables]
+                if is_64_windows():
+                    executables = [e.replace('.exe', '-64.exe') for e in executables]
+                for executable in executables:
+                    if is_in_path(executable):
+                        return executable
+    return None
+
+
+def get_stata_command(executable):
+    if is_unix():
+        command = stata_command_unix(executable)
+    elif sys.platform == 'win32':
+        command = stata_command_win(executable)
+    return command
+
+
+def stata_command_unix(executable):
     '''
     This function returns the appropriate Stata command for a user's 
     Unix platform.
@@ -91,20 +135,20 @@ def stata_command_unix(flavor, cl_arg = ''):
     options = {'darwin': '-e',
                'linux' : '-b',
                'linux2': '-b'}
-
     option  = options[sys.platform]
-    # %s will take filename later
-    command = flavor + ' ' + option + ' %s ' + str(cl_arg)
+
+    # %s will take filename and cl_arg later
+    command = executable + ' ' + option + ' %s %s' 
+
     return command
 
 
-def stata_command_win(flavor, cl_arg = ''):
+def stata_command_win(executable):
     '''
     This function returns the appropriate Stata command for a user's 
     Windows platform.
     '''
-    # %s will take filename later
-    command  = flavor + ' /e do' + ' %s ' + str(cl_arg)
+    command  = executable + ' /e do' + ' %s %s'  # %s will take filename later
     return command
 
 
@@ -138,40 +182,54 @@ def is_in_path(program):
             exe = os.path.join(path, program)
             if os.access(exe, os.X_OK):
                 return exe
-                
-    return None
+    return False
 
 
 def make_list_if_string(source):
     '''Convert a string input into a singleton list containing that string.'''
-    if isinstance(source, str):
-        source = [source]
+    if not isinstance(source, list):
+        if isinstance(source, str):
+            source = [source]
+        else:
+            message = "SCons source/target input must be either list or string. " + \
+                      "Here, it is %s, a %s." % (str(source), str(type(source)))
+            raise TypeError(message)
     return source
 
 
-def check_code_extension(source_file, software):
+def check_code_extension(source_file, extensions):
     '''
-    This function raises an exception if `source_file`'s extension
+    This function raises an exception if the extension in `source_file`
     does not match the software package specified by `software`.
     '''
-    extensions = {'stata'  : '.do',
-                  'r'      : '.r', 
-                  'lyx'    : '.lyx',
-                  'python' : '.py',
-                  'matlab' : '.m'}
-    ext = extensions[software]
+    if not isinstance(extensions, list):
+        extensions = [extensions]
     source_file = str.lower(str(source_file))
-    if not source_file.endswith(ext):
+    error       = True
+    for extension in extensions:
+        extension = str.lower(str(extension))
+
+        if source_file.endswith(extension):
+            error = False
+
+    if error:
         error_message = 'First argument, %s, must be a %s file.' % \
-                        (source_file, ext)
+                (source_file, extension)
         raise _exception_classes.BadExtensionError(error_message)
+
     return None
 
 
+def command_error_msg(executable, call):
+    ''' This function prints an informative message given a CalledProcessError.'''
+    return '''%s did not run successfully.
+       Please check that the executable, source, and target files
+       Check SConstruct.log for errors.
+Command tried: %s''' % (executable, call) 
+
+
 def current_time():
-    '''
-    This function returns the current time in a a Y-M-D H:M:S format.
-    '''
+    '''Return the current time in a Y-M-D H:M:S format.'''
     now = datetime.datetime.now()
     return datetime.datetime.strftime(now, '%Y-%m-%d %H:%M:%S')   
 
@@ -188,6 +246,68 @@ def lyx_scan(node, env, path):
     return SOURCE
 
 
+def load_yaml_value(path, key):
+    '''
+    Load the yaml value indexed by the key argument in the file
+    specified by the path argument.
+    '''
+    if key == "stata_executable":
+        prompt = "Enter %s or None to search for defaults: "
+    elif key == "github_token":
+        prompt = "(Optional) Enter %s to be stored in user_config.yaml.\n" 
+        prompt = prompt + "Github token can also be entered without storing to file later:" 
+    else:
+        prompt = "Enter %s: "
+
+    # Check if file exists and is not corrupted. If so, load yaml contents.
+    yaml_contents = None
+    if os.path.isfile(path):
+        try:
+            yaml_contents = yaml.load(open(path, 'rU'))
+            if not isinstance(yaml_contents, dict):
+                raise yaml.scanner.ScannerError()
+
+        except yaml.scanner.ScannerError:
+            message  = "%s is a corrupted yaml file. Delete file and recreate? (y/n) "
+            response = str(raw_input(message % path))
+            if response.lower() == 'y':
+                os.remove(path)
+                yaml_contents = None
+            else:
+                message = "%s is a corrupted yaml file. Please fix." % path
+                raise _exception_classes.PrerequisiteError(message)
+
+    # If key exists, return value. Otherwise, add key-value to file.
+    try:
+        if yaml_contents[key] == "None":
+            return None
+        else:
+            return yaml_contents[key]
+    except:
+        with open(path, 'ab') as f:  
+            if key == "github_token":
+                val = getpass.getpass(prompt = (prompt % key))
+            else:
+                val = str(raw_input(prompt % key))
+            if re.sub('"', '', re.sub('\'', '', val.lower())) == "none":
+                val = None
+            f.write('%s: %s\n' % (key, val))
+        return val
+
+
+def check_and_expand_path(path):
+    error_message = " The directory provided, '%s', cannot be found. " % path + \
+                    "Please manually create before running\n" + \
+                    "or fix the path in user-config.yaml.\n"
+    try:
+        path = os.path.expanduser(path)
+        if not os.path.isdir(path):
+            raise _exception_classes.PrerequisiteError(error_message)
+        return path
+    except:
+        raise _exception_classes.PrerequisiteError(error_message)
+
+
 def get_directory(path):
     '''
     Determine the directory of a file. This function returns
@@ -198,4 +318,3 @@ def get_directory(path):
         directory = './'
 
     return directory
-

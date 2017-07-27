@@ -6,31 +6,43 @@ import shutil
 import subprocess
 import _test_helpers as helpers
 
-
-def r_side_effect(*args, **kwargs):
+def make_r_side_effect(recognized = True):
     '''
-    This side effect mocks the behaviour of a system call
-    on a machine with R set up for command-line use.
+    Make a mock of mocks subprocess.check_output() for R CMD BATCH commands
+
+    The executable_recognized argument determines whether "R"
+    is a recognized executable on the mock platform.   
     '''
-    # Get and parse the command passed to os.system()
-    command = args[0]
-    match   = helpers.command_match(command, 'R')
+    def side_effect(*args, **kwargs):
+        '''
+        This side effect mocks the behaviour of a subprocess.check_output()
+        call on a machine with R set up for command-line use.
+        '''
+        # Get and parse the command passed to os.system()
+        command = args[0]
+        if re.search('R', command, flags = re.I) and not recognized:
+            raise subprocess.CalledProcessError(1, command)
 
-    executable = match.group('executable')
-    log        = match.group('log')
+        match   = helpers.command_match(command, 'R')
+    
+        executable = match.group('executable')
+        log        = match.group('log')
 
-    if log is None:
-        # If no log path is specified, create one by using the 
-        # R script's path after replacing .R (if present) with .Rout.
-        source = match.group('source')
-        log    = '%s.Rout' % re.sub('\.R', '', source)
+        if log is None:
+            # If no log path is specified, create one by using the 
+            # R script's path after replacing .R (if present) with .Rout.
+            source = match.group('source')
+            log    = '%s.Rout' % re.sub('\.R', '', source)
+    
+        if executable == "R CMD BATCH" and log:
+            with open(log.strip(), 'wb') as log_file:
+                log_file.write('Test log\n')
 
-    if executable == "R CMD BATCH" and log:
-        with open(log.strip(), 'wb') as log_file:
-            log_file.write('Test log\n')
+    return side_effect
 
 
 def python_side_effect(*args, **kwargs):
+    '''    Mock subprocess.check_output for testing build_python()'''
     command = args[0]
     match   = helpers.command_match(command, 'python')
 
@@ -40,37 +52,50 @@ def python_side_effect(*args, **kwargs):
             log_file.write('Test log')
 
 
-def matlab_side_effect(*args, **kwargs):
-    '''Mock os.system for Matlab commands'''
-    try:
-        command = kwargs['command']
-    except KeyError:
-        command = args[0]
+def make_matlab_side_effect(recognized = True):
+    '''
+    Make a mock of subprocess.check_output() for Matlab commands
 
-    log_match = re.search('> (?P<log>[-\.\w\/]+)', command)
+    The recognized argument determines whether "matlab"
+    is a recognized executable on the mock platform.
+    '''
+    def side_effect(*args, **kwargs):
+        try:
+            command = kwargs['command']
+        except KeyError:
+            command = args[0]
+    
+        if re.search('^matlab', command, flags = re.I) and not recognized:
+            raise subprocess.CalledProcessError(1, command)
 
-    if log_match:
-        log_path = log_match.group('log')
-        with open(log_path, 'wb') as log_file:
-            log_file.write('Test log')
+        log_match = re.search('> (?P<log>[-\.\w\/]+)', command)
+    
+        if log_match:
+            log_path = log_match.group('log')
+            with open(log_path, 'wb') as log_file:
+                log_file.write('Test log')
+    
+        return None
 
-    return None
+    return side_effect
+
 
 def matlab_copy_effect(*args, **kwargs):
     '''Mock copy so that it creates a file with the destination's path'''
     open(args[1], 'wb').write('test')
 
-def make_stata_side_effect(recognised_command):
+
+def make_stata_side_effect(recognized = True):
     '''
     Make a side effect mocking the behaviour of 
-    subprocess.check_output() when `recognised_command` is
+    subprocess.check_output() when `recognized` is
     the only recognised system command. 
     '''
     def stata_side_effect(*args, **kwargs):
         command = args[0]
         match   = helpers.command_match(command, 'stata')
 
-        if match.group('executable') == recognised_command:
+        if match.group('executable') == recognized:
             # Find the Stata script's name
             script_name = match.group('source')
             stata_log   = os.path.basename(script_name).replace('.do', '.log')
@@ -96,7 +121,7 @@ def make_stata_path_effect(executable):
 
 def lyx_side_effect(*args, **kwargs):
     '''
-    This side effect mocks the behaviour of a system call.
+    This side effect mocks the behaviour of a subprocess.check_output call.
     The mocked machine has lyx set up as a command-line executable
     and can export .lyx files to .pdf files only using 
     the "-e pdf2" option.
@@ -229,56 +254,3 @@ def dot_git_open_side_effect(repo   = 'repo',
         return file_object
 
     return open_side_effect
-
-
-#== Side effects for testing create_size_dictionary() ===
-# These functions mock a directory containing files of various sizes
-# and a system that recognises no directory other than that one.
-def isdir_side_effect(*args, **kwargs):
-    '''
-    Mock os.path.isdir() so that it only recognises ./test_files/
-    as an existing directory.
-    '''
-    path = args[0]
-    if not isinstance(path, str):
-        raise TypeError('coercing to Unicode: need string or buffer, '
-                        '%s found' % type(path))
-    return path == 'test_files'
-
-
-def walk_side_effect(*args, **kwargs):
-    '''
-    Mock os.walk() for a mock directory called ./test_files/.
-    '''
-    path = args[0]
-
-    if path != 'test_files':
-        raise StopIteration
-
-    roots       = ['test_files',      'test_files/size_test']
-    directories = [['size_test'],     []]
-    files       = [['root_file.txt'], ['test.txt', 'test.pdf']]
-
-    for i in range(len(roots)):
-        yield (roots[i], directories[i], files[i])
-
-
-def getsize_side_effect(*args, **kwargs):
-    '''
-    Mock os.path.getsize() to return mock sizes of files in our
-    mock ./test_files/ directory.
-    '''
-    path = args[0]
-    if path == 'test_files/root_file.txt':
-        size = 100
-    elif path == 'test_files/size_test/test.txt':
-        size = 200
-    elif path == 'test_files/size_test/test.pdf':
-        size = 1000
-    else:
-        raise OSError("[Errno 2] No such file or directory: '%s'" % path)
-
-    return size
-
-
-

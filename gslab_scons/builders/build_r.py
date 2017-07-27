@@ -1,6 +1,9 @@
+import subprocess
 import os
 import gslab_scons.misc as misc
 from gslab_scons import log_timestamp
+from gslab_scons._exception_classes import ExecCallError
+
 
 def build_r(target, source, env):
     '''Build SCons targets using an R script
@@ -15,7 +18,9 @@ def build_r(target, source, env):
     source: string or list
         The source(s) of the SCons command. The first source specified
         should be the R script that the builder is intended to execute. 
+    env: SCons construction environment, see SCons user guide 7.2
     '''
+    # Prelims
     source      = misc.make_list_if_string(source)
     target      = misc.make_list_if_string(target)
     source_file = str(source[0])
@@ -25,15 +30,31 @@ def build_r(target, source, env):
     start_time  = misc.current_time()
 
     misc.check_code_extension(source_file, 'r')
-    log_file = target_dir + '/sconscript.log'
+    try:
+        log_ext = '_%s' % env['log_ext']
+    except KeyError:
+        log_ext = ''
+    log_file = os.path.join(target_dir, ('sconscript%s.log' % log_ext))
     
     cl_arg = misc.command_line_args(env)
 
-    if cl_arg != '':
-        cl_arg = "'--args %s'" % cl_arg
+    if cl_arg != '': 
+        if misc.is_unix(): # R has platform-specific cl_arg syntax
+            cl_arg = "'--args %s'" % cl_arg
+        else:
+            cl_arg = "\"--args %s\"" % cl_arg
 
-    os.system("R CMD BATCH --no-save %s %s %s" % (cl_arg, source_file, log_file))
+    # System call
+    try:
+        command = 'R CMD BATCH --no-save %s %s %s' % (cl_arg, source_file, log_file)
+        subprocess.check_output(command,
+                                stderr = subprocess.STDOUT,
+                                shell  = True)
+    except subprocess.CalledProcessError:
+        message = misc.command_error_msg("R", command)
+        raise ExecCallError(message)
 
     end_time = misc.current_time()    
     log_timestamp(start_time, end_time, log_file)
+    
     return None

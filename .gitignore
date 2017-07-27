@@ -1,7 +1,10 @@
 *.pyc
+*.ipynb*
 *.egg*
 .cache
 .coverage
 .DS_Store
 *.Rhistory
 *.coveragerc
+*.ipynb
+.ipynb_checkpoints/

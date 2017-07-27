@@ -10,12 +10,12 @@ import subprocess
 
 from _exception_classes import ReleaseError
 
-
-def release(vers, org, repo, 
+def release(vers, org, repo,
             DriveReleaseFiles = [],  
             local_release     = '',  
             target_commitish  = '', 
-            zip_release       = True):
+            zip_release       = True,
+            github_token      = None):
     '''Publish a release
 
     Parameters
@@ -23,7 +23,7 @@ def release(vers, org, repo,
     env: an SCons environment object
     vers: the version of the release
     DriveReleaseFiles a optional list of files to be included in a
-        release to Google Drive.
+        release to drive (e.g. DropBox or Google Drive).
     local_release: The path of the release directory on the user's computer.
     org: The GtHub organisaton hosting the repository specified by `repo`.
     repo: The name of the GitHub repository from which the user is making
@@ -31,12 +31,13 @@ def release(vers, org, repo,
     '''
     # Check the argument types
 
-
-    token    = getpass.getpass("Enter a GitHub token and then press enter: ") 
+    if bool(github_token) is False:
+        github_token = getpass.getpass("Enter a GitHub token and then press enter: ") 
+    
     tag_name = vers
     
     releases_path = 'https://%s:@api.github.com/repos/%s/%s/releases' \
-                    % (token, org, repo)
+                    % (github_token, org, repo)
     session       = requests.session()
 
     # Create release
@@ -49,11 +50,20 @@ def release(vers, org, repo,
 
     json_dump = json.dumps(payload)
     json_dump = re.sub('"FALSE"', 'false', json_dump)
-    posting = session.post(releases_path, data = json_dump)
+    posting   = session.post(releases_path, data = json_dump)
     # Check that the GitHub release was successful
-    posting.raise_for_status()
+    try:
+        posting.raise_for_status()
+    except requests.exceptions.HTTPError:
+        message  = "We could not post the following json to the releases path \n" 
+        message  = message + ("https://YOURTOKEN:@api.github.com/repos/%s/%s/releases \n" % (org, repo))
+        message  = message + "The json looks like this:"
+        print(message)
+        for (k,v) in payload.items():
+            print(" '%s' : '%s' " % (k,v))
+        raise requests.exceptions.HTTPError
 
-    # Release to Google Drive
+    # Release to drive
     if bool(DriveReleaseFiles):
         # Delay
         time.sleep(1)
@@ -73,24 +83,15 @@ def release(vers, org, repo,
         tag_name_index = json_split.index('"tag_name":"%s"' % tag_name)
         release_id     = json_split[tag_name_index - 1].split(':')[1]
     
-        # Get root directory name on Drive
-        path     = local_release.split('/')
-        layers   = len(path)
-        dir_name = None
-
-        for i in range(layers):
-            if path[i] == 'release' and i + 1 < layers:
-                dir_name = path[i + 1]
-                break
-
-        if dir_name is None:
-            raise ReleaseError("No /release/ superdirectory found "
-                               "in path given by local_release")
+        # Get root directory name on drive
+        path       = local_release.split('/')
+        drive_name = path[-2]
+        dir_name   = path[-1]
 
         if not os.path.isdir(local_release):
             os.makedirs(local_release)
        
-        # If the files released to Google Drive are to be zipped,
+        # If the files released to drive are to be zipped,
         # specify their copy destination as an intermediate directory
         if zip_release:
             archive_files = 'release_content'
@@ -99,13 +100,13 @@ def release(vers, org, repo,
             os.makedirs(archive_files)
 
             destination_base = archive_files
-            drive_header = 'Google Drive: release/%s/%s/release_content.zip' % \
-                            (dir_name, vers)
+            drive_header = '%s: release/%s/%s/release_content.zip' % \
+                            (drive_name, dir_name, vers)
         # Otherwise, send the release files directly to the local release
-        # Google Drive directory
+        # drive directory
         else:
             destination_base = local_release
-            drive_header = 'Google Drive:'
+            drive_header = '%s:' % drive_name
 
         for path in DriveReleaseFiles:
             file_name   = os.path.basename(path)
@@ -125,25 +126,25 @@ def release(vers, org, repo,
             make_paths = lambda s: 'release/%s/%s/%s' % (dir_name, vers, s)
             DriveReleaseFiles = map(make_paths, DriveReleaseFiles)
 
-        with open('gdrive_assets.txt', 'wb') as f:
+        with open('drive_assets.txt', 'wb') as f:
             f.write('\n'.join([drive_header] + DriveReleaseFiles))
 
-        upload_asset(token      = token, 
-                     org        = org, 
-                     repo       = repo, 
-                     release_id = release_id, 
-                     file_name  = 'gdrive_assets.txt')
+        upload_asset(github_token = github_token, 
+                     org          = org, 
+                     repo         = repo, 
+                     release_id   = release_id, 
+                     file_name    = 'drive_assets.txt')
 
-        os.remove('gdrive_assets.txt')
+        os.remove('drive_assets.txt')
 
 
-def upload_asset(token, org, repo, release_id, file_name, 
+def upload_asset(github_token, org, repo, release_id, file_name, 
                  content_type = 'text/markdown'):
     '''
     This function uploads a release asset to GitHub.
 
     --Parameters--
-    token: a GitHub token
+    github_token: a GitHub token
     org: the GitHub organisation to which the repository associated
         with the release belongs
     repo: the GitHub repository associated with the release
@@ -158,7 +159,7 @@ def upload_asset(token, org, repo, release_id, file_name,
         raise ReleaseError('upload_asset() cannot find file_name')
 
     files  = {'file' : open(file_name, 'rU')}
-    header = {'Authorization': 'token %s' % token, 
+    header = {'Authorization': 'token %s' % github_token, 
               'Content-Type':  content_type}
     path_base   = 'https://uploads.github.com/repos'
     upload_path = '%s/%s/%s/releases/%s/assets?name=%s' % \
@@ -285,28 +286,6 @@ def extract_dot_git(path = '.git'):
 
     # Next, find the branch's name
     branch_info = open('%s/HEAD' % path, 'rU').readlines()
-    branch = re.findall('ref: refs/heads/([\w-]+)', branch_info[0])[0]
+    branch = re.findall('ref: refs/heads/(.+)\\n', branch_info[0])[0]
 
     return repo, organisation, branch
-
-
-def create_size_dictionary(path):
-    '''
-    This function creates a dictionary reporting the sizes of
-    files in the directory specified by `path`, a string. 
-    The filenames are the dictionary's keys; their sizes in 
-    bytes are its values. 
-    '''
-    size_dictionary = dict()
-
-    if not os.path.isdir(path):
-        raise ReleaseError("The path argument does not specify an "
-                           "existing directory.")
-
-    for root, directories, files in os.walk(path):
-        for file_name in files:
-            file_path = os.path.join(root, file_name)
-            size      = os.path.getsize(file_path)
-            size_dictionary[file_path] = size
-
-    return size_dictionary

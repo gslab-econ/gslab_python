@@ -97,7 +97,7 @@ def check_log(test_object, log_path, timestamp = True):
         log_data = log_file.read()
 
     if timestamp:
-        test_object.assertIn('Log created:', log_data)
+        test_object.assertIn('*** Builder log created:', log_data)
     else:
         test_object.assertNotIn('Log created:', log_data)
 
@@ -121,6 +121,7 @@ def bad_extension(test_object, builder,
                 source = source, 
                 env    = env)
 
+
 def standard_test(test_object, builder, 
                   extension   = None,  
                   system_mock = None,
@@ -129,7 +130,7 @@ def standard_test(test_object, builder,
                   env    = {}):
     '''Test that builders run without errors and create logs properly.'''
     if not source:
-        source = './test_script.%s' % extension,
+        source = './test_script.%s' % extension
 
     builder(source = source, target = target, env = env)
     
