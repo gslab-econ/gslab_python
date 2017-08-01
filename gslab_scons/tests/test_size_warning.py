@@ -206,10 +206,11 @@ class TestSizeWarning(unittest.TestCase):
         sizes = sw.create_size_dictionary(['.'])
         self.assertEqual(len(sizes), 4)
 
-        # Check that the function raises an error when its path argument
+        # Check that the function does not raise an error when its path argument
         # is not a directory.
-        with self.assertRaises(ReleaseError), nostderrout():
-            sizes = sw.create_size_dictionary(['nonexistent_directory'])
+        sizes = sw.create_size_dictionary(['nonexistent_directory'])
+        self.assertEqual(sizes, dict())
+        
         # The path argument must be a string
         with self.assertRaises(TypeError), nostderrout():
             sizes = sw.create_size_dictionary([10])

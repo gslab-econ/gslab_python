@@ -34,10 +34,14 @@ def state_of_repo(maxit):
                 "===================================\n\n GIT STATUS" +
                 "\n\n===================================\n")
         f.write("Last commit:\n\n")
-    os.system("git log -n 1 >> state_of_repo.log")
-    with open(outfile, 'ab') as f:
-        f.write("\n\nFiles changed since last commit:\n\n")
-    os.system("git diff --name-only >> state_of_repo.log")
+    try:
+        os.system("git log -n 1 >> state_of_repo.log")
+        with open(outfile, 'ab') as f:
+            f.write("\n\nFiles changed since last commit:\n\n")
+        os.system("git diff --name-only >> state_of_repo.log")
+    except:
+        with open(outfile, 'ab') as f:
+            f.write("\n\nWARNING: Git version history not found!\n\n")
     with open(outfile, 'ab') as f:
         f.write("\n===================================\n\n FILE STATUS" + 
                 "\n\n===================================\n")
