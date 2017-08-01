@@ -13,7 +13,7 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
     '''Issue warnings if versioned files are large'''
     bytes_in_MB = 1000000
     # Compile a list of files that are not versioned.
-    ignored = list_ignored_files(look_in)
+    ignored   = list_ignored_files(look_in)
     versioned = create_size_dictionary(look_in)
     versioned = {k: versioned[k] for k in versioned.keys() if k not in ignored}
 
@@ -118,8 +118,8 @@ def create_size_dictionary(dirs):
 
     for path in dirs:
         if not os.path.isdir(path):
-            raise ReleaseError("The path argument does not specify an "
-                               "existing directory.")
+            print("WARNING: '%s' is not an existing directory." % path)
+            continue
         for root, _, files in os.walk(path):
             for file_name in files:
                 file_path = os.path.join(root, file_name)
