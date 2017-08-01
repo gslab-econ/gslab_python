@@ -1,9 +1,11 @@
 running pytest
 running egg_info
+creating GSLab_Tools.egg-info
 writing requirements to GSLab_Tools.egg-info/requires.txt
 writing GSLab_Tools.egg-info/PKG-INFO
 writing top-level names to GSLab_Tools.egg-info/top_level.txt
 writing dependency_links to GSLab_Tools.egg-info/dependency_links.txt
+writing manifest file 'GSLab_Tools.egg-info/SOURCES.txt'
 reading manifest file 'GSLab_Tools.egg-info/SOURCES.txt'
 writing manifest file 'GSLab_Tools.egg-info/SOURCES.txt'
 running build_ext
@@ -33,7 +35,7 @@ gslab_scons/tests/test_release_function.py ....
 gslab_scons/tests/test_release_tools.py ....
 gslab_scons/tests/test_size_warning.py .....
 
-========================== 123 passed in 2.29 seconds ==========================
+========================== 123 passed in 1.28 seconds ==========================
 Name                                            Stmts   Miss Branch BrPart  Cover   Missing
 -------------------------------------------------------------------------------------------
 gencat/gencat.py                                   79      6     28      4    91%   72-73, 81, 89, 97, 101, 57->exit, 71->72, 96->97, 100->101
@@ -76,7 +78,7 @@ gslab_scons/builders/build_stata.py                34      0      0      0   100
 gslab_scons/builders/build_tables.py               31      0      2      0   100%
 gslab_scons/configuration_tests.py                 94      0     34      0   100%
 gslab_scons/log.py                                 74     21     16      3    71%   53-59, 87, 92-93, 97-108, 52->53, 84->87, 96->97
-gslab_scons/misc.py                               188      6     72      3    97%   42-44, 261-262, 293, 62->50, 260->261, 292->293
+gslab_scons/misc.py                               184      3     72      3    98%   260-261, 292, 61->49, 259->260, 291->292
 gslab_scons/release.py                             41     41     20      0     0%   1-72
 gslab_scons/size_warning.py                        70      0     30      0   100%
 gslab_scons/tests/_side_effects.py                112      2     28      7    94%   34-35, 31->34, 37->exit, 49->exit, 73->78, 144->156, 160->exit, 246->252
@@ -94,4 +96,4 @@ gslab_scons/tests/test_release_function.py        121      3     22      2    97
 gslab_scons/tests/test_release_tools.py            64      1      2      1    97%   153, 152->153
 gslab_scons/tests/test_size_warning.py            183      5     46      6    95%   277, 294, 310, 374, 380, 273->277, 274->277, 293->294, 305->310, 371->374, 379->380
 -------------------------------------------------------------------------------------------
-TOTAL                                            4607   1308   1292     86    66%
+TOTAL                                            4603   1305   1292     86    66%
