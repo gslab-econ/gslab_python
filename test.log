@@ -10,8 +10,7 @@ reading manifest file 'GSLab_Tools.egg-info/SOURCES.txt'
 writing manifest file 'GSLab_Tools.egg-info/SOURCES.txt'
 running build_ext
 ============================= test session starts ==============================
-platform darwin -- Python 2.7.13, pytest-3.0.5, py-1.4.32, pluggy-0.4.0
-rootdir: /Users/leviboxell/Desktop/gslab_python, inifile: 
+platform darwin -- Python 2.7.11 -- py-1.4.26 -- pytest-2.6.4
 collected 123 items
 
 gencat/tests/test_checkDicts.py ...
@@ -21,7 +20,7 @@ gencat/tests/test_unzipFiles.py ......
 gencat/tests/test_writeDict.py ....
 gencat/tests/test_zipFile.py ....
 gslab_fill/tests/test_tablefill.py ....
-gslab_fill/tests/test_textfill.py ........
+gslab_fill/tests/test_textfill.py ......F.
 gslab_scons/tests/test_build_lyx.py ......
 gslab_scons/tests/test_build_matlab.py ......
 gslab_scons/tests/test_build_python.py ......
@@ -29,13 +28,287 @@ gslab_scons/tests/test_build_r.py .....
 gslab_scons/tests/test_build_stata.py ..........
 gslab_scons/tests/test_build_tables.py .....
 gslab_scons/tests/test_configuration_tests.py .........
-gslab_scons/tests/test_log.py .........
-gslab_scons/tests/test_misc.py ..................
+gslab_scons/tests/test_log.py ....F.F..
+gslab_scons/tests/test_misc.py .......F..........
 gslab_scons/tests/test_release_function.py ....
-gslab_scons/tests/test_release_tools.py ....
+gslab_scons/tests/test_release_tools.py F..F
 gslab_scons/tests/test_size_warning.py .....
 
-========================== 123 passed in 1.28 seconds ==========================
+=================================== FAILURES ===================================
+_________________ testTextfill.test_tags_incorrectly_specified _________________
+
+self = <gslab_fill.tests.test_textfill.testTextfill testMethod=test_tags_incorrectly_specified>
+
+    def test_tags_incorrectly_specified(self):
+        with nostderrout():
+            textfill(input    = '../../gslab_fill/tests/input/tags_incorrectly_named.log',
+                     template = '../../gslab_fill/tests/input/textfill_template.lyx',
+                     output   = './build/textfill_template_filled.lyx')
+    
+        log_remove_string = '. insert_tag'
+    
+        with self.assertRaises(AssertionError):
+            log = '../../gslab_fill/tests/input/tags_incorrectly_named.log'
+>           self.check_log_in_LyX(log, log_remove_string, "textfill_")
+
+../../gslab_fill/tests/test_textfill.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../gslab_fill/tests/test_textfill.py:57: in check_log_in_LyX
+    self.assertEqual( len(text.results),2 )
+E   AssertionError: 0 != 2
+____________________ TestLog.test_start_log_open_on_windows ____________________
+
+args = (<gslab_scons.tests.test_log.TestLog testMethod=test_start_log_open_on_windows>,)
+keywargs = {}, extra_args = [], entered_patchers = []
+exc_info = (<type 'exceptions.AttributeError'>, AttributeError("<module 'gslab_scons.log' from '/Users/Levi1/Dropbox/Research/gslab_python/gslab_scons/log.py'> does not have the attribute 'open'",), <traceback object at 0x106368e18>)
+patching = <mock._patch object at 0x1061d0790>
+
+    @wraps(func)
+    def patched(*args, **keywargs):
+        # don't use a with here (backwards compatability with Python 2.4)
+        extra_args = []
+        entered_patchers = []
+    
+        # can't use try...except...finally because of Python 2.4
+        # compatibility
+        exc_info = tuple()
+        try:
+            try:
+                for patching in patched.patchings:
+>                   arg = patching.__enter__()
+
+/Users/Levi1/anaconda/lib/python2.7/site-packages/mock.py:1193: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/Levi1/anaconda/lib/python2.7/site-packages/mock.py:1268: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mock._patch object at 0x1061d0790>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if not self.create and original is DEFAULT:
+            raise AttributeError(
+>               "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'gslab_scons.log' from '/Users/Levi1/Dropbox/Research/gslab_python/gslab_scons/log.py'> does not have the attribute 'open'
+
+/Users/Levi1/anaconda/lib/python2.7/site-packages/mock.py:1242: AttributeError
+_____________________ TestLog.test_start_log_popen_on_unix _____________________
+
+args = (<gslab_scons.tests.test_log.TestLog testMethod=test_start_log_popen_on_unix>,)
+keywargs = {}, extra_args = [], entered_patchers = []
+exc_info = (<type 'exceptions.AttributeError'>, AttributeError("<module 'gslab_scons.log' from '/Users/Levi1/Dropbox/Research/gslab_python/gslab_scons/log.py'> does not have the attribute 'open'",), <traceback object at 0x10637a830>)
+patching = <mock._patch object at 0x1061d0510>
+
+    @wraps(func)
+    def patched(*args, **keywargs):
+        # don't use a with here (backwards compatability with Python 2.4)
+        extra_args = []
+        entered_patchers = []
+    
+        # can't use try...except...finally because of Python 2.4
+        # compatibility
+        exc_info = tuple()
+        try:
+            try:
+                for patching in patched.patchings:
+>                   arg = patching.__enter__()
+
+/Users/Levi1/anaconda/lib/python2.7/site-packages/mock.py:1193: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/Levi1/anaconda/lib/python2.7/site-packages/mock.py:1268: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mock._patch object at 0x1061d0510>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if not self.create and original is DEFAULT:
+            raise AttributeError(
+>               "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'gslab_scons.log' from '/Users/Levi1/Dropbox/Research/gslab_python/gslab_scons/log.py'> does not have the attribute 'open'
+
+/Users/Levi1/anaconda/lib/python2.7/site-packages/mock.py:1242: AttributeError
+________________________ TestMisc.test_load_yaml_value _________________________
+
+args = (<gslab_scons.tests.test_misc.TestMisc testMethod=test_load_yaml_value>,)
+keywargs = {}, extra_args = [], entered_patchers = []
+exc_info = (<type 'exceptions.AttributeError'>, AttributeError("<module 'gslab_scons.misc' from '/Users/Levi1/Dropbox/Research/gslab_python/gslab_scons/misc.py'> does not have the attribute 'raw_input'",), <traceback object at 0x106701d40>)
+patching = <mock._patch object at 0x106280890>
+
+    @wraps(func)
+    def patched(*args, **keywargs):
+        # don't use a with here (backwards compatability with Python 2.4)
+        extra_args = []
+        entered_patchers = []
+    
+        # can't use try...except...finally because of Python 2.4
+        # compatibility
+        exc_info = tuple()
+        try:
+            try:
+                for patching in patched.patchings:
+>                   arg = patching.__enter__()
+
+/Users/Levi1/anaconda/lib/python2.7/site-packages/mock.py:1193: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/Levi1/anaconda/lib/python2.7/site-packages/mock.py:1268: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mock._patch object at 0x106280890>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if not self.create and original is DEFAULT:
+            raise AttributeError(
+>               "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'gslab_scons.misc' from '/Users/Levi1/Dropbox/Research/gslab_python/gslab_scons/misc.py'> does not have the attribute 'raw_input'
+
+/Users/Levi1/anaconda/lib/python2.7/site-packages/mock.py:1242: AttributeError
+____________________ TestReleaseTools.test_extract_dot_git _____________________
+
+args = (<gslab_scons.tests.test_release_tools.TestReleaseTools testMethod=test_extract_dot_git>,)
+keywargs = {}, extra_args = [], entered_patchers = []
+exc_info = (<type 'exceptions.AttributeError'>, AttributeError("<module 'gslab_scons._release_tools' from '/Users/Levi1/Dropbo...ab_python/gslab_scons/_release_tools.py'> does not have the attribute 'open'",), <traceback object at 0x1064f7b90>)
+patching = <mock._patch object at 0x106259c90>
+
+    @wraps(func)
+    def patched(*args, **keywargs):
+        # don't use a with here (backwards compatability with Python 2.4)
+        extra_args = []
+        entered_patchers = []
+    
+        # can't use try...except...finally because of Python 2.4
+        # compatibility
+        exc_info = tuple()
+        try:
+            try:
+                for patching in patched.patchings:
+>                   arg = patching.__enter__()
+
+/Users/Levi1/anaconda/lib/python2.7/site-packages/mock.py:1193: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/Levi1/anaconda/lib/python2.7/site-packages/mock.py:1268: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mock._patch object at 0x106259c90>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if not self.create and original is DEFAULT:
+            raise AttributeError(
+>               "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'gslab_scons._release_tools' from '/Users/Levi1/Dropbox/Research/gslab_python/gslab_scons/_release_tools.py'> does not have the attribute 'open'
+
+/Users/Levi1/anaconda/lib/python2.7/site-packages/mock.py:1242: AttributeError
+_________________ TestReleaseTools.test_upload_asset_standard __________________
+
+args = (<gslab_scons.tests.test_release_tools.TestReleaseTools testMethod=test_upload_asset_standard>,)
+keywargs = {}, extra_args = [<MagicMock name='isfile' id='4401582992'>]
+entered_patchers = [<mock._patch object at 0x106259b50>]
+exc_info = (<type 'exceptions.AttributeError'>, AttributeError("<module 'gslab_scons._release_tools' from '/Users/Levi1/Dropbo...ab_python/gslab_scons/_release_tools.py'> does not have the attribute 'open'",), <traceback object at 0x1066c5e18>)
+patching = <mock._patch object at 0x106259b50>
+arg = <MagicMock name='isfile' id='4401582992'>
+
+    @wraps(func)
+    def patched(*args, **keywargs):
+        # don't use a with here (backwards compatability with Python 2.4)
+        extra_args = []
+        entered_patchers = []
+    
+        # can't use try...except...finally because of Python 2.4
+        # compatibility
+        exc_info = tuple()
+        try:
+            try:
+                for patching in patched.patchings:
+>                   arg = patching.__enter__()
+
+/Users/Levi1/anaconda/lib/python2.7/site-packages/mock.py:1193: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/Levi1/anaconda/lib/python2.7/site-packages/mock.py:1268: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mock._patch object at 0x106259b10>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if not self.create and original is DEFAULT:
+            raise AttributeError(
+>               "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'gslab_scons._release_tools' from '/Users/Levi1/Dropbox/Research/gslab_python/gslab_scons/_release_tools.py'> does not have the attribute 'open'
+
+/Users/Levi1/anaconda/lib/python2.7/site-packages/mock.py:1242: AttributeError
+===================== 6 failed, 117 passed in 2.84 seconds =====================
 Name                                            Stmts   Miss Branch BrPart  Cover   Missing
 -------------------------------------------------------------------------------------------
 gencat/gencat.py                                   79      6     28      4    91%   72-73, 81, 89, 97, 101, 57->exit, 71->72, 96->97, 100->101
@@ -46,7 +319,7 @@ gencat/tests/test_main.py                          49      4      8      1    91
 gencat/tests/test_unzipFiles.py                   124      6     30      2    95%   15, 17, 30-32, 194, 156->150, 193->194
 gencat/tests/test_writeDict.py                     60      6      8      1    90%   15, 17, 30-32, 92, 91->92
 gencat/tests/test_zipFile.py                      101      6      8      1    94%   16, 19, 28-30, 149, 148->149
-gslab_fill/tablefill.py                           107      4     44      7    93%   53, 100, 134, 137, 32->35, 35->37, 52->53, 85->82, 99->100, 130->134, 136->137
+gslab_fill/tablefill.py                           138     33     66      8    70%   53, 82, 102, 115-146, 168, 171, 32->35, 35->37, 52->53, 81->82, 88->85, 101->102, 164->168, 170->171
 gslab_fill/tablefill_info.py                        0      0      0      0   100%
 gslab_fill/tests/test_tablefill.py                 70      2     16      4    93%   118-119, 22->exit, 52->exit, 113->exit, 117->118
 gslab_fill/tests/test_textfill.py                  84      2     12      3    95%   139-140, 18->exit, 134->exit, 138->139
@@ -69,7 +342,7 @@ gslab_make/private/runprogramdirective.py         207    185    104      0     7
 gslab_make/run_program.py                         238    217     80      0     7%   129-162, 178-202, 208-225, 231-248, 254-275, 281-298, 304-321, 332-392, 398-423, 429-447, 453-488, 494-499
 gslab_make/tests/nostderrout.py                    12      0      2      0   100%
 gslab_scons/_exception_classes.py                  11      0      0      0   100%
-gslab_scons/_release_tools.py                     132      0     46      1    99%   34->37
+gslab_scons/_release_tools.py                     132     27     46      2    79%   161-169, 253-291, 34->37, 158->161
 gslab_scons/builders/build_lyx.py                  32      0      0      0   100%
 gslab_scons/builders/build_matlab.py               38      0      4      0   100%
 gslab_scons/builders/build_python.py               28      0      0      0   100%
@@ -78,10 +351,10 @@ gslab_scons/builders/build_stata.py                34      0      0      0   100
 gslab_scons/builders/build_tables.py               31      0      2      0   100%
 gslab_scons/configuration_tests.py                 94      0     34      0   100%
 gslab_scons/log.py                                 74     21     16      3    71%   53-59, 87, 92-93, 97-108, 52->53, 84->87, 96->97
-gslab_scons/misc.py                               184      3     72      3    98%   260-261, 292, 61->49, 259->260, 291->292
+gslab_scons/misc.py                               184     23     72      5    86%   259-263, 271-281, 286, 289-298, 61->49, 257->259, 267->284, 270->271, 285->286
 gslab_scons/release.py                             41     41     20      0     0%   1-72
 gslab_scons/size_warning.py                        70      0     30      0   100%
-gslab_scons/tests/_side_effects.py                112      2     28      7    94%   34-35, 31->34, 37->exit, 49->exit, 73->78, 144->156, 160->exit, 246->252
+gslab_scons/tests/_side_effects.py                112     15     28      6    79%   34-35, 220-256, 31->34, 37->exit, 49->exit, 73->78, 144->156, 160->exit
 gslab_scons/tests/_test_helpers.py                 95      4     34      3    93%   27-28, 102, 117, 76->88, 99->102, 112->117
 gslab_scons/tests/test_build_lyx.py                52      1      8      3    93%   108, 26->exit, 103->exit, 107->108
 gslab_scons/tests/test_build_matlab.py             54      1      6      1    97%   110, 109->110
@@ -90,10 +363,10 @@ gslab_scons/tests/test_build_r.py                  46      1     12      3    93
 gslab_scons/tests/test_build_stata.py              90      1      2      1    98%   179, 178->179
 gslab_scons/tests/test_build_tables.py             88      2     12      3    95%   144, 178, 21->exit, 173->exit, 177->178
 gslab_scons/tests/test_configuration_tests.py     194      3     54      5    97%   211, 226, 313, 107->exit, 206->213, 208->211, 225->226, 312->313
-gslab_scons/tests/test_log.py                     112     10     12      3    86%   27, 152-158, 194, 198, 26->27, 193->194, 197->198
-gslab_scons/tests/test_misc.py                    192      2     28      6    96%   179, 363, 178->179, 282->exit, 289->exit, 314->exit, 342->exit, 362->363
+gslab_scons/tests/test_log.py                     112     19     12      3    79%   27, 63-66, 97-102, 152-158, 194, 198, 26->27, 193->194, 197->198
+gslab_scons/tests/test_misc.py                    192     45     28      2    72%   179, 278-343, 363, 178->179, 362->363
 gslab_scons/tests/test_release_function.py        121      3     22      2    97%   293-294, 324, 184->exit, 323->324
-gslab_scons/tests/test_release_tools.py            64      1      2      1    97%   153, 152->153
+gslab_scons/tests/test_release_tools.py            64     23      2      1    64%   32-63, 131-149, 153, 152->153
 gslab_scons/tests/test_size_warning.py            183      5     46      6    95%   277, 294, 310, 374, 380, 273->277, 274->277, 293->294, 305->310, 371->374, 379->380
 -------------------------------------------------------------------------------------------
-TOTAL                                            4603   1305   1292     86    66%
+TOTAL                                            4634   1468   1314     85    63%
