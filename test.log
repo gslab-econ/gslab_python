@@ -1,14 +1,4 @@
 running pytest
-Searching for pytest
-Best match: pytest 3.2.1
-Processing pytest-3.2.1-py2.7.egg
-
-Using /Users/chuanyu/Desktop/gslab_python/.eggs/pytest-3.2.1-py2.7.egg
-Searching for py>=1.4.33
-Best match: py 1.4.34
-Processing py-1.4.34-py2.7.egg
-
-Using /Users/chuanyu/Desktop/gslab_python/.eggs/py-1.4.34-py2.7.egg
 running egg_info
 writing requirements to GSLab_Tools.egg-info/requires.txt
 writing GSLab_Tools.egg-info/PKG-INFO
@@ -18,7 +8,7 @@ reading manifest file 'GSLab_Tools.egg-info/SOURCES.txt'
 writing manifest file 'GSLab_Tools.egg-info/SOURCES.txt'
 running build_ext
 ============================= test session starts ==============================
-platform darwin -- Python 2.7.10, pytest-3.2.1, py-1.4.34, pluggy-0.4.0
+platform darwin -- Python 2.7.13, pytest-3.2.1, py-1.4.34, pluggy-0.4.0
 rootdir: /Users/chuanyu/Desktop/gslab_python, inifile:
 collected 123 items
 
@@ -43,7 +33,7 @@ gslab_scons/tests/test_release_function.py ....
 gslab_scons/tests/test_release_tools.py ....
 gslab_scons/tests/test_size_warning.py .....
 
-========================== 123 passed in 1.94 seconds ==========================
+========================== 123 passed in 1.74 seconds ==========================
 Name                                            Stmts   Miss Branch BrPart  Cover   Missing
 -------------------------------------------------------------------------------------------
 gencat/gencat.py                                   79      6     28      4    91%   72-73, 81, 89, 97, 101, 57->exit, 71->72, 96->97, 100->101
