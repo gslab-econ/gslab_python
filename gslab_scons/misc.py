@@ -87,38 +87,20 @@ def command_line_args(env):
 
 
 def get_stata_executable(env):
-    '''Return OS command to call Stata.
-    
-    This helper function returns a command (str) for Unix bash or
-    Windows cmd to carry a Stata batch job. 
-
-    The function checks for a Stata executable in env, an SCons 
-    Environment object. If env does not specify an executable, then 
-    the function searches for common executables in the system environment.
+    '''
+    This helper function returns the most common Stata executable
+    for Mac/Windows if the default executable is not available in env. 
     '''
     # Get environment's user input executable. Empty default = None.
     stata_executable  = env['stata_executable']  
 
-    if stata_executable is not None:
+    if stata_executable not in [None, 'None', '']:
         return stata_executable
     else:
-        executables = ['stata-mp', 'stata-se', 'stata']
         if is_unix():
-            for executable in executables:
-                if is_in_path(executable): # check in $PATH
-                    return executable
-
+            return 'stata-mp'
         elif sys.platform == 'win32':
-            if 'STATAEXE' in os.environ.keys():
-                return "%%STATAEXE%%"
-            else:
-                # Try StataMP.exe and StataMP-64.exe, etc.
-                executables = [(e.replace('-', '') + '.exe') for e in executables]
-                if is_64_windows():
-                    executables = [e.replace('.exe', '-64.exe') for e in executables]
-                for executable in executables:
-                    if is_in_path(executable):
-                        return executable
+            return 'StataMP-64.exe'
     return None
 
 

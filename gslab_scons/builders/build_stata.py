@@ -44,10 +44,9 @@ def build_stata(target, source, env):
     
     # Set up command line arguments
     cl_arg = misc.command_line_args(env)
-
-    executable       = misc.get_stata_executable(env)
+    executable = misc.get_stata_executable(env)
     command_skeleton = misc.get_stata_command(executable)
-
+    
     try:
         command = command_skeleton % (source_file, cl_arg)
         subprocess.check_output(command, 
@@ -55,6 +54,8 @@ def build_stata(target, source, env):
                                 shell  = True)
     except subprocess.CalledProcessError:
         message = misc.command_error_msg("Stata", command)
+        if  env['stata_executable'] not in [None, 'None', '']:
+            message = message + 'Maybe try specifying the Stata executable in config_user.yaml?'
         raise ExecCallError(message)
 
     shutil.move(loc_log, log_file)

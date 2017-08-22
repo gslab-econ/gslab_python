@@ -124,10 +124,6 @@ def check_stata(packages = ["yaml"], user_yaml = "user-config.yaml"):
                                                     'stata_executable')} 
     stata_executable = get_stata_executable(fake_env)
     
-    if stata_executable is None:
-        message = 'Stata is not installed or executable is not added to path'
-        raise PrerequisiteError(message)
-    
     command = get_stata_command(stata_executable)
     check_stata_packages(command, packages)
     return stata_executable
@@ -159,7 +155,7 @@ def check_stata_packages(command, packages):
                 raise PrerequisiteError('Stata package %s is not installed' % pkg)
 
     except subprocess.CalledProcessError:        
-        raise PrerequisiteError("Stata command, '%s', failed.\n" % command.split(' ')[0] + \
+        raise PrerequisiteError("Stata command, '%s', failed while checking for Stata packages.\n" % command.split(' ')[0] + \
                                 "\t\t   Please supply a correct stata_executable" + \
                                 " value in user-config.yaml.\n" )
         
