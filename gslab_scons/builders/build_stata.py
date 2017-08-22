@@ -55,7 +55,7 @@ def build_stata(target, source, env):
     except subprocess.CalledProcessError:
         message = misc.command_error_msg("Stata", command)
         if  env['stata_executable'] not in [None, 'None', '']:
-            message = message + 'Maybe try specifying the Stata executable in config_user.yaml?'
+            message = message + '\n Maybe try specifying the Stata executable in config_user.yaml?'
         raise ExecCallError(message)
 
     shutil.move(loc_log, log_file)
