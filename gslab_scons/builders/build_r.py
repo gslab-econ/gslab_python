@@ -40,7 +40,7 @@ def build_r(target, source, env):
 
     # System call
     try:
-        command = 'Rscript --no-save --no-restore --verbose %s %s > %s 2>>&1' % (source_file, cl_arg, log_file)
+        command = 'Rscript --no-save --no-restore --verbose %s %s > %s 2>&1' % (source_file, cl_arg, log_file)
         subprocess.check_output(command,
                                 stderr = subprocess.STDOUT,
                                 shell  = True)
@@ -50,5 +50,5 @@ def build_r(target, source, env):
 
     end_time = misc.current_time()    
     log_timestamp(start_time, end_time, log_file)
-    
+
     return None
