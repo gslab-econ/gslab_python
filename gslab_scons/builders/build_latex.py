@@ -5,10 +5,9 @@ import gslab_scons.misc as misc
 from gslab_scons import log_timestamp
 from gslab_scons._exception_classes import ExecCallError
 
-def build_lyx(target, source, env):
-    '''Compile a pdf from a LyX file
-
-    This function is a SCons builder that compiles a .lyx file
+def build_latex(target, source, env):
+    '''Compile a pdf from a LaTeX file
+    This function is a SCons builder that compiles a .tex file
     as a pdf and places it at the path specified by target.
 
     Parameters
@@ -18,7 +17,7 @@ def build_lyx(target, source, env):
         of the pdf that the builder is instructed to compile. 
     source: string or list
         The source of the SCons command. This should
-        be the .lyx file that the function will compile as a PDF.
+        be the .tex file that the function will compile as a PDF.
     env: SCons construction environment, see SCons user guide 7.2
     '''
 
@@ -27,7 +26,7 @@ def build_lyx(target, source, env):
     target      = misc.make_list_if_string(target)
 
     source_file = str(source[0])
-    misc.check_code_extension(source_file, '.lyx')
+    misc.check_code_extension(source_file, '.tex')
 
     # Set up target file and log file
     newpdf      = source_file[:-4] + '.pdf'
@@ -44,14 +43,14 @@ def build_lyx(target, source, env):
 
     # System call
     try:
-        command = 'lyx -e pdf2 %s > %s' % (source_file, log_file)
+        command = 'pdflatex %s %s > %s' % (source_file, target_dir, log_file)
         subprocess.check_output(command,
                                 stderr = subprocess.STDOUT,
                                 shell  = True)
         # Move rendered pdf to the target
         shutil.move(newpdf, target_file)
     except subprocess.CalledProcessError:
-        message = misc.command_error_msg('lyx', command)
+        message = misc.command_error_msg('pdflatex', command)
         raise ExecCallError(message)
 
     # Close log
