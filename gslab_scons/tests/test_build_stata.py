@@ -47,30 +47,12 @@ class TestBuildStata(unittest.TestCase):
         Test that build_stata() behaves correctly on a Windows machine
         when given appropriate inputs. 
         '''
-        # i) Non-64-bit Windows without a STATAEXE environment variable
-        mock_check.side_effect = fx.make_stata_side_effect('statamp.exe')
-        mock_path.side_effect  = fx.make_stata_path_effect('statamp.exe')
+        mock_check.side_effect = fx.make_stata_side_effect('StataMP-64.exe')
+        mock_path.side_effect  = fx.make_stata_path_effect('StataMP-64.exe')
         mock_is_64.return_value = False
 
         env = {'stata_executable' : None}
         helpers.standard_test(self, gs.build_stata, 'do', 
-                              env = env, system_mock = mock_check)
-
-        # ii) 64-bit Windows without a STATAEXE environment variable
-        mock_check.side_effect = fx.make_stata_side_effect('statamp-64.exe')
-        mock_path.side_effect  = fx.make_stata_path_effect('statamp-64.exe')
-        mock_is_64.return_value = True
-
-        helpers.standard_test(self, gs.build_stata, 'do', 
-                              env = env, system_mock = mock_check)
-
-        # ii) Windows with a STATAEXE environment variable
-        mock_check.side_effect = fx.make_stata_side_effect(r'%STATAEXE%')
-        mock_path.side_effect  = fx.make_stata_path_effect(r'%STATAEXE%')
-
-        with mock.patch('%s.os.environ' % path, 
-                        {'STATAEXE': 'statamp.exe'}):
-            helpers.standard_test(self, gs.build_stata, 'do', 
                               env = env, system_mock = mock_check)
 
     @helpers.platform_patch('cygwin', path)
@@ -143,12 +125,12 @@ class TestBuildStata(unittest.TestCase):
         mock_path.side_effect  = fx.make_stata_path_effect('')
 
         env = {'stata_executable': None}
-        with helpers.platform_patch('darwin', path), self.assertRaises(TypeError):
+        with helpers.platform_patch('darwin', path), self.assertRaises(ExecCallError):
             gs.build_stata(target = './test_output.txt', 
                            source = './test_script.do', 
                            env    = env)
 
-        with helpers.platform_patch('win32', path), self.assertRaises(TypeError):
+        with helpers.platform_patch('win32', path), self.assertRaises(ExecCallError):
             gs.build_stata(target = './test_output.txt', 
                            source = './test_script.do', 
                            env    = env)
