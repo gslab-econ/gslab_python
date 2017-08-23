@@ -174,12 +174,15 @@ def latex_side_effect(*args, **kwargs):
     match = helpers.command_match(command, 'pdflatex')
 
     executable   = match.group('executable')
-    option       = match.group('option')
+    option1      = match.group('option1')
+    option2      = match.group('option2')
     source       = match.group('source')
     log_redirect = match.group('log_redirect')
 
-    option_type  = re.findall('^(-\w+)', option)[0]
-    target_file  = re.findall('\s(\S+)', option)[0]
+    option1_type = re.findall('^(-\w+)', option1)[0]
+    interaction  = re.findall('\s(\S+)', option1)[0]
+    option2_type = re.findall('^(-\w+)', option2)[0]
+    target_file  = re.findall('\s(\S+)', option2)[0]
 
     is_pdflatex  = bool(re.search('^pdflatex$', executable, flags = re.I))
 
@@ -200,7 +203,7 @@ def latex_side_effect(*args, **kwargs):
     source_exists  = os.path.abspath(source) in \
                      map(os.path.abspath, existing_files)
 
-    if is_pdflatex and option_type == '-jobname' and source_exists:
+    if is_pdflatex and source_exists and option1_type == '-interaction' and option2_type == '-jobname':
         with open('%s.pdf' % target_file, 'wb') as out_file:
             out_file.write('Mock .pdf output')
         with open('%s.log' % target_file, 'wb') as out_file:
