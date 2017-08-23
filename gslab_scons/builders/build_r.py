@@ -38,6 +38,12 @@ def build_r(target, source, env):
     
     cl_arg = misc.command_line_args(env)
 
+    if cl_arg != '':
+        if misc.is_unix(): # R has platform-specific cl_arg syntax
+            cl_arg = "'--args %s'" % cl_arg
+        else:
+            cl_arg = "\"--args %s\"" % cl_arg
+
     # System call
     try:
         command = 'Rscript --no-save --no-restore --verbose %s %s > %s 2>&1' % (source_file, cl_arg, log_file)

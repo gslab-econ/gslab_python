@@ -34,8 +34,8 @@ def make_r_side_effect(recognized = True):
             source = match.group('source')
             log    = '%s.Rout' % re.sub('\.R', '', source)
     
-        if executable == "R CMD BATCH" and log:
-            with open(log.strip(), 'wb') as log_file:
+        if executable == "Rscript" and log:
+            with open(log.replace('>', '').strip(), 'wb') as log_file:
                 log_file.write('Test log\n')
 
     return side_effect

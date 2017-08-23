@@ -46,18 +46,22 @@ def command_match(command, executable, which = None):
                          command)
 
     elif executable in ['r', 'R']:
-        # e.g. "R CMD BATCH --no-save '--args cl_arg' script.R script.log"
+        # e.g. "Rscript --no-save --no-restore --verbose script.R > script.log 2>&1"
         match = re.match('\s*'
-                         '(?P<executable>R CMD BATCH)'
+                         '(?P<executable>Rscript)'
                          '\s+'
-                         '(?P<option>--no-save)?'
+                         '(?P<option1>--no-save)'
                          '\s*'
-                         "(?P<args>'--args .*')?"
+                         '(?P<option2>--no-restore)'
+                         '\s*'
+                         '(?P<option3>--verbose)'
                          '\s*'
                          '(?P<source>[\.\/\w]+\.[rR])'
                          '\s*'
-                         '(?P<log>[\.\/\w]+(\.\w+)?)?',
-                         command)  
+                         "(?P<args>'--args .*')?"
+                         '\s*'
+                         '(?P<log>> [\.\/\w]+(\.\w+)?)?',
+                         command)
 
     elif executable in ['stata', 'do']: 
         # e.g. "stata-mp -e do script.do cl_arg"
