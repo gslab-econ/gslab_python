@@ -27,7 +27,7 @@ gslab_scons/tests/test_build_python.py ......
 gslab_scons/tests/test_build_r.py .F.FF
 gslab_scons/tests/test_build_stata.py ..........
 gslab_scons/tests/test_build_tables.py .....
-gslab_scons/tests/test_configuration_tests.py ......F..
+gslab_scons/tests/test_configuration_tests.py .........
 gslab_scons/tests/test_log.py F........
 gslab_scons/tests/test_misc.py ..................
 gslab_scons/tests/test_release_function.py ....
@@ -38,7 +38,7 @@ gslab_scons/tests/test_size_warning.py .....
 ____________________________ TestBuildR.test_cl_arg ____________________________
 
 self = <gslab_scons.tests.test_build_r.TestBuildR testMethod=test_cl_arg>
-mock_check_output = <MagicMock name='check_output' id='4369230672'>
+mock_check_output = <MagicMock name='check_output' id='4371541456'>
 
     @system_patch
     def test_cl_arg(self, mock_check_output):
@@ -81,7 +81,7 @@ _side_effects.py:28: AttributeError
 ___________________________ TestBuildR.test_standard ___________________________
 
 self = <gslab_scons.tests.test_build_r.TestBuildR testMethod=test_standard>
-mock_check_output = <MagicMock name='check_output' id='4369192848'>
+mock_check_output = <MagicMock name='check_output' id='4370462032'>
 
     @system_patch
     def test_standard(self, mock_check_output):
@@ -126,7 +126,7 @@ _side_effects.py:28: AttributeError
 ______________________ TestBuildR.test_unintended_inputs _______________________
 
 self = <gslab_scons.tests.test_build_r.TestBuildR testMethod=test_unintended_inputs>
-mock_check_output = <MagicMock name='check_output' id='4369096656'>
+mock_check_output = <MagicMock name='check_output' id='4370265680'>
 
     @system_patch
     def test_unintended_inputs(self, mock_check_output):
@@ -181,58 +181,10 @@ match = None
 E       AttributeError: 'NoneType' object has no attribute 'group'
 
 _side_effects.py:28: AttributeError
-___________________ TestConfigurationTests.test_check_stata ____________________
-
-self = <gslab_scons.tests.test_configuration_tests.TestConfigurationTests testMethod=test_check_stata>
-mock_stata_command = <MagicMock name='get_stata_command' id='4371886672'>
-mock_stata_exec = <MagicMock name='get_stata_executable' id='4372219728'>
-mock_stata_packages = <MagicMock name='check_stata_packages' id='4372273872'>
-
-    @mock.patch('%s.check_stata_packages' % path)
-    @mock.patch('%s.get_stata_executable' % path)
-    @mock.patch('%s.get_stata_command'    % path)
-    def test_check_stata(self, mock_stata_command, mock_stata_exec, mock_stata_packages):
-        # Setup
-        def stata_package_side_effect(*args, **kwargs):
-            command  = args[0]
-            packages = args[1]
-            if command != 'statamp':
-                raise ex_classes.PrerequisiteError()
-            for package in packages:
-                if package != 'yaml':
-                    raise ex_classes.PrerequisiteError()
-    
-        f = lambda x: x['stata_executable'] if x['stata_executable'] is not None \
-                                            else 'statamp'
-        mock_stata_exec.side_effect     = f
-        mock_stata_command.side_effect  = lambda x: x
-        mock_stata_packages.side_effect = stata_package_side_effect
-    
-        # Correct tests
-        # Has yaml value
->       self.assertEqual(config_tests.check_stata(), 'statamp')
-
-test_configuration_tests.py:239: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-../configuration_tests.py:124: in check_stata
-    'stata_executable')}
-../misc.py:257: in load_yaml_value
-    response = str(raw_input(message % path))
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <_pytest.capture.DontReadFromInput instance at 0x10388b128>, args = ()
-
-    def read(self, *args):
->       raise IOError("reading from stdin while output is captured")
-E       IOError: reading from stdin while output is captured
-
-/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/_pytest/capture.py:459: IOError
------------------------------ Captured stdout call -----------------------------
-config_user.yaml is a corrupted yaml file. Delete file and recreate? (y/n) 
 _____________________________ TestLog.test_end_log _____________________________
 
 self = <gslab_scons.tests.test_log.TestLog testMethod=test_end_log>
-mock_time = <MagicMock name='current_time' id='4369005072'>
+mock_time = <MagicMock name='current_time' id='4371628304'>
 
     @mock.patch('gslab_scons.log.misc.current_time')
     def test_end_log(self, mock_time):
@@ -274,7 +226,7 @@ src = './sconstruct.log', dst = 'release/sconstruct.log'
 E           IOError: [Errno 2] No such file or directory: 'release/sconstruct.log'
 
 /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/shutil.py:83: IOError
-===================== 5 failed, 124 passed in 2.07 seconds =====================
+===================== 4 failed, 125 passed in 2.86 seconds =====================
 Name                                            Stmts   Miss Branch BrPart  Cover   Missing
 -------------------------------------------------------------------------------------------
 gencat/gencat.py                                   79      6     28      4    91%   72-73, 81, 89, 97, 101, 57->exit, 71->72, 96->97, 100->101
@@ -316,7 +268,7 @@ gslab_scons/builders/build_python.py               28      0      0      0   100
 gslab_scons/builders/build_r.py                    28      3      0      0    89%   51-54
 gslab_scons/builders/build_stata.py                36      0      2      0   100%
 gslab_scons/builders/build_tables.py               31      0      2      0   100%
-gslab_scons/configuration_tests.py                 91      4     32      0    97%   125-129
+gslab_scons/configuration_tests.py                 91      0     32      0   100%
 gslab_scons/log.py                                 77     22     18      4    71%   54-60, 65, 90, 95-96, 100-111, 53->54, 63->65, 87->90, 99->100
 gslab_scons/misc.py                               174      3     60      2    98%   242-243, 274, 241->242, 273->274
 gslab_scons/release.py                             41     41     20      0     0%   1-72
@@ -330,11 +282,11 @@ gslab_scons/tests/test_build_python.py             60      2     14      4    92
 gslab_scons/tests/test_build_r.py                  46      3     12      3    90%   38-39, 88, 27->exit, 83->exit, 87->88
 gslab_scons/tests/test_build_stata.py              82      1      2      1    98%   161, 160->161
 gslab_scons/tests/test_build_tables.py             88      2     12      3    95%   144, 178, 21->exit, 173->exit, 177->178
-gslab_scons/tests/test_configuration_tests.py     194     16     54      6    88%   211, 223-229, 242-253, 313, 107->exit, 206->213, 208->211, 231->exit, 234->exit, 312->313
+gslab_scons/tests/test_configuration_tests.py     194      2     54      4    98%   211, 313, 107->exit, 206->213, 208->211, 312->313
 gslab_scons/tests/test_log.py                     112     14     12      3    83%   27, 152-158, 185-188, 194, 198, 26->27, 193->194, 197->198
 gslab_scons/tests/test_misc.py                    192      2     28      6    96%   179, 363, 178->179, 282->exit, 289->exit, 314->exit, 342->exit, 362->363
 gslab_scons/tests/test_release_function.py        121      3     22      2    97%   293-294, 324, 184->exit, 323->324
 gslab_scons/tests/test_release_tools.py            64      1      2      1    97%   153, 152->153
 gslab_scons/tests/test_size_warning.py            183      5     46      6    95%   277, 294, 310, 374, 380, 273->277, 274->277, 293->294, 305->310, 371->374, 379->380
 -------------------------------------------------------------------------------------------
-TOTAL                                            4688   1340   1292     91    66%
+TOTAL                                            4688   1322   1292     89    67%
