@@ -84,7 +84,21 @@ def command_match(command, executable, which = None):
                          '\s*'
                          '(?P<log_redirect>\> [\.\/\w]+\.\w+)?',
                          command)
-     
+
+    elif executable == 'pdflatex':
+        # e.g. "pdflatex -interaction nonstopmode -jobname target_file file.tex > ./sconscript.log"
+        match = re.match('\s*'
+                         '(?P<executable>\w+)'
+                         '\s+'
+                         '(?P<option1>-\w+ \S+)?'
+                         '\s*'
+                         '(?P<option2>-\w+ \S+)?'
+                         '\s*'
+                         '(?P<source>[\.\/\w]+\.\w+)?'
+                         '\s*'
+                         '(?P<log_redirect>\> [\.\/\w]+\.\w+)?',
+                         command)
+
     if which:
         return match.group(which)
     else:

@@ -14,6 +14,7 @@ import misc
 import size_warning
 from .log import start_log, log_timestamp
 from .builders.build_r      import build_r
+from .builders.build_latex  import build_latex
 from .builders.build_lyx    import build_lyx
 from .builders.build_stata  import build_stata
 from .builders.build_tables import build_tables
