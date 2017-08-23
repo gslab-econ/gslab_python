@@ -48,6 +48,7 @@ def build_latex(target, source, env):
         subprocess.check_output(command,
                                 stderr = subprocess.STDOUT,
                                 shell  = True)
+        os.remove(target_file.replace('.pdf', '.log'))
     except subprocess.CalledProcessError:
         message = misc.command_error_msg('pdflatex', command)
         raise ExecCallError(message)

@@ -203,6 +203,8 @@ def latex_side_effect(*args, **kwargs):
     if is_pdflatex and option_type == '-jobname' and source_exists:
         with open('%s.pdf' % target_file, 'wb') as out_file:
             out_file.write('Mock .pdf output')
+        with open('%s.log' % target_file, 'wb') as out_file:
+            out_file.write('Mock .log output')
 
 def make_call_side_effect(text):
     '''
