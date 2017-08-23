@@ -58,7 +58,7 @@ def command_match(command, executable, which = None):
                          '\s*'
                          '(?P<source>[\.\/\w]+\.[rR])'
                          '\s*'
-                         "(?P<args>'--args .*')?"
+                         '(?P<args>(\s?[\.\/\w]+)*)?'
                          '\s*'
                          '(?P<log>> [\.\/\w]+(\.\w+)?)?',
                          command)
@@ -202,8 +202,6 @@ def test_cl_args(test_object, builder, system_mock, extension, env = {}):
     # The system command is the first positional argument
     command = system_mock.call_args[0][0] 
     args    = command_match(command, extension, which = 'args')
-    if extension in ['r', 'R']:
-        args = re.sub("('|--args)", '', args).strip()
 
     test_object.assertIn('test', args.split(' '))
     test_object.assertEqual(len(args.split(' ')), 1)
@@ -218,8 +216,6 @@ def test_cl_args(test_object, builder, system_mock, extension, env = {}):
 
     command = system_mock.call_args[0][0] 
     args    = command_match(command, extension, which = 'args')
-    if extension in ['r', 'R']:
-        args = re.sub("('|--args)", '', args).strip()
 
     for arg in env['CL_ARG']:
         test_object.assertIn(str(arg), args.split(' '))
