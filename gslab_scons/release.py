@@ -5,7 +5,7 @@ import _release_tools
 from _exception_classes import ReleaseError
 from misc import load_yaml_value, check_and_expand_path
 
-def main(user_yaml = 'user-config.yaml', release_files = []):
+def main(user_yaml = 'config_user.yaml', release_files = []):
     inspect_repo()
 
     # Extract information about the clone from its .git directory

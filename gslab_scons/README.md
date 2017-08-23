@@ -15,7 +15,7 @@ v1.2.1 of a directory, navigate to the root of the directory and run:
 python -m gslab_scons.release version=v1.2.1
 ```
 
-An automatic location for release can be specified in `user-config.yaml` with 
+An automatic location for release can be specified in `config_user.yaml` with 
 
 ```yaml
 release_directory: <release location here>
@@ -35,7 +35,7 @@ is larger than 2MB and when the directory's versioned content
 is larger than 500MB in total.  
 
 Instead of entering the GitHub token as a password when using `release`,
-you can store it in `user-config.yaml` as
+you can store it in `config_user.yaml` as
 
 ```yaml
 github_token: <your token here>

@@ -239,7 +239,7 @@ def load_yaml_value(path, key):
     if key == "stata_executable":
         prompt = "Enter %s or None to search for defaults: "
     elif key == "github_token":
-        prompt = "(Optional) Enter %s to be stored in user_config.yaml.\n" 
+        prompt = "(Optional) Enter %s to be stored in config_user.yaml.\n" 
         prompt = prompt + "Github token can also be entered without storing to file later:" 
     else:
         prompt = "Enter %s: "
@@ -283,7 +283,7 @@ def load_yaml_value(path, key):
 def check_and_expand_path(path):
     error_message = " The directory provided, '%s', cannot be found. " % path + \
                     "Please manually create before running\n" + \
-                    "or fix the path in user-config.yaml.\n"
+                    "or fix the path in config_user.yaml.\n"
     try:
         path = os.path.expanduser(path)
         if not os.path.isdir(path):
