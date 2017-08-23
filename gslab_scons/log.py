@@ -108,3 +108,8 @@ def collect_builder_logs(parent_dir):
         builder_log_collect[log_path]  = builder_log_end_time
 
     return builder_log_collect
+
+def move_log(cur_location = '.', target_location = 'release'):
+    for file in glob.glob("*.log"):
+        shutil.move('%s/' + file % cur_location, '%s/' + file % target_location)
+    return None
