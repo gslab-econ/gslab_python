@@ -46,39 +46,34 @@ def build_anything(target, source, env):
     start_time  = misc.current_time()
 
     # check for redirection in `do`
+    try: 
+        do = env['do']
+    except:
+        raise ExecCallError('build_anything did not find a "do" key in env.')
     if '>' in do:
-        warning = 'There is a redirection operator > in your "do" argument,' + \
+        warning = 'There is a redirection operator > in your "do" key,' + \
                   'build_anything may not work as intended.'
         warnings.warn(warning)
 
-    # log maker
-    ## the log_file key must exist in env
-    try: 
-        log_file = env['log_file']
+    # Set up log file destination
+    target_file = str(target[0])
+    target_dir  = misc.get_directory(target_file)
+    try:
+        log_ext = '_%s' % env['log_ext']
     except KeyError:
-        message = 'We did not find a log_file key in the env passed to build_anything' + \
-                  'Please specify the log_file argument when calling build_anything.'
-        raise ExecCallError(message)
-    ## the log must be named sconscript*.log 
-    log_tail = log_file.split('/')[-1]
-    log_pattern = re.compile('^sconscript(.)*log')
-    if not re.search(log_pattern, log_tail):
-        message = 'The log file passed to build_anything needs to be named' + \
-                  ' sconscript*.log'
-        raise ExecCallError(message)
+        log_ext = ''
+    log_file = os.path.join(target_dir, ('sconscript%s.log' % log_ext))
 
     # System call
-    command = '%s > %s' % (do, log_file)
-    print command
-
     try:
+        command = '%s > %s' % (do, log_file)
         subprocess.check_output(command,
                                 stderr = subprocess.STDOUT,
                                 shell  = True)
     except subprocess.CalledProcessError as ex:
         message = misc.command_error_msg("build_anything", command)
         raise ExecCallError('%s\n%s' % (message, ex.output))
-        
+
     # Close log
     end_time = misc.current_time()
     # check if there's an origin_log_file to be appended
@@ -87,7 +82,7 @@ def build_anything(target, source, env):
         with open(log_file, 'a') as sconscript_log:
             with open(origin_log_file, 'r') as origin_log:
                 sconscript_log.write(origin_log.read())
-        os.remove(origin_log_file)
+            os.remove(origin_log_file)
     except KeyError:
         pass
     log_timestamp(start_time, end_time, log_file)

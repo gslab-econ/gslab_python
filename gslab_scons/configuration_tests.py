@@ -156,4 +156,4 @@ def check_stata_packages(command, packages):
 
     except subprocess.CalledProcessError:        
         raise PrerequisiteError("Stata command, '%s', failed while checking for Stata packages in configuration test.\n" % command.split(' ')[0] + \
-                                '\n Maybe try specifying the Stata executable in config_user.yaml?'
+                                '\n Maybe try specifying the Stata executable in config_user.yaml?')
