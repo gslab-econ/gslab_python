@@ -163,6 +163,46 @@ def lyx_side_effect(*args, **kwargs):
         with open(out_path, 'wb') as out_file:
             out_file.write('Mock .pdf output')
 
+def latex_side_effect(*args, **kwargs):
+    '''
+    This side effect mocks the behaviour of a subprocess.check_output call.
+    The mocked machine has pdflatex set up as a command-line executable
+    and can export .tex files to .pdf files only using the "-jobname" option.
+    '''
+    # Get and parse the command passed to os.system()
+    command = args[0]
+    match = helpers.command_match(command, 'pdflatex')
+
+    executable   = match.group('executable')
+    option       = match.group('option')
+    source       = match.group('source')
+    log_redirect = match.group('log_redirect')
+
+    option_type  = re.findall('^(-\w+)', option)[0]
+    target_file  = re.findall('\s(\S+)', option)[0]
+
+    is_pdflatex  = bool(re.search('^pdflatex$', executable, flags = re.I))
+
+    # As long as output is redirected, create a log
+    if log_redirect:
+        log_path = re.sub('>\s*', '', log_redirect)
+        with open(log_path, 'wb') as log_file:
+            log_file.write('Test log\n')
+
+    # If pdflatex is the executable, the options are correctly specified,
+    # and the source exists, produce a .pdf file with the name specified in
+    # the -jobname option.
+
+    # Mock a list of the files that pdflatex sees as existing
+    # source_exists should be True only if the source script
+    # specified in the system command belongs to existing_files.
+    existing_files = ['test_script.tex', './input/latex_test_file.tex']
+    source_exists  = os.path.abspath(source) in \
+                     map(os.path.abspath, existing_files)
+
+    if is_pdflatex and option_type == '-jobname' and source_exists:
+        with open('%s.pdf' % target_file, 'wb') as out_file:
+            out_file.write('Mock .pdf output')
 
 def make_call_side_effect(text):
     '''

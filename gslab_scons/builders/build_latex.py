@@ -7,6 +7,7 @@ from gslab_scons._exception_classes import ExecCallError
 
 def build_latex(target, source, env):
     '''Compile a pdf from a LaTeX file
+
     This function is a SCons builder that compiles a .tex file
     as a pdf and places it at the path specified by target.
 
@@ -43,12 +44,10 @@ def build_latex(target, source, env):
 
     # System call
     try:
-        command = 'pdflatex %s %s > %s' % (source_file, target_dir, log_file)
+        command = 'pdflatex -jobname %s %s > %s' % (target_file.replace('.pdf', ''), source_file, log_file)
         subprocess.check_output(command,
                                 stderr = subprocess.STDOUT,
                                 shell  = True)
-        # Move rendered pdf to the target
-        shutil.move(newpdf, target_file)
     except subprocess.CalledProcessError:
         message = misc.command_error_msg('pdflatex', command)
         raise ExecCallError(message)
