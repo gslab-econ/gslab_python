@@ -239,7 +239,7 @@ def up_to_date(mode = 'scons', directory = '.'):
     return bool(result)
 
 
-def extract_dot_git(path = '.git'):
+def extract_dot_git(path = '../.git'):
     '''
     Extract information from a GitHub repository from a
     .git directory
