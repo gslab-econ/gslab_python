@@ -46,7 +46,7 @@ def command_match(command, executable, which = None):
                          command)
 
     elif executable in ['r', 'R']:
-        # e.g. "Rscript --no-save --no-restore --verbose script.R > script.log 2>&1"
+        # e.g. "Rscript --no-save --no-restore --verbose script.R input.txt > script.log 2>&1"
         match = re.match('\s*'
                          '(?P<executable>Rscript)'
                          '\s+'
@@ -60,7 +60,9 @@ def command_match(command, executable, which = None):
                          '\s*'
                          '(?P<args>(\s?[\.\/\w]+)*)?'
                          '\s*'
-                         '(?P<log>> [\.\/\w]+(\.\w+)?)?',
+                         '(?P<log>> [\.\/\w]+(\.\w+)?)?'
+                         '\s*'
+                         '(?P<append>2\>\&1)',
                          command)
 
     elif executable in ['stata', 'do']: 

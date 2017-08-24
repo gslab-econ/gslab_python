@@ -81,8 +81,8 @@ gslab_scons/log.py                                 77     21     18      3    73
 gslab_scons/misc.py                               174      3     60      2    98%   242-243, 274, 241->242, 273->274
 gslab_scons/release.py                             41     41     20      0     0%   1-72
 gslab_scons/size_warning.py                        70      0     30      0   100%
-gslab_scons/tests/_side_effects.py                136      3     32      9    93%   34-35, 119, 31->34, 37->exit, 49->exit, 73->78, 144->156, 160->exit, 190->202, 206->exit, 291->297
-gslab_scons/tests/_test_helpers.py                 93      4     32      3    93%   27-28, 120, 135, 92->106, 117->120, 130->135
+gslab_scons/tests/_side_effects.py                137      3     32      9    93%   35-36, 120, 32->35, 38->exit, 50->exit, 74->79, 145->157, 161->exit, 191->203, 207->exit, 292->298
+gslab_scons/tests/_test_helpers.py                 93      4     32      3    93%   27-28, 122, 137, 94->108, 119->122, 132->137
 gslab_scons/tests/test_build_latex.py              52      1      8      3    93%   108, 26->exit, 103->exit, 107->108
 gslab_scons/tests/test_build_lyx.py                52      1      8      3    93%   108, 26->exit, 103->exit, 107->108
 gslab_scons/tests/test_build_matlab.py             54      1      6      1    97%   110, 109->110
@@ -97,4 +97,4 @@ gslab_scons/tests/test_release_function.py        121      3     22      2    97
 gslab_scons/tests/test_release_tools.py            64      1      2      1    97%   153, 152->153
 gslab_scons/tests/test_size_warning.py            183      5     46      6    95%   277, 294, 310, 374, 380, 273->277, 274->277, 293->294, 305->310, 371->374, 379->380
 -------------------------------------------------------------------------------------------
-TOTAL                                            4689   1305   1292     90    67%
+TOTAL                                            4690   1305   1292     90    67%

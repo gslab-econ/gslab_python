@@ -27,14 +27,15 @@ def make_r_side_effect(recognized = True):
     
         executable = match.group('executable')
         log        = match.group('log')
+        append     = match.group('append')
 
         if log is None:
             # If no log path is specified, create one by using the 
-            # R script's path after replacing .R (if present) with .Rout.
+            # R script's path after replacing .R (if present) with .log.
             source = match.group('source')
-            log    = '%s.Rout' % re.sub('\.R', '', source)
+            log    = '%s.log' % re.sub('\.R', '', source)
     
-        if executable == "Rscript" and log:
+        if executable == 'Rscript' and log and append == '2>&1':
             with open(log.replace('>', '').strip(), 'wb') as log_file:
                 log_file.write('Test log\n')
 
