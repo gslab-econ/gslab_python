@@ -13,3 +13,6 @@ class ReleaseError(Exception):
 
 class PrerequisiteError(Exception):
     pass
+
+class TargetNonexistenceError(Exception):
+    pass

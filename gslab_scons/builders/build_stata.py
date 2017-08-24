@@ -59,6 +59,10 @@ def build_stata(target, source, env):
         raise ExecCallError(message)
 
     shutil.move(loc_log, log_file)
+
+    # Check if targets exist after build
+    misc.check_targets(target)
+
     end_time = misc.current_time()
     log_timestamp(start_time, end_time, log_file)
     

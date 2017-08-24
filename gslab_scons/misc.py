@@ -303,3 +303,22 @@ def get_directory(path):
         directory = './'
 
     return directory
+
+def check_targets(target_files):
+    '''
+    This function raises an exception if any of the files listed as `target_files`
+    do not exist after running a builder. 
+    '''
+    if not isinstance(target_files, list):
+        target_files = [target_files]
+    non_existence = []
+    for target in target_files:
+        target = str(target)
+        if not os.path.isfile(target):
+            non_existence.append(target)
+
+    if non_existence:
+        error_message = 'The following target files do not exist after build:\n' + '\n'.join(non_existence)
+        raise _exception_classes.TargetNonexistenceError(error_message)
+
+    return None

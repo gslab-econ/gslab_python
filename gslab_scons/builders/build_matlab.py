@@ -67,6 +67,9 @@ def build_matlab(target, source, env):
         raise ExecCallError(message)    
     os.remove('source.m')
 
+    # Check if targets exist after build
+    misc.check_targets(target)
+    
     end_time = misc.current_time()
     log_timestamp(start_time, end_time, log_file)
 
