@@ -10,7 +10,7 @@ running build_ext
 ============================= test session starts ==============================
 platform darwin -- Python 2.7.13, pytest-3.2.1, py-1.4.34, pluggy-0.4.0
 rootdir: /Users/chuanyu/Desktop/gslab_python, inifile:
-collected 129 items
+collected 128 items
 
 gencat/tests/test_checkDicts.py ...
 gencat/tests/test_cleanDir.py ......
@@ -23,10 +23,10 @@ gslab_fill/tests/test_textfill.py ........
 gslab_scons/tests/test_build_latex.py ......
 gslab_scons/tests/test_build_lyx.py ......
 gslab_scons/tests/test_build_matlab.py ......
-gslab_scons/tests/test_build_python.py ......
+gslab_scons/tests/test_build_python.py .....
 gslab_scons/tests/test_build_r.py .....
 gslab_scons/tests/test_build_stata.py ..........
-gslab_scons/tests/test_build_tables.py .....
+gslab_scons/tests/test_build_tables.py F.F..
 gslab_scons/tests/test_configuration_tests.py .........
 gslab_scons/tests/test_log.py .........
 gslab_scons/tests/test_misc.py ..................
@@ -34,7 +34,104 @@ gslab_scons/tests/test_release_function.py ....
 gslab_scons/tests/test_release_tools.py ....
 gslab_scons/tests/test_size_warning.py .....
 
-========================== 129 passed in 2.21 seconds ==========================
+=================================== FAILURES ===================================
+__________________ TestBuildTables.test_default_string_target __________________
+
+self = <gslab_scons.tests.test_build_tables.TestBuildTables testMethod=test_default_string_target>
+mock_tablefill = <MagicMock name='tablefill' id='4373006224'>
+
+    @mock.patch('gslab_scons.builders.build_tables.tablefill')
+    def test_default_string_target(self, mock_tablefill):
+        '''
+            Test that build_tables() constructs LyX tables correctly when
+            its target argument is a string.
+            '''
+        mock_tablefill.side_effect = self.table_fill_side_effect
+        source = ['./input/tablefill_template.lyx',
+                  './input/tables_appendix.txt',
+                  './input/tables_appendix_two.txt']
+        target = './build/tablefill_template_filled.lyx'
+>       gs.build_tables(target, source, {})
+
+test_build_tables.py:96: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../builders/build_tables.py:66: in build_tables
+    misc.check_targets(target)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+target_files = ['./build/tablefill_template_filled.lyx']
+
+    def check_targets(target_files):
+        '''
+        This function raises an exception if any of the files listed as `target_files`
+        do not exist after running a builder.
+        '''
+        if not isinstance(target_files, list):
+            target_files = [target_files]
+        non_existence = []
+        for target in target_files:
+            target = str(target)
+            if not os.path.isfile(target):
+                non_existence.append(target)
+    
+        if non_existence:
+            error_message = 'The following target files do not exist after build:\n' + '\n'.join(non_existence)
+>           raise _exception_classes.TargetNonexistenceError(error_message)
+E           TargetNonexistenceError: The following target files do not exist after build:
+E           ./build/tablefill_template_filled.lyx
+
+../misc.py:322: TargetNonexistenceError
+________________________ TestBuildTables.test_standard _________________________
+
+self = <gslab_scons.tests.test_build_tables.TestBuildTables testMethod=test_standard>
+mock_tablefill = <MagicMock name='tablefill' id='4372857488'>
+
+    @mock.patch('gslab_scons.builders.build_tables.tablefill')
+    def test_standard(self, mock_tablefill):
+        '''
+            Test that build_tables() correctly prepares and passes
+            inputs to the gslab_fill.tablefill() function
+            '''
+    
+        mock_tablefill.side_effect = self.table_fill_side_effect
+        # Specify the sources and the target arguments of build_tables()
+        source = ['./input/tablefill_template.lyx',
+                  './input/tables_appendix.txt',
+                  './input/tables_appendix.txt']
+        target = ['./build/tablefill_template_filled.lyx']
+    
+        # Call build_tables() and check that it behaved as expected.
+>       gs.build_tables(target, source, {})
+
+test_build_tables.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../builders/build_tables.py:66: in build_tables
+    misc.check_targets(target)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+target_files = ['./build/tablefill_template_filled.lyx']
+
+    def check_targets(target_files):
+        '''
+        This function raises an exception if any of the files listed as `target_files`
+        do not exist after running a builder.
+        '''
+        if not isinstance(target_files, list):
+            target_files = [target_files]
+        non_existence = []
+        for target in target_files:
+            target = str(target)
+            if not os.path.isfile(target):
+                non_existence.append(target)
+    
+        if non_existence:
+            error_message = 'The following target files do not exist after build:\n' + '\n'.join(non_existence)
+>           raise _exception_classes.TargetNonexistenceError(error_message)
+E           TargetNonexistenceError: The following target files do not exist after build:
+E           ./build/tablefill_template_filled.lyx
+
+../misc.py:322: TargetNonexistenceError
+===================== 2 failed, 126 passed in 2.06 seconds =====================
 Name                                            Stmts   Miss Branch BrPart  Cover   Missing
 -------------------------------------------------------------------------------------------
 gencat/gencat.py                                   79      6     28      4    91%   72-73, 81, 89, 97, 101, 57->exit, 71->72, 96->97, 100->101
@@ -67,29 +164,30 @@ gslab_make/private/preliminaries.py               107     88     40      0    13
 gslab_make/private/runprogramdirective.py         207    185    104      0     7%   16-93, 97-107, 111-116, 121-134, 138-145, 149-163, 167-220, 224-240, 244-264, 271-282, 285-289, 296-302
 gslab_make/run_program.py                         238    217     80      0     7%   129-162, 178-202, 208-225, 231-248, 254-275, 281-298, 304-321, 332-392, 398-423, 429-447, 453-488, 494-499
 gslab_make/tests/nostderrout.py                    12      0      2      0   100%
-gslab_scons/_exception_classes.py                  11      0      0      0   100%
+gslab_scons/_exception_classes.py                  13      0      0      0   100%
 gslab_scons/_release_tools.py                     132      0     46      1    99%   34->37
-gslab_scons/builders/build_latex.py                29      0      0      0   100%
-gslab_scons/builders/build_lyx.py                  30      0      0      0   100%
-gslab_scons/builders/build_matlab.py               38      0      4      0   100%
-gslab_scons/builders/build_python.py               28      0      0      0   100%
-gslab_scons/builders/build_r.py                    28      0      0      0   100%
-gslab_scons/builders/build_stata.py                36      0      2      0   100%
-gslab_scons/builders/build_tables.py               31      0      2      0   100%
+gslab_scons/builders/build_latex.py                30      0      0      0   100%
+gslab_scons/builders/build_lyx.py                  31      0      0      0   100%
+gslab_scons/builders/build_matlab.py               39      0      4      0   100%
+gslab_scons/builders/build_python.py               29      0      0      0   100%
+gslab_scons/builders/build_r.py                    29      0      0      0   100%
+gslab_scons/builders/build_stata.py                37      0      2      0   100%
+gslab_scons/builders/build_tables.py               32      3      2      0    91%   68-71
 gslab_scons/configuration_tests.py                 91      0     32      0   100%
 gslab_scons/log.py                                 77     21     18      3    73%   54-60, 90, 95-96, 100-111, 53->54, 87->90, 99->100
-gslab_scons/misc.py                               174      3     60      2    98%   242-243, 274, 241->242, 273->274
+gslab_scons/misc.py                               186      5     68      4    96%   242-243, 274, 303, 313, 241->242, 273->274, 302->303, 312->313
 gslab_scons/release.py                             41     41     20      0     0%   1-72
 gslab_scons/size_warning.py                        70      0     30      0   100%
-gslab_scons/tests/_side_effects.py                137      3     32      9    93%   35-36, 120, 32->35, 38->exit, 50->exit, 74->79, 145->157, 161->exit, 191->203, 207->exit, 292->298
+gslab_scons/tests/_side_effects.py                143      3     32      9    93%   35-36, 126, 32->35, 38->exit, 52->exit, 78->85, 151->163, 167->exit, 197->209, 213->exit, 298->304
 gslab_scons/tests/_test_helpers.py                 93      4     32      3    93%   27-28, 122, 137, 94->108, 119->122, 132->137
+gslab_scons/tests/input/test_script.py              3      0      0      0   100%
 gslab_scons/tests/test_build_latex.py              52      1      8      3    93%   108, 26->exit, 103->exit, 107->108
 gslab_scons/tests/test_build_lyx.py                52      1      8      3    93%   108, 26->exit, 103->exit, 107->108
 gslab_scons/tests/test_build_matlab.py             54      1      6      1    97%   110, 109->110
-gslab_scons/tests/test_build_python.py             60      2     14      4    92%   75, 107, 23->exit, 74->75, 102->exit, 106->107
-gslab_scons/tests/test_build_r.py                  46      1     12      3    93%   88, 27->exit, 83->exit, 87->88
+gslab_scons/tests/test_build_python.py             45      2     10      4    89%   67, 78, 23->exit, 66->67, 73->exit, 77->78
+gslab_scons/tests/test_build_r.py                  42      1     10      3    92%   81, 27->exit, 76->exit, 80->81
 gslab_scons/tests/test_build_stata.py              82      1      2      1    98%   161, 160->161
-gslab_scons/tests/test_build_tables.py             88      2     12      3    95%   144, 178, 21->exit, 173->exit, 177->178
+gslab_scons/tests/test_build_tables.py             88     21     12      3    72%   46-56, 64-83, 98, 144, 178, 21->exit, 173->exit, 177->178
 gslab_scons/tests/test_configuration_tests.py     194      2     54      4    98%   211, 313, 107->exit, 206->213, 208->211, 312->313
 gslab_scons/tests/test_log.py                     117     10     16      5    86%   28, 155-161, 197, 202, 27->28, 29->exit, 196->197, 198->exit, 201->202
 gslab_scons/tests/test_misc.py                    192      2     28      6    96%   179, 363, 178->179, 282->exit, 289->exit, 314->exit, 342->exit, 362->363
@@ -97,4 +195,4 @@ gslab_scons/tests/test_release_function.py        121      3     22      2    97
 gslab_scons/tests/test_release_tools.py            64      1      2      1    97%   153, 152->153
 gslab_scons/tests/test_size_warning.py            183      5     46      6    95%   277, 294, 310, 374, 380, 273->277, 274->277, 293->294, 305->310, 371->374, 379->380
 -------------------------------------------------------------------------------------------
-TOTAL                                            4690   1305   1292     90    67%
+TOTAL                                            4701   1329   1294     92    66%

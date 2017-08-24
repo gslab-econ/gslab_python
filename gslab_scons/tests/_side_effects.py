@@ -38,6 +38,8 @@ def make_r_side_effect(recognized = True):
         if executable == 'Rscript' and log and append == '2>&1':
             with open(log.replace('>', '').strip(), 'wb') as log_file:
                 log_file.write('Test log\n')
+            with open('./test_output.txt', 'wb') as target:
+                target.write('Test target')
 
     return side_effect
 
@@ -51,6 +53,8 @@ def python_side_effect(*args, **kwargs):
         log_path = re.sub('(\s|>)', '', match.group('log'))
         with open(log_path, 'wb') as log_file:
             log_file.write('Test log')
+        with open('./test_output.txt', 'wb') as target:
+            target.write('Test target')
 
 
 def make_matlab_side_effect(recognized = True):
@@ -75,6 +79,8 @@ def make_matlab_side_effect(recognized = True):
             log_path = log_match.group('log')
             with open(log_path, 'wb') as log_file:
                 log_file.write('Test log')
+            with open('./test_output.txt', 'wb') as target:
+                target.write('Test target')
     
         return None
 
