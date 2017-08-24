@@ -310,15 +310,15 @@ def check_targets(target_files):
     do not exist after running a builder. 
     '''
     if not isinstance(target_files, list):
-        extensions = [target_files]
+        target = [target_files]
     non_existence = []
     for target in target_files:
         target = str(target)
         if not os.path.isfile(target):
             non_existence.append(target)
 
-    if len(non_existence) > 0:
-        error_message = 'The following target files does not exist after build: ' + str(non_existence)
+    if non_existence:
+        error_message = 'The following target files do not exist after build:\n' + '\n'.join(non_existence)
         raise _exception_classes.TargetNonexistenceError(error_message)
 
     return None
