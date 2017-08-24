@@ -313,11 +313,12 @@ def check_targets(target_files):
         extensions = [target_files]
     non_existence = []
     for target in target_files:
+        target = str(target)
         if not os.path.isfile(target):
             non_existence.append(target)
 
     if len(non_existence) > 0:
-        error_message = 'The following target files does not exist after build: ' + non_existence
+        error_message = 'The following target files does not exist after build: ' + str(non_existence)
         raise _exception_classes.TargetNonexistenceError(error_message)
 
     return None
