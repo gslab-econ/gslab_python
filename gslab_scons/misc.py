@@ -310,7 +310,7 @@ def check_targets(target_files):
     do not exist after running a builder. 
     '''
     if not isinstance(target_files, list):
-        target = [target_files]
+        target_files = [target_files]
     non_existence = []
     for target in target_files:
         target = str(target)
