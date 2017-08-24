@@ -110,6 +110,8 @@ def make_stata_side_effect(recognized = True):
             # Write a log
             with open(stata_log, 'wb') as logfile:
                 logfile.write('Test Stata log.\n')
+            with open('./test_output.txt', 'wb') as target:
+                target.write('Test target')
 
         else:
             # Raise an error if the executable is not recognised.

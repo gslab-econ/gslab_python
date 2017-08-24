@@ -25,6 +25,10 @@ path = 'gslab_scons.builders.build_stata'
 
 class TestBuildStata(unittest.TestCase):
 
+    def setUp(self):
+        if not os.path.exists('./build/'):
+            os.mkdir('./build/')
+
     @helpers.platform_patch('darwin', path)
     @mock.patch('%s.misc.is_in_path'         % path)
     @mock.patch('%s.subprocess.check_output' % path)
@@ -156,6 +160,11 @@ class TestBuildStata(unittest.TestCase):
         helpers.bad_extension(self, gs.build_stata, 
                               good = 'test.do', env = env)
 
+    def tearDown(self):
+        if os.path.exists('./build/'):
+            shutil.rmtree('./build/')
+        if os.path.isfile('./test_output.txt'):
+            os.remove('./test_output.txt')
 
 if __name__ == '__main__':
     unittest.main()

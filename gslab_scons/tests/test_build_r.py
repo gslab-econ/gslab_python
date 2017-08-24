@@ -75,7 +75,8 @@ class TestBuildR(unittest.TestCase):
     def tearDown(self):
         if os.path.exists('./build/'):
             shutil.rmtree('./build/')
-
+        if os.path.isfile('./test_output.txt'):
+            os.remove('./test_output.txt')
 
 if __name__ == '__main__':
     unittest.main()
