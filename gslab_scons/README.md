@@ -1,7 +1,7 @@
 ## Notes on release.py
 
 Make a release from an SCons directory by running the following
-from the command line within the directory of interest:
+from the command line within the directory of interest (e.g. `gslab-econ/template/paper_slides`):
 
 ```sh
 python -m gslab_scons.release version=<version name here>
