@@ -9,7 +9,13 @@ def main(user_yaml = 'config_user.yaml', release_files = []):
     inspect_repo()
 
     # Extract information about the clone from its .git directory
-    repo, organisation, branch = _release_tools.extract_dot_git()
+    try: 
+        repo, organisation, branch = _release_tools.extract_dot_git()
+    except: 
+        try: 
+            repo, organisation, branch = _release_tools.extract_dot_git(path = '../.git')
+        except: 
+            raise ReleaseError("Could not find .git/config in the current directory or parent directory.")
 
     # Determine the version number
     try:
