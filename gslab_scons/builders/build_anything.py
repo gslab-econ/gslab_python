@@ -9,7 +9,7 @@ from gslab_scons._exception_classes import ExecCallError
 import SCons.Builder
 
 def build_anything(target, source, action, env, **kw):
-  ''' 
+    ''' 
     Anything builder-generator. The generator will create a custom builder 
     that runs `action` and add it as a SCons node, similar to the native env.Command.
     Using gslab_scons.build_anything will utilize our logging mechanism
