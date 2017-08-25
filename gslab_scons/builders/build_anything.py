@@ -9,9 +9,48 @@ from gslab_scons._exception_classes import ExecCallError
 import SCons.Builder
 
 def build_anything(target, source, action, env, **kw):
+  ''' 
+    Anything builder-generator. The generator will create a custom builder 
+    that runs `action` and add it as a SCons node, similar to the native env.Command.
+    Using gslab_scons.build_anything will utilize our logging mechanism
+    and error catching similar to our other builders.
+    `    
+    Parameters
+    target: string or list 
+        The target(s) of the SCons command. The log ends up in the 
+        directory of the first specified target.
+    source: string or list
+        The source(s) of the SCons command. 
+    action: string
+        The code to be run by the generated builder.
+    env: SCons construction environment, see SCons user guide 7.2.
+        You ***MUST *** manually pass `env = env` when calling this in SConscript,
+        since this is not a Scons.env method like env.Command.
+        Special parameters that can be added when using the builder
+        log_ext: string
+            Instead of logging to `sconscript.log` in the target dir, 
+            the builder will log to `sconscript_<log_ext>.log`.
+        origin_log_file: string
+            Sometimes, your command may produce a log file in an undesirable location.
+            Specifying the that location in this argument leads the builder to append
+            the content of origin_log_file to log_file and delete origin_log_file.            
+            The builder will crash if this file doesn't exist at the end of the command.
+        warning: Boolean
+            Turns off warnings if warning == False. 
+    '''
 
+    # the logging mechanism relies on redirection operators
+    if '>' in action:
+        try:
+            warn_switch = env['warning']
+        except KeyError: warn_switch == True
+        if warn_switch:
+            warning_message = 'There is a redirection operator > in your prescribed action key,' + \
+                              'build_anything\'s logging mechanism may not work as intended.'
+            warnings.warn(warning_message)
+
+    # this point onward looks like our other builders
     def _build_anything(env, target, source):
-        
         # Prelims
         start_time  = misc.current_time()
 
@@ -48,7 +87,7 @@ def build_anything(target, source, action, env, **kw):
         log_timestamp(start_time, end_time, log_file)
         return None
     
-
+    # generate SCons object based on the custom builder we made above
     bkw = {
             'action': _build_anything,
             'target_factory' : env.fs.Entry,
