@@ -8,7 +8,7 @@ from gslab_scons import log_timestamp
 from gslab_scons._exception_classes import ExecCallError
 import SCons.Builder
 
-def build_anything(target, source, action, env, **kw):
+def _build_anything(target, source, action, env, **kw):
     ''' 
     Anything builder-generator. The generator will create a custom builder 
     that runs `action` and add it as a SCons node, similar to the native env.Command.
@@ -36,21 +36,21 @@ def build_anything(target, source, action, env, **kw):
             the content of origin_log_file to log_file and delete origin_log_file.            
             The builder will crash if this file doesn't exist at the end of the command.
         warning: Boolean
-            Turns off warnings if warning == False. 
+            Turns off warnings if warning = False. 
     '''
 
     # the logging mechanism relies on redirection operators
     if '>' in action:
         try:
             warn_switch = env['warning']
-        except KeyError: warn_switch == True
+        except KeyError: warn_switch = True
         if warn_switch:
-            warning_message = 'There is a redirection operator > in your prescribed action key,' + \
+            warning_message = 'There is a redirection operator > in your prescribed action key.\n' + \
                               'build_anything\'s logging mechanism may not work as intended.'
             warnings.warn(warning_message)
 
     # this point onward looks like our other builders
-    def _build_anything(env, target, source):
+    def build_anything(env, target, source):
         # Prelims
         start_time  = misc.current_time()
 
@@ -65,13 +65,16 @@ def build_anything(target, source, action, env, **kw):
 
         # System call
         try:
-            command = '%s > %s' % (action, log_file)
+            command = '%s > %s 2>&1' % (action, log_file)
             subprocess.check_output(command,
                                     stderr = subprocess.STDOUT,
                                     shell  = True)
         except subprocess.CalledProcessError as ex:
             message = misc.command_error_msg("build_anything", command)
             raise ExecCallError('%s\n%s' % (message, ex.output))
+
+        # Check if target exists after build
+        misc.check_targets(target)
 
         # Close log
         end_time = misc.current_time()
@@ -89,7 +92,7 @@ def build_anything(target, source, action, env, **kw):
     
     # generate SCons object based on the custom builder we made above
     bkw = {
-            'action': _build_anything,
+            'action': build_anything,
             'target_factory' : env.fs.Entry,
             'source_factory':  env.fs.Entry,
           }
