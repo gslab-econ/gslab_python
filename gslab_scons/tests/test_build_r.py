@@ -34,8 +34,7 @@ class TestBuildR(unittest.TestCase):
         helpers.standard_test(self, gs.build_r, 'R', 
                               system_mock = mock_check_output)
         # With a list of targets
-        # We expect that build_r() can run without creating its targets
-        targets = ['./build/r.rds', 'additional_target', '']
+        targets = ['./test_output.txt']
         helpers.standard_test(self, gs.build_r, 'R', 
                               system_mock = mock_check_output,
                               target      = targets)    
@@ -73,16 +72,11 @@ class TestBuildR(unittest.TestCase):
         for bad_env in [True, (1, 2), TypeError]:
             check(env = bad_env, error = TypeError)
         
-        for bad_target in (None, 1):
-            check(target = bad_target, error = TypeError)
-        check(target = [], error = IndexError)     
-
-        check(target = '', error = None)
-
     def tearDown(self):
         if os.path.exists('./build/'):
             shutil.rmtree('./build/')
-
+        if os.path.isfile('./test_output.txt'):
+            os.remove('./test_output.txt')
 
 if __name__ == '__main__':
     unittest.main()

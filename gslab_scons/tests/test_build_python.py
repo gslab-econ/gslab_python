@@ -54,14 +54,6 @@ class TestBuildPython(unittest.TestCase):
         check(env = None,  error = TypeError)
         check(env = 'env', error = TypeError)        
 
-        # Targets that don't cause errors
-        for ok_target in ['', [1, 2]]:
-            check(target = ok_target, error = None) 
-        # Targets that cause TypeErrors
-        for bad_target in [('a', 'b'), None, 1]:
-            print bad_target
-            check(target = bad_target, error = TypeError) 
-
         test_source = ['./test_script.py', 'nonexistent_data.txt']
         check(source = test_source, error = None)
         test_source.reverse()
@@ -77,30 +69,11 @@ class TestBuildPython(unittest.TestCase):
         with self.assertRaises(ExecCallError):
             helpers.standard_test(self, gs.build_python, source = 'test.py')
 
-    def test_target_creation_unnecessary(self):
-        '''
-        Test that build_python() can run without
-        actually creating its target.
-        '''
-        source = './input/test_script.py'
-        target = './build/test_target.txt'
-
-        with open(source, 'wb') as test_script:
-            test_script.write('def main():\n'
-                              '    pass   \n'
-                              'main()     \n')
-
-        gs.build_python(target, source, env = {})
-        # The target doesn't exist...
-        with self.assertRaises(IOError):
-            open(target, 'rU')
-        # ...but the log does.
-        helpers.check_log(self, './build/sconscript.log')
-        os.remove(source)
-
     def tearDown(self):
         if os.path.exists('./build/'):
             shutil.rmtree('./build/')
+        if os.path.isfile('./test_output.txt'):
+            os.remove('./test_output.txt')
 
 
 if __name__ == '__main__':

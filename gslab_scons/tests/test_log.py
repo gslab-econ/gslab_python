@@ -4,6 +4,7 @@ import os
 import re
 import mock
 import time
+import shutil
 # Import gslab_scons testing helpers
 import _test_helpers as helpers
 
@@ -25,6 +26,8 @@ class TestLog(unittest.TestCase):
     def setUp(self):
         if os.path.isfile('sconstruct.log'):
             os.remove('sconstruct.log')
+        if not os.path.exists('./release/'):
+            os.mkdir('./release/')
 
     # Mock a Unix platform (sys.platform = 'darwin' on  Mac machines).
     @helpers.platform_patch('darwin', path)
@@ -182,7 +185,7 @@ class TestLog(unittest.TestCase):
         now = '2000-01-01 0:0:0'
         mock_time.return_value = now
         gs.end_log()
-        with open('sconstruct.log', 'rU') as f:
+        with open('./release/sconstruct.log', 'rU') as f:
             line = f.readline()
             self.assertTrue(re.search('Build completed', line))
             self.assertTrue(re.search('\{%s\}' % now, line))
@@ -192,7 +195,8 @@ class TestLog(unittest.TestCase):
            os.remove('sconstruct.log')
         if os.path.isfile('test_log.txt'):
            os.remove('test_log.txt')
-
+        if os.path.exists('./release/'):
+            shutil.rmtree('./release/')
 
 if __name__ == '__main__':
     unittest.main()

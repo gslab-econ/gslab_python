@@ -5,10 +5,10 @@ import gslab_scons.misc as misc
 from gslab_scons import log_timestamp
 from gslab_scons._exception_classes import ExecCallError
 
-def build_lyx(target, source, env):
-    '''Compile a pdf from a LyX file
+def build_latex(target, source, env):
+    '''Compile a pdf from a LaTeX file
 
-    This function is a SCons builder that compiles a .lyx file
+    This function is a SCons builder that compiles a .tex file
     as a pdf and places it at the path specified by target.
 
     Parameters
@@ -18,7 +18,7 @@ def build_lyx(target, source, env):
         of the pdf that the builder is instructed to compile. 
     source: string or list
         The source of the SCons command. This should
-        be the .lyx file that the function will compile as a PDF.
+        be the .tex file that the function will compile as a PDF.
     env: SCons construction environment, see SCons user guide 7.2
     '''
 
@@ -27,7 +27,7 @@ def build_lyx(target, source, env):
     target      = misc.make_list_if_string(target)
 
     source_file = str(source[0])
-    misc.check_code_extension(source_file, '.lyx')
+    misc.check_code_extension(source_file, '.tex')
 
     # Set up target file and log file
     newpdf      = source_file[:-4] + '.pdf'
@@ -44,14 +44,13 @@ def build_lyx(target, source, env):
 
     # System call
     try:
-        command = 'lyx -e pdf2 %s > %s' % (source_file, log_file)
+        command = 'pdflatex -interaction nonstopmode -jobname %s %s > %s' % (target_file.replace('.pdf', ''), source_file, log_file)
         subprocess.check_output(command,
                                 stderr = subprocess.STDOUT,
                                 shell  = True)
-        # Move rendered pdf to the target
-        shutil.move(newpdf, target_file)
+        # os.remove(target_file.replace('.pdf', '.log'))
     except subprocess.CalledProcessError:
-        message = misc.command_error_msg('lyx', command)
+        message = misc.command_error_msg('pdflatex', command)
         raise ExecCallError(message)
 
     # Check if targets exist after build

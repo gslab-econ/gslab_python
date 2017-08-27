@@ -48,6 +48,9 @@ def build_python(target, source, env):
         message = misc.command_error_msg("Python", command)
         raise ExecCallError('%s\n%s' % (message, ex.output))
 
+    # Check if targets exist after build
+    misc.check_targets(target)
+    
     # Close log
     end_time   =  misc.current_time()    
     log_timestamp(start_time, end_time, log_file)

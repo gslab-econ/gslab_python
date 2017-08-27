@@ -114,7 +114,7 @@ def check_lfs():
                               'git lfs install --force' if prompted above.''')
 
 
-def check_stata(packages = ["yaml"], user_yaml = "user-config.yaml"):
+def check_stata(packages = ["yaml"], user_yaml = "config_user.yaml"):
     '''
     Check that a valid Stata executable is in the path and that the specified
     Stata packages are installed.

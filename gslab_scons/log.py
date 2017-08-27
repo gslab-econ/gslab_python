@@ -3,6 +3,7 @@ import sys
 import glob
 from datetime import datetime
 import subprocess
+import shutil
 import gslab_scons.misc as misc
 
 
@@ -58,8 +59,10 @@ def end_log(log = 'sconstruct.log'):
                 sconstruct.write(f + '\n')
                 sconstruct.write(sconscript.read())
 
+    # move top level logs to /release/ directory.
+    for file in glob.glob("*.log"):
+        shutil.move('./' + file, 'release/' + file)
     return None
-
 
 def log_timestamp(start_time, end_time, filename = 'sconstruct.log'):
     '''Adds beginning and ending times to a log file.'''
@@ -108,3 +111,4 @@ def collect_builder_logs(parent_dir):
         builder_log_collect[log_path]  = builder_log_end_time
 
     return builder_log_collect
+    

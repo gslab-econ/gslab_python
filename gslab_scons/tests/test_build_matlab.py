@@ -23,6 +23,10 @@ main_patch = lambda f: check_output_patch(copy_patch(f))
 
 class TestBuildMatlab(unittest.TestCase):
 
+    def setUp(self):
+        if not os.path.exists('./build/'):
+            os.mkdir('./build/')
+
     @helpers.platform_patch('darwin', path)
     @main_patch
     def test_unix(self, mock_copy, mock_check_output):
@@ -104,7 +108,11 @@ class TestBuildMatlab(unittest.TestCase):
             gs.build_matlab(target = './build/test.mat', 
                             source = './input/matlab_test_script.m', 
                             env    = {})
-
+    def tearDown(self):
+        if os.path.exists('./build/'):
+            shutil.rmtree('./build/')
+        if os.path.isfile('./test_output.txt'):
+            os.remove('./test_output.txt')
 
 if __name__ == '__main__':
     unittest.main()
