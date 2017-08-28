@@ -43,11 +43,11 @@ def _build_anything(target, source, action, env, warning = True, **kw):
             warning_message = '\nThere is a redirection operator > in your prescribed action key.\n' + \
                               'build_anything\'s logging mechanism may not work as intended.'
             warnings.warn(warning_message)
+    
 
     # this point onward looks like our other builders
     def build_anything(env, target, source):
-        import SCons.Builder
-        
+
         # Prelims
         start_time  = misc.current_time()
 
@@ -88,12 +88,14 @@ def _build_anything(target, source, action, env, warning = True, **kw):
         return None
     
     # generate SCons object based on the custom builder we made above
+    import SCons.Builder
     bkw = {
             'action': build_anything,
             'target_factory' : env.fs.Entry,
             'source_factory':  env.fs.Entry,
           }
     bld = SCons.Builder.Builder(**bkw) 
+    
     return bld(env, target, source, **kw)
 
 
