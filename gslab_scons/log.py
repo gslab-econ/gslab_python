@@ -27,7 +27,7 @@ def start_log(mode, vers, log = 'sconstruct.log'):
     return None
 
 
-def end_log(log = 'sconstruct.log'):
+def end_log(log = 'sconstruct.log', excluded_dirs = []):
     '''Complete the log of a build process.'''
 
     end_message = "*** Build completed: {%s} ***\n \n \n" % misc.current_time()
@@ -42,7 +42,7 @@ def end_log(log = 'sconstruct.log'):
 
     # gather all sconscript logs 
     parent_dir = os.getcwd()
-    builder_logs = collect_builder_logs(parent_dir)
+    builder_logs = collect_builder_logs(parent_dir, excluded_dirs = excluded_dirs)
     
     # keep only builder logs from this run OR is broken (value == beginning_of_time)
     beginning_of_time    = datetime.min # to catch broken logs (see collect_builder_logs)
