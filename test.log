@@ -33,7 +33,7 @@ gslab_scons/tests/test_release_function.py ....
 gslab_scons/tests/test_release_tools.py ....
 gslab_scons/tests/test_size_warning.py .....
 
-========================== 123 passed in 1.89 seconds ==========================
+========================== 123 passed in 1.64 seconds ==========================
 Name                                            Stmts   Miss Branch BrPart  Cover   Missing
 -------------------------------------------------------------------------------------------
 gencat/gencat.py                                   79      6     28      4    91%   72-73, 81, 89, 97, 101, 57->exit, 71->72, 96->97, 100->101
@@ -46,7 +46,7 @@ gencat/tests/test_writeDict.py                     60      6      8      1    90
 gencat/tests/test_zipFile.py                      101      6      8      1    94%   16, 19, 28-30, 149, 148->149
 gslab_fill/tablefill.py                           141      5     68     10    93%   53, 105, 138, 171, 174, 32->35, 35->37, 52->53, 83->exit, 91->88, 104->105, 122->119, 137->138, 167->171, 173->174
 gslab_fill/tablefill_info.py                        0      0      0      0   100%
-gslab_fill/tests/test_tablefill.py                 97      2     42      6    94%   174-175, 22->exit, 39->36, 88->74, 105->exit, 169->exit, 173->174
+gslab_fill/tests/test_tablefill.py                 97      2     42      6    94%   145-146, 22->exit, 39->36, 59->45, 76->exit, 140->exit, 144->145
 gslab_fill/tests/test_textfill.py                  84      2     12      3    95%   139-140, 18->exit, 134->exit, 138->139
 gslab_fill/textfill.py                            135      2     60      5    96%   44, 170, 32->35, 35->37, 43->44, 100->exit, 169->170
 gslab_fill/textfill_info.py                         0      0      0      0   100%

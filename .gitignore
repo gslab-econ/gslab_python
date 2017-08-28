@@ -8,4 +8,3 @@
 *.coveragerc
 *.ipynb
 .ipynb_checkpoints/
-gslab_fill/tests/input/*.log
