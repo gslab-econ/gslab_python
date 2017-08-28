@@ -62,6 +62,9 @@ def build_tables(target, source, env):
         message = misc.command_error_msg("tablefill.py", command)
         raise ExecCallError(message)
     
+    # Check if targets exist after build
+    # misc.check_targets(target)
+    
     end_time = misc.current_time()    
     log_timestamp(start_time, end_time, log_file)
 

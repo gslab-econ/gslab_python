@@ -46,18 +46,24 @@ def command_match(command, executable, which = None):
                          command)
 
     elif executable in ['r', 'R']:
-        # e.g. "R CMD BATCH --no-save '--args cl_arg' script.R script.log"
+        # e.g. "Rscript --no-save --no-restore --verbose script.R input.txt > script.log 2>&1"
         match = re.match('\s*'
-                         '(?P<executable>R CMD BATCH)'
+                         '(?P<executable>Rscript)'
                          '\s+'
-                         '(?P<option>--no-save)?'
+                         '(?P<option1>--no-save)'
                          '\s*'
-                         "(?P<args>'--args .*')?"
+                         '(?P<option2>--no-restore)'
+                         '\s*'
+                         '(?P<option3>--verbose)'
                          '\s*'
                          '(?P<source>[\.\/\w]+\.[rR])'
                          '\s*'
-                         '(?P<log>[\.\/\w]+(\.\w+)?)?',
-                         command)  
+                         '(?P<args>(\s?[\.\/\w]+)*)?'
+                         '\s*'
+                         '(?P<log>> [\.\/\w]+(\.\w+)?)?'
+                         '\s*'
+                         '(?P<append>2\>\&1)',
+                         command)
 
     elif executable in ['stata', 'do']: 
         # e.g. "stata-mp -e do script.do cl_arg"
@@ -84,7 +90,21 @@ def command_match(command, executable, which = None):
                          '\s*'
                          '(?P<log_redirect>\> [\.\/\w]+\.\w+)?',
                          command)
-     
+
+    elif executable == 'pdflatex':
+        # e.g. "pdflatex -interaction nonstopmode -jobname target_file file.tex > ./sconscript.log"
+        match = re.match('\s*'
+                         '(?P<executable>\w+)'
+                         '\s+'
+                         '(?P<option1>-\w+ \S+)?'
+                         '\s*'
+                         '(?P<option2>-\w+ \S+)?'
+                         '\s*'
+                         '(?P<source>[\.\/\w]+\.\w+)?'
+                         '\s*'
+                         '(?P<log_redirect>\> [\.\/\w]+\.\w+)?',
+                         command)
+
     if which:
         return match.group(which)
     else:
@@ -184,8 +204,6 @@ def test_cl_args(test_object, builder, system_mock, extension, env = {}):
     # The system command is the first positional argument
     command = system_mock.call_args[0][0] 
     args    = command_match(command, extension, which = 'args')
-    if extension in ['r', 'R']:
-        args = re.sub("('|--args)", '', args).strip()
 
     test_object.assertIn('test', args.split(' '))
     test_object.assertEqual(len(args.split(' ')), 1)
@@ -200,8 +218,6 @@ def test_cl_args(test_object, builder, system_mock, extension, env = {}):
 
     command = system_mock.call_args[0][0] 
     args    = command_match(command, extension, which = 'args')
-    if extension in ['r', 'R']:
-        args = re.sub("('|--args)", '', args).strip()
 
     for arg in env['CL_ARG']:
         test_object.assertIn(str(arg), args.split(' '))

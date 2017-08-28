@@ -114,7 +114,7 @@ def check_lfs():
                               'git lfs install --force' if prompted above.''')
 
 
-def check_stata(packages = ["yaml"], user_yaml = "user-config.yaml"):
+def check_stata(packages = ["yaml"], user_yaml = "config_user.yaml"):
     '''
     Check that a valid Stata executable is in the path and that the specified
     Stata packages are installed.
@@ -123,10 +123,6 @@ def check_stata(packages = ["yaml"], user_yaml = "user-config.yaml"):
     fake_env = {'stata_executable': load_yaml_value(user_yaml, 
                                                     'stata_executable')} 
     stata_executable = get_stata_executable(fake_env)
-    
-    if stata_executable is None:
-        message = 'Stata is not installed or executable is not added to path'
-        raise PrerequisiteError(message)
     
     command = get_stata_command(stata_executable)
     check_stata_packages(command, packages)
@@ -159,7 +155,5 @@ def check_stata_packages(command, packages):
                 raise PrerequisiteError('Stata package %s is not installed' % pkg)
 
     except subprocess.CalledProcessError:        
-        raise PrerequisiteError("Stata command, '%s', failed.\n" % command.split(' ')[0] + \
-                                "\t\t   Please supply a correct stata_executable" + \
-                                " value in user-config.yaml.\n" )
-        
+        raise PrerequisiteError("Stata command, '%s', failed while checking for Stata packages in configuration test.\n" % command.split(' ')[0] + \
+                                '\n Maybe try specifying the Stata executable in config_user.yaml?')

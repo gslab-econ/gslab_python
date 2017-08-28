@@ -87,38 +87,20 @@ def command_line_args(env):
 
 
 def get_stata_executable(env):
-    '''Return OS command to call Stata.
-    
-    This helper function returns a command (str) for Unix bash or
-    Windows cmd to carry a Stata batch job. 
-
-    The function checks for a Stata executable in env, an SCons 
-    Environment object. If env does not specify an executable, then 
-    the function searches for common executables in the system environment.
+    '''
+    This helper function returns the most common Stata executable
+    for Mac/Windows if the default executable is not available in env. 
     '''
     # Get environment's user input executable. Empty default = None.
     stata_executable  = env['stata_executable']  
 
-    if stata_executable is not None:
+    if stata_executable not in [None, 'None', '']:
         return stata_executable
     else:
-        executables = ['stata-mp', 'stata-se', 'stata']
         if is_unix():
-            for executable in executables:
-                if is_in_path(executable): # check in $PATH
-                    return executable
-
+            return 'stata-mp'
         elif sys.platform == 'win32':
-            if 'STATAEXE' in os.environ.keys():
-                return "%%STATAEXE%%"
-            else:
-                # Try StataMP.exe and StataMP-64.exe, etc.
-                executables = [(e.replace('-', '') + '.exe') for e in executables]
-                if is_64_windows():
-                    executables = [e.replace('.exe', '-64.exe') for e in executables]
-                for executable in executables:
-                    if is_in_path(executable):
-                        return executable
+            return 'StataMP-64.exe'
     return None
 
 
@@ -257,7 +239,7 @@ def load_yaml_value(path, key):
     if key == "stata_executable":
         prompt = "Enter %s or None to search for defaults: "
     elif key == "github_token":
-        prompt = "(Optional) Enter %s to be stored in user_config.yaml.\n" 
+        prompt = "(Optional) Enter %s to be stored in config_user.yaml.\n" 
         prompt = prompt + "Github token can also be entered without storing to file later:" 
     else:
         prompt = "Enter %s: "
@@ -301,7 +283,7 @@ def load_yaml_value(path, key):
 def check_and_expand_path(path):
     error_message = " The directory provided, '%s', cannot be found. " % path + \
                     "Please manually create before running\n" + \
-                    "or fix the path in user-config.yaml.\n"
+                    "or fix the path in config_user.yaml.\n"
     try:
         path = os.path.expanduser(path)
         if not os.path.isdir(path):
@@ -321,3 +303,22 @@ def get_directory(path):
         directory = './'
 
     return directory
+
+def check_targets(target_files):
+    '''
+    This function raises an exception if any of the files listed as `target_files`
+    do not exist after running a builder. 
+    '''
+    if not isinstance(target_files, list):
+        target_files = [target_files]
+    non_existence = []
+    for target in target_files:
+        target = str(target)
+        if not os.path.isfile(target):
+            non_existence.append(target)
+
+    if non_existence:
+        error_message = 'The following target files do not exist after build:\n' + '\n'.join(non_existence)
+        raise _exception_classes.TargetNonexistenceError(error_message)
+
+    return None
