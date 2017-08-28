@@ -17,7 +17,7 @@ def tablefill(**kwargs):
         write_to_lyx(args, lyx_text)
         exitmessage = args['template'] + ' filled successfully by tablefill'
         print exitmessage
-        return exitmessage	
+        return exitmessage    
     except:
         print 'Error Found'
         exitmessage = traceback.format_exc()
@@ -77,7 +77,13 @@ def parse_data(data):
     return tables    
     
 
-def insert_tables(args,tables):
+def insert_tables(args, tables):
+    if re.search('\.lyx', args['template']):
+        return insert_tables_lyx(args, tables)
+    elif re.search('\.tex', args['template']):
+        return insert_tables_latex(args, tables)
+
+def insert_tables_lyx(args, tables):
     lyx_text = open(args['template'], 'rU').readlines()
     for n in range( len(lyx_text) ):
         if lyx_text[n].startswith('name "tab:'):
@@ -86,14 +92,13 @@ def insert_tables(args,tables):
                 i = n
                 entry_count = 0
                 search_table = True
-                
+            
                 while search_table is True:
                     i+=1
-                    
                     if re.match('^.*###', lyx_text[i]):
                         lyx_text[i] = lyx_text[i].replace('###', tables[tag][entry_count])
                         entry_count+=1
-                        
+                
                     elif re.match('^.*#\d+#', lyx_text[i]) or re.match('^.*#\d+,#', lyx_text[i]):
                         entry_tag = re.split('#', lyx_text[i])[1]
                         if re.match('---', tables[tag][entry_count]):
@@ -104,12 +109,44 @@ def insert_tables(args,tables):
                                 rounded_entry = insert_commas(rounded_entry)
                         lyx_text[i] = lyx_text[i].replace('#' + entry_tag + '#', rounded_entry)
                         entry_count+=1
-                        
-                    elif lyx_text[i] == '</lyxtabular>\n' or lyx_text[i] == "end{tabular}":
+                
+                    elif lyx_text[i] == '</lyxtabular>\n':
                         search_table = False
-    
     return lyx_text
- 
+
+def insert_tables_latex(args, tables):
+    lyx_text = open(args['template'], 'rU').readlines()
+    for n in range( len(lyx_text) ):
+        if re.search('label{tab:', lyx_text[n]):
+            tag = re.sub("[\}\"\n]", "", lyx_text[n].split(':')[1]).lower()
+            if tag in tables:
+                i = n
+                entry_count = 0
+                search_table = True
+                
+                while search_table is True:
+                    i+=1
+                    lyx_text_i = lyx_text[i].split("&")
+                    for col in range(len(lyx_text_i)):
+                        if re.match('^.*###', lyx_text_i[col]):
+                            lyx_text_i[col] = lyx_text_i[col].replace('###', tables[tag][entry_count])
+                            entry_count+=1
+                    
+                        elif re.match('^.*#\d+#', lyx_text_i[col]) or re.match('^.*#\d+,#', lyx_text_i[col]):
+                            entry_tag = re.split('#', lyx_text_i[col])[1]
+                            if re.match('---', tables[tag][entry_count]):
+                                rounded_entry = '---'
+                            else:
+                                rounded_entry = round_entry(entry_tag, tables[tag][entry_count])
+                                if re.match('^.*#\d+,#', lyx_text_i[col]):
+                                    rounded_entry = insert_commas(rounded_entry)
+                            lyx_text_i[col] = lyx_text_i[col].replace('#' + entry_tag + '#', rounded_entry)
+                            entry_count+=1
+                    
+                    lyx_text[i] = "&".join(lyx_text_i)
+                    if re.search('end{tabular}', lyx_text[i]):
+                        search_table = False
+    return lyx_text
 
 def round_entry(entry_tag, entry):
     round_to = int(entry_tag.replace(',', ''))
