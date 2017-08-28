@@ -8,7 +8,7 @@ from gslab_scons import log_timestamp
 from gslab_scons._exception_classes import ExecCallError
 import SCons.Builder
 
-def _build_anything(target, source, action, env, **kw):
+def _build_anything(target, source, action, env, warning = True, **kw):
     ''' 
     Anything builder-generator. The generator will create a custom builder 
     that runs `action` and add it as a SCons node, similar to the native env.Command.
@@ -41,11 +41,8 @@ def _build_anything(target, source, action, env, **kw):
 
     # the logging mechanism relies on redirection operators
     if '>' in action:
-        try:
-            warn_switch = env['warning']
-        except KeyError: warn_switch = True
-        if warn_switch:
-            warning_message = 'There is a redirection operator > in your prescribed action key.\n' + \
+        if warning == True:
+            warning_message = '\nThere is a redirection operator > in your prescribed action key.\n' + \
                               'build_anything\'s logging mechanism may not work as intended.'
             warnings.warn(warning_message)
 
