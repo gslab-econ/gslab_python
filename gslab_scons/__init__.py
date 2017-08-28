@@ -20,3 +20,4 @@ from .builders.build_stata  import build_stata
 from .builders.build_tables import build_tables
 from .builders.build_python import build_python
 from .builders.build_matlab import build_matlab
+from .builders._build_anything import _build_anything
