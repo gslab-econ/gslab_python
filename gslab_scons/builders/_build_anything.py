@@ -3,10 +3,8 @@ import subprocess
 import gslab_scons.misc as misc
 import warnings
 import re
-import SCons.Builder
 from gslab_scons import log_timestamp
 from gslab_scons._exception_classes import ExecCallError
-import SCons.Builder
 
 def _build_anything(target, source, action, env, warning = True, **kw):
     ''' 
@@ -48,6 +46,8 @@ def _build_anything(target, source, action, env, warning = True, **kw):
 
     # this point onward looks like our other builders
     def build_anything(env, target, source):
+        import SCons.Builder
+        
         # Prelims
         start_time  = misc.current_time()
 
