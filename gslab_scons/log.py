@@ -90,7 +90,7 @@ def collect_builder_logs(parent_dir, excluded_dirs = []):
     log_name = 'sconscript*.log'
     excluded_dirs = misc.make_list_if_string(excluded_dirs)
     if misc.is_unix():
-        command = 'find %s -name "%s -type f"' % (rel_parent_dir, log_name)
+        command = 'find %s -name "%s" -type f' % (rel_parent_dir, log_name)
         for x in excluded_dirs: # add in args to exclude folders from search
             command = '%s -not -path "*%s*"' % (command, os.path.normpath(x)) 
     else:
