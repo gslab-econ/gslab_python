@@ -9,7 +9,7 @@ from _exception_classes import ReleaseError
 
 def issue_size_warnings(look_in = ['source', 'raw', 'release'],
                         file_MB_limit = 2, 
-                        total_MB_limit = 500):
+                        total_MB_limit = 500, lfs_required = True):
     '''Issue warnings if versioned files are large'''
     bytes_in_MB = 1000000
     # Compile a list of files that are not versioned.
@@ -27,7 +27,9 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
                   " the versioned file %s "  % file_name  + \
                   "(size: %.02f MB)\n\t"     % size_in_MB + \
                   "is larger than %.02f MB." % file_MB_limit
-            print "Versioning files of this size is discouraged.\n" 
+            print "Versioning files of this size is discouraged.\n"
+            if not lfs_required:   
+                print "Consider using git-lfs for versioning large files.\n"
 
     total_size  = sum(versioned.values())
     total_limit = total_MB_limit * bytes_in_MB
@@ -40,6 +42,8 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
               "%.02f MB, which exceeds "          % total_size_in_MB + \
               "our recommended limit of %f.02 MB" % total_MB_limit
         print "Versioning this much content is discouraged.\n"
+        if not lfs_required: 
+            print "Consider using git-lfs for versioning large files.\n"
 
 
 def _red_and_bold(warning):

@@ -21,9 +21,15 @@ def scons_debrief(target, env):
     # Issue size warnings
     look_in = env['look_in']
     look_in = look_in.split(';')
-    file_MB_limit = float(env['file_MB_limit'])
-    total_MB_limit = float(env['total_MB_limit'])
-    issue_size_warnings(look_in, file_MB_limit, total_MB_limit)
+    lfs_required = env['lfs_required']
+    if lfs_required:
+        file_MB_limit = float(env['file_MB_limit_lfs'])
+        total_MB_limit = float(env['total_MB_limit_lfs'])
+    else: 
+        file_MB_limit = float(env['file_MB_limit'])
+        total_MB_limit = float(env['total_MB_limit'])
+        
+    issue_size_warnings(look_in, file_MB_limit, total_MB_limit, lfs_required)
     return None
 
 def state_of_repo(maxit):
