@@ -27,7 +27,7 @@ def start_log(mode, vers, log = 'sconstruct.log'):
     return None
 
 
-def end_log(log = 'sconstruct.log'):
+def end_log(log = 'sconstruct.log', excluded_dirs = []):
     '''Complete the log of a build process.'''
 
     end_message = "*** Build completed: {%s} ***\n \n \n" % misc.current_time()
@@ -42,7 +42,7 @@ def end_log(log = 'sconstruct.log'):
 
     # gather all sconscript logs 
     parent_dir = os.getcwd()
-    builder_logs = collect_builder_logs(parent_dir)
+    builder_logs = collect_builder_logs(parent_dir, excluded_dirs = excluded_dirs)
     
     # keep only builder logs from this run OR is broken (value == beginning_of_time)
     beginning_of_time    = datetime.min # to catch broken logs (see collect_builder_logs)
@@ -74,20 +74,30 @@ def log_timestamp(start_time, end_time, filename = 'sconstruct.log'):
     return None
 
 
-def collect_builder_logs(parent_dir):
+def collect_builder_logs(parent_dir, excluded_dirs = []):
     ''' Recursively return dictionary of files named sconscript*.log 
         in parent_dir and nested directories.
         Also return timestamp from those sconscript.log 
-        (snippet from SO 3964681)'''
+        (snippet from SO 3964681)
+
+        excluded_dirs (str or list of str):
+            list of directories to be excluded from the search
+        '''
     builder_log_collect = {}
 
     # Store paths to logs in a list, found from platform-specific command line tool 
     rel_parent_dir = os.path.relpath(parent_dir)
     log_name = 'sconscript*.log'
+    excluded_dirs = misc.make_list_if_string(excluded_dirs)
     if misc.is_unix():
-        command = 'find %s -name "%s"' % (rel_parent_dir, log_name)
+        command = 'find %s -name "%s" -type f' % (rel_parent_dir, log_name)
+        for x in excluded_dirs: # add in args to exclude folders from search
+            command = '%s -not -path "*%s*"' % (command, os.path.normpath(x)) 
     else:
         command = 'dir "%s" /b/s' % os.path.join(rel_parent_dir, log_name)
+        for x in excluded_dirs:         
+            command = '%s | find ^"%s^" /v /i ' % (command, os.path.normpath(x)) 
+
     try:
         log_paths = subprocess.check_output(command, shell = True).replace('\r\n', '\n')
         log_paths = log_paths.split('\n')
