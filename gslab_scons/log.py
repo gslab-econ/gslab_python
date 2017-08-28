@@ -74,20 +74,30 @@ def log_timestamp(start_time, end_time, filename = 'sconstruct.log'):
     return None
 
 
-def collect_builder_logs(parent_dir):
+def collect_builder_logs(parent_dir, excluded_dirs = []):
     ''' Recursively return dictionary of files named sconscript*.log 
         in parent_dir and nested directories.
         Also return timestamp from those sconscript.log 
-        (snippet from SO 3964681)'''
+        (snippet from SO 3964681)
+
+        excluded_dirs (str or list of str):
+            list of directories to be excluded from the search
+        '''
     builder_log_collect = {}
 
     # Store paths to logs in a list, found from platform-specific command line tool 
     rel_parent_dir = os.path.relpath(parent_dir)
     log_name = 'sconscript*.log'
+    excluded_dirs = misc.make_list_if_string(excluded_dirs)
     if misc.is_unix():
-        command = 'find %s -name "%s"' % (rel_parent_dir, log_name)
+        command = 'find %s -name "%s -type f"' % (rel_parent_dir, log_name)
+        for x in excluded_dirs: # add in args to exclude folders from search
+            command = '%s -not -path "*%s*"' % (command, os.path.normpath(x)) 
     else:
         command = 'dir "%s" /b/s' % os.path.join(rel_parent_dir, log_name)
+        for x in excluded_dirs:         
+            command = '%s | find ^"%s^" /v /i ' % (command, os.path.normpath(x)) 
+
     try:
         log_paths = subprocess.check_output(command, shell = True).replace('\r\n', '\n')
         log_paths = log_paths.split('\n')
