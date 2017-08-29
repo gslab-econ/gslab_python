@@ -7,9 +7,23 @@ import pkg_resources
 from misc import is_in_path, get_stata_executable, get_stata_command, is_unix, load_yaml_value, check_and_expand_path
 from _exception_classes import PrerequisiteError
 
+def check_builders(env, config_global = 'config_global.yaml'):
+    builder_checks = {'BuildLatex' : (lambda *args: None),
+                      'BuildLyx'   : check_lyx,
+                      'BuildMatlab': (lambda *args: None),
+                      'BuildR'     : check_r,
+                      'BuildStata' : check_stata}
+    for builder in builder_checks.keys():
+        if builder in env['BUILDERS'].keys():
+            if builder in ['BuildMatlab', 'BuildR', 'BuildStata']:
+                package = load_yaml_value(config_global, builder.replace('Build', '')).replace(' ', '').split(',')
+            else:
+                package = ''
+            builder_checks[builder](package)
+
 
 def check_python(gslab_python_version, 
-                 packages = ["yaml", "gslab_scons", "gslab_make", "gslab_fill"]):
+                 packages = ['yaml', 'gslab_scons', 'gslab_make', 'gslab_fill']):
     '''
     Check that an acceptable version of Python and the specified
     Python packages are installed.
@@ -62,7 +76,7 @@ def convert_packages_argument(packages):
     return packages
 
 
-def check_r(packages = ["yaml"]):
+def check_r(packages = ['yaml']):
     '''
     Check that a recognized R executable is in the path and that 
     the specified R packages are installed.
@@ -88,10 +102,10 @@ def check_r_packages(packages):
             missing_packages.append(pkg)
 
     if len(missing_packages) > 0:
-        raise PrerequisiteError("R packages, %s, not found." % missing_packages)
+        raise PrerequisiteError('R packages, %s, not found.' % missing_packages)
 
 
-def check_lyx():
+def check_lyx(*args):
     '''Check that there is a recognized LyX executable in the path'''
     if is_in_path('lyx.exe') is None and is_in_path('lyx') is None:
         message = 'LyX is not installed or executable is not added to path'
@@ -114,7 +128,7 @@ def check_lfs():
                               'git lfs install --force' if prompted above.''')
 
 
-def check_stata(packages = ["yaml"], user_yaml = "config_user.yaml"):
+def check_stata(packages = ['yaml'], user_yaml = 'config_user.yaml'):
     '''
     Check that a valid Stata executable is in the path and that the specified
     Stata packages are installed.
@@ -129,20 +143,19 @@ def check_stata(packages = ["yaml"], user_yaml = "config_user.yaml"):
     return stata_executable
 
 
-
 def check_stata_packages(command, packages):
     '''Check that the specified Stata packages are installed'''
     if is_unix():
         command = command.split("%s")[0]
-    elif sys.platform == "win32":
+    elif sys.platform == 'win32':
         command = command.split("do")[0]
     else:
-        raise PrerequisiteError("Unrecognized OS: %s" % sys.platform)
+        raise PrerequisiteError('Unrecognized OS: %s' % sys.platform)
 
     packages = convert_packages_argument(packages)
     try:
         for pkg in packages:
-            call = (command + "which %s") % pkg
+            call = (command + 'which %s') % pkg
             # http://www.stata.com/statalist/archive/2009-12/msg00493.html 
             # http://stackoverflow.com/questions/18962785/oserror-errno-2-no-such-file-or-directory-while-using-python-subprocess-in-dj
             subprocess.check_output(call, stderr = subprocess.STDOUT, shell = True) 
@@ -155,5 +168,5 @@ def check_stata_packages(command, packages):
                 raise PrerequisiteError('Stata package %s is not installed' % pkg)
 
     except subprocess.CalledProcessError:        
-        raise PrerequisiteError("Stata command, '%s', failed while checking for Stata packages in configuration test.\n" % command.split(' ')[0] + \
+        raise PrerequisiteError('Stata command, "%s", failed while checking for Stata packages in configuration test.\n' % command.split(' ')[0] + \
                                 '\n Maybe try specifying the Stata executable in config_user.yaml?')
