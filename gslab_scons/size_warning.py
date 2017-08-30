@@ -24,7 +24,7 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
     limit_total = total_MB_limit * bytes_in_MB
     new_add_list = []
 
-    if lfs_required: ß
+    if lfs_required:
         for file_name in versioned.keys():
             size  = versioned[file_name]
 
