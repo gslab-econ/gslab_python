@@ -11,28 +11,32 @@ import getpass
 import _exception_classes
 from size_warning import issue_size_warnings
 
-def scons_debrief(target, env):
-    '''Execute functions after SCons has built all targets'''
+def scons_debrief(args):
+    '''
+    Execute functions after SCons has built all targets.
+    Current list of functions: 
+        1. print state_of_repo
+        2. issue size_warnings
+    '''
     # Log the state of the repo
-    env['CL_ARG'] = env['MAXIT']
-    maxit = int(command_line_args(env))
-    state_of_repo(maxit)
+    args['CL_ARG'] = args['MAXIT']
+    maxit = int(command_line_args(args))
+    state_of_repo(maxit, outfile = args['log'])
 
     # Issue size warnings
-    look_in = env['look_in']
+    look_in = args['look_in']
     look_in = look_in.split(';')
-    lfs_required = env['lfs_required']
-    file_MB_limit_lfs = float(env['file_MB_limit_lfs'])
-    total_MB_limit_lfs = float(env['total_MB_limit_lfs'])
-    file_MB_limit = float(env['file_MB_limit'])
-    total_MB_limit = float(env['total_MB_limit'])
-    git_attrib_path = env['git_attrib_path']
+    lfs_required = args['lfs_required']
+    file_MB_limit_lfs = float(args['file_MB_limit_lfs'])
+    total_MB_limit_lfs = float(args['total_MB_limit_lfs'])
+    file_MB_limit = float(args['file_MB_limit'])
+    total_MB_limit = float(args['total_MB_limit'])
+    git_attrib_path = args['git_attrib_path']
         
     issue_size_warnings(look_in, file_MB_limit_lfs, total_MB_limit_lfs, file_MB_limit, total_MB_limit, lfs_required, git_attrib_path)
     return None
 
-def state_of_repo(maxit):
-    outfile = 'state_of_repo.log'
+def state_of_repo(maxit, outfile = 'state_of_repo.log'):
     with open(outfile, 'wb') as f:
         f.write("WARNING: Information about .sconsign.dblite may be misleading \n" +
                 "as it can be edited after state_of_repo.log finishes running\n\n" +
