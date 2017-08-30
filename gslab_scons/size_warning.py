@@ -40,7 +40,7 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
                 print "Versioning files of this size is discouraged.\n"
 
         total_size  = sum(versioned.values())
-        if total_size > total_limit_lfs:
+        if total_size > limit_total_lfs:
             total_size_in_MB = total_size / bytes_in_MB
             print _red_and_bold("Warning:") + \
                   " the total size of versioned files " + \
@@ -72,7 +72,7 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
                 print "Consider using git-lfs for versioning large files.\n"
 
         total_size  = sum(versioned.values())
-        if total_size > total_limit:
+        if total_size > limit_total:
             total_size_in_MB = total_size / bytes_in_MB
             print _red_and_bold("Warning:") + \
                   " the total size of versioned files " + \
