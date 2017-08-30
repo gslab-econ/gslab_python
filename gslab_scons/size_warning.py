@@ -24,10 +24,10 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
         if size > limit and file_name:
             size_in_MB = size / bytes_in_MB
             print _red_and_bold("Warning:") + \
-                  " the versioned file %s "  % file_name  + \
+                  " The versioned file %s "  % file_name  + \
                   "(size: %.02f MB)\n\t"     % size_in_MB + \
                   "is larger than %.02f MB." % file_MB_limit
-            print "Versioning files of this size is discouraged.\n"
+            print "Versioning files of this size is discouraged."
             if not lfs_required:   
                 print "Consider using git-lfs for versioning large files.\n"
 
@@ -37,11 +37,11 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
     if total_size > total_limit:
         total_size_in_MB = total_size / bytes_in_MB
         print _red_and_bold("Warning:") + \
-              " the total size of versioned files " + \
+              " The total size of versioned files " + \
               "in the directories %s\n\tis "      % str(look_in) + \
               "%.02f MB, which exceeds "          % total_size_in_MB + \
               "our recommended limit of %f.02 MB" % total_MB_limit
-        print "Versioning this much content is discouraged.\n"
+        print "Versioning this much content is discouraged."
         if not lfs_required: 
             print "Consider using git-lfs for versioning large files.\n"
 
