@@ -26,8 +26,9 @@ def scons_debrief(target, env):
     total_MB_limit_lfs = float(env['total_MB_limit_lfs'])
     file_MB_limit = float(env['file_MB_limit'])
     total_MB_limit = float(env['total_MB_limit'])
+    git_attrib_path = env['git_attrib_path']
         
-    issue_size_warnings(look_in, file_MB_limit_lfs, total_MB_limit_lfs, file_MB_limit, total_MB_limit, lfs_required)
+    issue_size_warnings(look_in, file_MB_limit_lfs, total_MB_limit_lfs, file_MB_limit, total_MB_limit, lfs_required, git_attrib_path)
     return None
 
 def state_of_repo(maxit):

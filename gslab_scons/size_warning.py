@@ -11,26 +11,39 @@ from _exception_classes import ReleaseError
 def issue_size_warnings(look_in = ['source', 'raw', 'release'],
                         file_MB_limit_lfs = 2, total_MB_limit_lfs = 500, 
                         file_MB_limit = 0.5, total_MB_limit = 125,
-                        lfs_required = True):
-    '''Issue warnings if versioned files are large'''
+                        lfs_required = True, git_attrib_path = '../.gitattributes'):
+    '''
+    This function issues warnings for large versioned files with different upper limits 
+    depending on whether the user has git-lfs or not. In addition, if the user has git-lfs
+    but is not tracking some large versioned files, this function will remind the users and 
+    perform the automatic git-lfs tracking if the user agrees. 
+    '''
     bytes_in_MB = 1000000
     # Compile a list of files that are not versioned.
     ignored   = list_ignored_files(look_in)
     versioned = create_size_dictionary(look_in)
     versioned = {k: versioned[k] for k in versioned.keys() if k not in ignored}
+    
+    # different limits 
     limit_file_lfs = file_MB_limit_lfs * bytes_in_MB
     limit_total_lfs = total_MB_limit_lfs * bytes_in_MB
     limit_file = file_MB_limit * bytes_in_MB
     limit_total = total_MB_limit * bytes_in_MB
+    
+    total_size  = sum(versioned.values())
+
+    # list for files to be tracked by git-lfs
     new_add_list = []
 
     if lfs_required:
         for file_name in versioned.keys():
             size  = versioned[file_name]
 
-            if size > limit_file and file_name and not check_track_lfs(file_name):
+            # the case where there exists some large versoned file not tracked by git-lfs
+            if size > limit_file and file_name and not check_track_lfs(file_name, git_attrib_path):
                 new_add_list.append(file_name)
 
+            # see if a file's size exceeds the given limit
             if size > limit_file_lfs and file_name:
                 size_in_MB = size / bytes_in_MB
                 print _red_and_bold("Warning:") + \
@@ -39,7 +52,7 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
                       "is larger than %.02f MB." % file_MB_limit_lfs
                 print "Versioning files of this size is discouraged.\n"
 
-        total_size  = sum(versioned.values())
+        # see if the directory size exceeds the given limit
         if total_size > limit_total_lfs:
             total_size_in_MB = total_size / bytes_in_MB
             print _red_and_bold("Warning:") + \
@@ -49,6 +62,7 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
                   "our recommended limit of %f.02 MB" % total_MB_limit_lfs
             print "Versioning this much content is discouraged.\n"
 
+        # if there are large versioned files not tracked by git-lfs, warned the user and perform tracking if the user agrees 
         if new_add_list:
             print "The following files are versioned large files that " + \
             "are not tracked by git-lfs (recommand using git-lfs to track them): " 
@@ -56,10 +70,11 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
             decision = raw_input("Enter 'y' to automatically track these with git-lfs: ")
             if decision == 'y':
                 for file in new_add_list:
-                    add_to_lfs(file)
+                    add_to_lfs(file, git_attrib_path)
 
 
     else:
+        # see if a file's size exceeds the given limit
         for file_name in versioned.keys():
             size  = versioned[file_name]
             if size > limit_file and file_name:
@@ -71,7 +86,7 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
                 print "Versioning files of this size is discouraged."
                 print "Consider using git-lfs for versioning large files.\n"
 
-        total_size  = sum(versioned.values())
+        # see if the directory size exceeds the given limit
         if total_size > limit_total:
             total_size_in_MB = total_size / bytes_in_MB
             print _red_and_bold("Warning:") + \
