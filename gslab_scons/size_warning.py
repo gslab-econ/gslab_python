@@ -4,45 +4,82 @@ import os
 import re
 import sys
 import subprocess
+import fnmatch
 from _exception_classes import ReleaseError
 
 
 def issue_size_warnings(look_in = ['source', 'raw', 'release'],
-                        file_MB_limit = 2, 
-                        total_MB_limit = 500, lfs_required = True):
+                        file_MB_limit_lfs = 2, total_MB_limit_lfs = 500, 
+                        file_MB_limit = 0.5, total_MB_limit = 125,
+                        lfs_required = True):
     '''Issue warnings if versioned files are large'''
     bytes_in_MB = 1000000
     # Compile a list of files that are not versioned.
     ignored   = list_ignored_files(look_in)
     versioned = create_size_dictionary(look_in)
     versioned = {k: versioned[k] for k in versioned.keys() if k not in ignored}
+    limit_file_lfs = file_MB_limit_lfs * bytes_in_MB
+    limit_total_lfs = total_MB_limit_lfs * bytes_in_MB
+    limit_file = file_MB_limit * bytes_in_MB
+    limit_total = total_MB_limit * bytes_in_MB
+    new_add_list = []
 
-    for file_name in versioned.keys():
-        size  = versioned[file_name]
-        limit = file_MB_limit * bytes_in_MB
+    if lfs_required: ß
+        for file_name in versioned.keys():
+            size  = versioned[file_name]
 
-        if size > limit and file_name:
-            size_in_MB = size / bytes_in_MB
+            if size > limit_file and file_name and not check_track_lfs(filenames):
+                new_add_list.append(filenames)
+
+            if size > limit_file_lfs and file_name:
+                size_in_MB = size / bytes_in_MB
+                print _red_and_bold("Warning:") + \
+                      " the versioned file %s "  % file_name  + \
+                      "(size: %.02f MB)\n\t"     % size_in_MB + \
+                      "is larger than %.02f MB." % file_MB_limit
+                print "Versioning files of this size is discouraged.\n"
+
+        total_size  = sum(versioned.values())
+        if total_size > total_limit_lfs:
+            total_size_in_MB = total_size / bytes_in_MB
             print _red_and_bold("Warning:") + \
-                  " The versioned file %s "  % file_name  + \
-                  "(size: %.02f MB)\n\t"     % size_in_MB + \
-                  "is larger than %.02f MB." % file_MB_limit
-            print "Versioning files of this size is discouraged."
-            if not lfs_required:   
+                  " the total size of versioned files " + \
+                  "in the directories %s\n\tis "      % str(look_in) + \
+                  "%.02f MB, which exceeds "          % total_size_in_MB + \
+                  "our recommended limit of %f.02 MB" % total_MB_limit
+            print "Versioning this much content is discouraged.\n"
+
+        if new_add_list:
+            print "The following files are versioned large files that " + \
+            "are not tracked by git-lfs. Recommand using git-lfs to track them.\n" 
+            print '\n'.join(new_add_list)
+            decision = input("Enter 'y' to automatically track these with git-lfs: ")
+            if decision == 'y':
+                for file in new_add_list:
+                    add_to_lfs(file)
+
+
+    else:
+        for file_name in versioned.keys():
+            size  = versioned[file_name]
+            if size > limit_file and file_name:
+                size_in_MB = size / bytes_in_MB
+                print _red_and_bold("Warning:") + \
+                      " the versioned file %s "  % file_name  + \
+                      "(size: %.02f MB)\n\t"     % size_in_MB + \
+                      "is larger than %.02f MB." % file_MB_limit
+                print "Versioning files of this size is discouraged.\n"
                 print "Consider using git-lfs for versioning large files.\n"
 
-    total_size  = sum(versioned.values())
-    total_limit = total_MB_limit * bytes_in_MB
-
-    if total_size > total_limit:
-        total_size_in_MB = total_size / bytes_in_MB
-        print _red_and_bold("Warning:") + \
-              " The total size of versioned files " + \
-              "in the directories %s\n\tis "      % str(look_in) + \
-              "%.02f MB, which exceeds "          % total_size_in_MB + \
-              "our recommended limit of %f.02 MB" % total_MB_limit
-        print "Versioning this much content is discouraged."
-        if not lfs_required: 
+        total_size  = sum(versioned.values())
+        if total_size > total_limit:
+            total_size_in_MB = total_size / bytes_in_MB
+            print _red_and_bold("Warning:") + \
+                  " the total size of versioned files " + \
+                  "in the directories %s\n\tis "      % str(look_in) + \
+                  "%.02f MB, which exceeds "          % total_size_in_MB + \
+                  "our recommended limit of %f.02 MB" % total_MB_limit
+            print "Versioning this much content is discouraged.\n"
             print "Consider using git-lfs for versioning large files.\n"
 
 
@@ -131,4 +168,31 @@ def create_size_dictionary(dirs):
                 size_dictionary[os.path.normpath(file_path)] = size
 
     return size_dictionary
+
+def add_to_lfs(filepath, attrib_path = '../.gitattributes'):
+    '''
+    This function tracks existing files with git lfs by writing down 
+    the given file path to the git attribute file (the default path is '../.gitattributes')
+    '''
+    with open(attrib_path) as f:
+        f.write('%s filter=lfs diff=lfs merge=lfs -text\n')
+    return None
+
+def check_track_lfs(filepath, attrib_path = '../.gitattributes'):
+    '''
+    This function checks if a given file is tracked by git lfs. 
+    It iterates everyline in the git attribute file (the default path is '../.gitattributes')
+    and checks if the file path matches with any of the file paths specified in the git
+    attribute file. 
+    '''
+    with open(attrib_path) as f:
+        track_list = f.readlines()
+        track_list = [x.split()[0] for x in track_list] 
+
+    match_list = [fnmatch.fnmatch(filepath, trackpath) for trackpath in track_list]
+
+    if sum(match_list) == 0:
+        return False
+    return True
+
 
