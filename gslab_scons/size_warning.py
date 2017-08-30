@@ -36,7 +36,7 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
                 print _red_and_bold("Warning:") + \
                       " the versioned file %s "  % file_name  + \
                       "(size: %.02f MB)\n\t"     % size_in_MB + \
-                      "is larger than %.02f MB." % file_MB_limit
+                      "is larger than %.02f MB." % file_MB_limit_lfs
                 print "Versioning files of this size is discouraged.\n"
 
         total_size  = sum(versioned.values())
@@ -46,7 +46,7 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
                   " the total size of versioned files " + \
                   "in the directories %s\n\tis "      % str(look_in) + \
                   "%.02f MB, which exceeds "          % total_size_in_MB + \
-                  "our recommended limit of %f.02 MB" % total_MB_limit
+                  "our recommended limit of %f.02 MB" % total_MB_limit_lfs
             print "Versioning this much content is discouraged.\n"
 
         if new_add_list:
@@ -68,7 +68,7 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
                       " the versioned file %s "  % file_name  + \
                       "(size: %.02f MB)\n\t"     % size_in_MB + \
                       "is larger than %.02f MB." % file_MB_limit
-                print "Versioning files of this size is discouraged.\n"
+                print "Versioning files of this size is discouraged."
                 print "Consider using git-lfs for versioning large files.\n"
 
         total_size  = sum(versioned.values())
@@ -79,7 +79,7 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
                   "in the directories %s\n\tis "      % str(look_in) + \
                   "%.02f MB, which exceeds "          % total_size_in_MB + \
                   "our recommended limit of %f.02 MB" % total_MB_limit
-            print "Versioning this much content is discouraged.\n"
+            print "Versioning this much content is discouraged."
             print "Consider using git-lfs for versioning large files.\n"
 
 
@@ -175,7 +175,7 @@ def add_to_lfs(filepath, attrib_path = '../.gitattributes'):
     the given file path to the git attribute file (the default path is '../.gitattributes')
     '''
     with open(attrib_path, "a") as f:
-        f.write('%s filter=lfs diff=lfs merge=lfs -text\n' % filepath)
+        f.write('\n%s filter=lfs diff=lfs merge=lfs -text' % filepath)
     return None
 
 def check_track_lfs(filepath, attrib_path = '../.gitattributes'):
