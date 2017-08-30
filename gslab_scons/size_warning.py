@@ -28,8 +28,8 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
         for file_name in versioned.keys():
             size  = versioned[file_name]
 
-            if size > limit_file and file_name and not check_track_lfs(filenames):
-                new_add_list.append(filenames)
+            if size > limit_file and file_name and not check_track_lfs(file_name):
+                new_add_list.append(file_name)
 
             if size > limit_file_lfs and file_name:
                 size_in_MB = size / bytes_in_MB
@@ -51,9 +51,9 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
 
         if new_add_list:
             print "The following files are versioned large files that " + \
-            "are not tracked by git-lfs. Recommand using git-lfs to track them.\n" 
+            "are not tracked by git-lfs (recommand using git-lfs to track them): " 
             print '\n'.join(new_add_list)
-            decision = input("Enter 'y' to automatically track these with git-lfs: ")
+            decision = raw_input("Enter 'y' to automatically track these with git-lfs: ")
             if decision == 'y':
                 for file in new_add_list:
                     add_to_lfs(file)
@@ -174,8 +174,8 @@ def add_to_lfs(filepath, attrib_path = '../.gitattributes'):
     This function tracks existing files with git lfs by writing down 
     the given file path to the git attribute file (the default path is '../.gitattributes')
     '''
-    with open(attrib_path) as f:
-        f.write('%s filter=lfs diff=lfs merge=lfs -text\n')
+    with open(attrib_path, "a") as f:
+        f.write('%s filter=lfs diff=lfs merge=lfs -text\n' % filepath)
     return None
 
 def check_track_lfs(filepath, attrib_path = '../.gitattributes'):
