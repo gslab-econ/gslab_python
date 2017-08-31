@@ -14,9 +14,10 @@ def make_provenance(start_path, readme_path, provenance_path,
                     external_provenance = [],     # list of external provenance files to append. If empty, automatically look for provenance files.
                     find_for_me         = False,  # automatically looks for provenance files regardless of external_provenance
                     excluded_dirs       = [],     # exclude these directories from automatic provenance look-up
+                    sig                 = '*** GSLab directory provenance ***',
                     verbose             = False): # print stuff
     '''
-    Creates GSLab-approved provenance.log and place it in provenance_path.
+    Create GSLab-approved provenance.log and place it in provenance_path.
     '''
     try:
         file_details = determine_file_details(include_details  = include_details,
@@ -36,10 +37,15 @@ def make_provenance(start_path, readme_path, provenance_path,
             write_detailed_info(provenance_path, details)
         
         write_ending(provenance_path)
-        append_sub_provenance(provenance_path, external_provenance, excluded_dirs,
-                              find_for_me, start_path, verbose)
+        append_sub_provenance(sig                 = sig,
+                              provenance_path     = provenance_path,
+                              external_provenance = external_provenance,
+                              excluded_dirs       = excluded_dirs,
+                              find_for_me         = find_for_me,
+                              start_path          = start_path,
+                              verbose             = verbose)
     except Exception as e:
-        print('make_provenance.py failed.')
+        print('make_provenance() failed.')
         try: 
             os.remove(provenance_path)
         except OSError:
@@ -135,9 +141,8 @@ def scan(start_path, include_details, file_details,
     return total_size, num_files, last_mtime, file_details, dirs
 
 
-def write_heading(start_path, provenance_path, 
-                  github_release = None,
-                  sig = '*** GSLab directory provenance ***'):
+def write_heading(start_path, provenance_path, sig
+                  github_release = None):
     '''
     Write standard heading for provenance: what and for where it is. 
     '''
@@ -201,13 +206,13 @@ def write_ending(provenance_path):
     return None
 
 
-def append_sub_provenance(root_provenance     = './provenance.log',
+def append_sub_provenance(sig, 
+                          root_provenance     = './provenance.log',
                           external_provenance = [],
                           excluded_dirs       = [],
                           find_for_me         = False,
                           start_path          = '.',
-                          verbose             = False,
-                          sig                 = '*** GSLab directory provenance ***'):
+                          verbose             = False):
     
     files = misc.make_list_if_string(external_provenance)
     if files == [] or find_for_me == True: 
