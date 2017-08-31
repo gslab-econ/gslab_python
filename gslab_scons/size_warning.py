@@ -76,7 +76,7 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
         # see if a file's size exceeds the given limit
         for file_name in versioned.keys():
             size  = versioned[file_name]
-            if size > limit_file and file_name:
+            if size > limit_file:
                 size_in_MB = size / bytes_in_MB
                 print _red_and_bold("Warning:") + \
                       " the versioned file %s "  % file_name  + \
