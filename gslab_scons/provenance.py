@@ -2,42 +2,56 @@ import os
 import sys
 import datetime
 import warnings
-import scandir # pip install scandir
-import mmh3 # pip install mmh3
+import scandir
+import mmh3
 import gslab_scons.misc as misc
 
 def make_provenance(start_path, readme_path, provenance_path, 
-                    include_details = True,
-                    include_checksum = True,
-                    github_release = None,
-                    detail_limit = 500,         # max number of files to output details for
-                    external_provenance = [],   # list of external_provenance. If empty, function automatically looks up provenance files.
-                    find_for_me = False,        # automatically looks for provenance files regardless of external_provenance
-                    excluded_dirs = [],         # exclude these directories from automatic-look-up
-                    verbose = False):           # print stuff
+                    include_details     = True,
+                    include_checksum    = True,
+                    github_release      = None,
+                    detail_limit        = 500,    # max number of files to calculate and output details for
+                    external_provenance = [],     # list of external provenance files to append. If empty, automatically look for provenance files.
+                    find_for_me         = False,  # automatically looks for provenance files regardless of external_provenance
+                    excluded_dirs       = [],     # exclude these directories from automatic provenance look-up
+                    verbose             = False): # print stuff
     '''
     Creates GSLab-approved provenance.log and place it in provenance_path.
     '''
-    
-    file_details = determine_file_details(include_details, include_checksum)
+    try:
+        file_details = determine_file_details(include_details = include_details,
+                                              include_checksum = include_checksum)
 
-    total_size, num_files, last_mtime, details = scan_wrapper(
-        start_path, include_details, include_checksum, detail_limit, file_details, verbose)
+        total_size, num_files, last_mtime, details = scan_wrapper(start_path       = start_path,
+                                                                  include_details  = include_details,
+                                                                  file_details     = file_details,
+                                                                  include_checksum = include_checksum,
+                                                                  detail_limit     = detail_limit, 
+                                                                  verbose          = verbose)
+                                                     
 
-    write_heading(start_path, provenance_path, github_release)
-    write_directory_info(provenance_path, total_size, num_files, last_mtime)
-    write_readme(readme_path, provenance_path)
-    if include_details:
-        write_detailed_info(provenance_path, details)
-    
-    write_ending(provenance_path)
-    append_sub_provenance(provenance_path, external_provenance, excluded_dirs,
-                          find_for_me, start_path, verbose)
-    
+        write_heading(start_path, provenance_path, github_release)
+        write_directory_info(provenance_path, total_size, num_files, last_mtime)
+        write_readme(readme_path, provenance_path)
+        if include_details:
+            write_detailed_info(provenance_path, details)
+        
+        write_ending(provenance_path)
+        append_sub_provenance(provenance_path, external_provenance, excluded_dirs,
+                              find_for_me, start_path, verbose)
+    except Exception as e:
+        print('make_provenance.py failed.')
+        print(e)
+        try: 
+            os.remove(provenance_path)
+        except OSError:
+            pass
+
     return None    
 
 
-def determine_file_details(include_details, include_checksum):
+def determine_file_details(include_details  = True,
+                           include_checksum = True):
     '''
     Determine if a checksum entry appears in the detailed file-level information.
     '''
@@ -48,26 +62,47 @@ def determine_file_details(include_details, include_checksum):
     return [file_details]
 
 
-def scan_wrapper(start_path, include_details, include_checksum, detail_limit, file_details,
+def scan_wrapper(start_path, include_details, file_details, 
+                 include_checksum = True,
+                 detail_limit = 500,
                  verbose = False):
     '''
     Walk through start_path and get info on files in all subdirectories.
     Walk in same order as os.walk. 
     Also scan to be recurisve-like without overflowing the stack on large directories. 
     '''
-    total_size, num_files, last_mtime, file_details, dirs = scan(
-        start_path, include_details, include_checksum, detail_limit, file_details, verbose = verbose)
+    total_size, num_files, last_mtime, file_details, dirs = scan(start_path       = start_path,
+                                                                 include_details  = include_details,
+                                                                 include_checksum = include_details,
+                                                                 detail_limit     = detail_limit,
+                                                                 file_details     = file_details,
+                                                                 verbose          = verbose)
+
     while dirs:
         new_start_path = dirs.pop(0) 
-        total_size, num_files, last_mtime, file_details, dirs = scan(
-            new_start_path, include_details, include_checksum, detail_limit, file_details, 
-            dirs, total_size, num_files, last_mtime)
+        total_size, num_files, last_mtime, file_details, dirs = scan(start_path  = new_start_path, 
+                                                                include_details  = include_details,
+                                                                file_details     = file_details, 
+                                                                include_checksum = include_checksum, 
+                                                                detail_limit     = detail_limit, 
+                                                                dirs             = dirs,
+                                                                total_size       = total_size,
+                                                                num_files        = num_files,
+                                                                last_mtime       = last_mtime,
+                                                                verbose          = verbose)
+
     
     return total_size, num_files, last_mtime, file_details
 
 
-def scan(start_path, include_details, include_checksum, detail_limit, file_details,
-         dirs = [], total_size = 0, num_files = 0, last_mtime = 0, verbose = False): 
+def scan(start_path, include_details, file_details, 
+         include_checksum = True,
+         detail_limit     = 500,
+         dirs             = [], 
+         total_size       = 0,
+         num_files        = 0,
+         last_mtime       = 0,
+         verbose          = False): 
     '''
     Grab file and create directory info from start path. 
     Also return list of unvisited subdirectories under start_path. 
@@ -101,11 +136,13 @@ def scan(start_path, include_details, include_checksum, detail_limit, file_detai
     return total_size, num_files, last_mtime, file_details, dirs
 
 
-def write_heading(start_path, provenance_path, github_release = None):
+def write_heading(start_path, provenance_path, 
+                  github_release = None,
+                  sig = '*** GSLab directory provenance ***'):
     '''
     Write standard heading for provenance: what and for where it is. 
     '''
-    out = '*** GSLab directory provenance ***\ndirectory: %s\n' % os.path.abspath(start_path) 
+    out = '%s\ndirectory: %s\n' % (sig, os.path.abspath(start_path))
     if github_release != None:
         out += '\n*** GitHub release: %s \n' % github_release
     with open(provenance_path, 'wb') as f:
@@ -136,8 +173,8 @@ def write_readme(readme_path, provenance_path):
         with open(readme_path, 'rU') as f:
             out = '%s' % f.read()
     except IOError:
-        raise IOError(('%s does not exist.\n If you are in release mode,' % readme_path) +
-                      'please specify the command line argument param `readme=<README_PATH>` .' )
+        raise IOError(('Cannot read %s.\n If you are in release mode,' % readme_path) +
+                      'please specify the command line argument param `readme=<README_PATH>`.' )
 
     with open(provenance_path, 'ab') as f:
         f.write('\n*** README verbatim\npath: %s\n' % os.path.abspath(readme_path))
@@ -165,12 +202,13 @@ def write_ending(provenance_path):
     return None
 
 
-def append_sub_provenance(root_provenance = './provenance.log',
+def append_sub_provenance(root_provenance     = './provenance.log',
                           external_provenance = [],
-                          excluded_dirs = [],
-                          find_for_me = False,
-                          start_path = '.',
-                          verbose = False):
+                          excluded_dirs       = [],
+                          find_for_me         = False,
+                          start_path          = '.',
+                          verbose             = False,
+                          sig                 = '*** GSLab directory provenance ***'):
     
     files = misc.make_list_if_string(external_provenance)
     if files == [] or find_for_me == True: 
@@ -178,28 +216,27 @@ def append_sub_provenance(root_provenance = './provenance.log',
         files += misc.finder(start_path, pattern, excluded_dirs)
     files = sorted(files)
     
-    with open(root_provenance, 'a') as root_f:
-        for provenance in files:
+    for provenance in files:
+        if os.path.abspath(root_provenance) != os.path.abspath(provenance): # if this is not the root file    
             if verbose == True:
                 print os.path.abspath(provenance)
-            
+        
             warning_message = '\nThe file %s does not appear to be a GSLab provenance file.\n' % provenance
             warn = False
-            
-            if os.path.abspath(root_provenance) != os.path.abspath(provenance): # if this is not the root file
-                root_f.write('*** Subdirectory provenance: %s\n' % os.path.abspath(provenance))
-                
-                with open(provenance, 'rU') as f:
-                    try:
-                        content = f.readlines()
-                        if content[0].rstrip() != '*** GSLab directory provenance ***': warn = True
-                    except IndexError:
-                        warn = True
-                    if warn == True:
-                        warnings.warn(warning_message)
-                        root_f.write(warning_message)
-                    root_f.write(''.join(content))
 
+            with open(provenance, 'rU') as f:
+                content = f.readlines()
+                try:
+                    if content[0].strip() != sig: warn = True
+                except IndexError:
+                    warn = True
+
+            with open(root_provenance, 'ab') as root_f:
+                root_f.write('*** Subdirectory provenance: %s\n' % os.path.abspath(provenance))
+                if warn == True:
+                    warnings.warn(warning_message)
+                    root_f.write(warning_message)
+                root_f.write(''.join(content))
                 root_f.write('\n\n')
 
     return None

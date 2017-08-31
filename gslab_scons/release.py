@@ -58,6 +58,7 @@ def main(user_yaml = 'config_user.yaml', release_files = []):
 
     readme = re.sub('^readme=', '', readme)
     provenance_release_note = '%s, version %s' % (name, version)
+    provenance_path = './release/provenance.log'
     make_provenance(start_path = '.',
                     readme_path = readme,
                     provenance_path = './release/provenance.log',
@@ -73,7 +74,8 @@ def main(user_yaml = 'config_user.yaml', release_files = []):
                            repo              = repo,
                            target_commitish  = branch,
                            zip_release       = zip_release,
-                           github_token      = github_token)
+                           github_token      = github_token,
+                           provenance_path   = provenance_path)
 
 
 def inspect_repo():
