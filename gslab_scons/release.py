@@ -61,6 +61,7 @@ def main(user_yaml = 'config_user.yaml',
 
     # Check provenance options
     find_for_me = 'find_for_me' in sys.argv
+    verbose     = 'verbose' in sys.argv
     try:
         detail_limit = next(arg for arg in sys.argv if re.search("^detail_limit=", arg))
     except:
@@ -75,7 +76,8 @@ def main(user_yaml = 'config_user.yaml',
                     github_release  = provenance_release_note,
                     detail_limit    = detail_limit,
                     find_for_me     = find_for_me,
-                    excluded_dirs   = prov_excluded_dirs) 
+                    excluded_dirs   = prov_excluded_dirs,
+                    verbose         = verbose) 
 
     # Get GitHub token:
     github_token = load_yaml_value(user_yaml, 'github_token')

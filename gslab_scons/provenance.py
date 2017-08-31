@@ -19,7 +19,7 @@ def make_provenance(start_path, readme_path, provenance_path,
     Creates GSLab-approved provenance.log and place it in provenance_path.
     '''
     try:
-        file_details = determine_file_details(include_details = include_details,
+        file_details = determine_file_details(include_details  = include_details,
                                               include_checksum = include_checksum)
 
         total_size, num_files, last_mtime, details = scan_wrapper(start_path       = start_path,
@@ -27,8 +27,7 @@ def make_provenance(start_path, readme_path, provenance_path,
                                                                   file_details     = file_details,
                                                                   include_checksum = include_checksum,
                                                                   detail_limit     = detail_limit, 
-                                                                  verbose          = verbose)
-                                                     
+                                                                  verbose          = verbose)                             
 
         write_heading(start_path, provenance_path, github_release)
         write_directory_info(provenance_path, total_size, num_files, last_mtime)
@@ -41,11 +40,11 @@ def make_provenance(start_path, readme_path, provenance_path,
                               find_for_me, start_path, verbose)
     except Exception as e:
         print('make_provenance.py failed.')
-        print(e)
         try: 
             os.remove(provenance_path)
         except OSError:
             pass
+        raise e
 
     return None    
 
