@@ -8,7 +8,8 @@ from provenance import make_provenance
 
 def main(user_yaml = 'config_user.yaml', 
          release_files = [],
-         prov_excluded_dirs = []):
+         prov_excluded_dirs = [],
+         external_provenance = []):
     inspect_repo()
 
     # Extract information about the clone from its .git directory
@@ -70,14 +71,15 @@ def main(user_yaml = 'config_user.yaml',
 
     provenance_release_note = '%s, version %s' % (name, version)
     provenance_path = './release/provenance.log'
-    make_provenance(start_path      = '.',
-                    readme_path     = readme,
-                    provenance_path = './release/provenance.log',
-                    github_release  = provenance_release_note,
-                    detail_limit    = detail_limit,
-                    find_for_me     = find_for_me,
-                    excluded_dirs   = prov_excluded_dirs,
-                    verbose         = verbose) 
+    make_provenance(start_path          = '.',
+                    readme_path         = readme,
+                    provenance_path     = './release/provenance.log',
+                    github_release      = provenance_release_note,
+                    detail_limit        = detail_limit,
+                    external_provenance = external_provenance,
+                    find_for_me         = find_for_me,
+                    excluded_dirs       = prov_excluded_dirs,
+                    verbose             = verbose) 
 
     # Get GitHub token:
     github_token = load_yaml_value(user_yaml, 'github_token')
