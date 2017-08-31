@@ -38,7 +38,7 @@ def make_provenance(start_path, readme_path, provenance_path,
         
         write_ending(provenance_path)
         append_sub_provenance(sig                 = sig,
-                              provenance_path     = provenance_path,
+                              root_provenance     = provenance_path,
                               external_provenance = external_provenance,
                               excluded_dirs       = excluded_dirs,
                               find_for_me         = find_for_me,
@@ -141,7 +141,7 @@ def scan(start_path, include_details, file_details,
     return total_size, num_files, last_mtime, file_details, dirs
 
 
-def write_heading(start_path, provenance_path, sig
+def write_heading(start_path, provenance_path, sig,
                   github_release = None):
     '''
     Write standard heading for provenance: what and for where it is. 
