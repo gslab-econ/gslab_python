@@ -14,21 +14,22 @@ from size_warning import issue_size_warnings
 def scons_debrief(target, env):
     '''Execute functions after SCons has built all targets'''
     # Log the state of the repo
-    env['CL_ARG'] = env['MAXIT']
-    maxit = int(command_line_args(env))
+    env['CL_ARG']      = env['MAXIT']
+    maxit              = int(command_line_args(env))
     state_of_repo(maxit)
 
     # Issue size warnings
-    look_in = env['look_in']
-    look_in = look_in.split(';')
-    lfs_required = env['lfs_required']
-    file_MB_limit_lfs = float(env['file_MB_limit_lfs'])
+    look_in            = env['look_in']
+    look_in            = look_in.split(';')
+    lfs_required       = env['lfs_required']
+    file_MB_limit_lfs  = float(env['file_MB_limit_lfs'])
     total_MB_limit_lfs = float(env['total_MB_limit_lfs'])
-    file_MB_limit = float(env['file_MB_limit'])
-    total_MB_limit = float(env['total_MB_limit'])
-    git_attrib_path = env['git_attrib_path']
+    file_MB_limit      = float(env['file_MB_limit'])
+    total_MB_limit     = float(env['total_MB_limit'])
+    git_attrib_path    = env['git_attrib_path']
         
-    issue_size_warnings(look_in, file_MB_limit_lfs, total_MB_limit_lfs, file_MB_limit, total_MB_limit, lfs_required, git_attrib_path)
+    issue_size_warnings(look_in, file_MB_limit_lfs, total_MB_limit_lfs, file_MB_limit, \
+                        total_MB_limit, lfs_required, git_attrib_path)
     return None
 
 def state_of_repo(maxit):

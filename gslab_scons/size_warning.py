@@ -20,17 +20,17 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
     '''
     bytes_in_MB = 1000000
     # Compile a list of files that are not versioned.
-    ignored   = list_ignored_files(look_in)
-    versioned = create_size_dictionary(look_in)
-    versioned = {k: versioned[k] for k in versioned.keys() if k not in ignored}
+    ignored     = list_ignored_files(look_in)
+    versioned   = create_size_dictionary(look_in)
+    versioned   = {k: versioned[k] for k in versioned.keys() if k not in ignored}
     
     # different limits 
-    limit_file_lfs = file_MB_limit_lfs * bytes_in_MB
+    limit_file_lfs  = file_MB_limit_lfs * bytes_in_MB
     limit_total_lfs = total_MB_limit_lfs * bytes_in_MB
-    limit_file = file_MB_limit * bytes_in_MB
-    limit_total = total_MB_limit * bytes_in_MB
+    limit_file      = file_MB_limit * bytes_in_MB
+    limit_total     = total_MB_limit * bytes_in_MB
     
-    total_size  = sum(versioned.values())
+    total_size   = sum(versioned.values())
 
     # list for files to be tracked by git-lfs
     new_add_list = []
@@ -40,11 +40,11 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
             size  = versioned[file_name]
 
             # the case where there exists some large versoned file not tracked by git-lfs
-            if size > limit_file and file_name and not check_track_lfs(file_name, git_attrib_path):
+            if size > limit_file and not check_track_lfs(file_name, git_attrib_path):
                 new_add_list.append(file_name)
 
             # see if a file's size exceeds the given limit
-            if size > limit_file_lfs and file_name:
+            if size > limit_file_lfs:
                 size_in_MB = size / bytes_in_MB
                 print _red_and_bold("Warning:") + \
                       " the versioned file %s "  % file_name  + \
@@ -64,14 +64,13 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
 
         # if there are large versioned files not tracked by git-lfs, warned the user and perform tracking if the user agrees 
         if new_add_list:
-            print "The following files are versioned large files that " + \
-            "are not tracked by git-lfs (recommand using git-lfs to track them): " 
+            print _red_and_bold("The following files are versioned large files that " + \
+            "are not tracked by git-lfs (recommend using git-lfs to track them): ") 
             print '\n'.join(new_add_list)
             decision = raw_input("Enter 'y' to automatically track these with git-lfs: ")
             if decision == 'y':
                 for file in new_add_list:
                     add_to_lfs(file, git_attrib_path)
-
 
     else:
         # see if a file's size exceeds the given limit
@@ -103,7 +102,7 @@ def _red_and_bold(warning):
     Make a string bold and red when printed to the terminal
     http://stackoverflow.com/questions/287871/print-in-terminal-with-colors-using-python
     '''
-    red = '\033[91m' 
+    red  = '\033[91m' 
     bold = '\033[1m'
     end_formatting = '\033[0m' 
     return (red + bold) + warning + (end_formatting)
@@ -184,15 +183,6 @@ def create_size_dictionary(dirs):
 
     return size_dictionary
 
-def add_to_lfs(filepath, attrib_path = '../.gitattributes'):
-    '''
-    This function tracks existing files with git lfs by writing down 
-    the given file path to the git attribute file (the default path is '../.gitattributes')
-    '''
-    with open(attrib_path, "a") as f:
-        f.write('\n%s filter=lfs diff=lfs merge=lfs -text' % filepath)
-    return None
-
 def check_track_lfs(filepath, attrib_path = '../.gitattributes'):
     '''
     This function checks if a given file is tracked by git lfs. 
@@ -209,5 +199,15 @@ def check_track_lfs(filepath, attrib_path = '../.gitattributes'):
     if sum(match_list) == 0:
         return False
     return True
+
+def add_to_lfs(filepath, attrib_path = '../.gitattributes'):
+    '''
+    This function tracks existing files with git lfs by writing down 
+    the given file path to the git attribute file (the default path is '../.gitattributes')
+    '''
+    with open(attrib_path, "a") as f:
+        f.write('%s filter=lfs diff=lfs merge=lfs -text\n' % filepath)
+    return None
+
 
 
