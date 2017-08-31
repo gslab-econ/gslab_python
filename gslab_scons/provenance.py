@@ -11,7 +11,7 @@ def make_provenance(start_path, readme_path, provenance_path,
                     include_checksum    = True,
                     github_release      = None,
                     detail_limit        = 500,    # max number of files to calculate and output details for
-                    external_provenance = [],     # list of external provenance files to append. If empty, automatically look for provenance files.
+                    external_provenance = [],     # list of external provenance files to append. If empty, automatically look for provenance files under start_path.
                     find_for_me         = False,  # automatically looks for provenance files regardless of external_provenance
                     excluded_dirs       = [],     # exclude these directories from automatic provenance look-up
                     sig                 = '*** GSLab directory provenance ***',
