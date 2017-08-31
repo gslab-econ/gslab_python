@@ -149,7 +149,7 @@ def write_detailed_info(provenance_path, details):
 
 def write_ending(provenance_path):
     with open(provenance_path, 'ab') as f:
-        f.write('\n************** provenance ends here**************\n')
+        f.write('*' * 80 + '\n\n')
     
     return None
 
@@ -171,13 +171,13 @@ def append_sub_provenance(root_provenance = './provenance.log',
     with open(root_provenance, 'a') as root_f:
         for provenance in files:
             if verbose == True:
-                print provenance
+                print os.path.abspath(provenance)
             
             warning_message = '\nThe file %s does not appear to be a GSLab provenance file.\n' % provenance
             warn = False
             
             if os.path.normpath(root_provenance) != os.path.normpath(provenance):
-                root_f.write('*** Subdirectory provenance: %s\n' % provenance)
+                root_f.write('*** Subdirectory provenance: %s\n' % os.path.abspath(provenance))
                 with open(provenance, 'rU') as f:
                     
                     try:
@@ -190,6 +190,6 @@ def append_sub_provenance(root_provenance = './provenance.log',
                         warnings.warn(warning_message)
                         root_f.write(warning_message)
                     root_f.write(''.join(content))
-                    root_f.write('\n\n')
+                root_f.write('\n\n')
 
     return None
