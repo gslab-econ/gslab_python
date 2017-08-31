@@ -9,6 +9,7 @@ import gslab_scons.misc as misc
 def make_provenance(start_path, readme_path, provenance_path, 
                     include_details = True,
                     include_checksum = True,
+                    github_release = None,
                     detail_limit = 500,         # max number of files to output details for
                     external_provenance = [],   # list of external_provenance. If empty, function automatically looks up provenance files.
                     find_for_me = False,        # automatically looks for provenance files regardless of external_provenance
@@ -23,7 +24,7 @@ def make_provenance(start_path, readme_path, provenance_path,
     total_size, num_files, last_mtime, details = scan_wrapper(
         start_path, include_details, include_checksum, detail_limit, file_details, verbose)
 
-    write_heading(start_path, provenance_path)
+    write_heading(start_path, provenance_path, github_release)
     write_directory_info(provenance_path, total_size, num_files, last_mtime)
     write_readme(readme_path, provenance_path)
     if include_details:
@@ -100,11 +101,13 @@ def scan(start_path, include_details, include_checksum, detail_limit, file_detai
     return total_size, num_files, last_mtime, file_details, dirs
 
 
-def write_heading(start_path, provenance_path):
+def write_heading(start_path, provenance_path, github_release = None):
     '''
     Write standard heading for provenance: what and for where it is. 
     '''
     out = '*** GSLab directory provenance ***\ndirectory: %s\n' % os.path.abspath(start_path) 
+    if github_release != None:
+        out += '\n*** GitHub release: %s \n' % github_release
     with open(provenance_path, 'wb') as f:
         f.write(out)
 
@@ -129,8 +132,13 @@ def write_readme(readme_path, provenance_path):
     '''
     Writes readme to provenance.
     '''
-    with open(readme_path, 'rU') as f:
-        out = '%s' % f.read()
+    try:
+        with open(readme_path, 'rU') as f:
+            out = '%s' % f.read()
+    except IOError:
+        raise IOError(('%s does not exist.\n If you are in release mode,' % readme_path) +
+                      'please specify the command line argument param `readme=<README_PATH>` .' )
+
     with open(provenance_path, 'ab') as f:
         f.write('\n*** README verbatim\npath: %s\n' % os.path.abspath(readme_path))
         f.write(out)
@@ -195,4 +203,3 @@ def append_sub_provenance(root_provenance = './provenance.log',
                 root_f.write('\n\n')
 
     return None
-    

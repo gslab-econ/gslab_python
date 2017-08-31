@@ -4,6 +4,7 @@ import sys
 import _release_tools
 from _exception_classes import ReleaseError
 from misc import load_yaml_value, check_and_expand_path
+from provenance import make_provenance
 
 def main(user_yaml = 'config_user.yaml', release_files = []):
     inspect_repo()
@@ -49,6 +50,18 @@ def main(user_yaml = 'config_user.yaml', release_files = []):
     local_release = '%s/%s/' % (release_dir, name)
     local_release = local_release + version + '/'
 
+    # Create provenance file in ./release
+    try:
+        readme = next(arg for arg in sys.argv if re.search("^readme=", arg))
+    except:
+        readme = "readme=./README.md"
+
+    readme = re.sub('^readme=', '', readme)
+    provenance_release_note = '%s, version %s' % (name, version)
+    make_provenance(start_path = '.',
+                    readme_path = readme,
+                    provenance_path = './release/provenance.log',
+                    github_release = provenance_release_note) 
 
     # Get GitHub token:
     github_token = load_yaml_value(user_yaml, 'github_token')
