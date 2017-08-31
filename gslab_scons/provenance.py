@@ -9,11 +9,14 @@ import gslab_scons.misc as misc
 def make_provenance(start_path, readme_path, provenance_path, 
                     include_details = True,
                     include_checksum = True,
-                    detail_limit = 500,
-                    external_provenance = [],
-                    find_for_me = False,
-                    excluded_dirs = [],
-                    verbose = False):
+                    detail_limit = 500,         # max number of files to output details for
+                    external_provenance = [],   # list of external_provenance. If empty, function automatically looks up provenance files.
+                    find_for_me = False,        # automatically looks for provenance files regardless of external_provenance
+                    excluded_dirs = [],         # exclude these directories from automatic-look-up
+                    verbose = False):           # print stuff
+    '''
+    Creates GSLab-approved provenance.log and place it in provenance_path.
+    '''
     
     file_details = determine_file_details(include_details, include_checksum)
 
@@ -149,7 +152,7 @@ def write_detailed_info(provenance_path, details):
 
 def write_ending(provenance_path):
     with open(provenance_path, 'ab') as f:
-        f.write('*' * 80 + '\n\n')
+        f.write('*' * 80 + '\n\n') # a lot of asterisks
     
     return None
 
@@ -162,11 +165,10 @@ def append_sub_provenance(root_provenance = './provenance.log',
                           verbose = False):
     
     files = misc.make_list_if_string(external_provenance)
-    if files == [] or find_for_me == True:
+    if files == [] or find_for_me == True: 
         pattern = 'provenance*.log'
         files += misc.finder(start_path, pattern, excluded_dirs)
     files = sorted(files)
-    
     
     with open(root_provenance, 'a') as root_f:
         for provenance in files:
@@ -176,20 +178,21 @@ def append_sub_provenance(root_provenance = './provenance.log',
             warning_message = '\nThe file %s does not appear to be a GSLab provenance file.\n' % provenance
             warn = False
             
-            if os.path.normpath(root_provenance) != os.path.normpath(provenance):
+            if os.path.abspath(root_provenance) != os.path.abspath(provenance): # if this is not the root file
                 root_f.write('*** Subdirectory provenance: %s\n' % os.path.abspath(provenance))
+                
                 with open(provenance, 'rU') as f:
-                    
                     try:
                         content = f.readlines()
                         if content[0].rstrip() != '*** GSLab directory provenance ***': warn = True
                     except IndexError:
                         warn = True
-
                     if warn == True:
                         warnings.warn(warning_message)
                         root_f.write(warning_message)
                     root_f.write(''.join(content))
+
                 root_f.write('\n\n')
 
     return None
+    
