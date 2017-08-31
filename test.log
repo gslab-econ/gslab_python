@@ -1,4 +1,14 @@
 running pytest
+Searching for pytest
+Best match: pytest 3.2.1
+Processing pytest-3.2.1-py2.7.egg
+
+Using /Users/Frank/Desktop/gslab_python/.eggs/pytest-3.2.1-py2.7.egg
+Searching for py>=1.4.33
+Best match: py 1.4.34
+Processing py-1.4.34-py2.7.egg
+
+Using /Users/Frank/Desktop/gslab_python/.eggs/py-1.4.34-py2.7.egg
 running egg_info
 writing requirements to GSLab_Tools.egg-info/requires.txt
 writing GSLab_Tools.egg-info/PKG-INFO
@@ -8,51 +18,6 @@ reading manifest file 'GSLab_Tools.egg-info/SOURCES.txt'
 writing manifest file 'GSLab_Tools.egg-info/SOURCES.txt'
 running build_ext
 ============================= test session starts ==============================
-platform darwin -- Python 2.7.13, pytest-3.2.1, py-1.4.34, pluggy-0.4.0
-rootdir: /Users/chuanyu/Desktop/gslab_python, inifile:
-
-collected 128 items
-
-
-gencat/tests/test_checkDicts.py ...
-gencat/tests/test_cleanDir.py ......
-gencat/tests/test_main.py .
-gencat/tests/test_unzipFiles.py ......
-gencat/tests/test_writeDict.py ....
-gencat/tests/test_zipFile.py ....
-gslab_fill/tests/test_tablefill.py ....
-gslab_fill/tests/test_textfill.py ........
-gslab_scons/tests/test_build_latex.py ......
-gslab_scons/tests/test_build_lyx.py ......
-gslab_scons/tests/test_build_matlab.py ......
-gslab_scons/tests/test_build_python.py .....
-gslab_scons/tests/test_build_r.py .....
-gslab_scons/tests/test_build_stata.py ..........
-gslab_scons/tests/test_build_tables.py .....
-gslab_scons/tests/test_configuration_tests.py .........
-gslab_scons/tests/test_log.py .........
-gslab_scons/tests/test_misc.py ..................
-gslab_scons/tests/test_release_function.py ....
-gslab_scons/tests/test_release_tools.py ....
-gslab_scons/tests/test_size_warning.py .....
-
-
-========================== 128 passed in 1.16 seconds ==========================
-Name                                            Stmts   Miss Branch BrPart  Cover   Missing
--------------------------------------------------------------------------------------------
-gencat/gencat.py                                   79      6     28      4    91%   72-73, 81, 89, 97, 101, 57->exit, 71->72, 96->97, 100->101
-gencat/tests/run_all_tests.py                       9      9      0      0     0%   3-14
-gencat/tests/test_checkDicts.py                    55      4      6      1    92%   20-22, 80, 79->80
-gencat/tests/test_cleanDir.py                      56      6      6      1    89%   15, 18, 31-33, 94, 93->94
-gencat/tests/test_main.py                          49      4      8      1    91%   32-34, 71, 70->71
-gencat/tests/test_unzipFiles.py                   124      6     30      2    95%   15, 17, 30-32, 194, 156->150, 193->194
-gencat/tests/test_writeDict.py                     60      6      8      1    90%   15, 17, 30-32, 92, 91->92
-gencat/tests/test_zipFile.py                      101      6      8      1    94%   16, 19, 28-30, 149, 148->149
-gslab_fill/tablefill.py                           141      5     68     10    93%   53, 105, 138, 171, 174, 32->35, 35->37, 52->53, 83->exit, 91->88, 104->105, 122->119, 137->138, 167->171, 173->174
-gslab_fill/tablefill_info.py                        0      0      0      0   100%
-gslab_fill/tests/test_tablefill.py                 97      2     42      6    94%   145-146, 22->exit, 39->36, 59->45, 76->exit, 140->exit, 144->145
-gslab_fill/tests/test_textfill.py                  84      2     12      3    95%   139-140, 18->exit, 134->exit, 138->139
-gslab_fill/textfill.py                            135      2     60      5    96%   44, 170, 32->35, 35->37, 43->44, 100->exit, 169->170
 gslab_fill/textfill_info.py                         0      0      0      0   100%
 gslab_make/dir_mod.py                             151    130     70      0    10%   28-31, 43-54, 69-145, 159-205, 216-220, 224-226, 230-237, 241-249
 gslab_make/get_externals.py                        22     16      2      0    25%   78-98
@@ -69,35 +34,44 @@ gslab_make/private/metadata.py                      9      0      0      0   100
 gslab_make/private/preliminaries.py               107     88     40      0    13%   17-26, 29-38, 43-56, 60-64, 67-72, 81-90, 97-113, 120-141, 144-146, 151-160
 gslab_make/private/runprogramdirective.py         207    185    104      0     7%   16-93, 97-107, 111-116, 121-134, 138-145, 149-163, 167-220, 224-240, 244-264, 271-282, 285-289, 296-302
 gslab_make/run_program.py                         238    217     80      0     7%   129-162, 178-202, 208-225, 231-248, 254-275, 281-298, 304-321, 332-392, 398-423, 429-447, 453-488, 494-499
-gslab_make/tests/nostderrout.py                    12      0      2      0   100%
-gslab_scons/_exception_classes.py                  13      0      0      0   100%
-gslab_scons/_release_tools.py                     132      0     46      1    99%   34->37
-gslab_scons/builders/build_latex.py                30      0      0      0   100%
-gslab_scons/builders/build_lyx.py                  31      0      0      0   100%
-gslab_scons/builders/build_matlab.py               39      0      4      0   100%
-gslab_scons/builders/build_python.py               29      0      0      0   100%
-gslab_scons/builders/build_r.py                    29      0      0      0   100%
-gslab_scons/builders/build_stata.py                37      0      2      0   100%
-gslab_scons/builders/build_tables.py               31      0      2      0   100%
-gslab_scons/configuration_tests.py                 91      0     32      0   100%
-gslab_scons/log.py                                 77     21     18      3    73%   54-60, 90, 95-96, 100-111, 53->54, 87->90, 99->100
-gslab_scons/misc.py                               186      8     68      6    94%   242-243, 274, 303, 313, 318, 321-322, 241->242, 273->274, 302->303, 312->313, 317->318, 320->321
-gslab_scons/release.py                             41     41     20      0     0%   1-72
-gslab_scons/size_warning.py                        70      0     30      0   100%
-gslab_scons/tests/_side_effects.py                145      3     32      9    93%   35-36, 128, 32->35, 38->exit, 52->exit, 78->85, 153->165, 169->exit, 199->211, 215->exit, 300->306
-gslab_scons/tests/_test_helpers.py                 93      4     32      3    93%   27-28, 122, 137, 94->108, 119->122, 132->137
-gslab_scons/tests/test_build_latex.py              52      1      8      3    93%   108, 26->exit, 103->exit, 107->108
-gslab_scons/tests/test_build_lyx.py                52      1      8      3    93%   108, 26->exit, 103->exit, 107->108
-gslab_scons/tests/test_build_matlab.py             62      1     12      3    95%   118, 27->exit, 112->114, 117->118
-gslab_scons/tests/test_build_python.py             47      2     12      4    90%   67, 80, 23->exit, 66->67, 73->75, 79->80
-gslab_scons/tests/test_build_r.py                  44      1     12      3    93%   82, 27->exit, 76->78, 81->82
-gslab_scons/tests/test_build_stata.py              90      1      8      3    96%   170, 29->exit, 164->166, 169->170
-gslab_scons/tests/test_build_tables.py             88      2     12      3    95%   144, 178, 21->exit, 173->exit, 177->178
-gslab_scons/tests/test_configuration_tests.py     194      2     54      4    98%   211, 313, 107->exit, 206->213, 208->211, 312->313
-gslab_scons/tests/test_log.py                     117     10     16      5    86%   28, 155-161, 197, 202, 27->28, 29->exit, 196->197, 198->exit, 201->202
-gslab_scons/tests/test_misc.py                    192      2     28      6    96%   179, 363, 178->179, 282->exit, 289->exit, 314->exit, 342->exit, 362->363
-gslab_scons/tests/test_release_function.py        121      3     22      2    97%   293-294, 324, 184->exit, 323->324
-gslab_scons/tests/test_release_tools.py            64      1      2      1    97%   153, 152->153
-gslab_scons/tests/test_size_warning.py            183      5     46      6    95%   277, 294, 310, 374, 380, 273->277, 274->277, 293->294, 305->310, 371->374, 379->380
+gslab_make/tests/nostderrout.py                    12      9      2      0    21%   6-14
+gslab_misc/gencat/gencat.py                        79     63     28      0    15%   28-32, 40-49, 57-60, 66-73, 81, 89, 95-101, 109-119, 129-154
+gslab_misc/gencat/tests/run_all_tests.py            9      9      0      0     0%   3-14
+gslab_misc/gencat/tests/test_checkDicts.py         55     40      6      1    26%   16-22, 29-38, 45-55, 61-71, 74-76, 80, 79->80
+gslab_misc/gencat/tests/test_cleanDir.py           56     35      6      1    35%   15, 18, 27-33, 39-42, 48-53, 59-60, 66-67, 73-75, 81-85, 88-90, 94, 93->94
+gslab_misc/gencat/tests/test_main.py               49     33      8      1    30%   17-18, 21-22, 28-39, 46-62, 65-67, 71, 70->71
+gslab_misc/gencat/tests/test_unzipFiles.py        124    102     30      1    15%   15, 17, 26-32, 38-40, 46-51, 58-71, 78-103, 110-140, 147-185, 188-190, 194, 193->194
+gslab_misc/gencat/tests/test_writeDict.py          60     40      8      1    31%   15, 17, 26-32, 38-44, 50-59, 65-71, 77-83, 86-88, 92, 91->92
+gslab_misc/gencat/tests/test_zipFile.py           101     82      8      1    18%   16, 19, 24-33, 39-56, 62-81, 87-113, 119-140, 143-145, 149, 148->149
+gslab_scons/_exception_classes.py                  13      1      0      0    92%   3
+gslab_scons/_release_tools.py                     132    132     46      0     0%   1-291
+gslab_scons/builders/_build_anything.py            43     37      4      0    13%   7-97
+gslab_scons/builders/build_latex.py                30     23      0      0    23%   26-63
+gslab_scons/builders/build_lyx.py                  31     24      0      0    23%   26-64
+gslab_scons/builders/build_matlab.py               39     31      4      0    19%   32-76
+gslab_scons/builders/build_python.py               29     23      0      0    21%   24-58
+gslab_scons/builders/build_r.py                    29     23      0      0    21%   24-57
+gslab_scons/builders/build_stata.py                37     29      2      0    21%   27-69
+gslab_scons/builders/build_tables.py               31     25      2      0    18%   26-71
+gslab_scons/configuration_tests.py                 91     91     32      0     0%   1-158
+gslab_scons/log.py                                 77     66     18      0    12%   13-27, 33-65, 69-74, 82-113
+gslab_scons/misc.py                               186    156     68      0    12%   17-27, 30-65, 74-86, 95-104, 108-112, 120-128, 136-137, 145-146, 154, 162-170, 175-182, 190-205, 210, 218-219, 223-231, 239-280, 284-293, 301-305, 312-324
+gslab_scons/release.py                             47     47     20      0     0%   1-78
+gslab_scons/size_warning.py                        70     59     30      0    11%   14-42, 50-53, 63-97, 105-107, 117-129
+gslab_scons/tests/_side_effects.py                145    145     32      0     0%   1-310
+gslab_scons/tests/_test_helpers.py                 93     93     32      0     0%   1-262
+gslab_scons/tests/test_build_latex.py              52     52      8      0     0%   2-108
+gslab_scons/tests/test_build_lyx.py                52     52      8      0     0%   2-108
+gslab_scons/tests/test_build_matlab.py             62     62     12      0     0%   1-118
+gslab_scons/tests/test_build_python.py             47     47     12      0     0%   1-80
+gslab_scons/tests/test_build_r.py                  44     44     12      0     0%   2-82
+gslab_scons/tests/test_build_stata.py              90     90      8      0     0%   2-170
+gslab_scons/tests/test_build_tables.py             88     88     12      0     0%   2-178
+gslab_scons/tests/test_configuration_tests.py     194    194     54      0     0%   1-313
+gslab_scons/tests/test_log.py                     117    117     16      0     0%   1-202
+gslab_scons/tests/test_misc.py                    192    192     28      0     0%   1-363
+gslab_scons/tests/test_release_function.py        121    121     22      0     0%   1-324
+gslab_scons/tests/test_release_tools.py            64     64      2      0     0%   1-153
+gslab_scons/tests/test_size_warning.py            183    183     46      0     0%   1-380
 -------------------------------------------------------------------------------------------
-TOTAL                                            4719   1310   1310     98    67%
+TOTAL                                            4768   4184   1314      8    10%
