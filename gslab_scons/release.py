@@ -61,11 +61,11 @@ def main(user_yaml = 'config_user.yaml',
 
     # Check provenance options
     find_for_me = 'find_for_me' in sys.argv
-   try:
+    try:
         detail_limit = next(arg for arg in sys.argv if re.search("^detail_limit=", arg))
     except:
-        readme = "detail_limit=500"
-    readme = re.sub('^detail_limit=', '', readme) 
+        detail_limit = "detail_limit=500"
+    detail_limit = re.sub('^detail_limit=', '', readme) 
 
     provenance_release_note = '%s, version %s' % (name, version)
     provenance_path = './release/provenance.log'

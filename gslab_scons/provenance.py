@@ -142,7 +142,7 @@ def write_heading(start_path, provenance_path,
     '''
     Write standard heading for provenance: what and for where it is. 
     '''
-    out = '%s\ndirectory: %s\n' % (sig, os.path.abspath(start_path))
+    out = '%s\n*** directory: %s\n' % (sig, os.path.abspath(start_path))
     if github_release != None:
         out += '\n*** GitHub release: %s \n' % github_release
     with open(provenance_path, 'wb') as f:
