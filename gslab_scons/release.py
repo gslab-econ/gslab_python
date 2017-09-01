@@ -4,8 +4,12 @@ import sys
 import _release_tools
 from _exception_classes import ReleaseError
 from misc import load_yaml_value, check_and_expand_path
+from provenance import make_provenance
 
-def main(user_yaml = 'config_user.yaml', release_files = []):
+def main(user_yaml = 'config_user.yaml', 
+         release_files = [],
+         prov_excluded_dirs = [],
+         external_provenance = []):
     inspect_repo()
 
     # Extract information about the clone from its .git directory
@@ -49,6 +53,33 @@ def main(user_yaml = 'config_user.yaml', release_files = []):
     local_release = '%s/%s/' % (release_dir, name)
     local_release = local_release + version + '/'
 
+    # Create provenance file in ./release
+    try:
+        readme = next(arg for arg in sys.argv if re.search("^readme=", arg))
+    except:
+        readme = "readme=./README.md"
+    readme = re.sub('^readme=', '', readme)
+
+    # Check provenance options
+    find_for_me = 'find_for_me' in sys.argv
+    verbose     = 'verbose' in sys.argv
+    try:
+        detail_limit = next(arg for arg in sys.argv if re.search("^detail_limit=", arg))
+    except:
+        detail_limit = "detail_limit=500"
+    detail_limit = re.sub('^detail_limit=', '', readme) 
+
+    provenance_release_note = '%s, version %s' % (name, version)
+    provenance_path = './release/provenance.log'
+    make_provenance(start_path          = '.',
+                    readme_path         = readme,
+                    provenance_path     = './release/provenance.log',
+                    github_release      = provenance_release_note,
+                    detail_limit        = detail_limit,
+                    external_provenance = external_provenance,
+                    find_for_me         = find_for_me,
+                    excluded_dirs       = prov_excluded_dirs,
+                    verbose             = verbose) 
 
     # Get GitHub token:
     github_token = load_yaml_value(user_yaml, 'github_token')
@@ -60,7 +91,8 @@ def main(user_yaml = 'config_user.yaml', release_files = []):
                            repo              = repo,
                            target_commitish  = branch,
                            zip_release       = zip_release,
-                           github_token      = github_token)
+                           github_token      = github_token,
+                           provenance_path   = provenance_path)
 
 
 def inspect_repo():

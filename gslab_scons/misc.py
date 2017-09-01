@@ -328,3 +328,26 @@ def check_targets(target_files):
 
     return None
 
+def finder(rel_parent_dir, pattern, excluded_dirs = []):
+    '''
+    A nice wrapper for the commands `find` (MacOS) and `dir` (Windows)
+    that allow excluded directories.
+    '''
+
+    if is_unix():
+        command = 'find %s -name "%s" -type f' % (rel_parent_dir, pattern)
+        for x in excluded_dirs: # add in args to exclude folders from search
+            command = '%s -not -path "*%s*"' % (command, os.path.normpath(x)) 
+    else:
+        command = 'dir "%s" /b/s' % os.path.join(rel_parent_dir, pattern)
+        for x in excluded_dirs:         
+            command = '%s | find ^"%s^" /v /i ' % (command, os.path.normpath(x)) 
+
+    try:
+        out_paths = subprocess.check_output(command, shell = True).replace('\r\n', '\n')
+        out_paths = out_paths.split('\n')
+        out_paths = filter(bool, map(str.strip, out_paths)) # Strip paths and keep non-empty
+    except subprocess.CalledProcessError:
+        out_paths = []
+
+    return out_paths
