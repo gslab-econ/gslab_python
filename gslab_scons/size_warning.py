@@ -65,7 +65,7 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
         # if there are large versioned files not tracked by git-lfs, warned the user and perform tracking if the user agrees 
         if new_add_list:
             print _red_and_bold("Warning:") + \
-            "The following files are versioned large files that " + \
+            " the following files are versioned large files that " + \
             "are not tracked by git-lfs (recommend using git-lfs to track them): " 
             print '\n'.join(new_add_list)
             decision = raw_input("Enter 'y' to automatically track these with git-lfs: ")
