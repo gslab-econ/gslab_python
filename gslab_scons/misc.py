@@ -22,7 +22,7 @@ def scons_debrief(args):
     state_of_repo(args['MAXIT'], args['log'])
 
     # Issue size warnings
-    issue_size_warnings(args['look_in'].split(;),
+    issue_size_warnings(args['look_in'].split(";"),
                         float(args['file_MB_limit_lfs']),
                         float(args['total_MB_limit_lfs']),
                         float(args['file_MB_limit']),
