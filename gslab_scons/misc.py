@@ -11,23 +11,28 @@ import getpass
 import _exception_classes
 from size_warning import issue_size_warnings
 
-def scons_debrief(target, env):
-    '''Execute functions after SCons has built all targets'''
+def scons_debrief(args):
+    '''
+    Execute functions after SCons has built all targets.
+    Current list of functions: 
+        1. print state_of_repo
+        2. issue size_warnings
+    '''
     # Log the state of the repo
-    env['CL_ARG'] = env['MAXIT']
-    maxit = int(command_line_args(env))
-    state_of_repo(maxit)
+    state_of_repo(args['MAXIT'], args['log'])
 
     # Issue size warnings
-    look_in = env['look_in']
-    look_in = look_in.split(';')
-    file_MB_limit = float(env['file_MB_limit'])
-    total_MB_limit = float(env['total_MB_limit'])
-    issue_size_warnings(look_in, file_MB_limit, total_MB_limit)
+    issue_size_warnings(args['look_in'].split(";"),
+                        float(args['file_MB_limit_lfs']),
+                        float(args['total_MB_limit_lfs']),
+                        float(args['file_MB_limit']),
+                        float(args['total_MB_limit']),
+                        args['lfs_required'], 
+                        args['git_attrib_path'])
+
     return None
 
-def state_of_repo(maxit):
-    outfile = 'state_of_repo.log'
+def state_of_repo(maxit, outfile = 'state_of_repo.log'):
     with open(outfile, 'wb') as f:
         f.write("WARNING: Information about .sconsign.dblite may be misleading \n" +
                 "as it can be edited after state_of_repo.log finishes running\n\n" +
@@ -323,7 +328,6 @@ def check_targets(target_files):
 
     return None
 
-
 def finder(rel_parent_dir, pattern, excluded_dirs = []):
     '''
     A nice wrapper for the commands `find` (MacOS) and `dir` (Windows)
@@ -347,5 +351,3 @@ def finder(rel_parent_dir, pattern, excluded_dirs = []):
         out_paths = []
 
     return out_paths
-
-
