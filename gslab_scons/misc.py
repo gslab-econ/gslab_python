@@ -19,22 +19,17 @@ def scons_debrief(args):
         2. issue size_warnings
     '''
     # Log the state of the repo
-    args['CL_ARG']     = args['MAXIT']
-    maxit              = int(command_line_args(args))
-    state_of_repo(maxit, outfile = args['log'])
+    state_of_repo(args['MAXIT'], args['log'])
 
     # Issue size warnings
-    look_in            = args['look_in']
-    look_in            = look_in.split(';')
-    lfs_required       = args['lfs_required']
-    file_MB_limit_lfs  = float(args['file_MB_limit_lfs'])
-    total_MB_limit_lfs = float(args['total_MB_limit_lfs'])
-    file_MB_limit      = float(args['file_MB_limit'])
-    total_MB_limit     = float(args['total_MB_limit'])
-    git_attrib_path    = args['git_attrib_path']
-        
-    issue_size_warnings(look_in, file_MB_limit_lfs, total_MB_limit_lfs, file_MB_limit, \
-                        total_MB_limit, lfs_required, git_attrib_path)
+    issue_size_warnings(args['look_in'].split(;),
+                        float(args['file_MB_limit_lfs']),
+                        float(args['total_MB_limit_lfs']),
+                        float(args['file_MB_limit']),
+                        float(args['total_MB_limit']),
+                        args['lfs_required'], 
+                        args['git_attrib_path'])
+
     return None
 
 def state_of_repo(maxit, outfile = 'state_of_repo.log'):
