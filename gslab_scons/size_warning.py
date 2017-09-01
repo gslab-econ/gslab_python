@@ -25,10 +25,10 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
     versioned   = {k: versioned[k] for k in versioned.keys() if k not in ignored}
     
     # different limits 
-    limit_file_lfs  = file_MB_limit_lfs * bytes_in_MB
+    limit_file_lfs  = file_MB_limit_lfs  * bytes_in_MB
     limit_total_lfs = total_MB_limit_lfs * bytes_in_MB
-    limit_file      = file_MB_limit * bytes_in_MB
-    limit_total     = total_MB_limit * bytes_in_MB
+    limit_file      = file_MB_limit      * bytes_in_MB
+    limit_total     = total_MB_limit     * bytes_in_MB
     
     total_size   = sum(versioned.values())
 
@@ -64,8 +64,9 @@ def issue_size_warnings(look_in = ['source', 'raw', 'release'],
 
         # if there are large versioned files not tracked by git-lfs, warned the user and perform tracking if the user agrees 
         if new_add_list:
-            print _red_and_bold("The following files are versioned large files that " + \
-            "are not tracked by git-lfs (recommend using git-lfs to track them): ") 
+            print _red_and_bold("Warning:") + \
+            "The following files are versioned large files that " + \
+            "are not tracked by git-lfs (recommend using git-lfs to track them): " 
             print '\n'.join(new_add_list)
             decision = raw_input("Enter 'y' to automatically track these with git-lfs: ")
             if decision == 'y':
@@ -186,8 +187,8 @@ def create_size_dictionary(dirs):
 def check_track_lfs(filepath, attrib_path = '../.gitattributes'):
     '''
     This function checks if a given file is tracked by git lfs. 
-    It iterates everyline in the git attribute file (the default path is '../.gitattributes')
-    and checks if the file path matches with any of the file paths specified in the git
+    It iterates everyline in .gitattributes and checks if the file 
+    path matches with any of the file paths specified in the git
     attribute file. 
     '''
     with open(attrib_path) as f:
@@ -203,7 +204,7 @@ def check_track_lfs(filepath, attrib_path = '../.gitattributes'):
 def add_to_lfs(filepath, attrib_path = '../.gitattributes'):
     '''
     This function tracks existing files with git lfs by writing down 
-    the given file path to the git attribute file (the default path is '../.gitattributes')
+    the given file path to the .gitattributes.
     '''
     with open(attrib_path, "a") as f:
         f.write('%s filter=lfs diff=lfs merge=lfs -text\n' % filepath)
