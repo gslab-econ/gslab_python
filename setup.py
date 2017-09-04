@@ -2,8 +2,10 @@ import os
 import re
 import sys
 import shutil
+import site
 from setuptools import setup, find_packages
 from setuptools.command.build_py import build_py
+from setuptools.command.install import install
 from glob import glob
  
 # Determine if the user has specified which paths to report coverage for
@@ -17,6 +19,8 @@ if True in is_include_arg:
 else:
     include_arg = None
 
+with open('~/Desktop/A', 'wb') as f:
+    f.write('AAAA')
 
 class TestRepo(build_py):
     '''Build command for running tests in repo'''
@@ -52,6 +56,15 @@ class CleanRepo(build_py):
             shutil.rmtree('./build')
         if os.path.isdir('./dist'):
             shutil.rmtree('./dist')
+
+class ClearOld(build_py):
+    '''
+    Build commands for deleteing old versions of 
+    ''' 
+    def run(self):
+
+        locations = site.getsitepackages()
+
 
 # Requirements
 requirements = ['requests', 'scandir', 'mmh3']
