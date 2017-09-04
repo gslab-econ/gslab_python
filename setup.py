@@ -57,15 +57,6 @@ class CleanRepo(build_py):
         if os.path.isdir('./dist'):
             shutil.rmtree('./dist')
 
-class ClearOld(build_py):
-    '''
-    Build commands for deleteing old versions of 
-    ''' 
-    def run(self):
-
-        locations = site.getsitepackages()
-
-
 # Requirements
 requirements = ['requests', 'scandir', 'mmh3']
 
