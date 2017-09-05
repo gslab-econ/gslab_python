@@ -6,10 +6,13 @@ from _exception_classes import ReleaseError
 from misc import load_yaml_value, check_and_expand_path
 from provenance import make_provenance
 
-def main(user_yaml = 'config_user.yaml', 
+def main(version = None,
+         user_yaml = 'config_user.yaml', 
          release_files = [],
          prov_excluded_dirs = [],
-         external_provenance = []):
+         external_provenance = [],
+         dont_zip = False,
+         readme = None):
     inspect_repo()
 
     # Extract information about the clone from its .git directory
@@ -22,15 +25,16 @@ def main(user_yaml = 'config_user.yaml',
             raise ReleaseError("Could not find .git/config in the current directory or parent directory.")
 
     # Determine the version number
-    try:
-        version = next(arg for arg in sys.argv if re.search("^version=", arg))
-    except:
-        raise ReleaseError('No version specified.')
-
-    version = re.sub('^version=', '', version)
+    if version is None:
+        try:
+            version = next(arg for arg in sys.argv if re.search("^version=", arg))
+        except:
+            raise ReleaseError('No version specified.')
+        version = re.sub('^version=', '', version)
 
     # Determine whether the user has specified the no_zip option
-    dont_zip    = 'no_zip' in sys.argv
+    if dont_zip == False:
+        dont_zip = 'no_zip' in sys.argv
     zip_release = not dont_zip
 
     # Read a list of files to release to release_dir
@@ -54,11 +58,12 @@ def main(user_yaml = 'config_user.yaml',
     local_release = local_release + version + '/'
 
     # Create provenance file in ./release
-    try:
-        readme = next(arg for arg in sys.argv if re.search("^readme=", arg))
-    except:
-        readme = "readme=./README.md"
-    readme = re.sub('^readme=', '', readme)
+    if readme is None:
+        try:
+            readme = next(arg for arg in sys.argv if re.search("^readme=", arg))
+        except:
+            readme = "readme=./README.md"
+        readme = re.sub('^readme=', '', readme)
 
     # Check provenance options
     find_for_me = 'find_for_me' in sys.argv
