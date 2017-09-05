@@ -17,8 +17,12 @@ def main(version = None,
 
     # Check if user specified a scons_local_path
     if scons_local_path == 'run.py':
+        check_none = lambda scons_local_path, regex: bool(re.match(regex, scons_local_path, re.IGNORECASE))
         try:
-            scons_local_path = next(arg for arg in sys.argv if re.search("^scons_local_path=", arg))
+            scons_local_path = next(arg for arg in sys.argv if re.search('^scons_local_path=', arg))
+            scons_local_path = re.sub('^scons_local_path=', '', scons_local_path)
+            if check_none(scons_local_path, 'None') or check_none(scons_local_path, 'False'):
+                scons_local_path = None
         except:
             pass
     inspect_repo(scons_local_path = scons_local_path)
@@ -114,7 +118,7 @@ def inspect_repo(scons_local_path = None):
         raise ReleaseError('SCons targets not up to date.')  
     elif not _release_tools.up_to_date(mode = 'git'):
         warn = "Warning: your git working tree is not clean.\n" \
-               + "End this process and run `git status` for more infomration.\n"
+               + "End this process and run `git status` for more infomration."
         print warn
         response = raw_input("Would you like to continue anyway? (y|n)\n")
         if bool(re.match('no?', response, re.IGNORECASE)):
