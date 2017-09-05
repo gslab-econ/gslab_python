@@ -2,8 +2,10 @@ import os
 import re
 import sys
 import shutil
+import site
 from setuptools import setup, find_packages
 from setuptools.command.build_py import build_py
+from setuptools.command.install import install
 from glob import glob
  
 # Determine if the user has specified which paths to report coverage for
@@ -17,7 +19,16 @@ if True in is_include_arg:
 else:
     include_arg = None
 
+# Uninstall old versions of GSLab-Tools
+re_gslab  = re.compile('gslab[-_].', re.IGNORECASE)
+re_gencat = re.compile('gencat')
+package_location = site.getsitepackages()[0]
+packages = os.listdir(package_location)
+for package in packages:
+    if re_gslab.match(package) or re_gencat.match(package):
+        shutil.rmtree(os.path.join(package_location, package))
 
+# Additional build commands
 class TestRepo(build_py):
     '''Build command for running tests in repo'''
     def run(self):
