@@ -2,7 +2,7 @@
 
 Make a release from an SCons directory by running the module `release`. 
 
-A user can either run the following from the command line within the directory of interest (e.g. `gslab-econ/template/paper_slides`) or write a Python script to call the module (see "Python wrapper" section below). If using the command line, run the following:
+A user can either run the following from the command line within the directory of interest (e.g. `/paper_slides`) or write a Python script to call the module (see "Python wrapper" section below). If using the command line, run the following:
 
 ```sh
 python -m gslab_scons.release version=<version name here> readme=<readme path here>
@@ -17,7 +17,7 @@ v1.2.1 of a directory with the README file one level up, navigate to the root of
 python -m gslab_scons.release version=v1.2.1 readme=../README.md
 ```
 
-An automatic location for release can be specified in `config_user.yaml` with 
+An automatic location for release must be specified in `config_user.yaml` with 
 
 ```yaml
 release_directory: <release location here>
@@ -45,9 +45,9 @@ github_token: <your token here>
 
 ## Provenance
 
-Making a release using this tool will automatically call `make_provenance()` from the module `provenance`create a `provenance` file (for more details, please see our [RA manual](https://github.com/gslab-econ/ra-manual/wiki/Data-Storage)). 
+Making a release using this tool will automatically call `make_provenance()` from the module `provenance` to create a `provenance` file (for more details, please see our [RA manual](https://github.com/gslab-econ/ra-manual/wiki/Data-Storage)). 
 
-While calling the `release` module from the command line, one can specify the `make_provenance()` argument by adding `detail_limit=<###>` (default to 500).
+While calling the `release` module from the command line, one can specify the `detail_limit` argument to`make_provenance()` by adding `detail_limit=<###>` (default to 500).
 
 ## Python wrapper
 
@@ -55,7 +55,7 @@ If you wish to wrap the `release` module in a Python script to pass arguments to
 
 ```python
 from gslab_scons import release
-release.main(version = 'test_sep4',
+release.main(version = '<version name here>',
              readme  = '../readme.md')
 ```
 
