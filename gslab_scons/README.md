@@ -29,6 +29,15 @@ For example, to automatically release to Dropbox set
 release_directory: /Users/you/Dropbox/release
 ``` 
 
+The release module executes an SCons dry run to check that your build is up-to-date. 
+By default, we complete this step by executing `run.py` in your current working directory.
+You can specify another script for execution by passing its relative path through the `scons_local_path` argument.
+To run SCons using your global installation, set the `scons_local_path` argument to `None` or `False`.
+
+```sh
+python -m gslab_scons.release scons_local_path=<relative path to script here>
+```
+
 Including the option `no_zip` will prevent files
 from being zipped before they are released to the specified location.  
 
