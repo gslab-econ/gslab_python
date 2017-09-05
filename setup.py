@@ -2,7 +2,7 @@ import os
 import re
 import sys
 import shutil
-import pip
+import site
 from setuptools import setup, find_packages
 from setuptools.command.build_py import build_py
 from setuptools.command.install import install
