@@ -47,7 +47,7 @@ github_token: <your token here>
 
 Making a release using this tool will automatically call `make_provenance()` from the module `provenance` to create a `provenance` file (for more details, please see our [RA manual](https://github.com/gslab-econ/ra-manual/wiki/Data-Storage)). 
 
-While calling the `release` module from the command line, one can specify the `detail_limit` argument to`make_provenance()` by adding `detail_limit=<###>` (default to 500).
+While calling the `release` module from the command line, one can specify the `detail_limit` argument of `make_provenance()` by adding `detail_limit=<###>` (default to 500).
 
 ## Python wrapper
 
