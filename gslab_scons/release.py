@@ -12,8 +12,16 @@ def main(version = None,
          prov_excluded_dirs = [],
          external_provenance = [],
          dont_zip = False,
-         readme = None):
-    inspect_repo()
+         readme = None, 
+         scons_local_path = 'run.py'):
+
+    # Check if user specified a scons_local_path
+    if scons_local_path == 'run.py':
+        try:
+            scons_local_path = next(arg for arg in sys.argv if re.search("^scons_local_path=", arg))
+        except:
+            pass
+    inspect_repo(scons_local_path = scons_local_path)
 
     # Extract information about the clone from its .git directory
     try: 
@@ -100,14 +108,16 @@ def main(version = None,
                            provenance_path   = provenance_path)
 
 
-def inspect_repo():
+def inspect_repo(scons_local_path = None):
     '''Ensure the repo is ready for release.'''
-    if not _release_tools.up_to_date(mode = 'scons'):
+    if not _release_tools.up_to_date(mode = 'scons', scons_local_path = scons_local_path):
         raise ReleaseError('SCons targets not up to date.')  
     elif not _release_tools.up_to_date(mode = 'git'):
-        print "Warning: `scons` has run since your latest git commit.\n"
+        warn = "Warning: your git working tree is not clean.\n" \
+               + "End this process and run `git status` for more infomration.\n"
+        print warn
         response = raw_input("Would you like to continue anyway? (y|n)\n")
-        if response in ['N', 'n']: 
+        if bool(re.match('no?', response, re.IGNORECASE)):
             sys.exit()
 
 

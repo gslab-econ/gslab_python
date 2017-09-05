@@ -177,7 +177,7 @@ def write_readme(readme_path, provenance_path):
         with open(readme_path, 'rU') as f:
             out = '%s' % f.read()
     except IOError:
-        raise IOError(('Cannot read %s.\n If you are in release mode,' % readme_path) +
+        raise IOError(('Cannot read %s.\n If you are in release mode, ' % readme_path) +
                       'please specify the command line argument param `readme=<README_PATH>`.' )
 
     with open(provenance_path, 'ab') as f:

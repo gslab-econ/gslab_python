@@ -176,7 +176,7 @@ def upload_asset(github_token, org, repo, release_id, file_name,
     return r.content
 
 
-def up_to_date(mode = 'scons', directory = '.'):
+def up_to_date(mode = 'scons', directory = '.', scons_local_path = None):
     '''
     If mode = scons, this function checks whether the targets of a 
     directory run using SCons are up to date. 
@@ -185,7 +185,7 @@ def up_to_date(mode = 'scons', directory = '.'):
     '''
     if mode not in ['scons', 'git']:
         raise ReleaseError("up_to_date()'s mode argument must be "
-                           "'scons' or 'git")
+                           "'scons' or 'git'")
 
     original_directory = os.getcwd()
     os.chdir(directory)
@@ -193,7 +193,11 @@ def up_to_date(mode = 'scons', directory = '.'):
     if mode == 'scons':
         # If mode = scons, conduct a dry run to check whether 
         # all targets are up-to-date
-        command = 'scons ' + directory + ' --dry-run'
+        if scons_local_path is not None:
+            scons_path = 'python %s ' % os.path.join(original_directory, scons_local_path)
+        else:
+            scons_path = 'scons '
+        command = scons_path + directory + ' --dry-run'
     else:
         # If mode = git, check whether .sconsign.dblite has changed
         # since the last commit.
@@ -234,11 +238,9 @@ def up_to_date(mode = 'scons', directory = '.'):
             raise ReleaseError('up_to_date(mode = git) must be run on a '
                                'git repository.')
 
-        # If mode = git, look for a line stating that sconsign.dblite has changed
+        # If mode = git, look for a line stating that nothing has changed
         # since the latest commit.
-        result = [out for out in output if re.search('sconsign\.dblite', out)]
-        result = [True for out in result if re.search('modified', out)]
-        result = not bool(result)
+        result = bool('nothing to commit, working tree clean' in output)
 
     os.chdir(original_directory)
 
