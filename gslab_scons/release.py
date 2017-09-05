@@ -118,10 +118,10 @@ def inspect_repo(scons_local_path = None):
         raise ReleaseError('SCons targets not up to date.')  
     elif not _release_tools.up_to_date(mode = 'git'):
         warn = "Warning: your git working tree is not clean.\n" \
-               + "End this process and run `git status` for more infomration."
+               + "End this process and run `git status` for more information."
         print warn
         response = raw_input("Would you like to continue anyway? (y|n)\n")
-        if bool(re.match('no?', response, re.IGNORECASE)):
+        if response in ['N', 'n']:
             sys.exit()
 
 

@@ -30,12 +30,7 @@ release_directory: /Users/you/Dropbox/release
 ``` 
 
 Before releasing, the module executes an SCons dry run to check that your build is up-to-date. 
-By default, we execute `run.py`, but you can specify another script through `scons_local_path`.
-Set this argument to `None` or `False` if you want to run `scons` using your global installation.
-
-```sh
-python -m gslab_scons.release scons_local_path=<relative path to script here>
-```
+By default, we run SCons from `run.py`, but you can specify another script through `scons_local_path=<relative path to script here>`. Set this argument to `None` or `False` if you want to run `scons` using your global installation.
 
 Including the option `no_zip` will prevent files
 from being zipped before they are released to the specified location.  
