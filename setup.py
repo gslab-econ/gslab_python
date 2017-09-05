@@ -19,7 +19,7 @@ if True in is_include_arg:
 else:
     include_arg = None
 
-with open('Users/arosenbe/Desktop/A', 'wb') as f:
+with open('/Users/arosenbe/Desktop/A', 'wb') as f:
     f.write('AAAA')
 
 class TestRepo(build_py):
