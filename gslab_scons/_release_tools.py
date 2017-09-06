@@ -220,7 +220,7 @@ def up_to_date(mode = 'scons', directory = '.', scons_local_path = None):
         # argument is actually a SCons directory.
         # We use the fact that running scons outside of SCons directory
         # produces the message: "No SConstruct file found."
-        if check_list_for_regex('No SConstruct file found', output):
+        if not os.path.isfile('SConstruct'):
             raise ReleaseError('up_to_date(mode = scons) must be run on an '
                                'SCons directory.')
         # Next determine if SCons could start to run.
