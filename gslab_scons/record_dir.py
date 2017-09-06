@@ -7,7 +7,7 @@ from misc import check_and_expand_path, make_heading
 def record_dir(start_path, name, 
                include_checksum = False,
                file_limit = 5000, 
-               logpath = 'state_of_inputs.log'):
+               logpath = 'state_of_external.log'):
     '''
     Record relative path, size, and (optionally) checksum of all files within start_path.
     Relative paths are from start_path.
