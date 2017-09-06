@@ -15,8 +15,7 @@ def release(vers, org, repo,
             local_release     = '',  
             target_commitish  = '', 
             zip_release       = True,
-            github_token      = None,
-            provenance_path   = './release/provenance.log'):
+            github_token      = None):
     '''Publish a release
 
     Parameters
@@ -141,8 +140,7 @@ def release(vers, org, repo,
         upload_asset(github_token = github_token, 
                      org          = org,    
                      repo         = repo, 
-                     release_id   = release_id, 
-                     file_name    = provenance_path)
+                     release_id   = release_id)
 
 
 def upload_asset(github_token, org, repo, release_id, file_name, 

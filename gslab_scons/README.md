@@ -43,15 +43,9 @@ you can store it in `config_user.yaml` as
 github_token: <your token here>
 ```
 
-## Provenance
-
-Making a release using this tool will automatically call `make_provenance()` from the module `provenance` to create a `provenance` file (for more details, please see our [RA manual](https://github.com/gslab-econ/ra-manual/wiki/Data-Storage)). 
-
-While calling the `release` module from the command line, one can specify the `detail_limit` argument of `make_provenance()` by adding `detail_limit=<###>` (default to 500).
-
 ## Python wrapper
 
-If you wish to wrap the `release` module in a Python script to pass arguments to `make_provenance()`, use the following syntax:
+If you wish to wrap the `release` module in a Python script to help pass arguments, use the syntax
 
 ```python
 from gslab_scons import release
@@ -59,4 +53,4 @@ release.main(version = '<version name here>',
              readme  = '../readme.md')
 ```
 
-For a complete list of arguments that you can pass to `release.main()` and `make_provenance()`, visit `release.py` and `provenance.py` respectively. 
+For a complete list of arguments that you can pass to `release.main()`, visit `release.py`.
