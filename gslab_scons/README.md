@@ -1,6 +1,6 @@
 ## Notes on release.py
 
-Make a release from an SCons directory by running the module `release`. 
+Make a release from a SCons directory by running the module `release`. 
 
 A user can either run the following from the command line within the directory of interest (e.g. `/paper_slides`) or write a Python script to call the module (see "Python wrapper" section below). If using the command line, run the following:
 
