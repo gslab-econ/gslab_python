@@ -10,7 +10,7 @@ def make_provenance(start_path, readme_path, provenance_path,
                     include_details     = True,
                     include_checksum    = True,
                     github_release      = None,
-                    detail_limit        = 500,    # max number of files to calculate and output details for
+                    file_limit          = 500,    # max number of files to include
                     external_provenance = [],     # list of external provenance files to append. If empty, automatically look for provenance files under start_path.
                     find_for_me         = False,  # automatically looks for provenance files regardless of external_provenance
                     excluded_dirs       = [],     # exclude these directories from automatic provenance look-up
@@ -23,15 +23,15 @@ def make_provenance(start_path, readme_path, provenance_path,
         file_details = determine_file_details(include_details  = include_details,
                                               include_checksum = include_checksum)
 
-        total_size, num_files, last_mtime, details = scan_wrapper(start_path       = start_path,
-                                                                  include_details  = include_details,
-                                                                  file_details     = file_details,
-                                                                  include_checksum = include_checksum,
-                                                                  detail_limit     = detail_limit, 
-                                                                  verbose          = verbose)                             
+        total_size, num_files, details = scan_wrapper(start_path       = start_path,
+                                                      include_details  = include_details,
+                                                      file_details     = file_details,
+                                                      include_checksum = include_checksum,
+                                                      file_limit       = file_limit, 
+                                                      verbose          = verbose)                             
 
-        write_heading(start_path, provenance_path, github_release)
-        write_directory_info(provenance_path, total_size, num_files, last_mtime)
+        write_heading(start_path, provenance_path, sig, github_release)
+        write_directory_info(provenance_path, total_size, num_files)
         write_readme(readme_path, provenance_path)
         if include_details:
             write_detailed_info(provenance_path, details)
@@ -69,44 +69,48 @@ def determine_file_details(include_details  = True,
 
 def scan_wrapper(start_path, include_details, file_details, 
                  include_checksum = True,
-                 detail_limit = 500,
+                 file_limit = 500,
                  verbose = False):
     '''
     Walk through start_path and get info on files in all subdirectories.
     Walk in same order as os.walk. 
     Also scan to be recurisve-like without overflowing the stack on large directories. 
     '''
-    total_size, num_files, last_mtime, file_details, dirs = scan(start_path       = start_path,
-                                                                 include_details  = include_details,
-                                                                 include_checksum = include_details,
-                                                                 detail_limit     = detail_limit,
-                                                                 file_details     = file_details,
-                                                                 verbose          = verbose)
+    total_size, num_files, file_details, dirs = scan(start_path       = start_path,
+                                                     include_details  = include_details,
+                                                     include_checksum = include_details,
+                                                     file_limit       = file_limit,
+                                                     file_details     = file_details,
+                                                     verbose          = verbose)
 
-    while dirs:
-        new_start_path = dirs.pop(0) 
-        total_size, num_files, last_mtime, file_details, dirs = scan(start_path  = new_start_path, 
-                                                                include_details  = include_details,
-                                                                file_details     = file_details, 
-                                                                include_checksum = include_checksum, 
-                                                                detail_limit     = detail_limit, 
-                                                                dirs             = dirs,
-                                                                total_size       = total_size,
-                                                                num_files        = num_files,
-                                                                last_mtime       = last_mtime,
-                                                                verbose          = verbose)
+    while dirs and allow_by_file_limit(num_files, file_limit):
+        new_start_path = dirs.pop(0)
+        total_size, num_files, file_details, dirs = scan(start_path  = new_start_path, 
+                                                         include_details  = include_details,
+                                                         file_details     = file_details, 
+                                                         include_checksum = include_checksum, 
+                                                         file_limit       = file_limit, 
+                                                         dirs             = dirs,
+                                                         total_size       = total_size,
+                                                         num_files        = num_files,
+                                                         verbose          = verbose)
 
     
-    return total_size, num_files, last_mtime, file_details
+    return total_size, num_files, file_details
+
+def allow_by_file_limit(num_files, file_limit):
+    '''
+    Rules to continue a while loop based on num_files and file_limit.
+    '''
+    return bool(num_files <= file_limit or not file_limit)
 
 
 def scan(start_path, include_details, file_details, 
          include_checksum = True,
-         detail_limit     = 500,
+         file_limit       = 500,
          dirs             = [], 
          total_size       = 0,
          num_files        = 0,
-         last_mtime       = 0,
          verbose          = False): 
     '''
     Grab file and create directory info from start path. 
@@ -117,28 +121,31 @@ def scan(start_path, include_details, file_details,
 
     entries = scandir.scandir(start_path)
     for entry in entries:
+        if not allow_by_file_limit(num_files, file_limit):
+            break
         if entry.is_dir(follow_symlinks = False): # Store subdirs
-            dirs.append(entry.path)
+            if '.git' in entry.path or '.svn' in entry.path:
+                continue
+            else:
+                dirs.append(entry.path)
         elif entry.is_file():
             # Get file info
             path = entry.path
             stat = entry.stat()
             size = stat.st_size
-            mtime = datetime.datetime.fromtimestamp(stat.st_mtime).strftime('%Y-%m-%d %H:%M:%S')
             # Incorporate file info into directory info.
             total_size += size            
             num_files += 1
-            last_mtime = max(last_mtime, mtime)
             # Optional detailed file information
-            if include_details and (not detail_limit or num_files <= detail_limit): 
-                line = '%s|%s|%s' % (path, size, mtime)
+            if include_details: 
+                line = '%s|%s' % (path, size)
                 if include_checksum:
                     with open(path, 'rU') as f:
                         checksum = str(mmh3.hash128(f.read(), 2017))
                     line = '%s|%s' % (line, checksum)
                 file_details.append(line)
-   
-    return total_size, num_files, last_mtime, file_details, dirs
+        
+    return total_size, num_files, file_details, dirs
 
 
 def write_heading(start_path, provenance_path, sig,
@@ -155,13 +162,12 @@ def write_heading(start_path, provenance_path, sig,
     return None
 
 
-def write_directory_info(provenance_path, total_size, num_files, last_mtime):
+def write_directory_info(provenance_path, total_size, num_files):
     '''
     Write directory-level information to provenance. 
     '''
     out = 'total bytes: %s\n' % total_size + \
-          'number of files: %s\n' % num_files + \
-          'most recent modification time: %s\n' % last_mtime
+          'number of files: %s\n' % num_files
     with open(provenance_path, 'ab') as f:
         f.write('\n*** Directory information\n')
         f.write(out)
@@ -176,6 +182,8 @@ def write_readme(readme_path, provenance_path):
     try:
         with open(readme_path, 'rU') as f:
             out = '%s' % f.read()
+        if not out.endswith('\n'):
+            out = out + '\n'
     except IOError:
         raise IOError(('Cannot read %s.\n If you are in release mode,' % readme_path) +
                       'please specify the command line argument param `readme=<README_PATH>`.' )
