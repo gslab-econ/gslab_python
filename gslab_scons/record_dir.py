@@ -13,9 +13,18 @@ def record_dir(start_path, name,
     Relative paths are from start_path.
     Append info in |-delimited format to logpath below a heading made from start_path.
     '''
-    check_and_expand_path(os.path.dirname(logpath))
+    check_logpath(logpath)
     files_info = walk(start_path, include_checksum, file_limit)
     write_log(name, files_info, logpath)
+    return None
+
+def check_logpath(logpath):
+    '''
+    Check that the directory for logpath exists
+    '''
+    dirname = os.path.dirname(logpath)
+    if dirname:
+        check_and_expand_path(dirname)
     return None
 
 def walk(start_path, include_checksum, file_limit, this_file_only = None):
