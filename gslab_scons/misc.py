@@ -34,21 +34,19 @@ def scons_debrief(args):
 
 def state_of_repo(maxit, outfile = 'state_of_repo.log'):
     with open(outfile, 'wb') as f:
-        f.write("WARNING: Information about .sconsign.dblite may be misleading \n" +
+        f.write("WARNING: Information about .sconsign.dblite may be misleading\n" +
                 "as it can be edited after state_of_repo.log finishes running\n\n" +
-                "===================================\n\n GIT STATUS" +
-                "\n\n===================================\n")
+                make_heading("GIT STATUS"))
         f.write("Last commit:\n\n")
 
     # https://stackoverflow.com/questions/876239/how-can-i-redirect-and-append-both-stdout-and-stderr-to-a-file-with-bash
     os.system("git log -n 1 >> state_of_repo.log 2>&1")
     with open(outfile, 'ab') as f:
-        f.write("\n\nFiles changed since last commit:\n\n")
+        f.write("\n\nFiles changed since last commit:\n\n\n")
     os.system("git diff --name-only >> state_of_repo.log 2>&1")
 
     with open(outfile, 'ab') as f:
-        f.write("\n===================================\n\n FILE STATUS" + 
-                "\n\n===================================\n")
+        f.write('\n%s' % make_heading("FILE STATUS"))
         for root, dirs, files in os.walk(".", followlinks = True):
             i = 1
             for name in files:
@@ -68,6 +66,15 @@ def state_of_repo(maxit, outfile = 'state_of_repo.log'):
                             (maxit, root))
                     break
     return None
+
+
+def make_heading(s):
+    '''
+    Wrap s in a bunch of equals signs for nice heading printing
+    '''
+    equals_signs = '=' * 35
+    out = '%s\n\n *** %s ***\n\n%s\n' % (equals_signs, s, equals_signs)
+    return out
 
 
 def command_line_args(env):
@@ -287,7 +294,7 @@ def load_yaml_value(path, key):
 
 def check_and_expand_path(path):
     error_message = " The directory provided, '%s', cannot be found. " % path + \
-                    "Please manually create before running\n" + \
+                    "Please manually create before running " + \
                     "or fix the path in config_user.yaml.\n"
     try:
         path = os.path.expanduser(path)

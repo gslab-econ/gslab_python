@@ -11,7 +11,7 @@ this module for additonal information on their functionalities.
 '''
 import os
 import misc
-import provenance
+import record_dir
 import size_warning
 from .log import start_log, log_timestamp
 from .builders.build_r      import build_r
