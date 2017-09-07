@@ -68,7 +68,7 @@ def prep_files_info(include_checksum, file_limit):
     '''
     files_info = [['file path', 'file size in bytes']]
     if include_checksum:
-        files_info.append('MurmurHash3')
+        files_info[0].append('MurmurHash3')
     file_limit += 1
     return files_info, file_limit
 
