@@ -46,7 +46,7 @@ def state_of_repo(maxit, outfile = 'state_of_repo.log'):
     os.system("git diff --name-only >> state_of_repo.log 2>&1")
 
     with open(outfile, 'ab') as f:
-        f.write(make_heading("FILE STATUS"))
+        f.write('\n%s' % make_heading("FILE STATUS"))
         for root, dirs, files in os.walk(".", followlinks = True):
             i = 1
             for name in files:
@@ -73,7 +73,7 @@ def make_heading(s):
     Wrap s in a bunch of equals signs for nice heading printing
     '''
     equals_signs = '=' * 35
-    out = '%s\n\n %s\n\n%s\n' % (equals_signs, s, equals_signs)
+    out = '%s\n\n *** %s ***\n\n%s\n' % (equals_signs, s, equals_signs)
     return out
 
 
@@ -294,7 +294,7 @@ def load_yaml_value(path, key):
 
 def check_and_expand_path(path):
     error_message = " The directory provided, '%s', cannot be found. " % path + \
-                    "Please manually create before running\n" + \
+                    "Please manually create before running " + \
                     "or fix the path in config_user.yaml.\n"
     try:
         path = os.path.expanduser(path)
