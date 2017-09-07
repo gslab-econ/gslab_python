@@ -174,16 +174,15 @@ def upload_asset(github_token, org, repo, release_id, file_name,
     return r.content
 
 
-def up_to_date(mode = 'scons', directory = '.'):
+def up_to_date(mode = 'scons', directory = '.', scons_local_path = None):
     '''
     If mode = scons, this function checks whether the targets of a 
     directory run using SCons are up to date. 
-    If mode = git, it checks whether the directory's sconsign.dblite has
-    changed since the latest commit.
+    If mode = git, it checks whether the directory's working tree is clean.
     '''
     if mode not in ['scons', 'git']:
         raise ReleaseError("up_to_date()'s mode argument must be "
-                           "'scons' or 'git")
+                           "'scons' or 'git'")
 
     original_directory = os.getcwd()
     os.chdir(directory)
@@ -191,20 +190,22 @@ def up_to_date(mode = 'scons', directory = '.'):
     if mode == 'scons':
         # If mode = scons, conduct a dry run to check whether 
         # all targets are up-to-date
-        command = 'scons ' + directory + ' --dry-run'
+        if scons_local_path is not None:
+            scons_installation = 'python %s ' % os.path.join(directory, 
+                                                             scons_local_path)
+        else:
+            scons_installation = 'scons '
+        command = scons_installation + directory + ' --dry-run'
     else:
-        # If mode = git, check whether .sconsign.dblite has changed
-        # since the last commit.
-        original_directory = os.getcwd()
-        os.chdir(directory)
+        # If mode = git, check whether the working tree is clean.
         command = 'git status'
     
     logpath = '.temp_log_up_to_date'
     
     with open(logpath, 'wb') as temp_log:
         subprocess.call(command, stdout = temp_log, 
-                        stderr = temp_log, shell = True)
-    
+                            stderr = temp_log, shell = True)
+        
     with open(logpath, 'rU') as temp_log:
         output = temp_log.readlines()
     os.remove(logpath)
@@ -217,31 +218,42 @@ def up_to_date(mode = 'scons', directory = '.'):
         # argument is actually a SCons directory.
         # We use the fact that running scons outside of SCons directory
         # produces the message: "No SConstruct file found."
-        if [True for out in output if re.search('No SConstruct file found', out)]:
-            raise ReleaseError('up_to_date(mode = scons) must be run on a '
+        if not os.path.isfile('SConstruct'):
+            raise ReleaseError('up_to_date(mode = scons) must be run on an '
                                'SCons directory.')
+        # Next determine if SCons could start to run.
+        # We use the fact that our SCons notifies when it starts the build process.
+        elif not check_list_for_regex('scons: Reading SConscript files', output):
+            raise ReleaseError('up_to_date(mode = scons) must be able to begin '
+                               'SCons build process.')
+
         # If mode = scons, look for a line stating that the directory is up to date.
-        result = [True for out in output if re.search('is up to date\.$', out)]
+        result = check_list_for_regex('is up to date\.$', output)
 
     else:  
         # Determine whether the directory specified as a function
         # argument is actually a git repository.
         # We use the fact that running `git status` outside of a git directory
         # produces the message: "fatal: Not a git repository"
-        if [True for out in output if re.search('Not a git repository', out)]:
+        if check_list_for_regex('Not a git repository', output):
             raise ReleaseError('up_to_date(mode = git) must be run on a '
                                'git repository.')
 
-        # If mode = git, look for a line stating that sconsign.dblite has changed
+        # If mode = git, look for a line stating that nothing has changed
         # since the latest commit.
-        result = [out for out in output if re.search('sconsign\.dblite', out)]
-        result = [True for out in result if re.search('modified', out)]
-        result = not bool(result)
+        result = check_list_for_regex('nothing to commit, working tree clean', output)
 
     os.chdir(original_directory)
 
     # Return the result.
-    return bool(result)
+    return result
+
+
+def check_list_for_regex(regex, l):
+    '''
+    True if any successful re.search for text in elements of list. False otherwise.
+    '''
+    return bool([True for entry in l if re.search(regex, entry)])
 
 
 def extract_dot_git(path = '.git'):
