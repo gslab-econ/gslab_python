@@ -60,7 +60,7 @@ def end_log(log = 'sconstruct.log', excluded_dirs = []):
                 sconstruct.write(sconscript.read())
 
     # move top level logs to /release/ directory.
-    release_dir = './release'
+    release_dir = './release/'
     if not os.path.exists(release_dir):
         os.makedirs(release_dir)
     for file in glob.glob("*.log"):
