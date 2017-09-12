@@ -27,7 +27,7 @@ def start_log(mode, vers, log = 'sconstruct.log'):
     return None
 
 
-def end_log(log = 'sconstruct.log', excluded_dirs = []):
+def end_log(log = 'sconstruct.log', excluded_dirs = [], release_dir = './release/'):
     '''Complete the log of a build process.'''
 
     end_message = "*** Build completed: {%s} ***\n \n \n" % misc.current_time()
@@ -60,7 +60,6 @@ def end_log(log = 'sconstruct.log', excluded_dirs = []):
                 sconstruct.write(sconscript.read())
 
     # move top level logs to /release/ directory.
-    release_dir = './release/'
     if not os.path.exists(release_dir):
         os.makedirs(release_dir)
     for file in glob.glob("*.log"):
