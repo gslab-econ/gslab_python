@@ -35,7 +35,7 @@ def end_log(log = 'sconstruct.log', excluded_dirs = []):
         f.write(end_message)
 
     # scan sconstruct.log for start time
-    with open('sconstruct.log', "rU") as f:
+    with open(log, "rU") as f:
         s = f.readline()
         s = s[s.find('{') + 1: s.find('}')]
         start_time = datetime.strptime(s, "%Y-%m-%d %H:%M:%S")
@@ -49,7 +49,7 @@ def end_log(log = 'sconstruct.log', excluded_dirs = []):
     this_run_dict = {key:value for key, value in builder_logs.items() if (value > start_time) or value == beginning_of_time}
     this_run_list = sorted(this_run_dict, key=this_run_dict.get, reverse=True)
 
-    with open('sconstruct.log', "a") as sconstruct:
+    with open(log, "a") as sconstruct:
         for f in this_run_list:
             with open(f, 'rU') as sconscript:
                 if this_run_dict[f] == beginning_of_time:
@@ -60,8 +60,11 @@ def end_log(log = 'sconstruct.log', excluded_dirs = []):
                 sconstruct.write(sconscript.read())
 
     # move top level logs to /release/ directory.
+    release_dir = './release/'
+    if not os.path.exists(release_dir):
+        os.makedirs(release_dir)
     for file in glob.glob("*.log"):
-        shutil.move('./' + file, 'release/' + file)
+        shutil.move('./' + file, release_dir + file)
     return None
 
 def log_timestamp(start_time, end_time, filename = 'sconstruct.log'):
