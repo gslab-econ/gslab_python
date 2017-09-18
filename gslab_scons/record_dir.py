@@ -30,8 +30,8 @@ def check_inpath(inpath, name):
     this_file_only = None
     do_walk = True
     if os.path.isfile(inpath):
+        this_file_only = inpath
         inpath = os.path.dirname(inpath)
-        this_file_only = os.path.abspath(inpath)
     elif os.path.isdir(inpath):
         pass
     else:
