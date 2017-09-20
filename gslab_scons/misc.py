@@ -7,6 +7,7 @@ import subprocess
 import datetime
 import yaml
 import getpass
+import fnmatch
 # Import gslab_scons modules
 import _exception_classes
 from size_warning import issue_size_warnings
@@ -342,9 +343,12 @@ def finder(rel_parent_dir, pattern, excluded_dirs = []):
     '''
 
     if is_unix():
-        command = 'find %s -name "%s" -type f' % (rel_parent_dir, pattern)
-        for x in excluded_dirs: # add in args to exclude folders from search
-            command = '%s -not -path "*%s*"' % (command, os.path.normpath(x)) 
+        command = 'find %s' % (rel_parent_dir)
+        if len(excluded_dirs) > 0:
+            for x in excluded_dirs: # add in args to exclude folders from search
+                command = '%s -path "*%s*" -prune -o ' % (command, os.path.normpath(x))
+        command = '%s -name "%s" -type f' % (command, pattern)
+
     else:
         command = 'dir "%s" /b/s' % os.path.join(rel_parent_dir, pattern)
         for x in excluded_dirs:         
@@ -354,6 +358,7 @@ def finder(rel_parent_dir, pattern, excluded_dirs = []):
         out_paths = subprocess.check_output(command, shell = True).replace('\r\n', '\n')
         out_paths = out_paths.split('\n')
         out_paths = filter(bool, map(str.strip, out_paths)) # Strip paths and keep non-empty
+        out_paths = fnmatch.filter(out_paths,pattern)
     except subprocess.CalledProcessError:
         out_paths = []
 
