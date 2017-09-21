@@ -7,9 +7,11 @@ import subprocess
 import datetime
 import yaml
 import getpass
+import fnmatch
 # Import gslab_scons modules
 import _exception_classes
 from size_warning import issue_size_warnings
+
 
 def scons_debrief(args):
     '''
@@ -27,12 +29,13 @@ def scons_debrief(args):
                         float(args['total_MB_limit_lfs']),
                         float(args['file_MB_limit']),
                         float(args['total_MB_limit']),
-                        args['lfs_required'], 
+                        args['lfs_required'],
                         args['git_attrib_path'])
 
     return None
 
-def state_of_repo(maxit, outfile = 'state_of_repo.log'):
+
+def state_of_repo(maxit, outfile='state_of_repo.log'):
     with open(outfile, 'wb') as f:
         f.write("WARNING: Information about .sconsign.dblite may be misleading\n" +
                 "as it can be edited after state_of_repo.log finishes running\n\n" +
@@ -47,7 +50,7 @@ def state_of_repo(maxit, outfile = 'state_of_repo.log'):
 
     with open(outfile, 'ab') as f:
         f.write('\n%s' % make_heading("FILE STATUS"))
-        for root, dirs, files in os.walk(".", followlinks = True):
+        for root, dirs, files in os.walk(".", followlinks=True):
             i = 1
             for name in files:
                 path = os.path.join(root, name).replace('\\', '/')
@@ -56,13 +59,13 @@ def state_of_repo(maxit, outfile = 'state_of_repo.log'):
                         re.search('.DS_Store', name):
                     stat_info = os.stat(os.path.join(root, name))
                     f.write(os.path.join(root, name) + ':\n')
-                    f.write('   modified on: %s\n' % 
-                        time.strftime('%d %b %Y %H:%M:%S', 
-                                      time.localtime(stat_info.st_mtime)))
+                    f.write('   modified on: %s\n' %
+                            time.strftime('%d %b %Y %H:%M:%S',
+                                          time.localtime(stat_info.st_mtime)))
                     f.write('   size of file: %s\n' % stat_info.st_size)
                     i = i + 1
                 elif i > maxit:
-                    f.write('MAX ITERATIONS (%s) HIT IN DIRECTORY: %s\n' % \
+                    f.write('MAX ITERATIONS (%s) HIT IN DIRECTORY: %s\n' %
                             (maxit, root))
                     break
     return None
@@ -91,7 +94,7 @@ def command_line_args(env):
                 cl_arg = ' '.join(map(str, cl_arg))
             except TypeError:
                 cl_arg = str(cl_arg)
-                
+
     except KeyError:
         cl_arg = ''
 
@@ -104,7 +107,7 @@ def get_stata_executable(env):
     for Mac/Windows if the default executable is not available in env. 
     '''
     # Get environment's user input executable. Empty default = None.
-    stata_executable  = env['stata_executable']  
+    stata_executable = env['stata_executable']
 
     if stata_executable not in [None, 'None', '']:
         return stata_executable
@@ -130,12 +133,12 @@ def stata_command_unix(executable):
     Unix platform.
     '''
     options = {'darwin': '-e',
-               'linux' : '-b',
+               'linux': '-b',
                'linux2': '-b'}
-    option  = options[sys.platform]
+    option = options[sys.platform]
 
     # %s will take filename and cl_arg later
-    command = executable + ' ' + option + ' %s %s' 
+    command = executable + ' ' + option + ' %s %s'
 
     return command
 
@@ -145,7 +148,7 @@ def stata_command_win(executable):
     This function returns the appropriate Stata command for a user's 
     Windows platform.
     '''
-    command  = executable + ' /e do' + ' %s %s'  # %s will take filename later
+    command = executable + ' /e do' + ' %s %s'  # %s will take filename later
     return command
 
 
@@ -189,7 +192,8 @@ def make_list_if_string(source):
             source = [source]
         else:
             message = "SCons source/target input must be either list or string. " + \
-                      "Here, it is %s, a %s." % (str(source), str(type(source)))
+                      "Here, it is %s, a %s." % (
+                          str(source), str(type(source)))
             raise TypeError(message)
     return source
 
@@ -202,7 +206,7 @@ def check_code_extension(source_file, extensions):
     if not isinstance(extensions, list):
         extensions = [extensions]
     source_file = str.lower(str(source_file))
-    error       = True
+    error = True
     for extension in extensions:
         extension = str.lower(str(extension))
 
@@ -211,7 +215,7 @@ def check_code_extension(source_file, extensions):
 
     if error:
         error_message = 'First argument, %s, must be a %s file.' % \
-                (source_file, extension)
+            (source_file, extension)
         raise _exception_classes.BadExtensionError(error_message)
 
     return None
@@ -222,23 +226,23 @@ def command_error_msg(executable, call):
     return '''%s did not run successfully.
        Please check that the executable, source, and target files
        Check SConstruct.log for errors.
-Command tried: %s''' % (executable, call) 
+Command tried: %s''' % (executable, call)
 
 
 def current_time():
     '''Return the current time in a Y-M-D H:M:S format.'''
     now = datetime.datetime.now()
-    return datetime.datetime.strftime(now, '%Y-%m-%d %H:%M:%S')   
+    return datetime.datetime.strftime(now, '%Y-%m-%d %H:%M:%S')
 
 
 def lyx_scan(node, env, path):
     contents = node.get_contents()
-    SOURCE = [] 
+    SOURCE = []
     for ext in env.EXTENSIONS:
         src_find = re.compile(r'filename\s(\S+%s)' % ext, re.M)
 
-        SOURCE = SOURCE + [source.replace('"', '') \
-                 for source in src_find.findall(contents)]
+        SOURCE = SOURCE + [source.replace('"', '')
+                           for source in src_find.findall(contents)]
 
     return SOURCE
 
@@ -251,8 +255,8 @@ def load_yaml_value(path, key):
     if key == "stata_executable":
         prompt = "Enter %s or None to search for defaults: "
     elif key == "github_token":
-        prompt = "(Optional) Enter %s to be stored in config_user.yaml.\n" 
-        prompt = prompt + "Github token can also be entered without storing to file later:" 
+        prompt = "(Optional) Enter %s to be stored in config_user.yaml.\n"
+        prompt = prompt + "Github token can also be entered without storing to file later:"
     else:
         prompt = "Enter %s: "
 
@@ -265,7 +269,7 @@ def load_yaml_value(path, key):
                 raise yaml.scanner.ScannerError()
 
         except yaml.scanner.ScannerError:
-            message  = "%s is a corrupted yaml file. Delete file and recreate? (y/n) "
+            message = "%s is a corrupted yaml file. Delete file and recreate? (y/n) "
             response = str(raw_input(message % path))
             if response.lower() == 'y':
                 os.remove(path)
@@ -281,9 +285,9 @@ def load_yaml_value(path, key):
         else:
             return yaml_contents[key]
     except:
-        with open(path, 'ab') as f:  
+        with open(path, 'ab') as f:
             if key == "github_token":
-                val = getpass.getpass(prompt = (prompt % key))
+                val = getpass.getpass(prompt=(prompt % key))
             else:
                 val = str(raw_input(prompt % key))
             if re.sub('"', '', re.sub('\'', '', val.lower())) == "none":
@@ -316,6 +320,7 @@ def get_directory(path):
 
     return directory
 
+
 def check_targets(target_files):
     '''
     This function raises an exception if any of the files listed as `target_files`
@@ -330,30 +335,42 @@ def check_targets(target_files):
             non_existence.append(target)
 
     if non_existence:
-        error_message = 'The following target files do not exist after build:\n' + '\n'.join(non_existence)
+        error_message = 'The following target files do not exist after build:\n' + \
+            '\n'.join(non_existence)
         raise _exception_classes.TargetNonexistenceError(error_message)
 
     return None
 
-def finder(rel_parent_dir, pattern, excluded_dirs = []):
+
+def finder(rel_parent_dir, pattern, excluded_dirs=[]):
     '''
     A nice wrapper for the commands `find` (MacOS) and `dir` (Windows)
     that allow excluded directories.
     '''
 
     if is_unix():
-        command = 'find %s -name "%s" -type f' % (rel_parent_dir, pattern)
-        for x in excluded_dirs: # add in args to exclude folders from search
-            command = '%s -not -path "*%s*"' % (command, os.path.normpath(x)) 
+        command = 'find %s' % (rel_parent_dir)
+        exclude_opt = ''
+        if len(excluded_dirs) > 0:
+            for x in excluded_dirs:  # add in args to exclude folders from search
+                # see https://stackoverflow.com/questions/4210042/exclude-directory-from-find-command/16595367
+                exclude_opt = '%s -path "*%s*" -prune -o ' % (
+                    exclude_opt, os.path.normpath(x))
+        command = '%s %s -name "%s" -type f' % (command, exclude_opt, pattern)
+
     else:
         command = 'dir "%s" /b/s' % os.path.join(rel_parent_dir, pattern)
-        for x in excluded_dirs:         
-            command = '%s | find ^"%s^" /v /i ' % (command, os.path.normpath(x)) 
+        for x in excluded_dirs:
+            command = '%s | find ^"%s^" /v /i ' % (
+                command, os.path.normpath(x))
 
     try:
-        out_paths = subprocess.check_output(command, shell = True).replace('\r\n', '\n')
+        out_paths = subprocess.check_output(
+            command, shell=True).replace('\r\n', '\n')
         out_paths = out_paths.split('\n')
-        out_paths = filter(bool, map(str.strip, out_paths)) # Strip paths and keep non-empty
+        # Strip paths and keep non-empty
+        out_paths = filter(bool, map(str.strip, out_paths))
+        out_paths = fnmatch.filter(out_paths, pattern)
     except subprocess.CalledProcessError:
         out_paths = []
 

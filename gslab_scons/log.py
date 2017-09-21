@@ -89,7 +89,7 @@ def collect_builder_logs(parent_dir, excluded_dirs = []):
 
     # Store paths to logs in a list, found from platform-specific command line tool 
     rel_parent_dir = os.path.relpath(parent_dir)
-    log_name = 'sconscript*.log'
+    log_name = '*sconscript*.log'
     excluded_dirs = misc.make_list_if_string(excluded_dirs)
 
     log_paths = misc.finder(rel_parent_dir, log_name, excluded_dirs)
