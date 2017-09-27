@@ -358,3 +358,15 @@ def finder(rel_parent_dir, pattern, excluded_dirs = []):
         out_paths = []
 
     return out_paths
+
+def flatten_dict(d, parent_key = '', sep = ':'):
+    items = []
+    for k, v in d.items():
+        new_key = parent_key + sep + k if parent_key else k
+        try:
+            items.extend(flatten_dict(v, new_key, sep = sep).items())
+        except:
+            print new_key
+            items.append((new_key, v))
+    print dict(items)
+    return dict(items)
