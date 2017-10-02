@@ -375,3 +375,44 @@ def finder(rel_parent_dir, pattern, excluded_dirs=[]):
         out_paths = []
 
     return out_paths
+
+def flatten_dict(d, parent_key = '', sep = ':', 
+                 safe_keys = True, skip_keys = ()):
+    '''
+    Recursively flatten nested dictionaries. Default sep between keys is ':'.
+    Using safe_keys avoids overwriting values assigned to the same key 
+    in the flattened dict. Does so by adding _(`times repeated`) to the key.
+    Keeps track of repeated keys using the skip_keys argument.
+    '''
+    items = []
+    for key, val in sorted(d.items()):
+        # Create name of new key
+        if parent_key is not '':
+            prefix = parent_key + sep
+        else:
+            prefix = ''
+        new_key = prefix + key
+        # If safe_keys is True, give new key a unique name and record it.
+        if safe_keys is not True:
+            pass
+        else:    
+            if new_key in skip_keys:
+                new_key_base = new_key.split('_')[0]
+                # Regex for new_key optionally folowed by underscore 
+                # and some digits. Then string must end.
+                key_regex = re.compile('%s(?:_\d+)?$' % new_key_base)
+                num_same_keys = len([True for skip_key in skip_keys 
+                                     if bool(key_regex.match(skip_key))])
+                if num_same_keys > 0:
+                    new_key = '%s_%s' % (new_key_base, num_same_keys)
+                else:
+                    pass
+            else:
+                pass
+            skip_keys += (new_key,)
+        try: # Recursive case
+            items.extend(flatten_dict(val, parent_key = new_key, 
+                                      skip_keys = skip_keys).items())
+        except AttributeError: # Base case
+            items.append((new_key, val))
+    return dict(items)
