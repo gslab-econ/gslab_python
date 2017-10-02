@@ -370,8 +370,12 @@ def flatten_dict(d, parent_key = '', sep = ':',
     items = []
     for key, val in sorted(d.items()):
         # Create name of new key
-        new_key = parent_key + sep + key if parent_key else key
-        # Give new key a unique name if safe_keys is True. 
+        if parent_key is not '':
+            prefix = parent_key + sep
+        else:
+            prefix = ''
+        new_key = prefix + key
+        # If safe_keys is True, give new key a unique name and record it.
         if safe_keys is not True:
             pass
         else:    
@@ -390,7 +394,7 @@ def flatten_dict(d, parent_key = '', sep = ':',
                 pass
             skip_keys += (new_key,)
         try: # Recursive case
-            items.extend(flatten_dict(val, parent_key = new_key, sep = sep, 
+            items.extend(flatten_dict(val, parent_key = new_key, 
                                       skip_keys = skip_keys).items())
         except AttributeError: # Base case
             items.append((new_key, val))
