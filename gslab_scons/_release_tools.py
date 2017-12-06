@@ -137,11 +137,6 @@ def release(vers, org, repo,
 
         os.remove('drive_assets.txt')
 
-        upload_asset(github_token = github_token, 
-                     org          = org,    
-                     repo         = repo, 
-                     release_id   = release_id)
-
 
 def upload_asset(github_token, org, repo, release_id, file_name, 
                  content_type = 'text/markdown'):
