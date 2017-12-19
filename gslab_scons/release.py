@@ -81,15 +81,16 @@ def main(version = None,
 
 def inspect_repo(scons_local_path = None):
     '''Ensure the repo is ready for release.'''
-    if not _release_tools.up_to_date(mode = 'scons', scons_local_path = scons_local_path):
-        raise ReleaseError('SCons targets not up to date.')  
-    elif not _release_tools.up_to_date(mode = 'git'):
+    if not _release_tools.up_to_date(mode = 'git'):
         warn = "Warning: your git working tree is not clean.\n" \
                + "End this process and run `git status` for more information."
         print warn
         response = raw_input("Would you like to continue anyway? (y|n)\n")
         if response in ['N', 'n']:
             sys.exit()
+    elif not _release_tools.up_to_date(mode = 'scons', 
+                                       scons_local_path = scons_local_path):
+        raise ReleaseError('SCons targets not up to date.')  
 
 
 if __name__ == '__main__':

@@ -29,18 +29,16 @@ For example, to automatically release to Dropbox set
 release_directory: /Users/you/Dropbox/release
 ``` 
 
-Before releasing, the module executes an SCons dry run to check that your build is up-to-date. 
-By default, we run SCons from `run.py`, but you can specify another script through `scons_local_path=<relative path to script here>`. Set this argument to `None` or `False` if you want to run `scons` using your global installation.
+Before releasing, the module checks that your repository is up-to-date by executing (in order) a
+* `git status`
+* SCons dry run
+By default, we run SCons from `run.py`, but you can specify another script through `scons_local_path=<relative path to script here>`. Set this argument to `None` or `False` if you want to run `scons` using your global installation. Executing a dry run may update log files packed into the SConstruct, which could affect the `git status` in repeated runs.
 
-Including the option `no_zip` will prevent files
-from being zipped before they are released to the specified location.  
+Including the option `no_zip` will prevent files from being zipped before they are released to the specified location.  
 
-This release procedure will warn you when a versioned file
-is larger than 2MB and when the directory's versioned content
-is larger than 500MB in total.  
+This release procedure will warn you when a versioned file is larger than 2MB and when the directory's versioned content is larger than 500MB in total.  
 
-Instead of entering the GitHub token as a password when using `release`,
-you can store it in `config_user.yaml` as
+Instead of entering the GitHub token as a password when using `release`, you can store it in `config_user.yaml` as
 
 ```yaml
 github_token: <your token here>
