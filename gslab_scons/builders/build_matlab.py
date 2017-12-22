@@ -2,6 +2,7 @@ import os
 import subprocess
 import shutil
 import sys 
+import hashlib
 import gslab_scons.misc as misc
 from gslab_scons import log_timestamp
 from gslab_scons._exception_classes import (ExecCallError,
@@ -56,16 +57,18 @@ def build_matlab(target, source, env):
     os.environ['CL_ARG'] = cl_arg
 
     # Run MATLAB on source file
-    shutil.copy(source_file, 'source.m')
+    source_hash = hashlib.sha1(source_file).hexdigest()
+    source_exec = 'source_%s' % source_hash
+    shutil.copy(source_file, source_exec + '.m')
     try:
-        command  = 'matlab %s -r source > %s' % (options, log_file)
+        command  = 'matlab %s -r %s > %s' % (options, source_exec, log_file)
         subprocess.check_output(command, 
                                 stderr = subprocess.STDOUT,
                                 shell  = True)
     except subprocess.CalledProcessError:
         message = misc.command_error_msg("Matlab", command)
         raise ExecCallError(message)    
-    os.remove('source.m')
+    os.remove(source_exec)
 
     # Check if targets exist after build
     misc.check_targets(target)
