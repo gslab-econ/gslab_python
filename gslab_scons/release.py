@@ -24,10 +24,11 @@ def main(version = None,
             pass
 
     # Check if repository is up-to-date and ready for release. Stop if not.
-    if not _release_tools.scons_up_to_date(scons_local_path):
-        raise ReleaseError('SCons targets not up to date.')  
+    # Order matters because SCons check changes logs.
     elif not _release_tools.git_up_to_date():
         raise ReleaseError('Git working tree not clean.')
+    if not _release_tools.scons_up_to_date(scons_local_path):
+        raise ReleaseError('SCons targets not up to date.')  
 
     # Extract information about the clone from its .git directory
     try: 
@@ -82,7 +83,6 @@ def main(version = None,
                            target_commitish  = branch,
                            zip_release       = zip_release,
                            github_token      = github_token)
-
 
 if __name__ == '__main__':
     main()
