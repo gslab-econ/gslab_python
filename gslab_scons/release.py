@@ -22,7 +22,12 @@ def main(version = None,
                 scons_local_path = None
         except:
             pass
-    inspect_repo(scons_local_path = scons_local_path)
+
+    # Check if repository is up-to-date and ready for release. Stop if not.
+    if not _release_tools.scons_up_to_date(scons_local_path):
+        raise ReleaseError('SCons targets not up to date.')  
+    elif not _release_tools.git_up_to_date():
+        raise ReleaseError('Git working tree not clean.')
 
     # Extract information about the clone from its .git directory
     try: 
@@ -77,19 +82,6 @@ def main(version = None,
                            target_commitish  = branch,
                            zip_release       = zip_release,
                            github_token      = github_token)
-
-
-def inspect_repo(scons_local_path = None):
-    '''Ensure the repo is ready for release.'''
-    if not _release_tools.up_to_date(mode = 'scons', scons_local_path = scons_local_path):
-        raise ReleaseError('SCons targets not up to date.')  
-    elif not _release_tools.up_to_date(mode = 'git'):
-        warn = "Warning: your git working tree is not clean.\n" \
-               + "End this process and run `git status` for more information."
-        print warn
-        response = raw_input("Would you like to continue anyway? (y|n)\n")
-        if response in ['N', 'n']:
-            sys.exit()
 
 
 if __name__ == '__main__':
