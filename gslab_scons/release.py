@@ -25,9 +25,9 @@ def main(version = None,
 
     # Check if repository is up-to-date and ready for release. Stop if not.
     # Order matters because SCons check changes logs.
-    elif not _release_tools.git_up_to_date():
+    if not _release_tools.git_up_to_date():
         raise ReleaseError('Git working tree not clean.')
-    if not _release_tools.scons_up_to_date(scons_local_path):
+    elif not _release_tools.scons_up_to_date(scons_local_path):
         raise ReleaseError('SCons targets not up to date.')  
 
     # Extract information about the clone from its .git directory
