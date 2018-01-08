@@ -201,7 +201,7 @@ def git_up_to_date():
     # Determine whether we're in a git repository based on git logging.
     if check_list_for_regex('Not a git repository', log):
         raise ReleaseError('git_up_to_date must be run on a git repository.')
-    result = check_list_for_regex('nothing to commit, working tree clean', output)
+    result = check_list_for_regex('nothing to commit, working tree clean', log)
     return result
 
 
