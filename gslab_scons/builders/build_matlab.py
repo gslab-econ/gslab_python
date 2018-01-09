@@ -59,7 +59,8 @@ def build_matlab(target, source, env):
     # Run MATLAB on source file
     source_hash = hashlib.sha1(source_file).hexdigest()
     source_exec = 'source_%s' % source_hash
-    shutil.copy(source_file, source_exec + '.m')
+    exec_file   = source_exec + '.m'
+    shutil.copy(source_file, exec_file)
     try:
         command  = 'matlab %s -r %s > %s' % (options, source_exec, log_file)
         subprocess.check_output(command, 
@@ -68,7 +69,7 @@ def build_matlab(target, source, env):
     except subprocess.CalledProcessError:
         message = misc.command_error_msg("Matlab", command)
         raise ExecCallError(message)    
-    os.remove(source_exec)
+    os.remove(exec_file)
 
     # Check if targets exist after build
     misc.check_targets(target)
