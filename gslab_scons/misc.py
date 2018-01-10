@@ -80,6 +80,15 @@ def make_heading(s):
     return out
 
 
+def is_scons_dry_run(cl_args_list = []):
+    '''
+    Determine if SCons is executing as a dry run based on the command line arguments.
+    '''
+    dry_run_terms = {'--dry-run', '--recon', '-n', '--just-print'}
+    is_dry_run = bool(dry_run_terms.intersection(set(cl_args_list)))
+    return is_dry_run
+
+
 def command_line_args(env):
     '''
     Return the content of env['CL_ARG'] as a string
