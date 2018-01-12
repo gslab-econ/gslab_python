@@ -7,11 +7,13 @@ import shutil
 import gslab_scons.misc as misc
 
 
-def start_log(mode, vers, log = 'sconstruct.log'):
+def start_log(mode, vers, cl_args_list = sys.argv, log = 'sconstruct.log'):
     '''Begins logging a build process'''
     
     if not (mode in ['develop', 'cache']):
         raise Exception("Error: %s is not a defined mode" % mode)
+    elif misc.is_scons_dry_run(cl_args_list = cl_args_list):
+        return None
 
     start_message = "*** New build: {%s} ***\n" % misc.current_time()
     with open(log, "w") as f:
@@ -27,8 +29,11 @@ def start_log(mode, vers, log = 'sconstruct.log'):
     return None
 
 
-def end_log(log = 'sconstruct.log', excluded_dirs = [], release_dir = './release/'):
+def end_log(cl_args_list = sys.argv, log = 'sconstruct.log', excluded_dirs = [], 
+            release_dir = './release/'):
     '''Complete the log of a build process.'''
+    if misc.is_scons_dry_run(cl_args_list = cl_args_list):
+        return None
 
     end_message = "*** Build completed: {%s} ***\n \n \n" % misc.current_time()
     with open(log, "a") as f:
