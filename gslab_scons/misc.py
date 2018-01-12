@@ -1,8 +1,6 @@
 import os
 import re
 import sys
-import time
-import shutil
 import subprocess
 import datetime
 import yaml
@@ -10,66 +8,6 @@ import getpass
 import fnmatch
 # Import gslab_scons modules
 import _exception_classes
-from size_warning import issue_size_warnings
-
-
-def scons_debrief(args):
-    '''
-    Execute functions after SCons has built all targets.
-    Current list of functions: 
-        1. print state_of_repo
-        2. issue size_warnings
-    '''
-    # Log the state of the repo
-    state_of_repo(args['MAXIT'], args['log'])
-
-    # Issue size warnings
-    issue_size_warnings(args['look_in'].split(";"),
-                        float(args['file_MB_limit_lfs']),
-                        float(args['total_MB_limit_lfs']),
-                        float(args['file_MB_limit']),
-                        float(args['total_MB_limit']),
-                        args['lfs_required'],
-                        args['git_attrib_path'])
-
-    return None
-
-
-def state_of_repo(maxit, outfile='state_of_repo.log'):
-    with open(outfile, 'wb') as f:
-        f.write("WARNING: Information about .sconsign.dblite may be misleading\n" +
-                "as it can be edited after state_of_repo.log finishes running\n\n" +
-                make_heading("GIT STATUS"))
-        f.write("Last commit:\n\n")
-
-    # https://stackoverflow.com/questions/876239/how-can-i-redirect-and-append-both-stdout-and-stderr-to-a-file-with-bash
-    os.system("git log -n 1 >> state_of_repo.log 2>&1")
-    with open(outfile, 'ab') as f:
-        f.write("\n\nFiles changed since last commit:\n\n\n")
-    os.system("git diff --name-only >> state_of_repo.log 2>&1")
-
-    with open(outfile, 'ab') as f:
-        f.write('\n%s' % make_heading("FILE STATUS"))
-        for root, dirs, files in os.walk(".", followlinks=True):
-            i = 1
-            for name in files:
-                path = os.path.join(root, name).replace('\\', '/')
-                if i <= maxit and not \
-                        re.search('\./\.', path) and not \
-                        re.search('.DS_Store', name):
-                    stat_info = os.stat(os.path.join(root, name))
-                    f.write(os.path.join(root, name) + ':\n')
-                    f.write('   modified on: %s\n' %
-                            time.strftime('%d %b %Y %H:%M:%S',
-                                          time.localtime(stat_info.st_mtime)))
-                    f.write('   size of file: %s\n' % stat_info.st_size)
-                    i = i + 1
-                elif i > maxit:
-                    f.write('MAX ITERATIONS (%s) HIT IN DIRECTORY: %s\n' %
-                            (maxit, root))
-                    break
-    return None
-
 
 def make_heading(s):
     '''
@@ -78,6 +16,15 @@ def make_heading(s):
     equals_signs = '=' * 35
     out = '%s\n\n *** %s ***\n\n%s\n' % (equals_signs, s, equals_signs)
     return out
+
+
+def is_scons_dry_run(cl_args_list = []):
+    '''
+    Determine if SCons is executing as a dry run based on the command line arguments.
+    '''
+    dry_run_terms = {'--dry-run', '--recon', '-n', '--just-print'}
+    is_dry_run = bool(dry_run_terms.intersection(set(cl_args_list)))
+    return is_dry_run
 
 
 def command_line_args(env):
@@ -416,3 +363,4 @@ def flatten_dict(d, parent_key = '', sep = ':',
         except AttributeError: # Base case
             items.append((new_key, val))
     return dict(items)
+

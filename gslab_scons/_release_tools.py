@@ -137,11 +137,6 @@ def release(vers, org, repo,
 
         os.remove('drive_assets.txt')
 
-        upload_asset(github_token = github_token, 
-                     org          = org,    
-                     repo         = repo, 
-                     release_id   = release_id)
-
 
 def upload_asset(github_token, org, repo, release_id, file_name, 
                  content_type = 'text/markdown'):
@@ -174,79 +169,54 @@ def upload_asset(github_token, org, repo, release_id, file_name,
     return r.content
 
 
-def up_to_date(mode = 'scons', directory = '.', scons_local_path = None):
+def scons_up_to_date(scons_local_path):
     '''
-    If mode = scons, this function checks whether the targets of a 
-    directory run using SCons are up to date. 
-    If mode = git, it checks whether the directory's working tree is clean.
+    Execute a SCons dry run and check that all the build steps are already up-to-date.
     '''
-    if mode not in ['scons', 'git']:
-        raise ReleaseError("up_to_date()'s mode argument must be "
-                           "'scons' or 'git'")
-
-    original_directory = os.getcwd()
-    os.chdir(directory)
-
-    if mode == 'scons':
-        # If mode = scons, conduct a dry run to check whether 
-        # all targets are up-to-date
-        if scons_local_path is not None:
-            scons_installation = 'python %s ' % os.path.join(directory, 
-                                                             scons_local_path)
-        else:
-            scons_installation = 'scons '
-        command = scons_installation + directory + ' --dry-run'
+    # Determine whether we're in an SCons directory.
+    if not os.path.isfile('SConstruct'):
+        raise ReleaseError('scons_up_to_date must be run on an SCons directory.')
+    # Execute the dry run and log its output.
+    if scons_local_path is not None:
+        scons_installation = 'python ' + scons_local_path
     else:
-        # If mode = git, check whether the working tree is clean.
-        command = 'git status'
-    
-    logpath = '.temp_log_up_to_date'
-    
-    with open(logpath, 'wb') as temp_log:
-        subprocess.call(command, stdout = temp_log, 
-                            stderr = temp_log, shell = True)
-        
-    with open(logpath, 'rU') as temp_log:
-        output = temp_log.readlines()
-    os.remove(logpath)
-    
-    # Strip the output lines of white spaces.
-    output = map(lambda s: s.strip(), output)
-
-    if mode == 'scons':
-        # First, determine whether the directory specified as a function
-        # argument is actually a SCons directory.
-        # We use the fact that running scons outside of SCons directory
-        # produces the message: "No SConstruct file found."
-        if not os.path.isfile('SConstruct'):
-            raise ReleaseError('up_to_date(mode = scons) must be run on an '
-                               'SCons directory.')
-        # Next determine if SCons could start to run.
-        # We use the fact that our SCons notifies when it starts the build process.
-        elif not check_list_for_regex('scons: Reading SConscript files', output):
-            raise ReleaseError('up_to_date(mode = scons) must be able to begin '
-                               'SCons build process.')
-
-        # If mode = scons, look for a line stating that the directory is up to date.
-        result = check_list_for_regex('is up to date\.$', output)
-
-    else:  
-        # Determine whether the directory specified as a function
-        # argument is actually a git repository.
-        # We use the fact that running `git status` outside of a git directory
-        # produces the message: "fatal: Not a git repository"
-        if check_list_for_regex('Not a git repository', output):
-            raise ReleaseError('up_to_date(mode = git) must be run on a '
-                               'git repository.')
-
-        # If mode = git, look for a line stating that nothing has changed
-        # since the latest commit.
-        result = check_list_for_regex('nothing to commit, working tree clean', output)
-
-    os.chdir(original_directory)
-
-    # Return the result.
+        scons_installation = 'scons '
+    command = scons_installation + ' --dry-run'
+    log = execute_up_to_date(command)
+    # Determine if SCons could start to run based on SCons logging.
+    if not check_list_for_regex('scons: Reading SConscript files', log):
+        raise ReleaseError('scons_up_to_date must be able to begin SCons build process.')
+    # Look for a line stating that the directory is up to date.
+    result = check_list_for_regex('is up to date\.$', log)
     return result
+
+
+def git_up_to_date():
+    '''
+    Execute a git status and check that all changes are committed.
+    '''
+    # If mode = git, check whether the working tree is clean.
+    command = 'git status'
+    log = execute_up_to_date(command)
+    # Determine whether we're in a git repository based on git logging.
+    if check_list_for_regex('Not a git repository', log):
+        raise ReleaseError('git_up_to_date must be run on a git repository.')
+    result = check_list_for_regex('nothing to commit, working tree clean', log)
+    return result
+
+
+def execute_up_to_date(command):
+    '''
+    Execute command (passed from *_up_to_date) redirecting output to log. 
+    Return the log as a list of stripped strings.
+    '''
+    logpath = 'temp_log_up_to_date'
+    with open(logpath, 'wb') as temp_log:
+        subprocess.call(command, stdout = temp_log, stderr = temp_log, shell = True)
+    with open(logpath, 'rU') as temp_log:
+        output = [line.strip() for line in temp_log]
+    os.remove(logpath)
+    return output
 
 
 def check_list_for_regex(regex, l):

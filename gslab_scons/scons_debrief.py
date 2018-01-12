@@ -4,9 +4,70 @@ import os
 import re
 import sys
 import subprocess
+import shutil
+import time
 import fnmatch
-from _exception_classes import ReleaseError
+import gslab_scons.misc as misc
 
+def scons_debrief(args, cl_args_list = sys.argv):
+    '''
+    Execute functions after SCons has built all targets.
+    Current list of functions: 
+        1. print state_of_repo
+        2. issue size_warnings
+    '''
+    # Don't run on SCons dry run
+    if misc.is_scons_dry_run(cl_args_list = cl_args_list):
+        return None 
+    # Log the state of the repo
+    state_of_repo(args['MAXIT'], args['log'])
+
+    # Issue size warnings
+    issue_size_warnings(args['look_in'].split(";"),
+                        float(args['file_MB_limit_lfs']),
+                        float(args['total_MB_limit_lfs']),
+                        float(args['file_MB_limit']),
+                        float(args['total_MB_limit']),
+                        args['lfs_required'],
+                        args['git_attrib_path'])
+
+    return None
+
+
+def state_of_repo(maxit, outfile='state_of_repo.log'):
+    with open(outfile, 'wb') as f:
+        f.write("WARNING: Information about .sconsign.dblite may be misleading\n" +
+                "as it can be edited after state_of_repo.log finishes running\n\n" +
+                misc.make_heading("GIT STATUS"))
+        f.write("Last commit:\n\n")
+
+    # https://stackoverflow.com/questions/876239/how-can-i-redirect-and-append-both-stdout-and-stderr-to-a-file-with-bash
+    os.system("git log -n 1 >> state_of_repo.log 2>&1")
+    with open(outfile, 'ab') as f:
+        f.write("\n\nFiles changed since last commit:\n\n\n")
+    os.system("git diff --name-only >> state_of_repo.log 2>&1")
+
+    with open(outfile, 'ab') as f:
+        f.write('\n%s' % misc.make_heading("FILE STATUS"))
+        for root, dirs, files in os.walk(".", followlinks=True):
+            i = 1
+            for name in files:
+                path = os.path.join(root, name).replace('\\', '/')
+                if i <= maxit and not \
+                        re.search('\./\.', path) and not \
+                        re.search('.DS_Store', name):
+                    stat_info = os.stat(os.path.join(root, name))
+                    f.write(os.path.join(root, name) + ':\n')
+                    f.write('   modified on: %s\n' %
+                            time.strftime('%d %b %Y %H:%M:%S',
+                                          time.localtime(stat_info.st_mtime)))
+                    f.write('   size of file: %s\n' % stat_info.st_size)
+                    i = i + 1
+                elif i > maxit:
+                    f.write('MAX ITERATIONS (%s) HIT IN DIRECTORY: %s\n' %
+                            (maxit, root))
+                    break
+    return None
 
 def issue_size_warnings(look_in = ['source', 'raw', 'release'],
                         file_MB_limit_lfs = 2, total_MB_limit_lfs = 500, 
@@ -209,6 +270,3 @@ def add_to_lfs(filepath, attrib_path = '../.gitattributes'):
     with open(attrib_path, "a") as f:
         f.write('%s filter=lfs diff=lfs merge=lfs -text\n' % filepath)
     return None
-
-
-
