@@ -3,7 +3,7 @@ import sys
 import scandir
 import mmh3
 
-from misc import check_and_expand_path, make_heading, is_scons_dry_run, flatten_dict
+import misc
 
 def log_paths_dict(d, record_key = 'input', nest_depth = 1, sep = ':', 
                   cl_args_list = sys.argv):
@@ -12,7 +12,7 @@ def log_paths_dict(d, record_key = 'input', nest_depth = 1, sep = ':',
     Assumes unnested elements of d follow human-name: file-path.
     Values of d at record_key can be string or (nested) dict.
     '''
-    if is_scons_dry_run(cl_args_list = cl_args_list):
+    if misc.is_scons_dry_run(cl_args_list = cl_args_list):
         return None 
     record_dict = misc.flatten_dict(d)
     record_dict = [(key, val) for key, val in sorted(record_dict.items())
@@ -146,7 +146,7 @@ def write_log(name, files_info, outpath):
     '''
     Write file information to outpath under a nice header.
     '''
-    out_name = make_heading(name)
+    out_name = misc.make_heading(name)
     if files_info is not None:
         out_files_info = ['|'.join(l) for l in files_info]
         out_files_info = '\n'.join(out_files_info)

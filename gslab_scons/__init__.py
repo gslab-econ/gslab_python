@@ -12,7 +12,8 @@ this module for additonal information on their functionalities.
 import os
 import misc
 from .log                      import start_log, log_timestamp
-from .log_paths_dict            import log_paths_dict, record_dir
+from .log_paths_dict           import log_paths_dict, record_dir
+from .scons_debrief            import scons_debrief
 from .builders.build_r         import build_r
 from .builders.build_latex     import build_latex
 from .builders.build_lyx       import build_lyx

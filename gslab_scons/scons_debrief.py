@@ -38,7 +38,7 @@ def state_of_repo(maxit, outfile='state_of_repo.log'):
     with open(outfile, 'wb') as f:
         f.write("WARNING: Information about .sconsign.dblite may be misleading\n" +
                 "as it can be edited after state_of_repo.log finishes running\n\n" +
-                make_heading("GIT STATUS"))
+                misc.make_heading("GIT STATUS"))
         f.write("Last commit:\n\n")
 
     # https://stackoverflow.com/questions/876239/how-can-i-redirect-and-append-both-stdout-and-stderr-to-a-file-with-bash
@@ -48,7 +48,7 @@ def state_of_repo(maxit, outfile='state_of_repo.log'):
     os.system("git diff --name-only >> state_of_repo.log 2>&1")
 
     with open(outfile, 'ab') as f:
-        f.write('\n%s' % make_heading("FILE STATUS"))
+        f.write('\n%s' % misc.make_heading("FILE STATUS"))
         for root, dirs, files in os.walk(".", followlinks=True):
             i = 1
             for name in files:
