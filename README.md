@@ -29,11 +29,17 @@ pip install git+https://git@github.com/gslab-econ/gslab_python.git@master
 ```
 which are the SSH and HTTPS protocol versions.
 
+The package at any tagged release, branch, or commit can be installed with the same commands, just changing `master` to the desirved target e.g., 
+```
+pip install git+ssh://git@github.com/gslab-econ/gslab_python.git@<tagg, branch name, or commit hash>
+```
+
+
 Note that this installation procedure may require obtaining machine privileges through,
-say, a `sudo` command. 
+say, a `sudo` command.
 
 
-Alternatively, one may use:
+Alternatively, one may install the local version of gslab_python by running (from the root of the repository)
 
 ```
 python setup.py install clean
