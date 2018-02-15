@@ -16,7 +16,7 @@ def log_paths_dict(d, record_key = 'input', nest_depth = 1, sep = ':',
         return None 
     record_dict = misc.flatten_dict(d)
     record_dict = [(key, val) for key, val in sorted(record_dict.items())
-                   if key.count(sep) >= nest_depth]
+                   if key.count(sep) >= nest_depth and val not in [None, 'None', '']]
     for name, path in record_dict:
         if record_key == name.split(sep)[nest_depth]:
             record_dir(path, name)

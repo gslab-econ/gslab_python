@@ -71,15 +71,6 @@ def end_log(cl_args_list = sys.argv, log = 'sconstruct.log', excluded_dirs = [],
         shutil.move('./' + file, release_dir + file)
     return None
 
-def log_timestamp(start_time, end_time, filename = 'sconstruct.log'):
-    '''Adds beginning and ending times to a log file.'''
-    with open(filename, mode = 'r+U') as f:
-        content = f.read()
-        f.seek(0, 0)
-        builder_log_msg = '*** Builder log created: {%s} \n' + '*** Builder log completed: {%s} \n %s'
-        f.write(builder_log_msg % (start_time, end_time, content))
-    return None
-
 
 def collect_builder_logs(parent_dir, excluded_dirs = []):
     ''' Recursively return dictionary of files named sconscript*.log 

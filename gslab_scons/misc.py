@@ -27,78 +27,6 @@ def is_scons_dry_run(cl_args_list = []):
     return is_dry_run
 
 
-def command_line_args(env):
-    '''
-    Return the content of env['CL_ARG'] as a string
-    with spaces separating entries. If env['CL_ARG']
-    doesn't exist, return an empty string. 
-    '''
-    try:
-        cl_arg = env['CL_ARG']
-        if not isinstance(cl_arg, str):
-            try:
-                # Join arguments as strings by spaces
-                cl_arg = ' '.join(map(str, cl_arg))
-            except TypeError:
-                cl_arg = str(cl_arg)
-
-    except KeyError:
-        cl_arg = ''
-
-    return cl_arg
-
-
-def get_stata_executable(env):
-    '''
-    This helper function returns the most common Stata executable
-    for Mac/Windows if the default executable is not available in env. 
-    '''
-    # Get environment's user input executable. Empty default = None.
-    stata_executable = env['stata_executable']
-
-    if stata_executable not in [None, 'None', '']:
-        return stata_executable
-    else:
-        if is_unix():
-            return 'stata-mp'
-        elif sys.platform == 'win32':
-            return 'StataMP-64.exe'
-    return None
-
-
-def get_stata_command(executable):
-    if is_unix():
-        command = stata_command_unix(executable)
-    elif sys.platform == 'win32':
-        command = stata_command_win(executable)
-    return command
-
-
-def stata_command_unix(executable):
-    '''
-    This function returns the appropriate Stata command for a user's 
-    Unix platform.
-    '''
-    options = {'darwin': '-e',
-               'linux': '-b',
-               'linux2': '-b'}
-    option = options[sys.platform]
-
-    # %s will take filename and cl_arg later
-    command = executable + ' ' + option + ' %s %s'
-
-    return command
-
-
-def stata_command_win(executable):
-    '''
-    This function returns the appropriate Stata command for a user's 
-    Windows platform.
-    '''
-    command = executable + ' /e do' + ' %s %s'  # %s will take filename later
-    return command
-
-
 def is_unix():
     '''
     This function return True if the user's platform is Unix and false 
@@ -143,37 +71,6 @@ def make_list_if_string(source):
                           str(source), str(type(source)))
             raise TypeError(message)
     return source
-
-
-def check_code_extension(source_file, extensions):
-    '''
-    This function raises an exception if the extension in `source_file`
-    does not match the software package specified by `software`.
-    '''
-    if not isinstance(extensions, list):
-        extensions = [extensions]
-    source_file = str.lower(str(source_file))
-    error = True
-    for extension in extensions:
-        extension = str.lower(str(extension))
-
-        if source_file.endswith(extension):
-            error = False
-
-    if error:
-        error_message = 'First argument, %s, must be a %s file.' % \
-            (source_file, extension)
-        raise _exception_classes.BadExtensionError(error_message)
-
-    return None
-
-
-def command_error_msg(executable, call):
-    ''' This function prints an informative message given a CalledProcessError.'''
-    return '''%s did not run successfully.
-       Please check that the executable, source, and target files
-       Check SConstruct.log for errors.
-Command tried: %s''' % (executable, call)
 
 
 def current_time():
@@ -264,29 +161,46 @@ def get_directory(path):
     directory = os.path.dirname(path)
     if directory == '':
         directory = './'
-
     return directory
 
 
-def check_targets(target_files):
+def get_executable(language_name, manual_executables = {}):
     '''
-    This function raises an exception if any of the files listed as `target_files`
-    do not exist after running a builder. 
+    Get executable stored at language_name of dictionary manual_executables.
+    If key doesn't exist, use a default.
     '''
-    if not isinstance(target_files, list):
-        target_files = [target_files]
-    non_existence = []
-    for target in target_files:
-        target = str(target)
-        if not os.path.isfile(target):
-            non_existence.append(target)
-
-    if non_existence:
-        error_message = 'The following target files do not exist after build:\n' + \
-            '\n'.join(non_existence)
-        raise _exception_classes.TargetNonexistenceError(error_message)
-
-    return None
+    default_executables = {
+        'python': 'python',
+        'r': 'Rscript',
+        'stata': None,
+        'matlab': 'matlab',
+        'lyx': 'lyx',
+        'latex': 'pdflatex',
+        'tablefill': None
+    }
+    lower_name = language_name.lower().strip()
+    manual_executables = {str(k).lower().strip(): str(v).lower().strip() 
+                          for k, v in manual_executables.items()}
+    manual_executables = {k: v for k, v in manual_executables.items() 
+                          if k and v and v not in ['none', 'no', 'false', 'n', 'f']}
+    try:
+        executable = manual_executables[lower_name]
+    except KeyError:
+        has_default_executable = lower_name in default_executables.keys()
+        if not has_default_executable:
+            error_message = 'Cannot find default executable for language: %s. ' \
+                            'Try specifying a default.' % language_name
+            raise _exception_classes.PrerequisiteError(error_message)
+        elif lower_name != 'stata':
+            executable = default_executables[lower_name]
+        elif is_unix():
+            executable = 'stata-mp'
+        elif sys.platform == 'win32':
+            executable = 'StataMP-64.exe'
+        else:
+            error_message = 'Cannot find default Stata executable. Try specifying manually'
+            raise _exception_classes.PrerequisiteError(error_message)
+    return executable
 
 
 def finder(rel_parent_dir, pattern, excluded_dirs=[]):
@@ -322,6 +236,29 @@ def finder(rel_parent_dir, pattern, excluded_dirs=[]):
         out_paths = []
 
     return out_paths
+
+
+def add_two_dict_keys(d = {}, common_key = '', key1 = 'global', key2 = 'user'):
+    '''
+    Combine items of d[key1][common_key] and d[key2][common_key] for dictionary d.
+    Overwrites repeated values at key1 by key2.
+    '''
+    try:
+        items1 = d[key1][common_key].items()
+    except KeyError, TypeError:
+        items1 = []
+    try:
+        items2 = d[key2][common_key].items()
+    except KeyError, TypeError:
+        items2 = []
+    items = dict(items1 + items2)
+    if not items:
+        message = 'Inappropriate input values: `d` must be a dictionary, and ' \
+                  'at least one of `d[%s][%s]` and `d[%s][%s]` ' \
+                  'must be a dictionary as well.' % (key1, common_key, key2, common_key)
+        raise _exception_classes.PrerequisiteError(message)
+    return items
+
 
 def flatten_dict(d, parent_key = '', sep = ':', 
                  safe_keys = True, skip_keys = ()):

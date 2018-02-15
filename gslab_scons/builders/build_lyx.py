@@ -1,11 +1,10 @@
 import os
-import subprocess
 import shutil
-import gslab_scons.misc as misc
-from gslab_scons import log_timestamp
-from gslab_scons._exception_classes import ExecCallError
 
-def build_lyx(target, source, env):
+from gslab_builder import GSLabBuilder
+
+
+def build_lyx(source, target, env):
     '''Compile a pdf from a LyX file
 
     This function is a SCons builder that compiles a .lyx file
@@ -21,44 +20,31 @@ def build_lyx(target, source, env):
         be the .lyx file that the function will compile as a PDF.
     env: SCons construction environment, see SCons user guide 7.2
     '''
-
-    # Prelims
-    source      = misc.make_list_if_string(source)
-    target      = misc.make_list_if_string(target)
-
-    source_file = str(source[0])
-    misc.check_code_extension(source_file, '.lyx')
-
-    # Set up target file and log file
-    newpdf      = source_file[:-4] + '.pdf'
-    target_file = str(target[0])
-    target_dir  = misc.get_directory(target_file)
-
-    start_time  = misc.current_time()
-
-    try:
-        log_ext = '_%s' % env['log_ext']
-    except KeyError:
-        log_ext = ''
-    log_file = os.path.join(target_dir, ('sconscript%s.log' % log_ext))
-
-    # System call
-    try:
-        command = 'lyx -e pdf2 %s > %s' % (source_file, log_file)
-        subprocess.check_output(command,
-                                stderr = subprocess.STDOUT,
-                                shell  = True)
-        # Move rendered pdf to the target
-        shutil.move(newpdf, target_file)
-    except subprocess.CalledProcessError:
-        message = misc.command_error_msg('lyx', command)
-        raise ExecCallError(message)
-
-    # Check if targets exist after build
-    misc.check_targets(target)
-    
-    # Close log
-    end_time    = misc.current_time()
-    log_timestamp(start_time, end_time, log_file)
-
+    builder_attributes = {
+        'name': 'LyX',
+        'valid_extensions': ['.lyx'],
+        'exec_opts':  '-e pdf2'
+    }
+    builder = LyxBuilder(source, target, env, **builder_attributes)
+    builder.execute_system_call()
     return None
+
+class LyxBuilder(GSLabBuilder):
+    '''
+    '''
+    def add_call_args(self):
+        '''
+        '''
+        args = '%s %s > %s' % (self.cl_arg, self.source_file, self.log_file)
+        self.call_args = args
+        return None
+
+
+    def do_call(self):
+        '''
+        '''
+        super(LyxBuilder, self).do_call()
+        new_pdf = os.path.splitext(self.source_file)[0] + '.pdf'
+        new_pdf_path = '%s/%s' % (self.target_dir, os.path.basename(new_pdf))
+        shutil.move(new_pdf, new_pdf_path)
+        return None
