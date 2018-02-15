@@ -245,11 +245,11 @@ def add_two_dict_keys(d = {}, common_key = '', key1 = 'global', key2 = 'user'):
     '''
     try:
         items1 = d[key1][common_key].items()
-    except KeyError, TypeError:
+    except (KeyError, TypeError):
         items1 = []
     try:
         items2 = d[key2][common_key].items()
-    except KeyError, TypeError:
+    except (KeyError, TypeError):
         items2 = []
     items = dict(items1 + items2)
     if not items:

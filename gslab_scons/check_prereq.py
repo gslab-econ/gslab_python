@@ -60,16 +60,20 @@ def process_gslab_version(gslab_version):
 def check_gslab_version(required, installed):
     '''
     '''
-    required_val = required[0]
-    installed_val = installed[0]
-    # Recursive case
-    if required_val == installed_val:
-        check_gslab_version(required[1:], installed[1:])
-    # Base cases
-    elif required_val > installed_val:
-        up_to_date = True
+    # Base case
+    if required == installed:
+        return True
     else:
-        up_to_date = False
+        required_val = required[0]
+        installed_val = installed[0]
+        # More base cases
+        if required_val > installed_val:
+            up_to_date = True
+        else:
+            up_to_date = False
+        # Recursive case
+        if required_val == installed_val:
+            check_gslab_version(required[1:], installed[1:])
     return up_to_date
 
 
