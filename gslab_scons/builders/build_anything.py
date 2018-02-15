@@ -2,6 +2,7 @@ import os
 import warnings
 
 from gslab_builder import GSLabBuilder
+import gslab_scons.misc as misc
 
 
 def build_anything(target, source, action, env, warning = True, **kw):
@@ -38,23 +39,27 @@ def build_anything(target, source, action, env, warning = True, **kw):
     builder_attributes = {
         'name': 'Anything Builder'
     }
+    for k, v in kw.items():
+        env[k] = v
     builder = AnythingBuilder(target, source, action, env, warning, **builder_attributes)
     bkw = {
         'action': builder.execute_system_call,
         'target_factory' : env.fs.Entry,
         'source_factory':  env.fs.Entry,
     }
-    bld = SCons.Builder(**bkw) 
-    return bld(env, target, source, **kw)
+    bld = SCons.Builder.Builder(**bkw) 
+    return bld(env, target, source)
 
 class AnythingBuilder(GSLabBuilder):
     '''
     '''
-    def __init__(target, source, action, env, name = '', warning = True, **kw):
+    def __init__(self, target, source, action, env, warning = True, name = ''):
         '''
         '''
-        super(AnythingBuilder, self).__init__(source, target, env, name = name)
+        target = [self.to_str(t) for t in misc.make_list_if_string(target)]
+        source = [self.to_str(s) for s in misc.make_list_if_string(source)]
         self.action = action
+        super(AnythingBuilder, self).__init__(source, target, env, name = name)
         try:
             origin_log_file = env['origin_log_file']
         except KeyError:
@@ -69,6 +74,17 @@ class AnythingBuilder(GSLabBuilder):
         return None
 
 
+    @staticmethod
+    def to_str(s):
+        '''
+        Convert s to string and drop leading `#` if it exists
+        '''
+        s = str(s)
+        if s and s[0] == '#':
+            s = s[1:]
+        return s
+
+
     def add_call_args(self):
         '''
         '''
@@ -77,7 +93,7 @@ class AnythingBuilder(GSLabBuilder):
         return None
 
 
-    def execute_system_call(self):
+    def execute_system_call(self, **kwargs):
         '''
         '''
         super(AnythingBuilder, self).execute_system_call()

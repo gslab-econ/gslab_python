@@ -172,11 +172,12 @@ def get_executable(language_name, manual_executables = {}):
     default_executables = {
         'python': 'python',
         'r': 'Rscript',
-        'stata': None,
+        'stata': '',
         'matlab': 'matlab',
         'lyx': 'lyx',
         'latex': 'pdflatex',
-        'tablefill': None
+        'tablefill': '',
+        'anything builder': ''
     }
     lower_name = language_name.lower().strip()
     manual_executables = {str(k).lower().strip(): str(v).lower().strip() 
