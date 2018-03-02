@@ -8,6 +8,10 @@ from _exception_classes import PrerequisiteError
 
 def check_prereq(prereq, manual_execs = {}, gslab_vers = None):
     '''
+    Check if the prerequisites for prereq are satisfied.
+    If prereq is a program, check that its executable is in the path.
+    If prereq is (gslab_)python, check that it is the appropriate version.
+    If prereq is git_lfs, check that it has been installed.
     '''
     prereq_clean = str(prereq).lower().strip()
     path_checkers = ['r', 'stata', 'matlab', 'lyx', 'latex']
@@ -38,6 +42,7 @@ def check_prereq(prereq, manual_execs = {}, gslab_vers = None):
 
 def process_gslab_version(gslab_version):
     '''
+    Split semantically versioned gslab_version number at `.`.
     '''
     try:
         vers = gslab_version.split('.')
@@ -45,8 +50,8 @@ def process_gslab_version(gslab_version):
         message = 'You must pass gslab_version as a string value.'
         raise PrerequisiteError(message)
     if len(vers) != 3:
-        message = 'The gslab_version argument must have exectly two periods `.` ' \
-                  'to corrsepond to semantic versioning.'
+        message = 'The gslab_version argument must have exactly two periods `.` ' \
+                  'to correspond to semantic versioning.'
         raise PrerequisiteError(message)
     try:
         vers = [int(val) for val in vers]
@@ -59,6 +64,7 @@ def process_gslab_version(gslab_version):
 
 def check_gslab_version(required, installed):
     '''
+    Check (recursively) that installed gslab_python version meets or exceeds the required.
     '''
     # Base case
     if required == installed:
@@ -79,6 +85,7 @@ def check_gslab_version(required, installed):
 
 def check_git_lfs():
     '''
+    Check that a valid git-lfs is installed by trying to start it.
     '''
     try:
         _ = subprocess.check_output('git-lfs install', shell = True)
