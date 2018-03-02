@@ -12,7 +12,7 @@ class GSLabBuilder(object):
     '''
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, source, target, env, name = 'GSLab Builder', 
+    def __init__(self, target, source, env, name = 'GSLab Builder', 
                  valid_extensions = [], exec_opts = ''):
         '''
         Fill builder with information about build step.

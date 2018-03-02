@@ -5,7 +5,7 @@ import sys
 import gslab_scons.misc as misc
 from gslab_builder import GSLabBuilder
 
-def build_stata(source, target, env):
+def build_stata(target, source, env):
     '''
     Build targets with a Stata command
  

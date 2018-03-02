@@ -4,7 +4,7 @@ import shutil
 from gslab_builder import GSLabBuilder
 
 
-def build_lyx(source, target, env):
+def build_lyx(target, source, env):
     '''Compile a pdf from a LyX file
 
     This function is a SCons builder that compiles a .lyx file

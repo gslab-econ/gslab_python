@@ -3,7 +3,7 @@ from gslab_builder import GSLabBuilder
 from gslab_fill import tablefill
 
 
-def build_tables(source, target, env):
+def build_tables(target, source, env):
     '''Build a SCons target by filling a table
 
     This function uses the tablefill function from gslab_fill to produced a 

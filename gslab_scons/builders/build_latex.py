@@ -3,7 +3,7 @@ import os
 from gslab_builder import GSLabBuilder
 
 
-def build_latex(source, target, env):
+def build_latex(target, source, env):
     '''
     Compile a pdf from a LaTeX file
 

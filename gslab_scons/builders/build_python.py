@@ -1,7 +1,7 @@
 from gslab_builder import GSLabBuilder
 
 
-def build_python(source, target, env):
+def build_python(target, source, env):
     '''
     Build SCons targets using a Python script
 

@@ -1,7 +1,7 @@
 from gslab_builder import GSLabBuilder
 
 
-def build_r(source, target, env):
+def build_r(target, source, env):
     '''
     Build SCons targets using an R script
 

@@ -6,7 +6,7 @@ import gslab_scons.misc as misc
 from gslab_builder import GSLabBuilder
 
 
-def build_matlab(source, target, env):
+def build_matlab(target, source, env):
     '''
     Build targets with a MATLAB command
  
