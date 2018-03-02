@@ -22,7 +22,7 @@ def build_r(target, source, env):
         'valid_extensions': ['.r'],
         'exec_opts': '--no-save --no-restore --verbose'
     }
-    builder = RBuilder(source, target, env, **builder_attributes)
+    builder = RBuilder(target, source, env, **builder_attributes)
     builder.execute_system_call()
     return None
 

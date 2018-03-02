@@ -25,7 +25,7 @@ def build_lyx(target, source, env):
         'valid_extensions': ['.lyx'],
         'exec_opts':  '-e pdf2'
     }
-    builder = LyxBuilder(source, target, env, **builder_attributes)
+    builder = LyxBuilder(target, source, env, **builder_attributes)
     builder.execute_system_call()
     return None
 

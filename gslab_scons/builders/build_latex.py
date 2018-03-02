@@ -25,7 +25,7 @@ def build_latex(target, source, env):
         'valid_extensions': ['.tex'],
         'exec_opts':  '-interaction nonstopmode -jobname'
     }
-    builder = LatexBuilder(source, target, env, **builder_attributes)
+    builder = LatexBuilder(target, source, env, **builder_attributes)
     builder.execute_system_call()
     return None
 

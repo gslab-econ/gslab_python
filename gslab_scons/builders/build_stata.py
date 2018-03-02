@@ -25,18 +25,18 @@ def build_stata(target, source, env):
         'name': 'Stata',
         'valid_extensions': ['.do']
     }
-    builder = StataBuilder(source, target, env, **builder_attributes)
+    builder = StataBuilder(target, source, env, **builder_attributes)
     builder.execute_system_call()
     return None
 
 class StataBuilder(GSLabBuilder):
     '''
     '''
-    def __init__(self, source, target, env, name = '', valid_extensions = []):
+    def __init__(self, target, source, env, name = '', valid_extensions = []):
         '''
         '''
         self.add_executable_options()
-        super(StataBuilder, self).__init__(source, target, env, name = name,
+        super(StataBuilder, self).__init__(target, source, env, name = name,
                                            exec_opts = self.exec_opts,
                                            valid_extensions = valid_extensions)
         return None

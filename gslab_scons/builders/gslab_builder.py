@@ -4,7 +4,7 @@ import subprocess
 import sys
 
 import gslab_scons.misc as misc
-from gslab_scons._exception_classes import ExecCallError, TargetNonexistenceError
+from gslab_scons._exception_classes import ExecCallError, TargetNonexistenceError, BadExtensionError
 
 class GSLabBuilder(object):
     '''

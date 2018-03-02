@@ -21,7 +21,7 @@ def build_python(target, source, env):
         'name': 'Python',
         'valid_extensions': ['.py'],
     }
-    builder = PythonBuilder(source, target, env, **builder_attributes)
+    builder = PythonBuilder(target, source, env, **builder_attributes)
     builder.execute_system_call()
     return None
 

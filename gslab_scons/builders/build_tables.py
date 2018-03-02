@@ -26,17 +26,17 @@ def build_tables(target, source, env):
         'valid_extensions': ['.lyx', '.tex'],
         'exec_opts':  '-interaction nonstopmode -jobname'
     }
-    builder = TableBuilder(source, target, env, **builder_attributes)
+    builder = TableBuilder(target, source, env, **builder_attributes)
     builder.execute_system_call()
     return None
 
 class TableBuilder(GSLabBuilder):
     '''
     '''
-    def __init__(self, source, target, env, name = '', valid_extensions = [], exec_opts = ''):
+    def __init__(self, target, source, env, name = '', valid_extensions = [], exec_opts = ''):
         '''
         '''
-        super(TableBuilder, self).__init__(source, target, env, name = name, 
+        super(TableBuilder, self).__init__(target, source, env, name = name, 
                                           valid_extensions = valid_extensions,
                                           exec_opts = exec_opts)
         self.input_string = ' '.join([str(i) for i in source[1:]])

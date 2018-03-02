@@ -22,18 +22,18 @@ def build_matlab(target, source, env):
         'name': 'MATLAB',
         'valid_extensions': ['.m'],
     }
-    builder = MatlabBuilder(source, target, env, **builder_attributes)
+    builder = MatlabBuilder(target, source, env, **builder_attributes)
     builder.execute_system_call()    
     return None
 
 class MatlabBuilder(GSLabBuilder):
     '''
     '''
-    def __init__(self, source, target, env, name = '', valid_extensions = []):
+    def __init__(self, target, source, env, name = '', valid_extensions = []):
         '''
         '''
         self.add_executable_options()
-        super(MatlabBuilder, self).__init__(source, target, env, name = name,
+        super(MatlabBuilder, self).__init__(target, source, env, name = name,
                                             exec_opts = self.exec_opts,
                                             valid_extensions = valid_extensions)
         return None

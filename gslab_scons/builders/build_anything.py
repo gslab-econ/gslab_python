@@ -59,7 +59,7 @@ class AnythingBuilder(GSLabBuilder):
         target = [self.to_str(t) for t in misc.make_list_if_string(target)]
         source = [self.to_str(s) for s in misc.make_list_if_string(source)]
         self.action = action
-        super(AnythingBuilder, self).__init__(source, target, env, name = name)
+        super(AnythingBuilder, self).__init__(target, source, env, name = name)
         try:
             origin_log_file = env['origin_log_file']
         except KeyError:
