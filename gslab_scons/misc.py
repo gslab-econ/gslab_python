@@ -192,15 +192,15 @@ def get_executable(language_name, manual_executables = {}):
             error_message = 'Cannot find default executable for language: %s. ' \
                             'Try specifying a default.' % language_name
             raise _exception_classes.PrerequisiteError(error_message)
-        elif lower_name != 'stata':
-            executable = default_executables[lower_name]
-        elif is_unix():
-            executable = 'stata-mp'
-        elif sys.platform == 'win32':
-            executable = 'StataMP-64.exe'
-        else:
-            error_message = 'Cannot find default Stata executable. Try specifying manually'
-            raise _exception_classes.PrerequisiteError(error_message)
+        executable = default_executables[lower_name]
+        if lower_name == 'stata':
+            if is_unix():
+                executable = 'stata-mp'
+            elif sys.platform == 'win32':
+                executable = 'StataMP-64.exe'
+            else:
+                error_message = 'Cannot find default Stata executable. Try specifying manually'
+                raise _exception_classes.PrerequisiteError(error_message)
     return executable
 
 
