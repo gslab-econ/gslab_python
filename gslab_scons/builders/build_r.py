@@ -1,12 +1,9 @@
-import subprocess
-import os
-import gslab_scons.misc as misc
-from gslab_scons import log_timestamp
-from gslab_scons._exception_classes import ExecCallError
+from gslab_builder import GSLabBuilder
 
 
 def build_r(target, source, env):
-    '''Build SCons targets using an R script
+    '''
+    Build SCons targets using an R script
 
     This function executes an R script to build objects specified
     by target using the objects specified by source.
@@ -20,38 +17,21 @@ def build_r(target, source, env):
         should be the R script that the builder is intended to execute. 
     env: SCons construction environment, see SCons user guide 7.2
     '''
-    # Prelims
-    source      = misc.make_list_if_string(source)
-    target      = misc.make_list_if_string(target)
-    source_file = str(source[0])
-    target_file = str(target[0])
-    target_dir  = misc.get_directory(target_file)
-
-    start_time  = misc.current_time()
-
-    misc.check_code_extension(source_file, 'r')
-    try:
-        log_ext = '_%s' % env['log_ext']
-    except KeyError:
-        log_ext = ''
-    log_file = os.path.join(target_dir, ('sconscript%s.log' % log_ext))
-    
-    cl_arg = misc.command_line_args(env)
-
-    # System call
-    try:
-        command = 'Rscript --no-save --no-restore --verbose %s %s > %s 2>&1' % (source_file, cl_arg, log_file)
-        subprocess.check_output(command,
-                                stderr = subprocess.STDOUT,
-                                shell  = True)
-    except subprocess.CalledProcessError:
-        message = misc.command_error_msg("R", command)
-        raise ExecCallError(message)
-
-    # Check if targets exist after build
-    misc.check_targets(target)
-    
-    end_time = misc.current_time()    
-    log_timestamp(start_time, end_time, log_file)
-
+    builder_attributes = {
+        'name': 'R',
+        'valid_extensions': ['.r'],
+        'exec_opts': '--no-save --no-restore --verbose'
+    }
+    builder = RBuilder(target, source, env, **builder_attributes)
+    builder.execute_system_call()
     return None
+
+class RBuilder(GSLabBuilder):
+    '''
+    '''
+    def add_call_args(self):
+        '''
+        '''
+        args = '%s %s > %s 2>&1' % (self.source_file, self.cl_arg, self.log_file)
+        self.call_args = args
+        return None
