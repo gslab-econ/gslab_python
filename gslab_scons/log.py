@@ -3,14 +3,17 @@ import sys
 import glob
 from datetime import datetime
 import subprocess
+import shutil
 import gslab_scons.misc as misc
 
 
-def start_log(mode, vers, log = 'sconstruct.log'):
+def start_log(mode, vers, cl_args_list = sys.argv, log = 'sconstruct.log'):
     '''Begins logging a build process'''
     
     if not (mode in ['develop', 'cache']):
         raise Exception("Error: %s is not a defined mode" % mode)
+    elif misc.is_scons_dry_run(cl_args_list = cl_args_list):
+        return None
 
     start_message = "*** New build: {%s} ***\n" % misc.current_time()
     with open(log, "w") as f:
@@ -26,29 +29,32 @@ def start_log(mode, vers, log = 'sconstruct.log'):
     return None
 
 
-def end_log(log = 'sconstruct.log'):
+def end_log(cl_args_list = sys.argv, log = 'sconstruct.log', excluded_dirs = [], 
+            release_dir = './release/'):
     '''Complete the log of a build process.'''
+    if misc.is_scons_dry_run(cl_args_list = cl_args_list):
+        return None
 
     end_message = "*** Build completed: {%s} ***\n \n \n" % misc.current_time()
     with open(log, "a") as f:
         f.write(end_message)
 
     # scan sconstruct.log for start time
-    with open('sconstruct.log', "rU") as f:
+    with open(log, "rU") as f:
         s = f.readline()
         s = s[s.find('{') + 1: s.find('}')]
         start_time = datetime.strptime(s, "%Y-%m-%d %H:%M:%S")
 
     # gather all sconscript logs 
     parent_dir = os.getcwd()
-    builder_logs = collect_builder_logs(parent_dir)
+    builder_logs = collect_builder_logs(parent_dir, excluded_dirs = excluded_dirs)
     
     # keep only builder logs from this run OR is broken (value == beginning_of_time)
     beginning_of_time    = datetime.min # to catch broken logs (see collect_builder_logs)
     this_run_dict = {key:value for key, value in builder_logs.items() if (value > start_time) or value == beginning_of_time}
     this_run_list = sorted(this_run_dict, key=this_run_dict.get, reverse=True)
 
-    with open('sconstruct.log', "a") as sconstruct:
+    with open(log, "a") as sconstruct:
         for f in this_run_list:
             with open(f, 'rU') as sconscript:
                 if this_run_dict[f] == beginning_of_time:
@@ -58,40 +64,32 @@ def end_log(log = 'sconstruct.log'):
                 sconstruct.write(f + '\n')
                 sconstruct.write(sconscript.read())
 
+    # move top level logs to /release/ directory.
+    if not os.path.exists(release_dir):
+        os.makedirs(release_dir)
+    for file in glob.glob("*.log"):
+        shutil.move('./' + file, release_dir + file)
     return None
 
 
-def log_timestamp(start_time, end_time, filename = 'sconstruct.log'):
-    '''Adds beginning and ending times to a log file.'''
-    with open(filename, mode = 'r+U') as f:
-        content = f.read()
-        f.seek(0, 0)
-        builder_log_msg = '*** Builder log created: {%s} \n' + '*** Builder log completed: {%s} \n %s'
-        f.write(builder_log_msg % (start_time, end_time, content))
-    return None
-
-
-def collect_builder_logs(parent_dir):
+def collect_builder_logs(parent_dir, excluded_dirs = []):
     ''' Recursively return dictionary of files named sconscript*.log 
         in parent_dir and nested directories.
         Also return timestamp from those sconscript.log 
-        (snippet from SO 3964681)'''
+        (snippet from SO 3964681)
+
+        excluded_dirs (str or list of str):
+            list of directories to be excluded from the search
+        '''
     builder_log_collect = {}
 
     # Store paths to logs in a list, found from platform-specific command line tool 
     rel_parent_dir = os.path.relpath(parent_dir)
-    log_name = 'sconscript*.log'
-    if misc.is_unix():
-        command = 'find %s -name "%s"' % (rel_parent_dir, log_name)
-    else:
-        command = 'dir "%s" /b/s' % os.path.join(rel_parent_dir, log_name)
-    try:
-        log_paths = subprocess.check_output(command, shell = True).replace('\r\n', '\n')
-        log_paths = log_paths.split('\n')
-        log_paths = filter(bool, map(str.strip, log_paths)) # Strip paths and keep non-empty
-    except subprocess.CalledProcessError:
-        log_paths = []
-    
+    log_name = '*sconscript*.log'
+    excluded_dirs = misc.make_list_if_string(excluded_dirs)
+
+    log_paths = misc.finder(rel_parent_dir, log_name, excluded_dirs)
+
     # Read the file at each path to a log and store output complete-time in a dict at filename
     for log_path in log_paths:
         with open(log_path, 'rU') as f:
@@ -108,3 +106,4 @@ def collect_builder_logs(parent_dir):
         builder_log_collect[log_path]  = builder_log_end_time
 
     return builder_log_collect
+    
