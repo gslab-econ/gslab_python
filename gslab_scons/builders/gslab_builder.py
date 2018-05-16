@@ -64,7 +64,7 @@ class GSLabBuilder(object):
             source_file = str(sources[0])
         else:
             source_file = ''
-        self.source_file = source_file
+        self.source_file = "'%s'" % source_file
         return None
 
 
@@ -84,7 +84,7 @@ class GSLabBuilder(object):
             cl_arg = ' '.join([str(s) for s in cl_arg])
         except TypeError:
             cl_arg = str(cl_arg)
-        self.cl_arg = cl_arg
+        self.cl_arg = "'%s'" % cl_arg
         return None
 
 
@@ -132,7 +132,7 @@ class GSLabBuilder(object):
         if extensions == []:
             return None
         matches = [True for extension in extensions 
-                   if self.source_file.lower().endswith(extension)]
+                   if self.source_file.lower().endswith("%s'" % extension)]
         if not matches:
             message = 'First argument, %s, must be a file of type %s.' % (self.source_file, extensions)
             raise BadExtensionError(message)
