@@ -82,7 +82,8 @@ class GSLabBuilder(object):
             log_ext = '_%s' % self.env['log_ext']
         except KeyError:
             log_ext = ''
-        self.log_file = os.path.join(self.target_dir, ('sconscript%s.log' % log_ext))
+        log_file = os.path.join(self.target_dir, ('sconscript%s.log' % log_ext))
+        self.log_file = "'%s'" % log_file
         return None
 
 
