@@ -40,17 +40,20 @@ def build_anything(target, source, action, env, warning = True, **kw):
     builder_attributes = {
         'name': 'Anything Builder'
     }
+    target = [t for t in misc.make_list_if_string(target) if t]
+    source = [s for s in misc.make_list_if_string(source) if s]
     local_env = env.Clone()
     for k, v in kw.items():
         local_env[k] = v
     builder = AnythingBuilder(target, source, action, local_env, warning, **builder_attributes)
     bkw = {
-        'action': builder.execute_system_call,
-        'target_factory' : local_env.fs.Entry,
-        'source_factory':  local_env.fs.Entry,
+        'action': builder.build_anything,
+        'target_factory' : local_env.env.fs.Entry,
+        'source_factory':  local_env.env.fs.Entry,
     }
-    bld = SCons.Builder.Builder(**bkw) 
+    bld = SCons.Builder.Builder(**bkw)
     return bld(local_env, target, source)
+
 
 class AnythingBuilder(GSLabBuilder):
     '''
@@ -58,8 +61,8 @@ class AnythingBuilder(GSLabBuilder):
     def __init__(self, target, source, action, env, warning = True, name = ''):
         '''
         '''
-        target = [self.to_str(t) for t in misc.make_list_if_string(target)]
-        source = [self.to_str(s) for s in misc.make_list_if_string(source)]
+        target = [self.to_str(t) for t in target]
+        source = [self.to_str(s) for s in source]
         self.action = action
         super(AnythingBuilder, self).__init__(target, source, env, name = name)
         try:
@@ -79,7 +82,7 @@ class AnythingBuilder(GSLabBuilder):
     @staticmethod
     def to_str(s):
         '''
-        Convert s to string and drop leading `#` if it exists
+        Convert s to string and drop leading `#` if it exists.
         '''
         s = str(s)
         if s and s[0] == '#':
@@ -95,8 +98,10 @@ class AnythingBuilder(GSLabBuilder):
         return None
 
 
-    def execute_system_call(self, **kwargs):
+    def build_anything(self, **kwargs):
         '''
+        Just a GSLabBuilder execute_system_call method,
+        but given a nice name for printing.
         '''
         super(AnythingBuilder, self).execute_system_call()
         if self.origin_log_file is not None:
