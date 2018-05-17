@@ -1,4 +1,5 @@
 import os
+import copy
 import warnings
 
 from gslab_builder import GSLabBuilder
@@ -41,16 +42,18 @@ def build_anything(target, source, action, env, warning = True, **kw):
     }
     target = [t for t in misc.make_list_if_string(target) if t]
     source = [s for s in misc.make_list_if_string(source) if s]
+    local_env = env.Clone()
     for k, v in kw.items():
-        env[k] = v
-    builder = AnythingBuilder(target, source, action, env, warning, **builder_attributes)
+        local_env[k] = v
+    builder = AnythingBuilder(target, source, action, local_env, warning, **builder_attributes)
     bkw = {
         'action': builder.build_anything,
-        'target_factory' : env.fs.Entry,
-        'source_factory':  env.fs.Entry,
+        'target_factory' : local_env.env.fs.Entry,
+        'source_factory':  local_env.env.fs.Entry,
     }
     bld = SCons.Builder.Builder(**bkw)
-    return bld(env, target, source)
+    return bld(local_env, target, source)
+
 
 class AnythingBuilder(GSLabBuilder):
     '''
