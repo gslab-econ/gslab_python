@@ -1,6 +1,7 @@
 import abc
 import os
 import subprocess
+import re
 import sys
 
 import gslab_scons.misc as misc
@@ -105,7 +106,7 @@ class GSLabBuilder(object):
         start_time = misc.current_time()
         self.do_call()
         self.check_targets()
-        end_time =  misc.current_time()    
+        end_time = misc.current_time()
         self.timestamp_log(start_time, end_time)
         return None
 
@@ -170,12 +171,14 @@ class GSLabBuilder(object):
         '''
         Adds beginning and ending times to a log file made for system call.
         '''
-        with open(self.log_file, mode = 'rU') as f:
+        # Remove quotes wrapping log file
+        log_file = re.match("^'(.*?)'$", self.log_file).groups()[0]
+        with open(log_file, mode = 'rU') as f:
             content = f.read()
             f.seek(0, 0)
             builder_log_msg = '*** Builder log created: {%s}\n' \
                               '*** Builder log completed: {%s}\n%s' \
                               % (start_time, end_time, content)
-        with open(self.log_file, mode = 'wb') as f:
+        with open(log_file, mode = 'wb') as f:
             f.write(builder_log_msg)
         return None
