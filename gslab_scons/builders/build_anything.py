@@ -40,7 +40,7 @@ def build_anything(target, source, action, env, warning = True, **kw):
     builder_attributes = {
         'name': 'Anything Builder'
     }
-    local_env = copy.deepcopy(env)
+    local_env = env.Clone()
     for k, v in kw.items():
         local_env[k] = v
     builder = AnythingBuilder(target, source, action, local_env, warning, **builder_attributes)
