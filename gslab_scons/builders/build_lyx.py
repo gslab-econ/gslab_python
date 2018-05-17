@@ -35,7 +35,7 @@ class LyxBuilder(GSLabBuilder):
     def add_call_args(self):
         '''
         '''
-        args = '%s %s > %s' % (self.cl_arg, self.source_file, self.log_file)
+        args = '%s %s > %s' % (self.cl_arg, os.path.normpath(self.source_file), os.path.normpath(self.log_file))
         self.call_args = args
         return None
 
@@ -45,6 +45,6 @@ class LyxBuilder(GSLabBuilder):
         '''
         super(LyxBuilder, self).do_call()
         new_pdf = os.path.splitext(self.source_file)[0] + '.pdf'
-        new_pdf_path = '%s/%s' % (self.target_dir, os.path.basename(new_pdf))
+        new_pdf_path = os.path.normpath('%s/%s' % (self.target_dir, os.path.basename(new_pdf)))
         shutil.move(new_pdf, new_pdf_path)
         return None

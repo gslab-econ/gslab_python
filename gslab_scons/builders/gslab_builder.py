@@ -64,7 +64,7 @@ class GSLabBuilder(object):
             source_file = str(sources[0])
         else:
             source_file = ''
-        self.source_file = "%s" % source_file
+        self.source_file = os.path.normpath("%s" % source_file)
         return None
 
 

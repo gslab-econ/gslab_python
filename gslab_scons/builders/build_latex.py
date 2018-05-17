@@ -36,6 +36,6 @@ class LatexBuilder(GSLabBuilder):
         '''
         '''
         target_name = os.path.splitext(self.target[0])[0]
-        args = '%s %s %s > %s' % (self.cl_arg, target_name, self.source_file, self.log_file)
+        args = '%s %s %s > %s' % (self.cl_arg, target_name, os.path.normpath(self.source_file), os.path.normpath(self.log_file))
         self.call_args = args
         return None
