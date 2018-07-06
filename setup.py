@@ -20,17 +20,17 @@ else:
     include_arg = None
 
 # Uninstall old versions of GSLab-Tools
-re_gslab  = re.compile('gslab[-_].', re.IGNORECASE)
-re_gencat = re.compile('gencat')
-package_locations = site.getsitepackages()
-for package_location in package_locations:
-    try:
-        packages = os.listdir(package_location)
-    except OSError:
-        continue
-    for package in packages:
-        if re_gslab.match(package) or re_gencat.match(package):
-            shutil.rmtree(os.path.join(package_location, package))
+# re_gslab  = re.compile('gslab[-_].', re.IGNORECASE)
+# re_gencat = re.compile('gencat')
+# package_locations = site.getsitepackages()
+# for package_location in package_locations:
+    # try:
+        # packages = os.listdir(package_location)
+    # except OSError:
+        # continue
+    # for package in packages:
+        # if re_gslab.match(package) or re_gencat.match(package):
+            # shutil.rmtree(os.path.join(package_location, package))
 
 # Additional build commands
 class TestRepo(build_py):
