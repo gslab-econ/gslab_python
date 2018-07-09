@@ -46,9 +46,11 @@ class TestRepo(build_py):
 class CleanRepo(build_py):
     '''Build command for clearing setup directories after installation'''
     def run(self):
-        # i) Remove the .egg-info folder
+        # i) Remove the .egg-info or .dist-info folders
         egg_directories = glob('./*.egg-info')
         map(shutil.rmtree, egg_directories)
+        dist_directories = glob('./*.dist-info')
+        map(shutil.rmtree, dist_directories)
         # ii) Remove the ./build and ./dist directories
         if os.path.isdir('./build'):
             shutil.rmtree('./build')
