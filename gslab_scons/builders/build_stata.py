@@ -44,10 +44,10 @@ class StataBuilder(GSLabBuilder):
 
     def add_log_file(self):
         super(StataBuilder, self).add_log_file()
-        self.final_sconscript_log = self.log_file
+        self.final_sconscript_log = os.path.normpath(self.log_file)
         log_file = os.path.splitext(os.path.basename(self.source_file))[0]
         log_file = '%s.log' % log_file
-        self.log_file = log_file
+        self.log_file = os.path.normpath(log_file)
         return None
 
 
@@ -70,7 +70,7 @@ class StataBuilder(GSLabBuilder):
     def add_call_args(self):
         '''
         '''
-        args = '%s %s' % (self.source_file, self.cl_arg)
+        args = '%s %s' % (os.path.normpath(self.source_file), self.cl_arg)
         self.call_args = args
         return None
 

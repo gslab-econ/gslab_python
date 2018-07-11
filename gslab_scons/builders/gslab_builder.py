@@ -23,7 +23,7 @@ class GSLabBuilder(object):
             The target(s) of the SCons command.
         source: string or list
             The source(s) of the SCons command. The first source specified
-            should be the script that the builder is intended to execute. 
+            should be the script that the builder is intended to execute.
         env: SCons construction environment, see SCons user guide 7.2
         name: string
             Name of builder-type. Use to refer to builder in error messages and env.
@@ -40,7 +40,7 @@ class GSLabBuilder(object):
         self.valid_extensions = valid_extensions
         self.exec_opts        = exec_opts
         # Build system call and store components
-        self.source_file      = str(misc.make_list_if_string(source)[0])
+        self.add_source_file(source)
         self.target           = [str(t) for t in misc.make_list_if_string(target)]
         self.target_dir       = misc.get_directory(self.target[0])
         if 'executable_names' not in env:
@@ -51,6 +51,20 @@ class GSLabBuilder(object):
         self.add_log_file()
         self.add_call_args()
         self.system_call = '%s %s %s' % (self.executable, self.exec_opts, self.call_args)
+        return None
+
+
+    def add_source_file(self, source):
+        '''
+        Add source file to execute as the first element of source.
+        If source is an empty list, then the source file is ''.
+        '''
+        if bool(source):
+            sources = misc.make_list_if_string(source)
+            source_file = str(sources[0])
+        else:
+            source_file = ''
+        self.source_file = os.path.normpath("%s" % source_file)
         return None
 
 
@@ -70,7 +84,7 @@ class GSLabBuilder(object):
             cl_arg = ' '.join([str(s) for s in cl_arg])
         except TypeError:
             cl_arg = str(cl_arg)
-        self.cl_arg = cl_arg
+        self.cl_arg = "%s" % cl_arg
         return None
 
 
@@ -118,7 +132,7 @@ class GSLabBuilder(object):
         if extensions == []:
             return None
         matches = [True for extension in extensions 
-                   if self.source_file.lower().endswith(extension)]
+                   if self.source_file.lower().endswith("%s" % extension)]
         if not matches:
             message = 'First argument, %s, must be a file of type %s.' % (self.source_file, extensions)
             raise BadExtensionError(message)

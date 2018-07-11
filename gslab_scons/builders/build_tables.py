@@ -1,3 +1,4 @@
+import os
 from gslab_builder import GSLabBuilder
 
 from gslab_fill import tablefill
@@ -40,7 +41,7 @@ class TableBuilder(GSLabBuilder):
                                           valid_extensions = valid_extensions,
                                           exec_opts = exec_opts)
         self.input_string = ' '.join([str(i) for i in source[1:]])
-        self.target_file  = self.target[0]
+        self.target_file  = os.path.normpath(self.target[0])
         return None
 
 
@@ -52,8 +53,8 @@ class TableBuilder(GSLabBuilder):
         '''
         '''
         output = tablefill(input    = self.input_string, 
-                           template = self.source_file, 
-                           output   = self.target_file)
+                           template = os.path.normpath(self.source_file), 
+                           output   = os.path.normpath(self.target_file))
         with open(self.log_file, 'wb') as f:
             f.write(output)
             f.write('\n\n')

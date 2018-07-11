@@ -1,4 +1,4 @@
-# GSLab Python Library Collection 4.1.0
+# GSLab Python Library Collection 4.1.1
 
 Overview
 --------
@@ -42,10 +42,19 @@ say, a `sudo` command.
 Alternatively, one may install the local version of gslab_python by running (from the root of the repository)
 
 ```
-python setup.py install clean
+pip install .
 ```
 
-However, this installation method may not remove previous versions of `gslab_tools`.
+We do not reccommend that these packages be installed by executing
+```bash
+python setup.py install
+```
+This method of installation uses egg files rather than Wheels, which can cause conflicts with previous versions of `gslab_tools`. If this method of installation is executed, some files need to be removed from the directory with a `clean` argument. `clean` removes `/build`,`/dist`, and `GSLab_Tools.egg-info`, which are built upon installation. This argument can be called by executing 
+
+```bash
+python setup.py clean
+```
+
 
 Testing
 -------

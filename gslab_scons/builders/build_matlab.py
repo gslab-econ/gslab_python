@@ -61,9 +61,9 @@ class MatlabBuilder(GSLabBuilder):
         source_exec = 'source_%s' % source_hash
         exec_file   = source_exec + '.m'
         shutil.copy(self.source_file, exec_file)
-        args = '%s > %s' % (source_exec, self.log_file)
+        args = '%s > %s' % (os.path.normpath(source_exec), os.path.normpath(self.log_file))
         self.call_args = args
-        self.exec_file = exec_file
+        self.exec_file = os.path.normpath(exec_file)
         return None
 
 
