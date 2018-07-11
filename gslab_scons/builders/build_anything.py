@@ -48,8 +48,8 @@ def build_anything(target, source, action, env, warning = True, **kw):
     builder = AnythingBuilder(target, source, action, local_env, warning, **builder_attributes)
     bkw = {
         'action': builder.build_anything,
-        'target_factory' : local_env.env.fs.Entry,
-        'source_factory':  local_env.env.fs.Entry,
+        'target_factory' : local_env.fs.Entry,
+        'source_factory':  local_env.fs.Entry,
     }
     bld = SCons.Builder.Builder(**bkw)
     return bld(local_env, target, source)
@@ -93,7 +93,7 @@ class AnythingBuilder(GSLabBuilder):
     def add_call_args(self):
         '''
         '''
-        args = '%s > %s 2>&1' % (self.action, self.log_file)
+        args = '%s > %s 2>&1' % (self.action, os.path.normpath(self.log_file))
         self.call_args = args
         return None
 

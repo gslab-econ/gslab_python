@@ -32,6 +32,6 @@ class RBuilder(GSLabBuilder):
     def add_call_args(self):
         '''
         '''
-        args = '%s %s > %s 2>&1' % (self.source_file, self.cl_arg, self.log_file)
+        args = '%s %s > %s 2>&1' % (os.path.normpath(self.source_file), self.cl_arg, os.path.normpath(self.log_file))
         self.call_args = args
         return None
