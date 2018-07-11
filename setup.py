@@ -19,19 +19,6 @@ if True in is_include_arg:
 else:
     include_arg = None
 
-# Uninstall old versions of GSLab-Tools
-re_gslab  = re.compile('gslab[-_].', re.IGNORECASE)
-re_gencat = re.compile('gencat')
-package_locations = site.getsitepackages()
-for package_location in package_locations:
-    try:
-        packages = os.listdir(package_location)
-    except OSError:
-        continue
-    for package in packages:
-        if re_gslab.match(package) or re_gencat.match(package):
-            shutil.rmtree(os.path.join(package_location, package))
-
 # Additional build commands
 class TestRepo(build_py):
     '''Build command for running tests in repo'''
@@ -59,9 +46,11 @@ class TestRepo(build_py):
 class CleanRepo(build_py):
     '''Build command for clearing setup directories after installation'''
     def run(self):
-        # i) Remove the .egg-info folder
+        # i) Remove the .egg-info or .dist-info folders
         egg_directories = glob('./*.egg-info')
         map(shutil.rmtree, egg_directories)
+        dist_directories = glob('./*.dist-info')
+        map(shutil.rmtree, dist_directories)
         # ii) Remove the ./build and ./dist directories
         if os.path.isdir('./build'):
             shutil.rmtree('./build')

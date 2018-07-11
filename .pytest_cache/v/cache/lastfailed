@@ -1,0 +1,15 @@
+{
+  "gslab_scons/tests/test_build_latex.py": true, 
+  "gslab_scons/tests/test_build_lyx.py": true, 
+  "gslab_scons/tests/test_build_matlab.py": true, 
+  "gslab_scons/tests/test_build_python.py": true, 
+  "gslab_scons/tests/test_build_r.py": true, 
+  "gslab_scons/tests/test_build_stata.py": true, 
+  "gslab_scons/tests/test_build_tables.py": true, 
+  "gslab_scons/tests/test_configuration_tests.py": true, 
+  "gslab_scons/tests/test_log.py": true, 
+  "gslab_scons/tests/test_misc.py": true, 
+  "gslab_scons/tests/test_release_function.py": true, 
+  "gslab_scons/tests/test_release_tools.py": true, 
+  "gslab_scons/tests/test_size_warning.py": true
+}
