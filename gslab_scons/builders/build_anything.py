@@ -48,8 +48,8 @@ def build_anything(target, source, action, env, warning = True, **kw):
     builder = AnythingBuilder(target, source, action, local_env, warning, **builder_attributes)
     bkw = {
         'action': builder.build_anything,
-        'target_factory' : local_env.fs.Entry,
-        'source_factory':  local_env.fs.Entry,
+        'target_factory' : local_env.env.fs.Entry,
+        'source_factory':  local_env.env.fs.Entry,
     }
     bld = SCons.Builder.Builder(**bkw)
     return bld(local_env, target, source)
