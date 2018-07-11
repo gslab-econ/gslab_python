@@ -1,5 +1,6 @@
-from gslab_builder import GSLabBuilder
+import os
 
+from gslab_builder import GSLabBuilder
 
 def build_python(target, source, env):
     '''

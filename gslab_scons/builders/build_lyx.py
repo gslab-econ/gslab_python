@@ -48,3 +48,4 @@ class LyxBuilder(GSLabBuilder):
         new_pdf_path = os.path.normpath('%s/%s' % (self.target_dir, os.path.basename(new_pdf)))
         shutil.move(new_pdf, new_pdf_path)
         return None
+        
