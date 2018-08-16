@@ -1,6 +1,7 @@
 import os
 import shutil
 import hashlib
+import sys
 
 import gslab_scons.misc as misc
 from gslab_builder import GSLabBuilder

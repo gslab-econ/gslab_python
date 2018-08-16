@@ -1,4 +1,4 @@
-# GSLab Python Library Collection 4.1.1
+# GSLab Python Library Collection 4.1.2
 
 Overview
 --------
