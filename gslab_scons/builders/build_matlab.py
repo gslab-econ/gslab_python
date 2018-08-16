@@ -33,9 +33,9 @@ class MatlabBuilder(GSLabBuilder):
     def __init__(self, target, source, env, name = '', valid_extensions = []):
         '''
         '''
-        self.add_executable_options()
+        exec_opts = self.add_executable_options()
         super(MatlabBuilder, self).__init__(target, source, env, name = name,
-                                            exec_opts = self.exec_opts,
+                                            exec_opts = exec_opts,
                                             valid_extensions = valid_extensions)
         return None
 
@@ -51,8 +51,7 @@ class MatlabBuilder(GSLabBuilder):
             message = 'Cannot find MATLAB command line syntax for platform.'
             raise PrerequisiteError(message)
         options = ' -nosplash %s -r' % platform_option
-        self.exec_opts = options
-        return None
+        return options
 
 
     def add_call_args(self):

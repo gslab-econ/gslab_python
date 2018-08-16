@@ -35,9 +35,9 @@ class StataBuilder(GSLabBuilder):
     def __init__(self, target, source, env, name = '', valid_extensions = []):
         '''
         '''
-        self.add_executable_options()
+        exec_opts = self.add_executable_options()
         super(StataBuilder, self).__init__(target, source, env, name = name,
-                                           exec_opts = self.exec_opts,
+                                           exec_opts = exec_opts,
                                            valid_extensions = valid_extensions)
         return None
 
@@ -63,8 +63,7 @@ class StataBuilder(GSLabBuilder):
         except KeyError:
             message = 'Cannot find Stata command line syntax for platform %s.' % sys.platform
             raise PrerequisiteError(message)
-        self.exec_opts = options
-        return None
+        return options
 
 
     def add_call_args(self):
