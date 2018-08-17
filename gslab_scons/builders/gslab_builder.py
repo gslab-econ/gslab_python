@@ -51,7 +51,6 @@ class GSLabBuilder(object):
         self.add_log_file()
         self.add_call_args()
         self.system_call = '%s %s %s' % (self.executable, self.exec_opts, self.call_args)
-        return None
 
 
     def add_source_file(self, source):

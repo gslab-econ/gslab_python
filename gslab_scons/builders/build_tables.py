@@ -42,7 +42,6 @@ class TableBuilder(GSLabBuilder):
                                           exec_opts = exec_opts)
         self.input_string = ' '.join([str(i) for i in source[1:]])
         self.target_file  = os.path.normpath(self.target[0])
-        return None
 
 
     def add_call_args(self):
