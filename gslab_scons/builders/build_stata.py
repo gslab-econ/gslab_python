@@ -39,7 +39,6 @@ class StataBuilder(GSLabBuilder):
         super(StataBuilder, self).__init__(target, source, env, name = name,
                                            exec_opts = exec_opts,
                                            valid_extensions = valid_extensions)
-        return None
 
 
     def add_log_file(self):

@@ -37,7 +37,6 @@ class MatlabBuilder(GSLabBuilder):
         super(MatlabBuilder, self).__init__(target, source, env, name = name,
                                             exec_opts = exec_opts,
                                             valid_extensions = valid_extensions)
-        return None
 
 
     def add_executable_options(self):

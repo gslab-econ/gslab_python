@@ -76,7 +76,6 @@ class AnythingBuilder(GSLabBuilder):
                               'The Anything Builder\'s logging mechanism '\
                               'may not work as intended.'
             warnings.warn(warning_message)
-        return None
 
 
     @staticmethod
