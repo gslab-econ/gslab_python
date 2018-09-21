@@ -88,10 +88,10 @@ def check_git_lfs():
     Check that a valid git-lfs is installed by trying to start it.
     '''
     try:
-        _ = subprocess.check_output('git-lfs install', shell = True)
+        _ = subprocess.check_output('git lfs install', shell = True)
     except subprocess.CalledProcessError:
         try:
-            _ = subprocess.check_output('git-lfs init', shell = True)
+            _ = subprocess.check_output('git lfs init', shell = True)
         except subprocess.CalledProcessError:
             message = "Either Git LFS is not installed " \
                       "or your Git LFS settings need to be updated. " \
