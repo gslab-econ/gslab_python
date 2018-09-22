@@ -57,6 +57,10 @@ def is_in_path(program):
             exe = os.path.join(path, program)
             if os.access(exe, os.X_OK):
                 return exe
+            exe = os.path.join(path, program + ".exe")
+            if os.access(exe, os.X_OK):
+                return exe
+
     return False
 
 
