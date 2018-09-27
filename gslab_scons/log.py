@@ -7,7 +7,7 @@ import shutil
 import gslab_scons.misc as misc
 
 
-def start_log(mode, vers, cl_args_list = sys.argv, log = 'sconstruct.log'):
+def start_log(mode, cl_args_list = sys.argv, log = 'sconstruct.log'):
     '''Begins logging a build process'''
     
     if not (mode in ['develop', 'cache']):
