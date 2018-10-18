@@ -27,9 +27,9 @@ def check_prereq(prereq, manual_execs = {}, gslab_vers = None):
         required_version  = process_gslab_version(gslab_vers)
         installed_version = pkg_resources.get_distribution('gslab_tools').version
         installed_version = process_gslab_version(installed_version)
-        if not check_gslab_version(installed_version, required_version):
+        if check_gslab_version(required_version, installed_version):
             message = 'Your version of gslab_python (%s) is outdated. ' \
-                      'This repository requires gslab_python %s or higher to run' \
+                      'This repository requires gslab_python (%s) or higher to run' \
                       % ('.'.join(str(v) for v in installed_version), '.'.join(str(v) for v in required_version))
             raise PrerequisiteError(message)
     elif prereq_clean == 'git_lfs':
@@ -79,7 +79,7 @@ def check_gslab_version(required, installed):
             up_to_date = False
         # Recursive case
         if required_val == installed_val:
-            check_gslab_version(required[1:], installed[1:])
+            up_to_date = check_gslab_version(required[1:], installed[1:])
     return up_to_date
 
 
