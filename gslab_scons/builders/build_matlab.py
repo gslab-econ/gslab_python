@@ -58,7 +58,7 @@ class MatlabBuilder(GSLabBuilder):
         '''
         source_hash = hashlib.sha1(self.source_file).hexdigest()
         source_exec = 'source_%s' % source_hash
-        exec_file   = source_exec + '.m'
+        exec_file   = 'try, ' + source_exec + '.m' + '; , end, quit' 
         shutil.copy(self.source_file, exec_file)
         args = '%s > %s' % (os.path.normpath(source_exec), os.path.normpath(self.log_file))
         self.call_args = args
