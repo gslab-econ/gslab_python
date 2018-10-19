@@ -68,7 +68,7 @@ def check_gslab_version(required, installed):
     '''
     # Base case
     if required == installed:
-        return True
+        return False
     else:
         required_val = required[0]
         installed_val = installed[0]
