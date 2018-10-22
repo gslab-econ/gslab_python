@@ -74,13 +74,13 @@ def check_gslab_version(required, installed):
         installed_val = installed[0]
         # More base cases
         if required_val > installed_val:
-            up_to_date = True
+            out_dated = True
         else:
-            up_to_date = False
+            out_dated = False
         # Recursive case
         if required_val == installed_val:
-            up_to_date = check_gslab_version(required[1:], installed[1:])
-    return up_to_date
+            out_dated = check_gslab_version(required[1:], installed[1:])
+    return out_dated
 
 
 def check_git_lfs():
