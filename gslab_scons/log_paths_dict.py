@@ -1,7 +1,7 @@
 import os
 import sys
 import scandir
-import mmh3
+import pymmh3 as mmh3
 
 import misc
 
