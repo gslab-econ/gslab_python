@@ -177,6 +177,7 @@ def get_executable(language_name, manual_executables = {}):
         'python': 'python',
         'r': 'Rscript',
         'stata': '',
+        'mathematica': 'MathKernel',
         'matlab': 'matlab',
         'lyx': 'lyx',
         'latex': 'pdflatex',

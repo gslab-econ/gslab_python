@@ -14,7 +14,7 @@ def check_prereq(prereq, manual_execs = {}, gslab_vers = None):
     If prereq is git_lfs, check that it has been installed.
     '''
     prereq_clean = str(prereq).lower().strip()
-    path_checkers = ['r', 'stata', 'matlab', 'lyx', 'latex']
+    path_checkers = ['r', 'stata', 'matlab', 'mathematica', 'lyx', 'latex']
     if prereq_clean in path_checkers:
         executable = misc.get_executable(prereq_clean, manual_execs)
         if not misc.is_in_path(executable):
