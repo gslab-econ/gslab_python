@@ -11,11 +11,7 @@ def build_mathematica(target, source, env):
     This function executes a Mathematica function to build objects 
     specified by target using the objects specified by source.
     It requires Mathematica to be callable from the command line 
-    via `math`.
-    
-    If on OS X, you'll need to change line 180 in gslab_scons\misc.py
-    to 'mathematica': 'MathKernel'.
- 
+    via `math` (or `MathKernel` for OS X).
     '''
     builder_attributes = {
         'name': 'Mathematica',

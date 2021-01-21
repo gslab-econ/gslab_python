@@ -96,8 +96,8 @@ def make_mathematica_side_effect(recognized = True):
     '''
     Make a mock of mocks subprocess.check_output() for Mathematica commands
 
-    The executable_recognized argument determines whether "math"
-    is a recognized executable on the mock platform.   
+    The executable_recognized argument determines whether "math" (or "MathKernel"
+    for OS X) is a recognized executable on the mock platform.   
     '''
     def side_effect(*args, **kwargs):
         '''
@@ -106,7 +106,7 @@ def make_mathematica_side_effect(recognized = True):
         '''
         # Get and parse the command passed to os.system()
         command = args[0]
-        if re.search('math', command, flags = re.I) and not recognized:
+        if re.search('math|MathKernel', command, flags = re.I) and not recognized:
             raise subprocess.CalledProcessError(1, command)
 
         match      = helpers.command_match(command, 'm')
@@ -120,7 +120,7 @@ def make_mathematica_side_effect(recognized = True):
             source = match.group('source')
             log    = '%s.log' % re.sub('\.m', '', source)
     
-        if executable == 'math' and log:
+        if (executable == 'math' or executable == 'MathKernel') and log:
             with open(log.replace('>', '').strip(), 'wb') as log_file:
                 log_file.write('Test log\n')
             with open('./test_output.txt', 'wb') as target:
@@ -345,3 +345,4 @@ def dot_git_open_side_effect(repo   = 'repo',
         return file_object
 
     return open_side_effect
+

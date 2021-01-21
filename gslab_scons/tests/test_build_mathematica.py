@@ -51,8 +51,8 @@ class TestBuildMathematica(unittest.TestCase):
     @system_patch
     def test_no_executable(self, mock_check_output):
         '''
-        Check build_mathematica()'s behaviour when math is not recognised as
-        an executable.
+        Check build_mathematica()'s behaviour when math (or MathKernel for OS X) 
+        is not recognised as an executable.
         '''
         mock_check_output.side_effect = \
             fx.make_mathematica_side_effect(recognized = False)

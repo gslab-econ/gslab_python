@@ -108,7 +108,7 @@ def command_match(command, executable, which = None):
     elif executable == 'm':
         # e.g. "math -script script.m input.txt > script.log"
         match = re.match(r'\s*'
-                         r'(?P<executable>math)'
+                         r'(?P<executable>math|MathKernel)'
                          r'\s+'
                          r'(?P<option1>-script)'
                          r'\s*'
@@ -274,3 +274,4 @@ def mock_release_data(args):
                '"draft":false',
                '"prerelease":false}]']) 
     return mock_release_data
+
