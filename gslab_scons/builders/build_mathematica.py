@@ -1,10 +1,6 @@
 import os
-import shutil
-import hashlib
-import sys
 import subprocess
 
-import gslab_scons.misc as misc
 from gslab_builder import GSLabBuilder
 
 
@@ -16,6 +12,9 @@ def build_mathematica(target, source, env):
     specified by target using the objects specified by source.
     It requires Mathematica to be callable from the command line 
     via `math`.
+    
+    If on OS X, you'll need to change line 180 in gslab_scons\misc.py
+    to 'mathematica': 'MathKernel'.
  
     '''
     builder_attributes = {
@@ -38,3 +37,4 @@ class MathematicaBuilder(GSLabBuilder):
                                os.path.normpath(self.log_file))
         self.call_args = args
         return None
+
