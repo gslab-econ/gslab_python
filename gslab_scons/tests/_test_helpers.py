@@ -104,6 +104,20 @@ def command_match(command, executable, which = None):
                          '\s*'
                          '(?P<log_redirect>\> [\.\/\w]+\.\w+)?',
                          command)
+                         
+    elif executable == 'm':
+        # e.g. "math -script script.m input.txt > script.log"
+        match = re.match(r'\s*'
+                         r'(?P<executable>math|MathKernel)'
+                         r'\s+'
+                         r'(?P<option1>-script)'
+                         r'\s*'
+                         r'(?P<source>[\.\/\\\w]+\.[m])'
+                         r'\s*'
+                         r'(?P<args>(\s?[\.\/\\\w]+)*)?'
+                         r'\s*'
+                         r'(?P<log>>\s*[\.\/\\\w]+(\.\w+)?)?',
+                         command)
 
     if which:
         return match.group(which)
@@ -198,11 +212,11 @@ def test_cl_args(test_object, builder, system_mock, extension, env = {}):
         env['CL_ARG'] = 'test'
     else:
         env = {'CL_ARG': 'test'}
-    
+
     builder(source = source, target = target, env = env)
 
     # The system command is the first positional argument
-    command = system_mock.call_args[0][0] 
+    command = system_mock.call_args[0][0]
     args    = command_match(command, extension, which = 'args')
 
     test_object.assertIn('test', args.split(' '))
@@ -260,3 +274,4 @@ def mock_release_data(args):
                '"draft":false',
                '"prerelease":false}]']) 
     return mock_release_data
+

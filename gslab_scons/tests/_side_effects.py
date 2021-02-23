@@ -90,6 +90,43 @@ def make_matlab_side_effect(recognized = True):
 def matlab_copy_effect(*args, **kwargs):
     '''Mock copy so that it creates a file with the destination's path'''
     open(args[1], 'wb').write('test')
+    
+    
+def make_mathematica_side_effect(recognized = True):
+    '''
+    Make a mock of mocks subprocess.check_output() for Mathematica commands
+
+    The executable_recognized argument determines whether "math" (or "MathKernel"
+    for OS X) is a recognized executable on the mock platform.   
+    '''
+    def side_effect(*args, **kwargs):
+        '''
+        This side effect mocks the behaviour of a subprocess.check_output()
+        call on a machine with Mathematica set up for command-line use.
+        '''
+        # Get and parse the command passed to os.system()
+        command = args[0]
+        if re.search('math|MathKernel', command, flags = re.I) and not recognized:
+            raise subprocess.CalledProcessError(1, command)
+
+        match      = helpers.command_match(command, 'm')
+    
+        executable = match.group('executable')
+        log        = match.group('log')
+
+        if log is None:
+            # If no log path is specified, create one by using the 
+            # Mathematica script's path after replacing .m (if present) with .log.
+            source = match.group('source')
+            log    = '%s.log' % re.sub('\.m', '', source)
+    
+        if (executable == 'math' or executable == 'MathKernel') and log:
+            with open(log.replace('>', '').strip(), 'wb') as log_file:
+                log_file.write('Test log\n')
+            with open('./test_output.txt', 'wb') as target:
+                target.write('Test target')
+
+    return side_effect
 
 
 def make_stata_side_effect(recognized = True):
@@ -308,3 +345,4 @@ def dot_git_open_side_effect(repo   = 'repo',
         return file_object
 
     return open_side_effect
+

@@ -177,6 +177,7 @@ def get_executable(language_name, manual_executables = {}):
         'python': 'python',
         'r': 'Rscript',
         'stata': '',
+        'mathematica': '',
         'matlab': 'matlab',
         'lyx': 'lyx',
         'latex': 'pdflatex',
@@ -204,6 +205,14 @@ def get_executable(language_name, manual_executables = {}):
                 executable = 'StataMP-64.exe'
             else:
                 error_message = 'Cannot find default Stata executable. Try specifying manually'
+                raise _exception_classes.PrerequisiteError(error_message)
+        if lower_name == 'mathematica':
+            if sys.platform == 'darwin':
+                executable = 'MathKernel'
+            elif sys.platform in ['win32', 'linux', 'linux2']:
+                executable = 'math'
+            else:
+                error_message = 'Cannot find default Mathematica executable. Try specifying manually'
                 raise _exception_classes.PrerequisiteError(error_message)
     return executable
 
@@ -305,4 +314,5 @@ def flatten_dict(d, parent_key = '', sep = ':',
         except AttributeError: # Base case
             items.append((new_key, val))
     return dict(items)
+
 
