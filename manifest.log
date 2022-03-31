@@ -1,0 +1,10 @@
+File: df_sample.dta
+
+MD5 hash: 8de2b44fd5bd9f42d138501aa48031b6
+
+Keys: a 
+
+    type  count  mean     std  min   25%  50%   75%  max
+a  int64    2.0   2.5  0.7071  2.0  2.25  2.5  2.75  3.0
+b  int64    2.0   4.5  0.7071  4.0  4.25  4.5  4.75  5.0
+
