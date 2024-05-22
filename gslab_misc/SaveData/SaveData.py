@@ -45,11 +45,17 @@ def CheckKeys(df, keys):
         
 def GetSummaryStats(df):
     var_types = df.dtypes
-    var_stats = df.describe().transpose()
+    var_stats = df.describe(include='all').transpose().fillna('')
+
+    var_stats['count'] = df.notnull().sum()
+    var_stats = var_stats.drop(columns=['top', 'freq'], errors='ignore')
+    
     summary_stats = pd.DataFrame({'type': var_types}).\
         merge(var_stats, how = 'left', left_index = True, right_index = True)
     summary_stats = summary_stats.round(4)
-    return(summary_stats)    
+    
+    return summary_stats
+
 
 def SaveDf(df, keys, out_file, sortbykey):
     if sortbykey:
@@ -87,5 +93,3 @@ def SaveLog(df_hash, keys, summary_stats, out_file, append, log_file):
         f.close()    
     else:
         pass
-    
-
