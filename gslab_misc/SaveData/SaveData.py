@@ -59,7 +59,7 @@ def GetSummaryStats(df):
 
 def SaveDf(df, keys, out_file, sortbykey):
     if sortbykey:
-        df.sort_values(keys)
+        df.sort_values(keys, inplace = True)
     
     if re.search('.csv', out_file):
         df.to_csv(out_file, index = False)
