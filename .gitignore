@@ -8,5 +8,4 @@
 *.coveragerc
 *.ipynb
 .ipynb_checkpoints/
-issue*
 build/
