@@ -13,6 +13,9 @@ import pathlib
 def SaveData(df, keys, out_file, log_file = '', append = False, sortbykey = True):
     extension = CheckExtension(out_file)
     CheckKeys(df, keys)
+    # reorder df so keys are on the left
+    keycols = keys + [ele for ele in df.columns if ele not in keys]
+    df = df[keycols]
     df_hash = hashlib.md5(pd.util.hash_pandas_object(df).values).hexdigest() 
     summary_stats = GetSummaryStats(df)
     SaveDf(df, keys, out_file, sortbykey, extension)
