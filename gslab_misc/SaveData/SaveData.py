@@ -45,7 +45,10 @@ def CheckKeys(df, keys):
         print('The following keys are missing in some rows: %s .' % (missings_string))
         raise ValueError('You have rows with missing keys.')
     
-    
+    type_list = any([any(df[keycol].apply(lambda x: type(x) == list)) for keycol in keys])
+    if type_list:
+        raise TypeError("No key can contain keys of type list")
+        
     if not all(df.groupby(keys).size() == 1):
         raise ValueError("Keys do not uniquely identify the observations.")
         

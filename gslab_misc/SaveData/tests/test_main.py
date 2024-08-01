@@ -22,7 +22,14 @@ class TestSaveData(unittest.TestCase):
         df = pd.read_csv('data/data.csv')
         with self.assertRaises(TypeError):
             SaveData(df, 'id', 'dfs.csv')        
-            
+
+    def test_wrong_keytype_list(self):
+        df = pd.read_csv('data/data.csv')
+        df['bad_id'] = df['id'].apply(lambda x: [x])
+        with self.assertRaises(TypeError):
+            SaveData(df, 'bad_id', 'dfs.csv')        
+
+    
     def test_missingkeys(self):
         df = pd.read_csv('data/data.csv')
         with self.assertRaises(ValueError):
