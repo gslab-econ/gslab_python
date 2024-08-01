@@ -3,6 +3,7 @@ import sys
 import pandas as pd
 import numpy as np
 import os
+from pathlib import Path
 
 sys.path.append('..')
 
@@ -78,6 +79,17 @@ class TestSaveData(unittest.TestCase):
         self.assertEqual(exists, True)
         os.remove('df.log')
         os.remove('df.csv')    
+
+    def test_saves_with_path(self):  
+        indir = Path('data/data.csv')
+        outdir_csv = Path('data.csv')
+        outdir_log = Path('data.log')
+        df = pd.read_csv(indir)
+        SaveData(df, ['id'], outdir_csv, outdir_log)
+        exists = os.path.isfile(str(outdir_log))
+        self.assertEqual(exists, True)
+        os.remove(str(outdir_csv))
+        os.remove(str(outdir_log))
         
 if __name__ == '__main__':
     unittest.main()

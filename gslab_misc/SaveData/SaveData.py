@@ -8,20 +8,26 @@ Created on Sat Dec 25 05:44:33 2021
 import pandas as pd
 import hashlib
 import re
+import pathlib
 
 def SaveData(df, keys, out_file, log_file = '', append = False, sortbykey = True):
-    CheckExtension(out_file)
+    extension = CheckExtension(out_file)
     CheckKeys(df, keys)
     df_hash = hashlib.md5(pd.util.hash_pandas_object(df).values).hexdigest() 
     summary_stats = GetSummaryStats(df)
-    SaveDf(df, keys, out_file, sortbykey)
+    SaveDf(df, keys, out_file, sortbykey, extension)
     SaveLog(df_hash, keys, summary_stats, out_file, append, log_file)
     
 def CheckExtension(out_file):
-    extension = re.findall(r'\.[a-z]+$', out_file)
+    if type(out_file) == str:
+        extension = re.findall(r'\.[a-z]+$', out_file)
+    elif type(out_file) == pathlib.PosixPath:
+        extension = [out_file.suffix]
+    else:
+        raise ValueError('Output file format must either be string or pathlib.PosixPath')
     if not extension[0] in ['.csv', '.dta']:
         raise ValueError("File extension should be one of .csv or .dta.")
-    
+    return extension[0]
 def CheckKeys(df, keys):
     if not isinstance(keys, list):
         raise TypeError("Keys must be specified as a list.")
@@ -58,13 +64,13 @@ def GetSummaryStats(df):
     return summary_stats
 
 
-def SaveDf(df, keys, out_file, sortbykey):
+def SaveDf(df, keys, out_file, sortbykey, extension):
     if sortbykey:
         df.sort_values(keys, inplace = True)
     
-    if re.search('.csv', out_file):
+    if extension == '.csv':
         df.to_csv(out_file, index = False)
-    if re.search('.dta', out_file):
+    if extension == '.dta':
         df.to_stata(out_file, write_index = False)
     
 def SaveLog(df_hash, keys, summary_stats, out_file, append, log_file):
