@@ -76,7 +76,7 @@ class TestSaveData(unittest.TestCase):
         exists = os.path.isfile('df.csv')
         self.assertEqual(exists, True)
         os.remove('df.log')
-        os.remove('df.csv')    
+        os.remove('df.csv')
         
 if __name__ == '__main__':
     unittest.main()
