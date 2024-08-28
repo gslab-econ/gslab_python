@@ -58,7 +58,7 @@ class CleanRepo(build_py):
             shutil.rmtree('./dist')
 
 # Requirements
-requirements = ['requests', 'scandir', 'pymmh3']
+requirements = ['requests', 'scandir', 'pymmh3', 'pandas']
 
 setup(name         = 'GSLab_Tools',
       version      = '4.1.2',
