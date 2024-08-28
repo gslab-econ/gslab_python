@@ -45,8 +45,8 @@ def CheckKeys(df, keys):
     keys_with_missing = df_keys.columns[df_keys.isnull().any()]
     if keys_with_missing.any():
         missings_string = ', '.join(keys_with_missing)
-        print('The following keys are missing in some rows: %s .' % (missings_string))
-        raise ValueError('You have rows with missing keys.')
+        raise ValueError(f'The following keys are missing in some rows: {missings_string}.')
+
     
     type_list = any([any(df[keycol].apply(lambda x: type(x) == list)) for keycol in keys])
     if type_list:
