@@ -12,6 +12,7 @@ import pathlib
 
 def SaveData(df, keys, out_file, log_file = '', append = False, sortbykey = True):
     extension = CheckExtension(out_file)
+    CheckColumnsNotList(df)
     CheckKeys(df, keys)
     df_hash = hashlib.md5(pd.util.hash_pandas_object(df).values).hexdigest() 
     summary_stats = GetSummaryStats(df)
@@ -28,6 +29,15 @@ def CheckExtension(out_file):
     if not extension[0] in ['.csv', '.dta']:
         raise ValueError("File extension should be one of .csv or .dta.")
     return extension[0]
+
+def CheckColumnsNotList(df):
+    type_list = [any(df[col].apply(lambda x: type(x) == list)) for col in df.columns]
+    if sum(type_list) > 0:
+        type_list_columns = df.columns[type_list]
+        print("The following columns are of type list: " + ", ".join(type_list_columns))
+        raise TypeError("No key can contain keys of type list")
+        
+
 def CheckKeys(df, keys):
     if not isinstance(keys, list):
         raise TypeError("Keys must be specified as a list.")
@@ -45,10 +55,6 @@ def CheckKeys(df, keys):
         print('The following keys are missing in some rows: %s .' % (missings_string))
         raise ValueError('You have rows with missing keys.')
     
-    type_list = any([any(df[keycol].apply(lambda x: type(x) == list)) for keycol in keys])
-    if type_list:
-        raise TypeError("No key can contain keys of type list")
-        
     if not all(df.groupby(keys).size() == 1):
         raise ValueError("Keys do not uniquely identify the observations.")
         
