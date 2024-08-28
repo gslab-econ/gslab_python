@@ -35,7 +35,7 @@ def CheckColumnsNotList(df):
     if sum(type_list) > 0:
         type_list_columns = df.columns[type_list]
         print("The following columns are of type list: " + ", ".join(type_list_columns))
-        raise TypeError("No key can contain keys of type list")
+        raise TypeError("No column can be of type list")
         
 
 def CheckKeys(df, keys):
