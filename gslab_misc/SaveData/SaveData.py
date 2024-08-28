@@ -52,8 +52,8 @@ def CheckKeys(df, keys):
     keys_with_missing = df_keys.columns[df_keys.isnull().any()]
     if keys_with_missing.any():
         missings_string = ', '.join(keys_with_missing)
-        print('The following keys are missing in some rows: %s .' % (missings_string))
-        raise ValueError('You have rows with missing keys.')
+        raise ValueError(f'The following keys are missing in some rows: {missings_string}.')
+
     
     if not all(df.groupby(keys).size() == 1):
         raise ValueError("Keys do not uniquely identify the observations.")
