@@ -32,10 +32,9 @@ def CheckExtension(out_file):
 
 def CheckColumnsNotList(df):
     type_list = [any(df[col].apply(lambda x: type(x) == list)) for col in df.columns]
-    if sum(type_list) > 0:
+    if any(type_list):
         type_list_columns = df.columns[type_list]
-        print("The following columns are of type list: " + ", ".join(type_list_columns))
-        raise TypeError("No column can be of type list")
+        raise TypeError("No column can be of type list - check the following columns: " + ", ".join(type_list_columns))
         
 
 def CheckKeys(df, keys):
