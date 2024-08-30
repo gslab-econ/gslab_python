@@ -20,8 +20,24 @@ class TestSaveData(unittest.TestCase):
     def test_wrong_keytype(self):
         df = pd.read_csv('data/data.csv')
         with self.assertRaises(TypeError):
-            SaveData(df, 'id', 'dfs.csv')        
-            
+            SaveData(df, 'id', 'dfs.csv')            
+
+    def test_key_on_left(self):
+        df = pd.read_csv('data/data.csv')
+        df['id2'] = df['id']
+        SaveData(df, ['id2'], 'df.csv')        
+        df_saved = pd.read_csv('df.csv')
+        self.assertEqual(df_saved.columns[0], 'id2')
+        os.remove('df.csv')
+
+    def test_two_keys_on_left(self):
+        df = pd.read_csv('data/data.csv')
+        df['id2'] = df['id']
+        SaveData(df, ['id2', 'id'], 'df.csv')        
+        df_saved = pd.read_csv('df.csv')
+        self.assertEqual(True, all([x == y for x, y in zip(['id2', 'id'], df_saved.columns[:2])]))
+        os.remove('df.csv')
+    
     def test_missingkeys(self):
         df = pd.read_csv('data/data.csv')
         with self.assertRaises(ValueError):
