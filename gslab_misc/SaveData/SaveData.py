@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sat Dec 25 05:44:33 2021
-
-@author: user
-"""
 
 import pandas as pd
 import hashlib
@@ -14,11 +9,15 @@ def SaveData(df, keys, out_file, log_file = '', append = False, sortbykey = True
     extension = CheckExtension(out_file)
     CheckColumnsNotList(df)
     CheckKeys(df, keys)
+    # reorder df so keys are on the left
+    cols_reordered = keys + [col for col in df.columns if col not in keys]
+    df = df[cols_reordered]
     df_hash = hashlib.md5(pd.util.hash_pandas_object(df).values).hexdigest() 
     summary_stats = GetSummaryStats(df)
     SaveDf(df, keys, out_file, sortbykey, extension)
     SaveLog(df_hash, keys, summary_stats, out_file, append, log_file)
     
+
 def CheckExtension(out_file):
     if type(out_file) == str:
         extension = re.findall(r'\.[a-z]+$', out_file)
@@ -35,7 +34,8 @@ def CheckColumnsNotList(df):
     if any(type_list):
         type_list_columns = df.columns[type_list]
         raise TypeError("No column can be of type list - check the following columns: " + ", ".join(type_list_columns))
-        
+       
+      
 
 def CheckKeys(df, keys):
     if not isinstance(keys, list):
@@ -54,9 +54,17 @@ def CheckKeys(df, keys):
         raise ValueError(f'The following keys are missing in some rows: {missings_string}.')
 
     
+
+    
+    type_list = any([any(df[keycol].apply(lambda x: type(x) == list)) for keycol in keys])
+    if type_list:
+        raise TypeError("No key can contain keys of type list")
+
+        
     if not all(df.groupby(keys).size() == 1):
         raise ValueError("Keys do not uniquely identify the observations.")
         
+
 def GetSummaryStats(df):
     var_types = df.dtypes
     with pd.option_context("future.no_silent_downcasting", True):
@@ -80,7 +88,10 @@ def SaveDf(df, keys, out_file, sortbykey, extension):
         df.to_csv(out_file, index = False)
     if extension == '.dta':
         df.to_stata(out_file, write_index = False)
+
+    print(f"File '{out_file}' saved successfully.")
     
+
 def SaveLog(df_hash, keys, summary_stats, out_file, append, log_file):
     if log_file: 
         if append:
