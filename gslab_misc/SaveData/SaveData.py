@@ -77,6 +77,8 @@ def SaveDf(df, keys, out_file, sortbykey, extension):
         df.to_csv(out_file, index = False)
     if extension == '.dta':
         df.to_stata(out_file, write_index = False)
+
+    print(f"File '{out_file}' saved successfully.")
     
 
 def SaveLog(df_hash, keys, summary_stats, out_file, append, log_file):
