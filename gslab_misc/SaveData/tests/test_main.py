@@ -26,16 +26,16 @@ class TestSaveData(unittest.TestCase):
         df = pd.read_csv('data/data.csv')
         df['id2'] = df['id']
         SaveData(df, ['id2'], 'df.csv')        
-        df_imp = pd.read_csv('df.csv')
-        self.assertEqual(df_imp.columns[0], 'id2')
+        df_saved = pd.read_csv('df.csv')
+        self.assertEqual(df_saved.columns[0], 'id2')
         os.remove('df.csv')
 
     def test_two_keys_on_left(self):
         df = pd.read_csv('data/data.csv')
         df['id2'] = df['id']
         SaveData(df, ['id2', 'id'], 'df.csv')        
-        df_imp = pd.read_csv('df.csv')
-        self.assertEqual(True, all([x == y for x, y in zip(['id2', 'id'], df_imp.columns[:2])]))
+        df_saved = pd.read_csv('df.csv')
+        self.assertEqual(True, all([x == y for x, y in zip(['id2', 'id'], df_saved.columns[:2])]))
         os.remove('df.csv')
     
     def test_missingkeys(self):
