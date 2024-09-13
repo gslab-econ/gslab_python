@@ -14,7 +14,7 @@ def check_prereq(prereq, manual_execs = {}, gslab_vers = None):
     If prereq is git_lfs, check that it has been installed.
     '''
     prereq_clean = str(prereq).lower().strip()
-    path_checkers = ['r', 'stata', 'matlab', 'lyx', 'latex']
+    path_checkers = ['r', 'stata', 'matlab', 'mathematica', 'lyx', 'latex']
     if prereq_clean in path_checkers:
         executable = misc.get_executable(prereq_clean, manual_execs)
         if not misc.is_in_path(executable):
@@ -27,10 +27,10 @@ def check_prereq(prereq, manual_execs = {}, gslab_vers = None):
         required_version  = process_gslab_version(gslab_vers)
         installed_version = pkg_resources.get_distribution('gslab_tools').version
         installed_version = process_gslab_version(installed_version)
-        if not check_gslab_version(installed_version, required_version):
+        if check_gslab_version(required_version, installed_version):
             message = 'Your version of gslab_python (%s) is outdated. ' \
-                      'This repository requires gslab_python %s or higher to run' \
-                      % ('.'.join(installed_version), '.'.join(required_version))
+                      'This repository requires gslab_python (%s) or higher to run' \
+                      % ('.'.join(str(v) for v in installed_version), '.'.join(str(v) for v in required_version))
             raise PrerequisiteError(message)
     elif prereq_clean == 'git_lfs':
         check_git_lfs()
@@ -68,19 +68,19 @@ def check_gslab_version(required, installed):
     '''
     # Base case
     if required == installed:
-        return True
+        return False
     else:
         required_val = required[0]
         installed_val = installed[0]
         # More base cases
         if required_val > installed_val:
-            up_to_date = True
+            out_dated = True
         else:
-            up_to_date = False
+            out_dated = False
         # Recursive case
         if required_val == installed_val:
-            check_gslab_version(required[1:], installed[1:])
-    return up_to_date
+            out_dated = check_gslab_version(required[1:], installed[1:])
+    return out_dated
 
 
 def check_git_lfs():
