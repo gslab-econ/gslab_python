@@ -20,8 +20,26 @@ class TestSaveData(unittest.TestCase):
     def test_wrong_keytype(self):
         df = pd.read_csv('data/data.csv')
         with self.assertRaises(TypeError):
-            SaveData(df, 'id', 'dfs.csv')            
+            SaveData(df, 'id', 'dfs.csv')        
 
+    def test_wrong_key_column_list(self):
+        df = pd.read_csv('data/data.csv')
+        df['list_id'] = df['id'].apply(lambda x: [x])
+        with self.assertRaises(TypeError):
+            SaveData(df, 'list_id', 'dfs.csv')        
+
+    def test_wrong_key_column_containing_list(self):
+        df = pd.read_csv('data/data.csv')
+        df['list_id'] = df['id'].apply(lambda x: [x] if x == 1 else x)
+        with self.assertRaises(TypeError):
+            SaveData(df, 'list_id', 'dfs.csv')      
+
+    def test_wrong_non_key_column_containing_list(self):
+        df = pd.read_csv('data/data.csv')
+        df['list_column'] = df['id'].apply(lambda x: [x] if x == 1 else x)
+        with self.assertRaises(TypeError):
+            SaveData(df, 'id', 'dfs.csv')    
+            
     def test_key_on_left(self):
         df = pd.read_csv('data/data.csv')
         df['id2'] = df['id']

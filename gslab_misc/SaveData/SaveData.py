@@ -7,6 +7,7 @@ import pathlib
 
 def SaveData(df, keys, out_file, log_file = '', append = False, sortbykey = True):
     extension = CheckExtension(out_file)
+    CheckColumnsNotList(df)
     CheckKeys(df, keys)
     # reorder df so keys are on the left
     cols_reordered = keys + [col for col in df.columns if col not in keys]
@@ -28,6 +29,13 @@ def CheckExtension(out_file):
         raise ValueError("File extension should be one of .csv or .dta.")
     return extension[0]
 
+def CheckColumnsNotList(df):
+    type_list = [any(df[col].apply(lambda x: type(x) == list)) for col in df.columns]
+    if any(type_list):
+        type_list_columns = df.columns[type_list]
+        raise TypeError("No column can be of type list - check the following columns: " + ", ".join(type_list_columns))
+       
+      
 
 def CheckKeys(df, keys):
     if not isinstance(keys, list):
@@ -46,9 +54,12 @@ def CheckKeys(df, keys):
         raise ValueError(f'The following keys are missing in some rows: {missings_string}.')
 
     
+
+    
     type_list = any([any(df[keycol].apply(lambda x: type(x) == list)) for keycol in keys])
     if type_list:
         raise TypeError("No key can contain keys of type list")
+
         
     if not all(df.groupby(keys).size() == 1):
         raise ValueError("Keys do not uniquely identify the observations.")
